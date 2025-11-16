@@ -565,19 +565,8 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           h("option", { value: "2" }, T.colsOption2),
           h("option", { value: "1" }, T.colsOption1)
         )
-      ),
-      h(
-        "div",
-        { className: "row" },
-        h("label", { className: "lbl" }, T.rowBgLabel),
-        h("input", {
-          type: "color",
-          value: rowBg,
-          onChange: (e) => setRowBg(e.target.value),
-          className: "color-input"
-        }),
-        h("span", { className: "hex" }, rowBg)
       )
+      // ⚠️ rowBg row-ը հանված է
     ),
 
     h(
