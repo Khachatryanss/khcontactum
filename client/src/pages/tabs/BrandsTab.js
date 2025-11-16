@@ -143,7 +143,7 @@ const BRANDS_UI_TEXT = {
     heading: "Marques",
     titleColorLabel: "Couleur du titre :",
     nameColorLabel: "Couleur des noms :",
-    titleTextLabel: "Texte du titre :", 
+    titleTextLabel: "Texte du titre :",
     colsLabel: "Nombre de colonnes :",
     colsOption3: "3",
     colsOption2: "2",
@@ -327,12 +327,11 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
   const [saving, setSaving] = React.useState(false);
   const [msg, setMsg] = React.useState("");
 
-  // caret info
   const lastFocusRef = React.useRef({ key: null, pos: null });
 
-  // 👇 scroll-to-bottom refs
+  // scroll-to-bottom
   const bottomRef = React.useRef(null);
-  const prevBrandsCountRef = React.useRef(0);
+  const [scrollToBottomFlag, setScrollToBottomFlag] = React.useState(false);
 
   React.useEffect(() => {
     (async () => {
@@ -382,17 +381,16 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
     }
   });
 
-  // 👇 եթե brand-ների քանակը աճել է → scroll ներքև
+  // scroll ONLY when flag true (օր. addBrand-ից հետո)
   React.useEffect(() => {
-    const prev = prevBrandsCountRef.current;
-    if (brands.length > prev && bottomRef.current) {
+    if (scrollToBottomFlag && bottomRef.current) {
       bottomRef.current.scrollIntoView({
         behavior: "smooth",
         block: "end",
       });
+      setScrollToBottomFlag(false);
     }
-    prevBrandsCountRef.current = brands.length;
-  }, [brands.length]);
+  }, [scrollToBottomFlag, brands.length]);
 
   /* ------ local CRUD ------ */
   const onBrandField = (id, key, val, fieldKey, pos) => {
@@ -409,7 +407,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
     );
   };
 
-  const addBrand = () =>
+  const addBrand = () => {
     setBrands((list) => [
       ...list,
       {
@@ -421,6 +419,9 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         logo: ""
       }
     ]);
+    // հաջորդ render–ին scroll անի ներքև
+    setScrollToBottomFlag(true);
+  };
 
   const delBrand = (id) => setBrands((list) => list.filter((b) => b.id !== id));
 
@@ -723,10 +724,10 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       )
     ),
 
-    // sentinel – scroll-ի target
+    // scroll target
     h("div", { ref: bottomRef, style: { height: 1 } }),
 
-    // sticky footer only inside phone/card
+    // sticky footer
     h(
       "div",
       { className: "footer-actions-fixed" },
