@@ -8,7 +8,6 @@ const LANGS = ["am", "ru", "en", "ar", "fr"];
 /* ---------- UI TEXT ---------- */
 const BRANDS_UI_TEXT = {
   am: {
-    heading: "Բրենդներ / Ծառայություններ",
     titleColorLabel: "Վերնագրի գույն :",
     nameColorLabel: "Անունների գույն :",
     titleTextLabel: "Վերնագրի տեքստը:",
@@ -41,7 +40,6 @@ const BRANDS_UI_TEXT = {
   },
 
   en: {
-    heading: "Brands / Services",
     titleColorLabel: "Title color:",
     nameColorLabel: "Name color:",
     titleTextLabel: "Title text:",
@@ -74,7 +72,6 @@ const BRANDS_UI_TEXT = {
   },
 
   ru: {
-    heading: "Бренды / Услуги",
     titleColorLabel: "Цвет заголовка:",
     nameColorLabel: "Цвет названий:",
     titleTextLabel: "Текст заголовка:",
@@ -107,7 +104,6 @@ const BRANDS_UI_TEXT = {
   },
 
   ar: {
-    heading: "العلامات / الخدمات",
     titleColorLabel: "لون العنوان:",
     nameColorLabel: "لون الأسماء:",
     titleTextLabel: "نص العنوان:",
@@ -140,7 +136,6 @@ const BRANDS_UI_TEXT = {
   },
 
   fr: {
-    heading: "Marques / Services",
     titleColorLabel: "Couleur du titre :",
     nameColorLabel: "Couleur des noms :",
     titleTextLabel: "Texte du titre :",

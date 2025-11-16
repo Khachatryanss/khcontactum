@@ -385,7 +385,12 @@ function FileButton({ label, accept, onChange }) {
   );
 }
 
-export default function AdminDashboard({ token: propToken, onLogout, uiLang = "en" }) {
+export default function AdminDashboard({
+  token: propToken,
+  onLogout,
+  uiLang = "en",
+  onLangChange,
+}) {
   const token =
     propToken ||
     sessionStorage.getItem("adminToken") ||
@@ -393,6 +398,16 @@ export default function AdminDashboard({ token: propToken, onLogout, uiLang = "e
     "";
 
   const T = ADMIN_UI_TEXT[uiLang] || ADMIN_UI_TEXT.en;
+
+  // UI լեզուների selector-ի համար (նույն տրամաբանությունը, ինչ AdminLogin-ում)
+  const UI_LANGS = ["en", "am", "fr", "ar", "ru"];
+
+  function handleUiLangChange(next) {
+    if (!next || next === uiLang) return;
+    if (onLangChange) {
+      onLangChange(next); // բարձրացնում ենք App.js, որը պահում է state + sessionStorage
+    }
+  }
 
   // tabs: "home" | "icons" | "brands" | "brandinfo" | "share" | "password"
   const [tab, setTab] = useState("home");
@@ -815,6 +830,27 @@ export default function AdminDashboard({ token: propToken, onLogout, uiLang = "e
     );
   }
 
+  /* Լեզվի selector admin-ի քարտի header-ում */
+  function LangSelector() {
+    if (!token || loading) return null;
+
+    return h(
+      "select",
+      {
+        className: "admin-login-lang-select",
+        value: uiLang,
+        onChange: (e) => handleUiLangChange(e.target.value),
+        style: {
+          minWidth: 72,
+          fontSize: 13,
+        },
+      },
+      UI_LANGS.map((code) =>
+        h("option", { key: code, value: code }, code.toUpperCase())
+      )
+    );
+  }
+
   /* small helpers for render */
   const Card = (title, children) =>
     h(
@@ -832,7 +868,18 @@ export default function AdminDashboard({ token: propToken, onLogout, uiLang = "e
             },
           },
           title && h("h2", { style: { margin: 0 } }, title),
-          TabsAnchor()
+          h(
+            "div",
+            {
+              style: {
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+              },
+            },
+            LangSelector(), // ← ձախ՝ լեզվի selector
+            TabsAnchor()    // ← աջ՝ երեք կետանոց մենյու
+          )
         ),
       children || null
     );
@@ -886,7 +933,12 @@ export default function AdminDashboard({ token: propToken, onLogout, uiLang = "e
             h(
               "span",
               {
-                style: { flex: 1, fontSize: "14px", fontFamily: "revert-layer", width: 100 },
+                style: {
+                  flex: 1,
+                  fontSize: "14px",
+                  fontFamily: "revert-layer",
+                  width: 100,
+                },
               },
               label
             ),
@@ -1167,10 +1219,10 @@ export default function AdminDashboard({ token: propToken, onLogout, uiLang = "e
       info?.background?.type === "video" &&
         h(
           "div",
-            {
-              className: "row mb-3",
-              style: { display: "flex", alignItems: "center", gap: "12px" },
-            },
+          {
+            className: "row mb-3",
+            style: { display: "flex", alignItems: "center", gap: "12px" },
+          },
           CirclePreview(
             fileUrl(bgVideoPreview || info?.background?.videoUrl || ""),
             "video"

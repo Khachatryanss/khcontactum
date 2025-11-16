@@ -192,6 +192,13 @@ export default function App() {
       h(AdminDashboard, {
         token: adminToken,
         uiLang: adminLang,
+        // ✅ նոր՝ լեզվի փոփոխման callback admin dashboard–ից
+        onLangChange: (code) => {
+          setAdminLang(code);
+          try {
+            sessionStorage.setItem("adminLang", code);
+          } catch {}
+        },
         onLogout: () => {
           try {
             sessionStorage.removeItem("adminToken");
