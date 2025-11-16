@@ -566,7 +566,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           h("option", { value: "1" }, T.colsOption1)
         )
       )
-      // rowBg UI-ն չենք նկարում, բայց արժեքը պահում ենք
+      // rowBg UI-ն չենք նկարում
     ),
 
     h(
@@ -703,7 +703,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       )
     ),
 
-    // 👇 Fixed footer – scroll-ից անկախ
+    // 👇 Fixed INSIDE phone (sticky bottom)
     h(
       "div",
       { className: "footer-actions-fixed" },
@@ -756,21 +756,20 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
 
       .admin-scroll-root{
         overscroll-behavior:contain;
-        padding-bottom:90px; /* որ fixed footer-ի տակ բան չկորչի */
+        padding-bottom:16px; /* փոքր buffer, այլևս viewport-fixed չի */
       }
 
+      /* 👉 sticky footer only inside phone/card */
       .footer-actions-fixed{
-        position:fixed;
-        left:0;
-        right:0;
+        position:sticky;
         bottom:0;
-        padding:10px 16px;
+        margin-top:12px;
+        padding:10px 8px 6px;
         display:flex;
         align-items:center;
         gap:10px;
-        background:rgba(255,255,255,0.98);
-        box-shadow:0 -10px 30px rgba(0,0,0,0.35);
-        z-index:1000;
+        background:#fff;
+        border-radius:18px;
       }
 
       .floating-menu{
