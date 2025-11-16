@@ -87,9 +87,6 @@ export default function IconsPage({
     layoutStyle === "dzev4" ? "icons-dzev4" :
                               "grid";
 
-  // հավելյալ class dzev1-ի համար, որ թիրախավորում անենք CSS-ով
-  if (layoutStyle === "dzev1") containerClass += " icons-dzev1";
-
   containerClass += " icons-nowrap";
   if (layoutStyle !== "dzev4" && cols === 1) containerClass += " icons-cols-1";
   if (glowEnabled) containerClass += " icons-glow-on";
@@ -102,9 +99,9 @@ export default function IconsPage({
   if (chipColor)  containerStyle["--icons-chip-bg"]     = chipColor;
   if (labelColor) containerStyle["--icons-label-color"] = labelColor;
 
-  // 1 սյունակային ռեժիմի համար քարտիկների ֆոնի գույնը (եթե տրված է)
-  if (layoutStyle !== "dzev4" && cols === 1 && rowCardColor) {
-    containerStyle["--icons-card-bg"] = rowCardColor;
+  if (layoutStyle !== "dzev4" && cols === 1) {
+    const cardBg = rowCardColor || chipColor;
+    if (cardBg) containerStyle["--icons-card-bg"] = cardBg;
     containerStyle["--icons-card-border"] =
       "color-mix(in oklab, var(--icons-card-bg, #fff), #000 8%)";
   }
@@ -189,35 +186,6 @@ export default function IconsPage({
             label
           )
       );
-    }),
-    // 1 սյունակ + dzev1-ի համար glass քարտիկների CSS
-    layoutStyle === "dzev1" &&
-      cols === 1 &&
-      h(
-        "style",
-        null,
-        `
-        .icons-dzev1.icons-cols-1 .grid-item{
-          display:flex;
-          align-items:center;
-          gap:12px;
-          padding:10px 12px;
-          border-radius:16px;
-          background:
-            linear-gradient(135deg, rgba(255,255,255,0.90), rgba(255,255,255,0.76));
-          box-shadow:
-            0 18px 40px rgba(15,23,42,0.18),
-            0 0 0 1px rgba(15,23,42,0.04);
-          border:1px solid rgba(15,23,42,0.06);
-          text-decoration:none;
-        }
-        .icons-dzev1.icons-cols-1 .grid-item .icon-btn{
-          flex-shrink:0;
-        }
-        .icons-dzev1.icons-cols-1 .grid-item .label{
-          font-weight:600;
-        }
-      `
-      )
+    })
   );
 }

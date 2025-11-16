@@ -13,8 +13,8 @@ const rtlProps = (code) =>
 /* ---------- UI TEXT (multi-lang) ---------- */
 const ICONS_UI_TEXT = {
   am: {
-    title: "Իկոններ եք",
     styleLabel: "Ոճ",
+    // style options
     styleOption1: "Ձև 1",
     styleOption2: "Ձև 2",
     styleOption3: "Ձև 3",
@@ -42,7 +42,6 @@ const ICONS_UI_TEXT = {
   },
 
   ru: {
-    title: "Иконки",
     styleLabel: "Стиль",
     styleOption1: "Стиль 1",
     styleOption2: "Стиль 2",
@@ -71,7 +70,6 @@ const ICONS_UI_TEXT = {
   },
 
   en: {
-    title: "Icons",
     styleLabel: "Style",
     styleOption1: "Style 1",
     styleOption2: "Style 2",
@@ -100,7 +98,6 @@ const ICONS_UI_TEXT = {
   },
 
   ar: {
-    title: "الأيقونات",
     styleLabel: "النمط",
     styleOption1: "نمط 1",
     styleOption2: "نمط 2",
@@ -129,7 +126,6 @@ const ICONS_UI_TEXT = {
   },
 
   fr: {
-    title: "Icônes",
     styleLabel: "Style",
     styleOption1: "Style 1",
     styleOption2: "Style 2",
@@ -572,21 +568,24 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   // pickers
   const chipBtnRef = React.useRef(null);
   const [showChipPicker, setShowChipPicker] = React.useState(false);
-
-  // scroll-on-add
-  const bottomRef = React.useRef(null);
-  const [scrollToBottomFlag, setScrollToBottomFlag] = React.useState(false);
+  const rowBtnRef = React.useRef(null);
+  const [showRowPicker, setShowRowPicker] = React.useState(false);
 
   React.useEffect(() => {
     const onDown = (e) => {
       const chipPop = document.getElementById("chip-popover");
+      const rowPop = document.getElementById("row-popover");
       const insideChip =
         chipPop?.contains(e.target) || chipBtnRef.current?.contains(e.target);
+      const insideRow =
+        rowPop?.contains(e.target) || rowBtnRef.current?.contains(e.target);
       if (!insideChip) setShowChipPicker(false);
+      if (!insideRow) setShowRowPicker(false);
     };
     const onEsc = (e) => {
       if (e.key === "Escape") {
         setShowChipPicker(false);
+        setShowRowPicker(false);
       }
     };
     window.addEventListener("mousedown", onDown);
@@ -596,17 +595,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       window.removeEventListener("keydown", onEsc);
     };
   }, []);
-
-  // scroll ONLY when նոր row ենք ավելացրել
-  React.useEffect(() => {
-    if (scrollToBottomFlag && bottomRef.current) {
-      bottomRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
-      setScrollToBottomFlag(false);
-    }
-  }, [scrollToBottomFlag, items.length]);
 
   // derived CSS strings
   const labelRgbObj = React.useMemo(
@@ -693,7 +681,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     };
   };
 
-  const add = () => {
+  const add = () =>
     setItems((list) => [
       ...list,
       {
@@ -703,8 +691,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         icon: "fa-solid fa-link",
       },
     ]);
-    setScrollToBottomFlag(true);
-  };
 
   const onField = (uidKey, patch) => {
     setErrors((e) => {
@@ -882,6 +868,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         }),
         h("input", {
           className: "input",
+          
           value: style.labelHEX,
           onChange: (e) =>
             setStyle((s) => ({ ...s, labelHEX: e.target.value })),
@@ -936,8 +923,57 @@ export default function IconsTab({ langs, uiLang = "en" }) {
                 setStyle((s) => ({ ...s, chipRGBA: c })),
             })
           )
+      ),
+
+      h(
+        "div",
+        {
+          style: {
+            position: "relative",
+            display: "grid",
+            gridTemplateColumns: "auto 36px 1fr",
+            gap: 10,
+            alignItems: "center",
+          },
+        },
+        h("label", { style: { fontWeight: 700 } }, T.rowCardBg),
+        h("button", {
+          ref: rowBtnRef,
+          onClick: () => setShowRowPicker((v) => !v),
+          style: { ...sq(rowCardCss), cursor: "pointer" },
+          title: "Choose RGBA for single-column cards",
+          disabled: style.layoutStyle === "dzev4",
+        }),
+        h("input", {
+          className: "input",
+          value: rowCardCss,
+          readOnly: true,
+          style: { opacity: 0.75 },
+        }),
+        showRowPicker &&
+          h(
+            "div",
+            {
+              id: "row-popover",
+              style: {
+                position: "absolute",
+                zIndex: 50,
+                top: "calc(100% + 8px)",
+                left: 150,
+                background: "#fff",
+                borderRadius: 12,
+                boxShadow:
+                  "0 14px 40px rgba(0,0,0,.18), 0 1px 0 rgba(0,0,0,.06)",
+                padding: 12,
+              },
+            },
+            h(RgbaColorPicker, {
+              color: style.rowCardRGBA,
+              onChange: (c) =>
+                setStyle((s) => ({ ...s, rowCardRGBA: c })),
+            })
+          )
       )
-      // rowCardBg preview / picker-ը հանված է ըստ խնդրանքիդ
     ),
 
     /* rows */
@@ -957,9 +993,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         })
       )
     ),
-
-    // scroll target — նոր row ավելացնելուց հետո այստեղ ենք գալիս
-    h("div", { ref: bottomRef, style: { height: 1 } }),
 
     /* footer actions — sticky toolbar */
     h(
