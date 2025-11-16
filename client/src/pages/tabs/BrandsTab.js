@@ -8,6 +8,7 @@ const LANGS = ["am", "ru", "en", "ar", "fr"];
 /* ---------- UI TEXT ---------- */
 const BRANDS_UI_TEXT = {
   am: {
+    heading: "Բրենդներ եք",
     titleColorLabel: "Վերնագրի գույն :",
     nameColorLabel: "Անունների գույն :",
     titleTextLabel: "Վերնագրի տեքստը:",
@@ -40,6 +41,7 @@ const BRANDS_UI_TEXT = {
   },
 
   en: {
+    heading: "Brands",
     titleColorLabel: "Title color:",
     nameColorLabel: "Name color:",
     titleTextLabel: "Title text:",
@@ -72,6 +74,7 @@ const BRANDS_UI_TEXT = {
   },
 
   ru: {
+    heading: "Бренды",
     titleColorLabel: "Цвет заголовка:",
     nameColorLabel: "Цвет названий:",
     titleTextLabel: "Текст заголовка:",
@@ -104,6 +107,7 @@ const BRANDS_UI_TEXT = {
   },
 
   ar: {
+    heading: "العلامات التجارية",
     titleColorLabel: "لون العنوان:",
     nameColorLabel: "لون الأسماء:",
     titleTextLabel: "نص العنوان:",
@@ -136,9 +140,10 @@ const BRANDS_UI_TEXT = {
   },
 
   fr: {
+    heading: "Marques",
     titleColorLabel: "Couleur du titre :",
     nameColorLabel: "Couleur des noms :",
-    titleTextLabel: "Texte du titre :",
+    titleTextLabel: "Texte du titre :", 
     colsLabel: "Nombre de colonnes :",
     colsOption3: "3",
     colsOption2: "2",
@@ -325,6 +330,10 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
   // caret info
   const lastFocusRef = React.useRef({ key: null, pos: null });
 
+  // 👇 scroll-to-bottom refs
+  const bottomRef = React.useRef(null);
+  const prevBrandsCountRef = React.useRef(0);
+
   React.useEffect(() => {
     (async () => {
       try {
@@ -372,6 +381,18 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       requestAnimationFrame(() => focusAndRestoreCaret(key, pos));
     }
   });
+
+  // 👇 եթե brand-ների քանակը աճել է → scroll ներքև
+  React.useEffect(() => {
+    const prev = prevBrandsCountRef.current;
+    if (brands.length > prev && bottomRef.current) {
+      bottomRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+    prevBrandsCountRef.current = brands.length;
+  }, [brands.length]);
 
   /* ------ local CRUD ------ */
   const onBrandField = (id, key, val, fieldKey, pos) => {
@@ -566,7 +587,6 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           h("option", { value: "1" }, T.colsOption1)
         )
       )
-      // rowBg UI-ն չենք նկարում
     ),
 
     h(
@@ -703,7 +723,10 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       )
     ),
 
-    // 👇 Fixed INSIDE phone (sticky bottom)
+    // sentinel – scroll-ի target
+    h("div", { ref: bottomRef, style: { height: 1 } }),
+
+    // sticky footer only inside phone/card
     h(
       "div",
       { className: "footer-actions-fixed" },
@@ -756,10 +779,9 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
 
       .admin-scroll-root{
         overscroll-behavior:contain;
-        padding-bottom:16px; /* փոքր buffer, այլևս viewport-fixed չի */
+        padding-bottom:16px;
       }
 
-      /* 👉 sticky footer only inside phone/card */
       .footer-actions-fixed{
         position:sticky;
         bottom:0;
