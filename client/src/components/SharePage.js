@@ -50,9 +50,6 @@ const TEXT = {
     // share defaults
     shareDefault: "Դիտիր իմ KHContactum.com թվային քարտը։",
     mailSubject: "KHContactum թվային քարտ",
-    // եթե ունես qrTitle / qrDesc, կարող ես լրացնել
-    qrTitle: "KHContactum QR",
-    qrDesc: "Սկանավորեք կամ կիսվեք ձեր թվային քարտով։",
   },
   ru: {
     scanBtn: "СКАНИРОВАТЬ QR-КОД",
@@ -63,8 +60,7 @@ const TEXT = {
     offlineNote: "После сканирования можно сохранить в контактах.",
     shareDefault: "Посмотри мою цифровую карточку KHContactum.com.",
     mailSubject: "Цифровая визитка KHContactum",
-    qrTitle: "QR KHContactum",
-    qrDesc: "Отсканируйте или поделитесь своей цифровой визиткой.",
+
   },
   en: {
     scanBtn: "SCAN QR CODE",
@@ -75,8 +71,7 @@ const TEXT = {
     offlineNote: "After scanning you can save it to your contacts.",
     shareDefault: "Check out my KHContactum.com digital card.",
     mailSubject: "KHContactum digital card",
-    qrTitle: "KHContactum QR",
-    qrDesc: "Scan or share your digital business card.",
+
   },
   ar: {
     scanBtn: "مسح رمز QR",
@@ -87,8 +82,7 @@ const TEXT = {
     offlineNote: "بعد المسح يمكنك حفظه في جهات الاتصال.",
     shareDefault: "اطّلع على بطاقتي الرقمية على KHContactum.com.",
     mailSubject: "بطاقة KHContactum الرقمية",
-    qrTitle: "رمز QR لـ KHContactum",
-    qrDesc: "امسح أو شارك بطاقتك الرقمية.",
+
   },
   fr: {
     scanBtn: "SCANNER LE QR CODE",
@@ -99,8 +93,7 @@ const TEXT = {
     offlineNote: "Après le scan vous pouvez l’enregistrer dans vos contacts.",
     shareDefault: "Découvrez ma carte numérique KHContactum.com.",
     mailSubject: "Carte numérique KHContactum",
-    qrTitle: "QR KHContactum",
-    qrDesc: "Scannez ou partagez votre carte numérique.",
+
   },
 };
 
