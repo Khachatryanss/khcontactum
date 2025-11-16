@@ -566,7 +566,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           h("option", { value: "1" }, T.colsOption1)
         )
       )
-      // ⚠️ rowBg row-ը հանված է
+      // rowBg UI-ն չենք նկարում, բայց արժեքը պահում ենք
     ),
 
     h(
@@ -703,9 +703,10 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       )
     ),
 
+    // 👇 Fixed footer – scroll-ից անկախ
     h(
       "div",
-      { className: "footer-actions" },
+      { className: "footer-actions-fixed" },
       h(
         "button",
         { className: "btn strong", type: "button", onClick: addBrand },
@@ -751,10 +752,26 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       .btn{ padding:10px 14px; border:none; border-radius:12px; background:#111; color:#fff; cursor:pointer; }
       .btn.pill{ border-radius:999px; } .btn.danger{ background:#e8554d; } .btn.strong{ font-weight:700; }
       .input{ width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:12px; background:#fff; }
-      .footer-actions{ margin-top:10px; display:flex; align-items:center; gap:10px; }
       .small-msg{ margin-left:8px; font-size:12px; color:#444; }
 
-      .admin-scroll-root{ overscroll-behavior:contain; }
+      .admin-scroll-root{
+        overscroll-behavior:contain;
+        padding-bottom:90px; /* որ fixed footer-ի տակ բան չկորչի */
+      }
+
+      .footer-actions-fixed{
+        position:fixed;
+        left:0;
+        right:0;
+        bottom:0;
+        padding:10px 16px;
+        display:flex;
+        align-items:center;
+        gap:10px;
+        background:rgba(255,255,255,0.98);
+        box-shadow:0 -10px 30px rgba(0,0,0,0.35);
+        z-index:1000;
+      }
 
       .floating-menu{
         max-height:60vh;
