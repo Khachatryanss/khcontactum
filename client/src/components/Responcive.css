@@ -639,7 +639,7 @@
 .public-scroll-layer section:last-of-type div[style*="justify-content: center"] {
   display: flex !important;
   flex-wrap: wrap;
-  justify-content: flex-start !important; /* որ մենք կառավարենք դիրքերը */
+
   max-width: 360px;
   margin: 0 auto 20px auto;
   gap: 14px;
