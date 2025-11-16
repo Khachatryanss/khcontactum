@@ -40,7 +40,7 @@ const CROP_ZOOM = 1.1; // 1.08–1.12 միջակայքը OK է
  * - brandsTitleText
  * - brandsNameColor
  * - brandsCols: 1 | 2 | 3
- * - brandsBgColor (for cols=1 list row bg)
+ * - brandsBgColor (for cols=1 list row bg) – ՀԻՄԱ չօգտագործվի, glass ենք տալիս
  * - lang
  * - onKeywordClick(keyword) – optional
  */
@@ -50,7 +50,7 @@ export default function BrandsPage({
   brandsTitleText = "ՄԵՐ ԲՐԵՆԴՆԵՐԸ",
   brandsNameColor = "#000000",
   brandsCols = 3,
-  brandsBgColor = "#ffffff",
+  brandsBgColor = "#ffffff", // մնաց, բայց 1 column-ում չենք օգտագործում
   lang = "am",
   onKeywordClick,
 }) {
@@ -59,11 +59,16 @@ export default function BrandsPage({
   const cols = Math.max(1, Math.min(3, Number(brandsCols) || 3));
   const titleText = pickLang(brandsTitleText, lang) || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ";
 
-  /* === ONE COLUMN MODE === */
+  /* === ONE COLUMN MODE (GLASS EFFECT) === */
   if (cols === 1) {
     return h(
       "section",
-      { className: "brands-public", style: { padding: "10px 12px" } },
+      {
+        className: "brands-public",
+        style: {
+          padding: "10px 12px",
+        },
+      },
 
       h(
         "h2",
@@ -81,7 +86,14 @@ export default function BrandsPage({
 
       h(
         "div",
-        { style: { display: "grid", gap: 10, maxWidth: 560, margin: "0 auto" } },
+        {
+          style: {
+            display: "grid",
+            gap: 10,
+            maxWidth: 560,
+            margin: "0 auto",
+          },
+        },
         ...brands.map((b, i) => {
           const name = pickLang(b?.name, lang);
           const href = (b?.href || "").trim();
@@ -94,8 +106,11 @@ export default function BrandsPage({
             (linkType === "url" && href);
 
           const onClick = () => {
-            if (linkType === "keyword" && keyword && onKeywordClick) onKeywordClick(keyword);
-            else if (linkType === "url" && href) window.open(href, "_blank", "noopener,noreferrer");
+            if (linkType === "keyword" && keyword && onKeywordClick) {
+              onKeywordClick(keyword);
+            } else if (linkType === "url" && href) {
+              window.open(href, "_blank", "noopener,noreferrer");
+            }
           };
 
           return h(
@@ -109,7 +124,14 @@ export default function BrandsPage({
                 gap: 14,
                 padding: "10px 12px",
                 borderRadius: 14,
-                background: brandsBgColor,
+
+                // 🔹 GLASS EFFECT միայն 1-սյունակ ռեժիմի համար
+                background: "rgba(255,255,255,0.18)",
+                backdropFilter: "blur(10px)",
+                WebkitBackdropFilter: "blur(10px)",
+                border: "1px solid rgba(255,255,255,0.35)",
+                boxShadow: "0 10px 30px rgba(0,0,0,0.18)",
+
                 cursor: clickable ? "pointer" : "default",
               },
               onClick,
@@ -150,7 +172,13 @@ export default function BrandsPage({
             ),
             h(
               "span",
-              { style: { fontWeight: 700, fontSize: 15, color: brandsNameColor } },
+              {
+                style: {
+                  fontWeight: 700,
+                  fontSize: 15,
+                  color: brandsNameColor,
+                },
+              },
               name || ""
             )
           );
@@ -191,16 +219,16 @@ export default function BrandsPage({
       { style: { display: "flex", justifyContent: "center" } },
       h(
         "div",
-        {
-          className: "brands-grid",
-          style: {
-            display: "grid",
-            gap: 16,
-            justifyContent: "center",
-            gridTemplateColumns:
-              cols === 2 ? "repeat(2, 120px)" : "repeat(3, 110px)",
+          {
+            className: "brands-grid",
+            style: {
+              display: "grid",
+              gap: 16,
+              justifyContent: "center",
+              gridTemplateColumns:
+                cols === 2 ? "repeat(2, 120px)" : "repeat(3, 110px)",
+            },
           },
-        },
         ...brands.map((b, i) => {
           const name = pickLang(b?.name, lang);
           const href = (b?.href || "").trim();
