@@ -13,8 +13,8 @@ const rtlProps = (code) =>
 /* ---------- UI TEXT (multi-lang) ---------- */
 const ICONS_UI_TEXT = {
   am: {
-    title: "Իկոններով բաժին",
     styleLabel: "Ոճ",
+    // style options
     styleOption1: "Ձև 1",
     styleOption2: "Ձև 2",
     styleOption3: "Ձև 3",
@@ -42,7 +42,6 @@ const ICONS_UI_TEXT = {
   },
 
   ru: {
-    title: "Раздел с иконками",
     styleLabel: "Стиль",
     styleOption1: "Стиль 1",
     styleOption2: "Стиль 2",
@@ -71,7 +70,6 @@ const ICONS_UI_TEXT = {
   },
 
   en: {
-    title: "Icons section",
     styleLabel: "Style",
     styleOption1: "Style 1",
     styleOption2: "Style 2",
@@ -100,7 +98,6 @@ const ICONS_UI_TEXT = {
   },
 
   ar: {
-    title: "قسم الأيقونات",
     styleLabel: "النمط",
     styleOption1: "نمط 1",
     styleOption2: "نمط 2",
@@ -129,7 +126,6 @@ const ICONS_UI_TEXT = {
   },
 
   fr: {
-    title: "Section icônes",
     styleLabel: "Style",
     styleOption1: "Style 1",
     styleOption2: "Style 2",
@@ -151,8 +147,7 @@ const ICONS_UI_TEXT = {
     validateLabelsMissing: "Veuillez remplir les champs du nom",
     validateAmMissing: "Veuillez remplir le champ du nom (AM)",
     validateHrefMissing: "Veuillez remplir le champ Lien (URL)",
-    rowsAttention:
-      "Attention : remplissez les lignes marquées en rouge",
+    rowsAttention: "Attention : remplissez les lignes marquées en rouge",
     savedOk: "Enregistré ✅",
     loadFailed: "Échec du chargement",
     saveFailed: "Échec de l’enregistrement",
@@ -341,22 +336,22 @@ function PresetSelect({
     open &&
       h(
         "div",
-          {
-            style: {
-              position: "absolute",
-              top: "calc(100% + 6px)",
-              width: menuWidth,
-              maxHeight,
-              overflow: "auto",
-              background: "#fff",
-              border: "1px solid rgba(0,0,0,.12)",
-              borderRadius: 12,
-              boxShadow:
-                "0 14px 40px rgba(0,0,0,.18), 0 1px 0 rgba(0,0,0,.06)",
-              zIndex: 50,
-              padding: 8,
-            },
+        {
+          style: {
+            position: "absolute",
+            top: "calc(100% + 6px)",
+            width: menuWidth,
+            maxHeight,
+            overflow: "auto",
+            background: "#fff",
+            border: "1px solid rgba(0,0,0,.12)",
+            borderRadius: 12,
+            boxShadow:
+              "0 14px 40px rgba(0,0,0,.18), 0 1px 0 rgba(0,0,0,.06)",
+            zIndex: 50,
+            padding: 8,
           },
+        },
         h("input", {
           className: "input",
           placeholder: searchPlaceholder,
@@ -576,26 +571,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   const rowBtnRef = React.useRef(null);
   const [showRowPicker, setShowRowPicker] = React.useState(false);
 
-  // scroll control — new brand-style behavior
-  const rootRef = React.useRef(null);
-
-  const scrollToBottom = React.useCallback(() => {
-    requestAnimationFrame(() => {
-      const root = rootRef.current;
-      if (!root) return;
-      let scrollEl = root.closest(".admin-scroll-root");
-      if (!scrollEl) {
-        scrollEl =
-          document.scrollingElement || document.documentElement;
-      }
-      if (!scrollEl) return;
-      scrollEl.scrollTo({
-        top: scrollEl.scrollHeight,
-        behavior: "smooth",
-      });
-    });
-  }, []);
-
   React.useEffect(() => {
     const onDown = (e) => {
       const chipPop = document.getElementById("chip-popover");
@@ -627,8 +602,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     [style.labelHEX]
   );
   const labelCss = React.useMemo(
-    () =>
-      `rgb(${labelRgbObj.r}, ${labelRgbObj.g}, ${labelRgbObj.b})`,
+    () => `rgb(${labelRgbObj.r}, ${labelRgbObj.g}, ${labelRgbObj.b})`,
     [labelRgbObj]
   );
   const chipCss = React.useMemo(
@@ -658,13 +632,12 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
         setStyle({
           labelHEX: icons.styles?.labelHEX || "#d9caa0",
-          chipRGBA:
-            icons.styles?.chipRGBA || {
-              r: 47,
-              g: 47,
-              b: 47,
-              a: 1,
-            },
+          chipRGBA: icons.styles?.chipRGBA || {
+            r: 47,
+            g: 47,
+            b: 47,
+            a: 1,
+          },
           layoutStyle: icons.styles?.layoutStyle || "dzev1",
           cols: Number(icons.styles?.cols || 4),
           glowEnabled: !!icons.styles?.glowEnabled,
@@ -709,19 +682,15 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   };
 
   const add = () =>
-    setItems((list) => {
-      const next = [
-        ...list,
-        {
-          uid: uid(),
-          label: normLabels(""),
-          href: "",
-          icon: "fa-solid fa-link",
-        },
-      ];
-      scrollToBottom();
-      return next;
-    });
+    setItems((list) => [
+      ...list,
+      {
+        uid: uid(),
+        label: normLabels(""),
+        href: "",
+        icon: "fa-solid fa-link",
+      },
+    ]);
 
   const onField = (uidKey, patch) => {
     setErrors((e) => {
@@ -829,10 +798,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
   return h(
     "div",
-    {
-      ref: rootRef,
-      style: { minHeight: "100%", paddingBottom: 88, overflowX: "clip" },
-    },
+    { style: { minHeight: "100%", paddingBottom: 88, overflowX: "clip" } },
     h(
       "h2",
       { className: "company-title", style: { marginTop: 8 } },
@@ -902,6 +868,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         }),
         h("input", {
           className: "input",
+          
           value: style.labelHEX,
           onChange: (e) =>
             setStyle((s) => ({ ...s, labelHEX: e.target.value })),
@@ -1027,7 +994,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       )
     ),
 
-    /* footer actions — sticky toolbar (չի շարժվում scroll-ից) */
+    /* footer actions — sticky toolbar */
     h(
       "div",
       {
