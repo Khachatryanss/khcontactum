@@ -72,8 +72,7 @@ export default function IconsPage({
     const x = getClientX(e);
     const dx = x - lastXRef.current;
     lastXRef.current = x;
-    // multiplier-ը փոխիր ցանկությանդ համաձայն (արագություն)
-    setOrbitAngle((a) => a + dx * 0.6);
+    setOrbitAngle((a) => a + dx * 0.6); // multiplier = արագություն
   };
 
   const endDrag = () => {
@@ -99,17 +98,17 @@ export default function IconsPage({
   if (chipColor)  containerStyle["--icons-chip-bg"]     = chipColor;
   if (labelColor) containerStyle["--icons-label-color"] = labelColor;
 
-  // 1 սյունակով layout-ի համար glass card bg + border (բոլոր dzev-ների համար, բացի dzev4-ից)
+  // 1 սյունակով layout-ի համար ultra-transparent glass card
   const isOneCol = layoutStyle !== "dzev4" && cols === 1;
   if (isOneCol) {
     const cardBg =
-      rowCardColor || chipColor || "rgba(15, 23, 42, 0.78)";
+      rowCardColor || chipColor || "rgba(255, 255, 255, 0.12)";
     containerStyle["--icons-card-bg"] = cardBg;
     containerStyle["--icons-card-border"] =
-      "rgba(255, 255, 255, 0.22)";
+      "rgba(255, 255, 255, 0.28)";
   }
 
-  // dzev4 — այլևս transform չկան, միայն UX
+  // dzev4 — UX only
   if (layoutStyle === "dzev4") {
     containerStyle.touchAction = "pan-y";
     containerStyle.cursor = "grab";
@@ -146,7 +145,7 @@ export default function IconsPage({
       const aClass = [];
       if (layoutStyle === "dzev1") aClass.push("grid-item");
       if (layoutStyle === "dzev4") aClass.push("icon-wrap");
-      if (isOneCol) aClass.push("icon-row-card"); // 👉 glass card 1 սյունակով
+      if (isOneCol) aClass.push("icon-row-card"); // glass card 1 column-ի համար
 
       const aProps = {
         key: i,
