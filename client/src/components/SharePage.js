@@ -28,7 +28,7 @@ function pickLang(v, lang, fallbacks = ["am", "en", "ru", "ar", "fr"]) {
   return "";
 }
 
-/** Խաղաղ գլոբալ normalizer, որ link-ը միշտ լինի լիարժեք https://... (միայն public card-ի համար) */
+/** normalize public link → միշտ https://khcontactum.com/... */
 function ensureAbsoluteUrl(u) {
   const raw = (u || "").toString().trim();
   if (!raw) return "";
@@ -48,7 +48,6 @@ const TEXT = {
     offlineNote: "Սկանելուց հետո կարող եք պահպանել կոնտակտների մեջ։",
     shareDefault: "Դիտիր իմ KHContactum.com թվային քարտը։",
     mailSubject: "KHContactum թվային քարտ",
-    // qrTitle / qrDesc արդեն ունես քո վարկածում, չեմ դիպչում
   },
   ru: {
     scanBtn: "СКАНИРОВАТЬ QR-КОД",
@@ -121,7 +120,7 @@ function normalizeShare(raw) {
   };
 }
 
-/* default link – fallback, եթե admin share.onlineUrl չկա */
+/* default link – fallback */
 function defaultOnlineUrl(cardId) {
   if (typeof window !== "undefined" && window.location?.href) {
     return ensureAbsoluteUrl(window.location.href);
@@ -129,23 +128,55 @@ function defaultOnlineUrl(cardId) {
   return ensureAbsoluteUrl((cardId && String(cardId)) || "");
 }
 
-/* ----------helpers vcard contact fields---------- */
+/* ---------- contact meta helpers ---------- */
 
 function normalizePhone(p) {
   return (p || "").toString().replace(/[^\d+]/g, "");
 }
 
 /**
- * Icons-ից հավաքում ենք email + URL-ներ՝
- *  - email → EMAIL դաշտ
- *  - մնացած link-երը → itemN.URL + itemN.X-ABLabel
- * Phone icon-ը չենք ավելացնում, եթե համընկնում է offlinePhone-ի հետ։
+ * info-ից «ճանապարով» փնտրում ենք email + url-ներ․
+ * 1) icons / iconRows → սրամեջ label-ներն էլ վերցնում ենք
+ * 2) ողջ info օբյեկտը ռեկուրսիվ սկան ենք անում՝
+ *    - "@": email
+ *    - http/https/www: url
  */
-function collectContactMetaFromIcons(info, offlinePhone, lang) {
+function collectContactMeta(info, offlinePhone, lang) {
   const meta = { email: "", urls: [] };
   if (!info) return meta;
 
   const normOffline = normalizePhone(offlinePhone);
+  const seenUrls = new Set();
+
+  function addEmail(email) {
+    const clean = (email || "").toString().trim().replace(/^mailto:/i, "");
+    if (!clean) return;
+    if (!meta.email) meta.email = clean;
+  }
+
+  function addUrl(url, label) {
+    let u = (url || "").toString().trim();
+    if (!u) return;
+
+    // եթե tel:/sms:/viber: է, թողնենք ինչ կա
+    if (
+      !/^https?:\/\//i.test(u) &&
+      !/^(tel|sms|viber|whatsapp|wa):/i.test(u)
+    ) {
+      // domain / path → https://domain...
+      u = "https://" + u.replace(/^https?:\/\//i, "");
+    }
+
+    if (seenUrls.has(u)) return;
+    seenUrls.add(u);
+
+    const lab =
+      (label && label.toString().trim()) ||
+      "link";
+    meta.urls.push({ label: lab, url: u });
+  }
+
+  /* ---- 1) icons / iconRows հատուկ մեփինգ ---- */
 
   let icons = [];
   if (Array.isArray(info.icons)) {
@@ -174,7 +205,7 @@ function collectContactMetaFromIcons(info, offlinePhone, lang) {
     if (!value) continue;
     value = String(value).trim();
 
-    // հեռախոսահամար icon – եթե նույնն է ինչ offlinePhone, skip
+    // phone icon, հանում ենք offline phone-ի դուպլիկատը
     if (kind === "phone" || kind === "tel") {
       const vNorm = normalizePhone(value.replace(/^tel:/i, ""));
       if (normOffline && vNorm === normOffline) continue;
@@ -186,24 +217,8 @@ function collectContactMetaFromIcons(info, offlinePhone, lang) {
       /^mailto:/i.test(value) ||
       (!value.startsWith("http") && value.includes("@"))
     ) {
-      const email = value.replace(/^mailto:/i, "").trim();
-      if (email && !meta.email) {
-        meta.email = email;
-      }
+      addEmail(value);
       continue;
-    }
-
-    // մնացած բոլորը → URL դաշտեր
-    let url = value;
-
-    // եթե tel: / sms: / viber: link է, բավարար է որպես URL, բայց iOS-ում կարող է չերևալ
-    // ամեն դեպքում թողնենք, բայց առանց मजबուր https-ի։
-    if (
-      !/^https?:\/\//i.test(url) &&
-      !/^(tel|sms|viber|whatsapp|wa):/i.test(url)
-    ) {
-      // եթե user-ը գրել է առանց protocol-ի, ավելացնենք https://
-      url = "https://" + url.replace(/^https?:\/\//i, "");
     }
 
     let label =
@@ -213,11 +228,61 @@ function collectContactMetaFromIcons(info, offlinePhone, lang) {
       kindRaw ||
       "link";
 
-    label = String(label).trim();
-    if (!label) label = "link";
-
-    meta.urls.push({ label, url });
+    addUrl(value, label);
   }
+
+  /* ---- 2) ընդհանուր deep scan ամբողջ info-ի մեջ ---- */
+
+  function walk(node) {
+    if (!node) return;
+
+    if (typeof node === "string") {
+      const s = node.trim();
+      if (!s) return;
+
+      if (s.includes("@") && !s.startsWith("http")) {
+        addEmail(s);
+      }
+
+      if (/^(https?:\/\/|www\.)/i.test(s)) {
+        addUrl(s, "link");
+      }
+      return;
+    }
+
+    if (Array.isArray(node)) {
+      node.forEach(walk);
+      return;
+    }
+
+    if (typeof node === "object") {
+      for (const k of Object.keys(node)) {
+        const v = node[k];
+
+        // field name-ով էլ հուշումներ
+        if (
+          typeof v === "string" &&
+          !meta.email &&
+          /mail/i.test(k) &&
+          v.includes("@")
+        ) {
+          addEmail(v);
+        }
+
+        if (
+          typeof v === "string" &&
+          /site|url|link|profile|web/i.test(k) &&
+          /^(https?:\/\/|www\.)/i.test(v)
+        ) {
+          addUrl(v, k);
+        }
+
+        walk(v);
+      }
+    }
+  }
+
+  walk(info);
 
   return meta;
 }
@@ -250,14 +315,15 @@ function buildVCard(name, phone, contactMeta) {
     );
   }
 
-  // URLs → itemN.URL + itemN.X-ABLabel (Apple Contacts-friendly)
+  // Apple Contacts-friendly URL-ներ
   let idx = 1;
   for (const u of urls) {
     if (!u || !u.url) continue;
     const url = String(u.url).trim();
     if (!url) continue;
     const label = (u.label || "link").toString().trim() || "link";
-    lines.push(`item${idx}.URL:${url}`);
+
+    lines.push(`item${idx}.URL;type=pref:${url}`);
     lines.push(`item${idx}.X-ABLabel:${label}`);
     idx++;
   }
@@ -365,7 +431,6 @@ async function saveVCardUniversal({ name, phone, contactMeta, fileName = "contac
 
 /**
  * lang-ը կարող ես փոխանցել HomePage-ից.
- * Եթե չփոխանցվի, կկարդա localStorage.lang-ը, default "am".
  */
 export default function SharePage({ info, cardId, lang }) {
   const share = normalizeShare(info && info.share);
@@ -387,9 +452,9 @@ export default function SharePage({ info, cardId, lang }) {
   const offlineName = share.offlineFullName || info?.company?.name?.en || "";
   const offlinePhone = share.offlinePhone || "";
 
-  // icons-ից հավաքված email + urls
+  // icons + ամբողջ info-ից հավաքած email + urls
   const contactMeta = React.useMemo(
-    () => collectContactMetaFromIcons(info, offlinePhone, activeLang),
+    () => collectContactMeta(info, offlinePhone, activeLang),
     [info, offlinePhone, activeLang]
   );
 
