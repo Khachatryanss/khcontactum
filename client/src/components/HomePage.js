@@ -255,7 +255,7 @@ export default function HomePage({ cardId = "101" }) {
     (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
   );
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
-  const [autoAddPrompt, setAutoAddPrompt] = React.useState(false);   // ✅ VisitCard popup flag
+  const [autoAddPrompt, setAutoAddPrompt] = React.useState(false); // ✅ popup 101-ի համար
 
   const htmlLang = lang === "am" ? "hy" : lang;
 
@@ -263,27 +263,12 @@ export default function HomePage({ cardId = "101" }) {
     try { document.documentElement.lang = htmlLang; } catch {}
   }, [htmlLang]);
 
-  // ✅ special VisitCard / add-contact detection from URL
+  // ✅ եթե սա 101 քարտն է, VisitCard popup-ը ավտոմատ միացնենք
   React.useEffect(() => {
-    if (typeof window === "undefined") return;
-    try {
-      const search = window.location.search || "";
-      const hash   = window.location.hash   || "";
-      const sp = new URLSearchParams(search);
-
-      const flag =
-        sp.get("add") === "1" ||
-        sp.get("add") === "true" ||
-        sp.has("visit") ||
-        sp.has("visitcard") ||
-        sp.has("visitCard") ||
-        hash === "#add-contact";
-
-      if (flag) setAutoAddPrompt(true);
-    } catch (e) {
-      console.warn("autoAddPrompt parse error", e);
+    if (String(cardId) === "101") {
+      setAutoAddPrompt(true);
     }
-  }, []);
+  }, [cardId]);
 
   React.useEffect(() => {
     let killed = false;
@@ -483,7 +468,7 @@ export default function HomePage({ cardId = "101" }) {
                 cardId,
                 info,
                 lang: htmlLang,
-                autoOpenConfirm: autoAddPrompt,   // ✅ VisitCard popup prop
+                autoOpenConfirm: autoAddPrompt,   // ✅ popup prop
               })
             )
       )
