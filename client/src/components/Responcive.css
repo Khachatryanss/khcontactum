@@ -450,7 +450,7 @@
   /* share բաժնի section-ը HomePage-ի մեջ միշտ վերջինն է */
   .public-scroll-layer section:last-of-type {
     margin-top: 18px !important;
-    margin-bottom: 18px !important;
+    margin-bottom: 25px;
     padding-inline: 6px;
   }
 
@@ -500,7 +500,7 @@
 @media (max-width: 360px) {
   .public-scroll-layer section:last-of-type {
     margin-top: 16px !important;
-    margin-bottom: 16px !important;
+    margin-bottom: 22px;
     padding-inline: 4px;
   }
 
@@ -543,7 +543,7 @@
 @media (max-width: 320px) {
   .public-scroll-layer section:last-of-type {
     margin-top: 14px !important;
-    margin-bottom: 14px !important;
+    margin-bottom: 20px;
     padding-inline: 3px;
   }
 
