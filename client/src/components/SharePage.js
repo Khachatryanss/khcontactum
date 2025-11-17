@@ -689,7 +689,7 @@ export default function SharePage({ info, cardId, lang }) {
 
           h("img", {
             src: qrImgSrc,
-            alt: "QR code",
+            alt: "QR code ✅",
             loading: "lazy",
             style: { width: 260, height: 260, margin: "0 auto 8px" },
           }),
