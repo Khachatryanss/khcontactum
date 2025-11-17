@@ -134,12 +134,35 @@ function normalizePhone(p) {
   return (p || "").toString().replace(/[^\d+]/g, "");
 }
 
+/** kind → գեղեցիկ label կոնտակտի մեջ */
+const ICON_KIND_LABELS = {
+  telegram: "Telegram",
+  tg: "Telegram",
+  whatsapp: "WhatsApp",
+  wa: "WhatsApp",
+  viber: "Viber",
+  fb: "Facebook",
+  facebook: "Facebook",
+  insta: "Instagram",
+  instagram: "Instagram",
+  ig: "Instagram",
+  linkedin: "LinkedIn",
+  ln: "LinkedIn",
+  site: "Website",
+  website: "Website",
+  web: "Website",
+  globe: "Website",
+  mail: "Email",
+  email: "Email",
+  digital: "Digital profile",
+  profile: "Profile",
+};
+
 /**
- * info-ից «ճանապարով» փնտրում ենք email + url-ներ․
- * 1) icons / iconRows → սրամեջ label-ներն էլ վերցնում ենք
- * 2) ողջ info օբյեկտը ռեկուրսիվ սկան ենք անում՝
- *    - "@": email
- *    - http/https/www: url
+ * info-ից հավաքում ենք
+ *   email  → EMAIL դաշտ
+ *   link-եր → ՄԻԱՅՆ icon-ներից (icons / iconRows),
+ *      ամեն լಿಂքի label = icon-ի անունը (Telegram, WhatsApp, Website…)
  */
 function collectContactMeta(info, offlinePhone, lang) {
   const meta = { email: "", urls: [] };
@@ -158,25 +181,21 @@ function collectContactMeta(info, offlinePhone, lang) {
     let u = (url || "").toString().trim();
     if (!u) return;
 
-    // եթե tel:/sms:/viber: է, թողնենք ինչ կա
     if (
       !/^https?:\/\//i.test(u) &&
       !/^(tel|sms|viber|whatsapp|wa):/i.test(u)
     ) {
-      // domain / path → https://domain...
       u = "https://" + u.replace(/^https?:\/\//i, "");
     }
 
     if (seenUrls.has(u)) return;
     seenUrls.add(u);
 
-    const lab =
-      (label && label.toString().trim()) ||
-      "link";
+    const lab = (label || "link").toString().trim() || "link";
     meta.urls.push({ label: lab, url: u });
   }
 
-  /* ---- 1) icons / iconRows հատուկ մեփինգ ---- */
+  /* ---- 1) icons / iconRows → URLs (ու label-ներ) ---- */
 
   let icons = [];
   if (Array.isArray(info.icons)) {
@@ -205,13 +224,13 @@ function collectContactMeta(info, offlinePhone, lang) {
     if (!value) continue;
     value = String(value).trim();
 
-    // phone icon, հանում ենք offline phone-ի դուպլիկատը
+    // phone icon – skip, եթե նույնն է offline phone-ի հետ
     if (kind === "phone" || kind === "tel") {
       const vNorm = normalizePhone(value.replace(/^tel:/i, ""));
       if (normOffline && vNorm === normOffline) continue;
     }
 
-    // email
+    // email icon
     if (
       kind === "email" ||
       /^mailto:/i.test(value) ||
@@ -221,45 +240,40 @@ function collectContactMeta(info, offlinePhone, lang) {
       continue;
     }
 
+    // label՝ նախ icon label-ից, հետո kind map-ից
     let label =
       pickLang(item.label, lang) ||
       item.name ||
       item.title ||
-      kindRaw ||
+      ICON_KIND_LABELS[kind] ||
+      ICON_KIND_LABELS[kindRaw.toLowerCase()] ||
       "link";
 
     addUrl(value, label);
   }
 
-  /* ---- 2) ընդհանուր deep scan ամբողջ info-ի մեջ ---- */
+  /* ---- 2) ամբողջ info-ի deep-scan → միայն email fallback-ի համար ---- */
 
-  function walk(node) {
+  function walkEmails(node, keyHint) {
     if (!node) return;
 
     if (typeof node === "string") {
       const s = node.trim();
       if (!s) return;
-
       if (s.includes("@") && !s.startsWith("http")) {
         addEmail(s);
-      }
-
-      if (/^(https?:\/\/|www\.)/i.test(s)) {
-        addUrl(s, "link");
       }
       return;
     }
 
     if (Array.isArray(node)) {
-      node.forEach(walk);
+      node.forEach((v) => walkEmails(v));
       return;
     }
 
     if (typeof node === "object") {
       for (const k of Object.keys(node)) {
         const v = node[k];
-
-        // field name-ով էլ հուշումներ
         if (
           typeof v === "string" &&
           !meta.email &&
@@ -268,26 +282,17 @@ function collectContactMeta(info, offlinePhone, lang) {
         ) {
           addEmail(v);
         }
-
-        if (
-          typeof v === "string" &&
-          /site|url|link|profile|web/i.test(k) &&
-          /^(https?:\/\/|www\.)/i.test(v)
-        ) {
-          addUrl(v, k);
-        }
-
-        walk(v);
+        walkEmails(v, k);
       }
     }
   }
 
-  walk(info);
+  walkEmails(info);
 
   return meta;
 }
 
-/* CRLF պարտադիր մի շարք կոնտակտ-կլայենտների համար (iOS/Outlook և այլն) */
+/* CRLF պահանջված է iOS/Outlook-ի համար */
 function buildVCard(name, phone, contactMeta) {
   const safeName = (name || "").trim() || "KHContactum";
   const safePhone = (phone || "").trim();
@@ -452,7 +457,7 @@ export default function SharePage({ info, cardId, lang }) {
   const offlineName = share.offlineFullName || info?.company?.name?.en || "";
   const offlinePhone = share.offlinePhone || "";
 
-  // icons + ամբողջ info-ից հավաքած email + urls
+  // icons-ից հավաքած email + urls
   const contactMeta = React.useMemo(
     () => collectContactMeta(info, offlinePhone, activeLang),
     [info, offlinePhone, activeLang]
