@@ -35,6 +35,8 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Նկար",
     avatarTypeVideo: "Վիդեո",
     avatarImageUrlLabel: "Avatar նկարի հղում",
+    avatarImageHint:
+      "Խորհուրդ է տրվում քառակուսի PNG / JPG / WEBP, առնվազն 600×600px։",
     avatarVideoUrlLabel: "Avatar վիդեոյի հղում",
     avatarVideoHint: "Մաքս. 20 MB (mp4, webm, ogg)",
 
@@ -88,6 +90,8 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Изображение",
     avatarTypeVideo: "Видео",
     avatarImageUrlLabel: "Ссылка на аватар",
+    avatarImageHint:
+      "Рекомендуется квадратное PNG / JPG / WEBP, минимум 600×600px.",
     avatarVideoUrlLabel: "Ссылка на видео-аватар",
     avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
 
@@ -141,6 +145,8 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Image",
     avatarTypeVideo: "Video",
     avatarImageUrlLabel: "Avatar Image URL",
+    avatarImageHint:
+      "Recommended: square PNG / JPG / WEBP, at least 600×600px.",
     avatarVideoUrlLabel: "Avatar Video URL",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
 
@@ -194,8 +200,10 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "صورة",
     avatarTypeVideo: "فيديو",
     avatarImageUrlLabel: "رابط صورة الـ Avatar",
+    avatarImageHint:
+      "يُفضّل صورة مربعة PNG / JPG / WEBP لا تقل عن ‎600×600‎ بكسل.",
     avatarVideoUrlLabel: "رابط فيديو الـ Avatar",
-    avatarVideoHint: "الحد الأقصى 20MB (mp4, webm, ogg)",
+    avatarVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
 
     companyNameTitle: "اسم الشركة",
     nameColorLabel: "لون الاسم",
@@ -210,7 +218,7 @@ const ADMIN_UI_TEXT = {
     backgroundColorLabel: "لون الخلفية",
     backgroundImageUrlLabel: "رابط صورة الخلفية",
     backgroundVideoUrlLabel: "رابط فيديو الخلفية",
-    backgroundVideoHint: "الحد الأقصى 20MB (mp4, webm, ogg)",
+    backgroundVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
 
     saveButton: "حفظ",
     savingButton: "جاري الحفظ...",
@@ -247,6 +255,8 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Image",
     avatarTypeVideo: "Vidéo",
     avatarImageUrlLabel: "URL de l’image avatar",
+    avatarImageHint:
+      "Recommandé : image carrée PNG / JPG / WEBP, au moins 600×600px.",
     avatarVideoUrlLabel: "URL de la vidéo avatar",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
 
@@ -878,7 +888,7 @@ export default function AdminDashboard({
               },
             },
             LangSelector(), // ← ձախ՝ լեզվի selector
-            TabsAnchor()    // ← աջ՝ երեք կետանոց մենյու
+            TabsAnchor() // ← աջ՝ երեք կետանոց մենյու
           )
         ),
       children || null
@@ -1024,7 +1034,8 @@ export default function AdminDashboard({
             accept:
               "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
             onChange: handleAvatarUpload,
-          })
+          }),
+          h("div", { className: "small" }, T.avatarImageHint)
         ),
 
       info?.avatar?.type === "video" &&
