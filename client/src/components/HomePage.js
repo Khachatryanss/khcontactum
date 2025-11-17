@@ -404,7 +404,7 @@ export default function HomePage({ cardId = "101" }) {
         "div",
         { className: "public-scroll-layer", id: "publicScroll",
           style: { position: "relative", zIndex: 1, width: "100%", height: "100%", maxHeight: "100%",
-                   overflowY: "auto", WebkitOverflowScrolling: "touch", padding: "20px" } },
+                   overflowY: "auto", WebkitOverflowScrolling: "touch", padding: "12px" } },
         h(LangDropdown, { value: lang, onChange: setLang, langs: serverLangs }),
         showBrandInfo
           ? h(BrandInfoPage, { brandInfos, keyword: activeBrandKeyword, lang: htmlLang, onBack: () => setActiveBrandKeyword("") })
