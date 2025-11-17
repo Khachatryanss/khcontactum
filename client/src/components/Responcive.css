@@ -449,7 +449,7 @@
 @media (max-width: 480px) {
   /* share բաժնի section-ը HomePage-ի մեջ միշտ վերջինն է */
   .public-scroll-layer section:last-of-type {
-    margin-top: 18px !important;
+    margin-top: 45px;
     margin-bottom: 35px;
     padding-inline: 6px;
   }
@@ -499,8 +499,8 @@
 /* ===== 360px և ներքև – փոքր սմարթֆոններ ===== */
 @media (max-width: 360px) {
   .public-scroll-layer section:last-of-type {
-    margin-top: 16px !important;
-    margin-bottom: 32px;
+    margin-top: 16px;
+    margin-bottom: 40px;
     padding-inline: 4px;
   }
 
@@ -542,8 +542,8 @@
 /* ===== 320px և ներքև – iPhone SE / շատ նեղ ===== */
 @media (max-width: 320px) {
   .public-scroll-layer section:last-of-type {
-    margin-top: 14px !important;
-    margin-bottom: 30px;
+    margin-top: 14px;
+    margin-bottom: 35px;
     padding-inline: 3px;
   }
 
@@ -589,8 +589,8 @@
 /* ===== 280px և ներքև – Galaxy Fold ultra narrow ===== */
 @media (max-width: 280px) {
   .public-scroll-layer section:last-of-type {
-    margin-top: 12px !important;
-    margin-bottom: 22px;
+    margin-top: 12px;
+    margin-bottom: 32px;
     padding-inline: 2px;
   }
 
