@@ -36,7 +36,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeVideo: "Վիդեո",
     avatarImageUrlLabel: "Avatar նկարի հղում",
     avatarImageHint:
-      "Խորհուրդ է տրվում քառակուսի PNG / JPG / WEBP, առնվազն 600×600px։",
+      "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Avatar վիդեոյի հղում",
     avatarVideoHint: "Մաքս. 20 MB (mp4, webm, ogg)",
 
@@ -91,7 +91,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeVideo: "Видео",
     avatarImageUrlLabel: "Ссылка на аватар",
     avatarImageHint:
-      "Рекомендуется квадратное PNG / JPG / WEBP, минимум 600×600px.",
+      "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Ссылка на видео-аватар",
     avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
 
@@ -146,7 +146,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeVideo: "Video",
     avatarImageUrlLabel: "Avatar Image URL",
     avatarImageHint:
-      "Recommended: square PNG / JPG / WEBP, at least 600×600px.",
+      "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Avatar Video URL",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
 
@@ -201,7 +201,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeVideo: "فيديو",
     avatarImageUrlLabel: "رابط صورة الـ Avatar",
     avatarImageHint:
-      "يُفضّل صورة مربعة PNG / JPG / WEBP لا تقل عن ‎600×600‎ بكسل.",
+      "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "رابط فيديو الـ Avatar",
     avatarVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
 
@@ -256,7 +256,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeVideo: "Vidéo",
     avatarImageUrlLabel: "URL de l’image avatar",
     avatarImageHint:
-      "Recommandé : image carrée PNG / JPG / WEBP, au moins 600×600px.",
+      "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "URL de la vidéo avatar",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
 
