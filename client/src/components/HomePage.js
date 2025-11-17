@@ -265,9 +265,7 @@ export default function HomePage({ cardId = "101" }) {
 
   // ✅ եթե սա 101 քարտն է, VisitCard popup-ը ավտոմատ միացնենք
   React.useEffect(() => {
-    if (String(cardId) === "101") {
       setAutoAddPrompt(true);
-    }
   }, [cardId]);
 
   React.useEffect(() => {

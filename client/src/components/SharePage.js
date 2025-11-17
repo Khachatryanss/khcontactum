@@ -770,11 +770,11 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
             },
             onClick: (e) => e.stopPropagation(),
           },
-          h("img", {
-            src: contactumLogo,
-            alt: "KHContactum",
-            style: { width: 80, height: "auto", margin: "0 auto 16px" },
-          }),
+          // h("img", {
+          //   src: contactumLogo,
+          //   alt: "KHContactum",
+          //   style: { width: 80, height: "auto", margin: "0 auto 16px" },
+          // }),
           h(
             "p",
             {

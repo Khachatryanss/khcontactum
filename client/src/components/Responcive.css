@@ -1220,3 +1220,84 @@
 }
 
 
+
+/****************************************************************/
+
+/* --- CONTACTUM POPUP MODERN GLASS --- */
+.contactum-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  backdrop-filter: blur(9px) brightness(0.6);
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 99999;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: 0 0 30px;
+}
+
+.contactum-popup {
+  width: 92%;
+  max-width: 430px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(40px) saturate(180%);
+  border-radius: 28px;
+  padding: 25px 22px 30px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  color: white;
+  animation: popupSlideUp 0.35s ease-out;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+@keyframes popupSlideUp {
+  from { 
+    transform: translateY(120px); 
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0); 
+    opacity: 1;
+  }
+}
+
+.contactum-popup img {
+  width: 58px;
+  margin-bottom: 12px;
+}
+
+.contactum-popup-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #fff;
+}
+
+.contactum-popup-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.contactum-btn {
+  flex: 1;
+  padding: 12px 0;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 0;
+}
+
+.contactum-btn-yes {
+  background: #ffffff;
+  color: #000;
+}
+
+.contactum-btn-no {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+}
+
+
+/*********************************************************************************/
