@@ -254,7 +254,7 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
     if (item.enabled === false || item.hidden === true) continue;
 
     const kindRaw =
-      (item.kind || item.type || item.icon || item.code || "").toString();
+      (item.kind || item.type || item.icon || "").toString();
     const kind = kindRaw.toLowerCase();
 
     let value =
@@ -412,7 +412,12 @@ function ShareIcon({ kind, onClick }) {
 }
 
 /* ========= vCard saver ========= */
-async function saveVCardUniversal({ name, phone, contactMeta, fileName = "contact.vcf" }) {
+async function saveVCardUniversal({
+  name,
+  phone,
+  contactMeta,
+  fileName = "contact.vcf",
+}) {
   const vcard = buildVCard(name, phone, contactMeta);
   const blob = new Blob([vcard], { type: "text/x-vcard;charset=utf-8" });
   const url = URL.createObjectURL(blob);
@@ -532,13 +537,13 @@ export default function SharePage({ info, cardId, lang }) {
     });
   }
 
-  const qrValue = currentQrValue();
+  const qrValue   = currentQrValue();
   const encodedQr = encodeURIComponent(qrValue);
-  const qrImgSrc =
+  const qrImgSrc  =
     "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
     encodedQr;
 
-  // ✅ label-ները՝ ակտիվի վերջում checkmark-ով
+  // ✅ label – ակտիվի վերջում checkmark
   const onlineLabel  = qrMode === "online"  ? `${t.qrOnline} ✅`  : t.qrOnline;
   const offlineLabel = qrMode === "offline" ? `${t.qrOffline} ✅` : t.qrOffline;
 
@@ -658,6 +663,7 @@ export default function SharePage({ info, cardId, lang }) {
             "×"
           ),
 
+          // ONLINE / OFFLINE toggle buttons
           h(
             "div",
             { style: { display: "flex", gap: 8, marginBottom: 12 } },
@@ -668,8 +674,9 @@ export default function SharePage({ info, cardId, lang }) {
                 className: "btn",
                 style: {
                   flex: 1,
-                  background: qrMode === "online" ? "#eee" : "#111",
-                  color: qrMode === "online" ? "#111" : "#eee",
+                  // Active → white bg, black text; Inactive → black bg, white text
+                  background: qrMode === "online" ? "#ffffff" : "#000000",
+                  color: qrMode === "online" ? "#000000" : "#ffffff",
                 },
                 onClick: () => setQrMode("online"),
               },
@@ -682,8 +689,8 @@ export default function SharePage({ info, cardId, lang }) {
                 className: "btn",
                 style: {
                   flex: 1,
-                  background: qrMode === "offline" ? "#eee" : "#111",
-                  color: qrMode === "offline" ? "#111" : "#eee",
+                  background: qrMode === "offline" ? "#ffffff" : "#000000",
+                  color: qrMode === "offline" ? "#000000" : "#ffffff",
                 },
                 onClick: () => setQrMode("offline"),
               },
