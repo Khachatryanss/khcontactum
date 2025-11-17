@@ -40,6 +40,9 @@ function ensureAbsoluteUrl(u) {
 /* ===== i18n text ===== */
 const TEXT = {
   am: {
+    qrTitle: "Share / QR",
+    qrDesc: "QR կոդով և share հղումով կարող եք կիսվել ձեր քարտով։",
+
     scanBtn: "Սկանավորել QR կոդը",
     shareTitle: "Կիսվել իմ քարտով",
     addBtn: "ԱՎԵԼԱՑՐԵՔ ԻՆՁ ԿՈՆՏԱԿՏՆԵՐԻ ՑԱՆԿՈՒՄ",
@@ -50,6 +53,10 @@ const TEXT = {
     mailSubject: "KHContactum թվային քարտ",
   },
   ru: {
+    qrTitle: "Share / QR",
+    qrDesc:
+      "Вы можете делиться своей карточкой через QR-код и ссылку для шаринга.",
+
     scanBtn: "СКАНИРОВАТЬ QR-КОД",
     shareTitle: "ПОДЕЛИТЬСЯ МОЕЙ ВИЗИТКОЙ",
     addBtn: "ДОБАВИТЬ В КОНТАКТЫ",
@@ -60,6 +67,9 @@ const TEXT = {
     mailSubject: "Цифровая визитка KHContactum",
   },
   en: {
+    qrTitle: "Share / QR",
+    qrDesc: "You can share your card via QR code and a share link.",
+
     scanBtn: "SCAN QR CODE",
     shareTitle: "SHARE MY CARD",
     addBtn: "ADD ME TO THE CONTACT LIST",
@@ -70,16 +80,23 @@ const TEXT = {
     mailSubject: "KHContactum digital card",
   },
   ar: {
+    qrTitle: "Share / QR",
+    qrDesc: "يمكنك مشاركة بطاقتك عبر رمز QR ورابط المشاركة.",
+
     scanBtn: "مسح رمز QR",
     shareTitle: "مشاركة بطاقتي",
     addBtn: "إضافتي إلى قائمة جهات الاتصال",
-    qrOnline: "رمز QR عبر الإنترنت",
-    qrOffline: "رمز QR بدون اتصال",
+    qrOnline: "رمز QR أونلاين · الرابط",
+    qrOffline: "رمز QR أوفلاين",
     offlineNote: "بعد المسح يمكنك حفظه في جهات الاتصال.",
     shareDefault: "اطّلع على بطاقتي الرقمية على KHContactum.com.",
     mailSubject: "بطاقة KHContactum الرقمية",
   },
   fr: {
+    qrTitle: "Share / QR",
+    qrDesc:
+      "Vous pouvez partager votre carte via un code QR et un lien de partage.",
+
     scanBtn: "SCANNER LE QR CODE",
     shareTitle: "PARTAGER MA CARTE",
     addBtn: "M’AJOUTER À LA LISTE DE CONTACTS",
@@ -175,44 +192,18 @@ function guessLabelFromUrl(u) {
     return "Location";
   if (s.includes("youtube.") || s.includes("youtu.be")) return "YouTube";
   if (s.includes("tiktok.")) return "TikTok";
-  if (s.includes("khcontactum.com")) return "KHContactum Card";
-  return "";
-}
-
-/** info-ից առաջին email-ը գտնելու փոքր helper (առանց URL-ներ ավելացնելու) */
-function findFirstEmail(node) {
-  if (!node) return "";
-  if (typeof node === "string") {
-    const s = node.trim();
-    if (s.includes("@") && !s.includes(" ")) return s;
-    return "";
-  }
-  if (Array.isArray(node)) {
-    for (const v of node) {
-      const e = findFirstEmail(v);
-      if (e) return e;
-    }
-    return "";
-  }
-  if (typeof node === "object") {
-    for (const k of Object.keys(node)) {
-      const v = node[k];
-      const e = findFirstEmail(v);
-      if (e) return e;
-    }
-  }
+  if (s.includes("khcontactum.com")) return "KHContactum Digital Card";
   return "";
 }
 
 /**
  * Կոնտակտի meta՝
- *   email  → EMAIL
  *   urls   → միայն
- *     - KHContactum Card (onlineUrl)
- *     - icon-ներից եկած linker (միայն օգտագործված icon-ներ)
+ *     - KHContactum Digital Card (onlineUrl)
+ *     - icon-ներից եկած linker (միայն օգտագործված icon-ներ, առանց email)
  */
 function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
-  const meta = { email: "", urls: [] };
+  const meta = { urls: [] };
   const seenUrls = new Set();
   if (!info && !onlineUrl) return meta;
 
@@ -230,12 +221,6 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
     return s;
   }
 
-  function addEmail(email) {
-    const clean = (email || "").toString().trim().replace(/^mailto:/i, "");
-    if (!clean) return;
-    if (!meta.email) meta.email = clean;
-  }
-
   function addUrl(url, label) {
     const norm = normalizeUrl(url);
     if (!norm) return;
@@ -246,9 +231,9 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
     meta.urls.push({ label: lab, url: norm });
   }
 
-  // 0) KHContactum Card՝ առաջին URL-ը
+  // 0) KHContactum Digital Card՝ առաջին URL-ը
   if (onlineUrl) {
-    addUrl(onlineUrl, "KHContactum Card");
+    addUrl(onlineUrl, "KHContactum Digital Card");
   }
 
   /* ---- 1) icons / iconRows → միայն դրանցից URL-ներ ---- */
@@ -266,8 +251,6 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
 
   for (const item of icons) {
     if (!item) continue;
-
-    // եթե ունես enabled / hidden flag-եր, այստեղից էլ կարող ես ֆիլտրել
     if (item.enabled === false || item.hidden === true) continue;
 
     const kindRaw =
@@ -291,13 +274,12 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
       if (normOffline && vNorm === normOffline) continue;
     }
 
-    // email icon
+    // email icon – լիովին skip, որ vCard-ի մեջ չընկնի
     if (
       kind === "email" ||
       /^mailto:/i.test(value) ||
       (!value.startsWith("http") && value.includes("@"))
     ) {
-      addEmail(value);
       continue;
     }
 
@@ -318,13 +300,6 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
     addUrl(value, label);
   }
 
-  /* ---- 2) email fallback info-ից (առանց URL-ների) ---- */
-
-  if (!meta.email && info) {
-    const e = findFirstEmail(info);
-    if (e) addEmail(e);
-  }
-
   return meta;
 }
 
@@ -333,7 +308,6 @@ function buildVCard(name, phone, contactMeta) {
   const safeName = (name || "").trim() || "KHContactum";
   const safePhone = (phone || "").trim();
   const meta = contactMeta || {};
-  const email = (meta.email || "").trim();
   const urls = Array.isArray(meta.urls) ? meta.urls : [];
 
   const lines = [
@@ -350,12 +324,7 @@ function buildVCard(name, phone, contactMeta) {
     );
   }
 
-  if (email) {
-    // առանց WORK, որ "work" label չերևա
-    lines.push("EMAIL;TYPE=INTERNET;TYPE=pref:" + email);
-  }
-
-  // Apple Contacts-friendly URL-ներ
+  // միայն URL-ներ՝ KHContactum Digital Card + icon-ների linker
   let idx = 1;
   for (const u of urls) {
     if (!u || !u.url) continue;
@@ -492,7 +461,7 @@ export default function SharePage({ info, cardId, lang }) {
   const offlineName = share.offlineFullName || info?.company?.name?.en || "";
   const offlinePhone = share.offlinePhone || "";
 
-  // KHContactum Card + icon links
+  // KHContactum Digital Card + icon links
   const contactMeta = React.useMemo(
     () => collectContactMeta(info, offlinePhone, activeLang, onlineUrl),
     [info, offlinePhone, activeLang, onlineUrl]
