@@ -28,12 +28,11 @@ function pickLang(v, lang, fallbacks = ["am", "en", "ru", "ar", "fr"]) {
   return "";
 }
 
-/** Խաղաղ գլոբալ normalizer, որ link-ը միշտ լինի լիարժեք https://... */
+/** Խաղաղ գլոբալ normalizer, որ link-ը միշտ լինի լիարժեք https://... (միայն public card-ի համար) */
 function ensureAbsoluteUrl(u) {
   const raw = (u || "").toString().trim();
   if (!raw) return "";
   if (/^https?:\/\//i.test(raw)) return raw;
-  // եթե user-ը պահել է միայն path կամ domain, սարքում ենք https://khcontactum.com/path
   const path = raw.replace(/^https?:\/\/[^/]+\//i, "").replace(/^\/+/, "");
   return PUBLIC_BASE + path;
 }
@@ -47,9 +46,9 @@ const TEXT = {
     qrOnline: "ONLINE QR-CODE",
     qrOffline: "OFFLINE QR-CODE",
     offlineNote: "Սկանելուց հետո կարող եք պահպանել կոնտակտների մեջ։",
-    // share defaults
     shareDefault: "Դիտիր իմ KHContactum.com թվային քարտը։",
     mailSubject: "KHContactum թվային քարտ",
+    // qrTitle / qrDesc արդեն ունես քո վարկածում, չեմ դիպչում
   },
   ru: {
     scanBtn: "СКАНИРОВАТЬ QR-КОД",
@@ -105,7 +104,6 @@ const DEFAULT_QUICK = {
 
 function normalizeShare(raw) {
   const s = raw && typeof raw === "object" ? raw : {};
-  // NEW: normalize onlineUrl, որ միշտ ունենա https://... ձև
   const normalizedOnlineUrl = ensureAbsoluteUrl(s.onlineUrl || "");
 
   return {
@@ -113,7 +111,6 @@ function normalizeShare(raw) {
     offlineFullName: (s.offlineFullName || "").toString().trim(),
     offlinePhone: (s.offlinePhone || "").toString().trim(),
     quick: Object.assign({}, DEFAULT_QUICK, s.quick || {}),
-    // shareText կարող է լինել string կամ {am,ru,en,ar,fr} օբյեկտ — պահում ենք ինչպես կա
     shareText: s.shareText || "",
     styles: {
       btnTextColor: (s.styles && s.styles.btnTextColor) || "#ffffff",
@@ -127,37 +124,33 @@ function normalizeShare(raw) {
 /* default link – fallback, եթե admin share.onlineUrl չկա */
 function defaultOnlineUrl(cardId) {
   if (typeof window !== "undefined" && window.location?.href) {
-    // օգտագործում ենք հենց բացված public card–ի URL–ը
     return ensureAbsoluteUrl(window.location.href);
   }
-  // server-side / no window → գոնե domain + id
   return ensureAbsoluteUrl((cardId && String(cardId)) || "");
 }
 
-/* ---------- small UA helpers ---------- */
-function isIOS() {
-  if (typeof navigator === "undefined") return false;
-  const ua = navigator.userAgent || navigator.vendor || "";
-  return /iPad|iPhone|iPod/.test(ua) || (/\bMacintosh\b/.test(ua) && "ontouchend" in window);
-}
+/* ----------helpers vcard contact fields---------- */
 
-/* ===== helpers for collecting extra contact fields from icons ===== */
 function normalizePhone(p) {
   return (p || "").toString().replace(/[^\d+]/g, "");
 }
 
-function collectExtraContactFields(info, offlinePhone, lang) {
-  const result = [];
-  if (!info) return result;
+/**
+ * Icons-ից հավաքում ենք email + URL-ներ՝
+ *  - email → EMAIL դաշտ
+ *  - մնացած link-երը → itemN.URL + itemN.X-ABLabel
+ * Phone icon-ը չենք ավելացնում, եթե համընկնում է offlinePhone-ի հետ։
+ */
+function collectContactMetaFromIcons(info, offlinePhone, lang) {
+  const meta = { email: "", urls: [] };
+  if (!info) return meta;
 
   const normOffline = normalizePhone(offlinePhone);
 
-  // icons կարող են լինել info.icons կամ info.iconRows-ում։
   let icons = [];
   if (Array.isArray(info.icons)) {
     icons = info.icons;
   } else if (Array.isArray(info.iconRows)) {
-    // iconRows → flatten
     icons = info.iconRows.flatMap((row) =>
       Array.isArray(row?.items) ? row.items : row ? [row] : []
     );
@@ -165,10 +158,11 @@ function collectExtraContactFields(info, offlinePhone, lang) {
 
   for (const item of icons) {
     if (!item) continue;
-    const kind =
-      (item.kind || item.type || item.icon || item.code || "").toString().toLowerCase();
 
-    // value / link
+    const kindRaw =
+      (item.kind || item.type || item.icon || item.code || "").toString();
+    const kind = kindRaw.toLowerCase();
+
     let value =
       item.href ||
       item.url ||
@@ -178,44 +172,71 @@ function collectExtraContactFields(info, offlinePhone, lang) {
       item.text ||
       "";
     if (!value) continue;
-
     value = String(value).trim();
 
-    // եթե tel: link է, հանենք prefix-ը
-    if (/^tel:/i.test(value)) {
-      value = value.replace(/^tel:/i, "");
+    // հեռախոսահամար icon – եթե նույնն է ինչ offlinePhone, skip
+    if (kind === "phone" || kind === "tel") {
+      const vNorm = normalizePhone(value.replace(/^tel:/i, ""));
+      if (normOffline && vNorm === normOffline) continue;
     }
 
-    // նույն հեռախոսահամարը, ինչ offlinePhone-ն է → բաց թողնել
-    if (normOffline && normalizePhone(value) === normOffline) {
+    // email
+    if (
+      kind === "email" ||
+      /^mailto:/i.test(value) ||
+      (!value.startsWith("http") && value.includes("@"))
+    ) {
+      const email = value.replace(/^mailto:/i, "").trim();
+      if (email && !meta.email) {
+        meta.email = email;
+      }
       continue;
     }
 
-    // label
+    // մնացած բոլորը → URL դաշտեր
+    let url = value;
+
+    // եթե tel: / sms: / viber: link է, բավարար է որպես URL, բայց iOS-ում կարող է չերևալ
+    // ամեն դեպքում թողնենք, բայց առանց मजबուր https-ի։
+    if (
+      !/^https?:\/\//i.test(url) &&
+      !/^(tel|sms|viber|whatsapp|wa):/i.test(url)
+    ) {
+      // եթե user-ը գրել է առանց protocol-ի, ավելացնենք https://
+      url = "https://" + url.replace(/^https?:\/\//i, "");
+    }
+
     let label =
       pickLang(item.label, lang) ||
       item.name ||
       item.title ||
-      kind;
-    label = (label || "").toString().trim();
-    if (!label) label = kind || "link";
+      kindRaw ||
+      "link";
 
-    result.push({ label, value });
+    label = String(label).trim();
+    if (!label) label = "link";
+
+    meta.urls.push({ label, url });
   }
 
-  return result;
+  return meta;
 }
 
 /* CRLF պարտադիր մի շարք կոնտակտ-կլայենտների համար (iOS/Outlook և այլն) */
-function buildVCard(name, phone, extraFields = []) {
+function buildVCard(name, phone, contactMeta) {
   const safeName = (name || "").trim() || "KHContactum";
   const safePhone = (phone || "").trim();
+  const meta = contactMeta || {};
+  const email = (meta.email || "").trim();
+  const urls = Array.isArray(meta.urls) ? meta.urls : [];
+
   const lines = [
     "BEGIN:VCARD",
     "VERSION:3.0",
     "N:" + safeName + ";;;;",
     "FN:" + safeName,
   ];
+
   if (safePhone) {
     lines.push(
       "TEL;TYPE=CELL,VOICE;TYPE=pref:" +
@@ -223,18 +244,23 @@ function buildVCard(name, phone, extraFields = []) {
     );
   }
 
-  // Յուրաքանչյուր icon → NOTE դաշտում առանձին տող
-  extraFields.forEach((f) => {
-    if (!f || !f.value) return;
-    const label = (f.label || "link").toString().trim();
-    const value = (f.value || "").toString().trim();
+  if (email) {
     lines.push(
-      "NOTE:" +
-        label.replace(/\r?\n/g, " ") +
-        ": " +
-        value.replace(/\r?\n/g, " ")
+      "EMAIL;TYPE=INTERNET;TYPE=WORK;TYPE=pref:" + email
     );
-  });
+  }
+
+  // URLs → itemN.URL + itemN.X-ABLabel (Apple Contacts-friendly)
+  let idx = 1;
+  for (const u of urls) {
+    if (!u || !u.url) continue;
+    const url = String(u.url).trim();
+    if (!url) continue;
+    const label = (u.label || "link").toString().trim() || "link";
+    lines.push(`item${idx}.URL:${url}`);
+    lines.push(`item${idx}.X-ABLabel:${label}`);
+    idx++;
+  }
 
   lines.push("END:VCARD");
   return lines.join("\r\n");
@@ -276,7 +302,6 @@ function buildShareUrl(kind, url, text, mailSubject) {
     case "viber":
       return "viber://forward?text=" + encBoth;
     case "ig":
-      // Instagram web share չկա, просто հղումը / navigator.share
       return url;
     default:
       return url;
@@ -311,12 +336,9 @@ function ShareIcon({ kind, onClick }) {
   );
 }
 
-/* =========
-   vCard saver — անմիջապես բերում է կոնտակտի preview-ը,
-   չի բացում share sheet և չի տանում էջից դուրս
-   ========= */
-async function saveVCardUniversal({ name, phone, extraFields = [], fileName = "contact.vcf" }) {
-  const vcard = buildVCard(name, phone, extraFields);
+/* ========= vCard saver ========= */
+async function saveVCardUniversal({ name, phone, contactMeta, fileName = "contact.vcf" }) {
+  const vcard = buildVCard(name, phone, contactMeta);
   const blob = new Blob([vcard], { type: "text/x-vcard;charset=utf-8" });
   const url = URL.createObjectURL(blob);
 
@@ -358,7 +380,6 @@ export default function SharePage({ info, cardId, lang }) {
 
   const t = TEXT[activeLang] || TEXT.am;
 
-  // վերջնական onlineUrl – արդեն normalize արած, անհրաժեշտության դեպքում fallback
   const onlineUrl = ensureAbsoluteUrl(
     share.onlineUrl || defaultOnlineUrl(cardId)
   );
@@ -366,13 +387,12 @@ export default function SharePage({ info, cardId, lang }) {
   const offlineName = share.offlineFullName || info?.company?.name?.en || "";
   const offlinePhone = share.offlinePhone || "";
 
-  // Վերցնում ենք icon-ներից լրացուցիչ դաշտերը (email, сайт, LinkedIn, WhatsApp և այլն)
-  const extraFields = React.useMemo(
-    () => collectExtraContactFields(info, offlinePhone, activeLang),
+  // icons-ից հավաքված email + urls
+  const contactMeta = React.useMemo(
+    () => collectContactMetaFromIcons(info, offlinePhone, activeLang),
     [info, offlinePhone, activeLang]
   );
 
-  // === shareText լուծարում՝ բազմալեզու աջակցությամբ ===
   const shareText = (() => {
     const raw = share.shareText;
     if (raw && typeof raw === "object") {
@@ -382,10 +402,9 @@ export default function SharePage({ info, cardId, lang }) {
       const s = String(raw || "").trim();
       if (s) return s;
     }
-    return t.shareDefault; // fallback ըստ լեզվի
+    return t.shareDefault;
   })();
 
-  // գույներ admin-ից
   const btnTextColor    = share.styles.btnTextColor    || "#ffffff";
   const btnBgColor      = share.styles.btnBgColor      || "#000000";
   const shareTitleColor = share.styles.shareTitleColor || "#000000";
@@ -394,7 +413,6 @@ export default function SharePage({ info, cardId, lang }) {
   const enabledKinds = Object.keys(quick).filter((k) => quick[k]);
 
   function onShare(kind) {
-    // ՄԻՇՏ օգտագործում ենք normalize արած absolute URL
     const url =
       onlineUrl ||
       (typeof window !== "undefined"
@@ -403,7 +421,9 @@ export default function SharePage({ info, cardId, lang }) {
     if (!url) return;
 
     if (kind === "ig" && typeof navigator !== "undefined" && navigator.share) {
-      navigator.share({ title: "KHContactum", text: shareText, url }).catch(() => {});
+      navigator
+        .share({ title: "KHContactum", text: shareText, url })
+        .catch(() => {});
       return;
     }
 
@@ -412,7 +432,6 @@ export default function SharePage({ info, cardId, lang }) {
     if (href.startsWith("http")) {
       window.open(href, "_blank", "noopener,noreferrer");
     } else {
-      // viber://, mailto:
       const a = document.createElement("a");
       a.href = href;
       a.target = "_blank";
@@ -424,7 +443,8 @@ export default function SharePage({ info, cardId, lang }) {
   }
 
   function currentQrValue() {
-    if (qrMode === "offline") return buildVCard(offlineName, offlinePhone, extraFields);
+    if (qrMode === "offline")
+      return buildVCard(offlineName, offlinePhone, contactMeta);
     return onlineUrl;
   }
 
@@ -432,15 +452,17 @@ export default function SharePage({ info, cardId, lang }) {
     await saveVCardUniversal({
       name: offlineName,
       phone: offlinePhone,
-      extraFields,
-      fileName: (offlineName || "contact").replace(/[^\w\-]+/g, "_") + ".vcf",
+      contactMeta,
+      fileName:
+        (offlineName || "contact").replace(/[^\w\-]+/g, "_") + ".vcf",
     });
   }
 
   const qrValue = currentQrValue();
   const encodedQr = encodeURIComponent(qrValue);
   const qrImgSrc =
-    "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" + encodedQr;
+    "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
+    encodedQr;
 
   return h(
     "section",
@@ -449,7 +471,10 @@ export default function SharePage({ info, cardId, lang }) {
     h("h2", { style: { marginBottom: 4 } }, t.qrTitle),
     h(
       "p",
-      { className: "small", style: { marginBottom: 16, maxWidth: 360, marginInline: "auto" } },
+      {
+        className: "small",
+        style: { marginBottom: 16, maxWidth: 360, marginInline: "auto" },
+      },
       t.qrDesc
     ),
 
@@ -527,7 +552,13 @@ export default function SharePage({ info, cardId, lang }) {
           "div",
           {
             className: "card",
-            style: { position: "relative", maxWidth: 360, width: "90%", padding: 16, textAlign: "center" },
+            style: {
+              position: "relative",
+              maxWidth: 360,
+              width: "90%",
+              padding: 16,
+              textAlign: "center",
+            },
             onClick: (e) => e.stopPropagation(),
           },
 
@@ -557,7 +588,11 @@ export default function SharePage({ info, cardId, lang }) {
               {
                 type: "button",
                 className: "btn",
-                style: { flex: 1, background: qrMode === "online" ? "#111" : "#eee", color: qrMode === "online" ? "#fff" : "#111" },
+                style: {
+                  flex: 1,
+                  background: qrMode === "online" ? "#111" : "#eee",
+                  color: qrMode === "online" ? "#fff" : "#111",
+                },
                 onClick: () => setQrMode("online"),
               },
               t.qrOnline
@@ -567,7 +602,11 @@ export default function SharePage({ info, cardId, lang }) {
               {
                 type: "button",
                 className: "btn",
-                style: { flex: 1, background: qrMode === "offline" ? "#111" : "#eee", color: qrMode === "offline" ? "#fff" : "#111" },
+                style: {
+                  flex: 1,
+                  background: qrMode === "offline" ? "#111" : "#eee",
+                  color: qrMode === "offline" ? "#fff" : "#111",
+                },
                 onClick: () => setQrMode("offline"),
               },
               t.qrOffline
@@ -582,7 +621,11 @@ export default function SharePage({ info, cardId, lang }) {
           }),
 
           qrMode === "offline" &&
-            h("div", { className: "small", style: { marginTop: 4 } }, t.offlineNote)
+            h(
+              "div",
+              { className: "small", style: { marginTop: 4 } },
+              t.offlineNote
+            )
         )
       )
   );
