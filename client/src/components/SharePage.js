@@ -359,7 +359,7 @@ export default function SharePage({ info, cardId, lang }) {
 
   return h(
     "section",
-    { style: { marginTop: 24, marginBottom: 24, textAlign: "center" } },
+    { style: { marginTop: 24, marginBottom: 44, textAlign: "center" } },
 
     h("h2", { style: { marginBottom: 4 } }, t.qrTitle),
     h(
