@@ -6,15 +6,15 @@ import "../icons.layout.css";
 const h = React.createElement;
 
 /* ---------------- constants & helpers ---------------- */
-const LANGS = ["am", "ru", "en", "ar", "fr"];
+const LANGS = ["am", "ru", "en", "ar", "fr"]; // ամբողջ հավաքածուն
 const rtlProps = (code) =>
   code === "ar" ? { dir: "rtl", style: { textAlign: "right" } } : {};
 
 /* ---------- UI TEXT (multi-lang) ---------- */
 const ICONS_UI_TEXT = {
   am: {
-    title: "Իկոններ",
     styleLabel: "Ոճ",
+    // style options
     styleOption1: "Ձև 1",
     styleOption2: "Ձև 2",
     styleOption3: "Ձև 3",
@@ -24,8 +24,6 @@ const ICONS_UI_TEXT = {
     labelColor: "Իկոնների անունների գույնը",
     iconBg: "Իկոնների հետնաֆոնը",
     rowCardBg: "Տողային իկոնների հետնաֆոն (Սյունակ 1)",
-    bgColor: "Ֆոնի գույնը",              // 👈 ՆՈՐ
-
     addButton: "Ավելացնել",
     deleteButton: "Ջնջել",
     saveButton: "Պահպանել",
@@ -44,7 +42,6 @@ const ICONS_UI_TEXT = {
   },
 
   ru: {
-    title: "Иконки",
     styleLabel: "Стиль",
     styleOption1: "Стиль 1",
     styleOption2: "Стиль 2",
@@ -55,8 +52,6 @@ const ICONS_UI_TEXT = {
     labelColor: "Цвет названий иконок",
     iconBg: "Фон иконок",
     rowCardBg: "Фон строковых иконок (1 колонка)",
-    bgColor: "Цвет фона",               // 👈 ՆՈՐ
-
     addButton: "Добавить",
     deleteButton: "Удалить",
     saveButton: "Сохранить",
@@ -75,7 +70,6 @@ const ICONS_UI_TEXT = {
   },
 
   en: {
-    title: "Icons",
     styleLabel: "Style",
     styleOption1: "Style 1",
     styleOption2: "Style 2",
@@ -86,8 +80,6 @@ const ICONS_UI_TEXT = {
     labelColor: "Icon name color",
     iconBg: "Icon background",
     rowCardBg: "Row icons background (column 1)",
-    bgColor: "Background color",        // 👈 ՆՈՐ
-
     addButton: "Add",
     deleteButton: "Delete",
     saveButton: "Save",
@@ -106,7 +98,6 @@ const ICONS_UI_TEXT = {
   },
 
   ar: {
-    title: "الأيقونات",
     styleLabel: "النمط",
     styleOption1: "نمط 1",
     styleOption2: "نمط 2",
@@ -117,8 +108,6 @@ const ICONS_UI_TEXT = {
     labelColor: "لون أسماء الأيقونات",
     iconBg: "خلفية الأيقونات",
     rowCardBg: "خلفية الأيقونات في الصف (عمود واحد)",
-    bgColor: "لون الخلفية",            // 👈 ՆՈՐ
-
     addButton: "إضافة",
     deleteButton: "حذف",
     saveButton: "حفظ",
@@ -137,7 +126,6 @@ const ICONS_UI_TEXT = {
   },
 
   fr: {
-    title: "Icônes",
     styleLabel: "Style",
     styleOption1: "Style 1",
     styleOption2: "Style 2",
@@ -148,8 +136,6 @@ const ICONS_UI_TEXT = {
     labelColor: "Couleur des noms d’icônes",
     iconBg: "Arrière-plan des icônes",
     rowCardBg: "Arrière-plan des icônes en ligne (1 colonne)",
-    bgColor: "Couleur du fond",         // 👈 ՆՈՐ
-
     addButton: "Ajouter",
     deleteButton: "Supprimer",
     saveButton: "Enregistrer",
@@ -206,6 +192,7 @@ const ICON_MAP = {
   threads: "fa-brands fa-threads",
 };
 
+// preset list
 const FA_PRESETS = [
   "fa-solid fa-phone",
   "fa-solid fa-comment-dots",
@@ -255,6 +242,7 @@ function withUid(x) {
 }
 
 function normLabels(label) {
+  // պահում ենք բոլոր 5 լեզուները, անկախ active langs-ից
   if (label && typeof label === "object") {
     const out = { am: "", ru: "", en: "", ar: "", fr: "", ...label };
     LANGS.forEach((k) => {
@@ -286,7 +274,7 @@ function rgbToHex({ r, g, b }) {
 function faClass(raw) {
   const s = String(raw || "").trim();
   if (!s) return "";
-  if (/\bfa-(solid|regular|brands)\b|\bfa-[a-z0-9-]+/i.test(s)) return s;
+  if (/\bfa-(solid|regular|brands)\b|\bfa-[a-z0-9-]+/i.test(s)) return s; // already class
   const m = ICON_MAP[s.toLowerCase()];
   return m || "";
 }
@@ -311,6 +299,7 @@ function PresetSelect({
     return presets.filter((p) => p.toLowerCase().includes(s));
   }, [q, presets]);
 
+  // close on outside click / Esc
   React.useEffect(() => {
     const onDown = (e) => {
       const el = containerRef.current;
@@ -343,6 +332,7 @@ function PresetSelect({
       },
       label
     ),
+
     open &&
       h(
         "div",
@@ -471,6 +461,8 @@ function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
       h(
         "div",
         { style: { display: "grid", gap: 10 } },
+
+        // labels
         h(
           "div",
           { className: "lang-stack" },
@@ -488,6 +480,8 @@ function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
             )
           )
         ),
+
+        // href + FA class (custom Preset dropdown)
         h(
           "div",
           {
@@ -521,6 +515,7 @@ function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
             })
           )
         ),
+
         h(
           "div",
           { style: { display: "flex", gap: 8, justifyContent: "flex-end" } },
@@ -547,12 +542,14 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     "";
 
   const T = ICONS_UI_TEXT[uiLang] || ICONS_UI_TEXT.en;
+
   const activeLangs =
     Array.isArray(langs) && langs.length ? langs : LANGS;
 
   const [baseInfo, setBaseInfo] = React.useState(null);
-  const [items, setItems] = React.useState([]);
 
+  // items: { uid, id?, label:{am,ru,en,ar,fr}, href, icon }
+  const [items, setItems] = React.useState([]);
   const [style, setStyle] = React.useState({
     labelHEX: "#d9caa0",
     chipRGBA: { r: 47, g: 47, b: 47, a: 1 },
@@ -561,7 +558,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     glowEnabled: false,
     glowColor: "#7dd3fc",
     rowCardRGBA: { r: 255, g: 255, b: 255, a: 1 },
-    sectionBgHEX: "#020617",                // 👈 ՆՈՐ – հիմնական ֆոն
   });
 
   const [errors, setErrors] = React.useState({});
@@ -569,6 +565,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   const [saving, setSaving] = React.useState(false);
   const [msg, setMsg] = React.useState("");
 
+  // pickers
   const chipBtnRef = React.useRef(null);
   const [showChipPicker, setShowChipPicker] = React.useState(false);
   const rowBtnRef = React.useRef(null);
@@ -599,7 +596,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     };
   }, []);
 
-  /* ---- derived CSS strings ---- */
+  // derived CSS strings
   const labelRgbObj = React.useMemo(
     () => hexToRgb(style.labelHEX),
     [style.labelHEX]
@@ -617,15 +614,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     () =>
       `rgba(${style.rowCardRGBA.r}, ${style.rowCardRGBA.g}, ${style.rowCardRGBA.b}, ${style.rowCardRGBA.a})`,
     [style.rowCardRGBA]
-  );
-  const sectionBgRgbObj = React.useMemo(
-    () => hexToRgb(style.sectionBgHEX || "#020617"),
-    [style.sectionBgHEX]
-  );
-  const sectionBgCss = React.useMemo(
-    () =>
-      `rgb(${sectionBgRgbObj.r}, ${sectionBgRgbObj.g}, ${sectionBgRgbObj.b})`,
-    [sectionBgRgbObj]
   );
 
   React.useEffect(() => {
@@ -661,7 +649,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
               b: 255,
               a: 1,
             },
-          sectionBgHEX: icons.styles?.sectionBgHEX || "#020617",
         });
       } catch (e) {
         setMsg(e.message || T.loadFailed);
@@ -671,6 +658,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     })();
   }, [token, T.loadFailed]);
 
+  /* ------ CRUD in memory ------ */
   const validate = (it) => {
     const href = (it.href || "").trim();
     if (!it.label || typeof it.label !== "object")
@@ -682,6 +670,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     return {
       ok: true,
       payload: {
+        // պահում ենք ամբողջ LANGS-ը DB-ում
         label: LANGS.reduce(
           (o, k) => ((o[k] = (it.label[k] || "").trim()), o),
           {}
@@ -739,6 +728,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     setItems((list) => list.filter((x) => x.uid !== uidKey));
   };
 
+  /* ------ SAVE to DB ------ */
   const save = async () => {
     setMsg("");
     setSaving(true);
@@ -772,12 +762,10 @@ export default function IconsTab({ langs, uiLang = "en" }) {
           cols: Number(style.cols || 4),
           glowEnabled: !!style.glowEnabled,
           glowColor: style.glowColor,
-          rowCardRGBA: style.rowCardRGBA,
           labelCss,
           chipCss,
+          rowCardRGBA: style.rowCardRGBA,
           rowCardCss,
-          sectionBgHEX: style.sectionBgHEX,   // 👈 պահում ենք HEX–ը
-          sectionBgCss,                      // 👈 ու CSS ready string
         },
       };
 
@@ -798,6 +786,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     }
   };
 
+  /* ------ UI ------ */
   const sq = (bg) => ({
     width: 36,
     height: 22,
@@ -805,7 +794,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     border: "1px solid #ccc",
     background: bg,
   });
-
   if (loading) return h("div", { className: "card" }, T.loading);
 
   return h(
@@ -853,7 +841,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
                 cols: parseInt(e.target.value, 10) || 4,
               })),
             style: { padding: "6px 10px", borderRadius: 8 },
-            disabled: style.layoutStyle === "dzev4",
+            disabled: style.layoutStyle === "dzev4", // շրջան_LAYOUT-ի մոտ cols-ը դեր չունի
           },
           h("option", { value: "1" }, "1"),
           h("option", { value: "2" }, "2"),
@@ -880,6 +868,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         }),
         h("input", {
           className: "input",
+          
           value: style.labelHEX,
           onChange: (e) =>
             setStyle((s) => ({ ...s, labelHEX: e.target.value })),
@@ -935,6 +924,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
             })
           )
       ),
+
       h(
         "div",
         {
@@ -983,32 +973,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
                 setStyle((s) => ({ ...s, rowCardRGBA: c })),
             })
           )
-      ),
-      h(
-        "div",
-        {
-          style: {
-            display: "grid",
-            gridTemplateColumns: "auto 36px 140px",
-            gap: 10,
-            alignItems: "center",
-          },
-        },
-        h("label", { style: { fontWeight: 700 } }, T.bgColor),
-        h("input", {
-          type: "color",
-          value: rgbToHex(sectionBgRgbObj),
-          onChange: (e) =>
-            setStyle((s) => ({ ...s, sectionBgHEX: e.target.value })),
-        }),
-        h("input", {
-          className: "input",
-          value: style.sectionBgHEX,
-          onChange: (e) =>
-            setStyle((s) => ({ ...s, sectionBgHEX: e.target.value })),
-          placeholder: "#020617",
-          style: { maxWidth: 120, marginLeft: 20 },
-        })
       )
     ),
 
@@ -1030,7 +994,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       )
     ),
 
-    /* footer actions */
+    /* footer actions — sticky toolbar */
     h(
       "div",
       {
@@ -1068,6 +1032,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       msg && h("div", { className: "small" }, msg)
     ),
 
+    /* local CSS for big language inputs */
     h(
       "style",
       null,
