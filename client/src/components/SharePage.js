@@ -158,6 +158,24 @@ const ICON_KIND_LABELS = {
   profile: "Profile",
 };
 
+/** URL-ից label գուշակող helper՝ fallback-ի համար */
+function guessLabelFromUrl(u) {
+  const s = (u || "").toString().toLowerCase();
+  if (!s) return "";
+  if (s.includes("t.me")) return "Telegram";
+  if (s.includes("wa.me") || s.includes("whatsapp")) return "WhatsApp";
+  if (s.includes("viber")) return "Viber";
+  if (s.includes("linkedin.")) return "LinkedIn";
+  if (s.includes("instagram.")) return "Instagram";
+  if (s.includes("facebook.") || s.includes("fb.")) return "Facebook";
+  if (s.includes("maps.google.") || s.includes("goo.gl/maps"))
+    return "Location";
+  if (s.includes("youtube.") || s.includes("youtu.be")) return "YouTube";
+  if (s.includes("tiktok.")) return "TikTok";
+  if (s.includes("khcontactum.com")) return "KHContactum Card";
+  return "";
+}
+
 /**
  * Կոնտակտի meta՝
  *   email  → EMAIL
@@ -260,7 +278,13 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
       item.title ||
       ICON_KIND_LABELS[kind] ||
       ICON_KIND_LABELS[kindRaw.toLowerCase()] ||
-      "link";
+      "";
+
+    if (!label || label.toLowerCase() === "link") {
+      const g = guessLabelFromUrl(value);
+      if (g) label = g;
+    }
+    if (!label) label = "link";
 
     const norm = normalizeUrl(value);
     if (!norm) continue;
@@ -271,7 +295,7 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
 
   /* ---- 2) deep-scan info → emails + urls (fallback) ---- */
 
-  function walk(node) {
+  function walk(node, keyHint) {
     if (!node) return;
 
     if (typeof node === "string") {
@@ -284,14 +308,15 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
 
       if (/^(https?:\/\/|www\.)/i.test(s)) {
         const norm = normalizeUrl(s);
-        const label = iconUrlLabelMap[norm] || "link";
+        let label =
+          iconUrlLabelMap[norm] || guessLabelFromUrl(s) || "link";
         addUrl(norm, label);
       }
       return;
     }
 
     if (Array.isArray(node)) {
-      node.forEach(walk);
+      node.forEach((v) => walk(v));
       return;
     }
 
@@ -314,11 +339,12 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
           /^(https?:\/\/|www\.)/i.test(v)
         ) {
           const norm = normalizeUrl(v);
-          const label = iconUrlLabelMap[norm] || "link";
+          let label =
+            iconUrlLabelMap[norm] || guessLabelFromUrl(v) || "link";
           addUrl(norm, label);
         }
 
-        walk(v);
+        walk(v, k);
       }
     }
   }
@@ -353,11 +379,8 @@ function buildVCard(name, phone, contactMeta) {
   }
 
   if (email) {
-    // label-ը վերահսկել չենք կարող 100%, բայց TYPE=WORK-ը դնում ենք,
-    // իսկ URL-ները կգան KHContactum Card + icon labels-ով
-    lines.push(
-      "EMAIL;TYPE=INTERNET;TYPE=WORK;TYPE=pref:" + email
-    );
+    // Հանեցինք TYPE=WORK, որ "work" չերևա
+    lines.push("EMAIL;TYPE=INTERNET;TYPE=pref:" + email);
   }
 
   // Apple Contacts-friendly URL-ներ
