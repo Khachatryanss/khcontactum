@@ -538,6 +538,10 @@ export default function SharePage({ info, cardId, lang }) {
     "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
     encodedQr;
 
+  // ✅ label-ները՝ ակտիվի վերջում checkmark-ով
+  const onlineLabel  = qrMode === "online"  ? `${t.qrOnline} ✅`  : t.qrOnline;
+  const offlineLabel = qrMode === "offline" ? `${t.qrOffline} ✅` : t.qrOffline;
+
   return h(
     "section",
     { style: { marginTop: 24, marginBottom: 44, textAlign: "center" } },
@@ -669,7 +673,7 @@ export default function SharePage({ info, cardId, lang }) {
                 },
                 onClick: () => setQrMode("online"),
               },
-              t.qrOnline
+              onlineLabel
             ),
             h(
               "button",
@@ -683,13 +687,13 @@ export default function SharePage({ info, cardId, lang }) {
                 },
                 onClick: () => setQrMode("offline"),
               },
-              t.qrOffline
+              offlineLabel
             )
           ),
 
           h("img", {
             src: qrImgSrc,
-            alt: "QR code ✅",
+            alt: "QR code ",
             loading: "lazy",
             style: { width: 260, height: 260, margin: "0 auto 8px" },
           }),
