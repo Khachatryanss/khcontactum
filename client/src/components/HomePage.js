@@ -7,6 +7,7 @@ import IconsPage     from "./IconsPage.js";
 import BrandsPage    from "./BrandsPage.js";
 import BrandInfoPage from "./BrandInfoPage.js";
 import SharePage     from "./SharePage.js";
+import contactumLogo from "../img/Contactum.png"; // ✅ splash logo
 
 const h = React.createElement;
 
@@ -255,18 +256,12 @@ export default function HomePage({ cardId = "101" }) {
     (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
   );
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
-  const [autoAddPrompt, setAutoAddPrompt] = React.useState(false); // ✅ popup 101-ի համար
 
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
     try { document.documentElement.lang = htmlLang; } catch {}
   }, [htmlLang]);
-
-  // ✅ եթե սա 101 քարտն է, VisitCard popup-ը ավտոմատ միացնենք
-  React.useEffect(() => {
-      setAutoAddPrompt(true);
-  }, [cardId]);
 
   React.useEffect(() => {
     let killed = false;
@@ -294,7 +289,44 @@ export default function HomePage({ cardId = "101" }) {
     return () => { killed = true; };
   }, [cardId]);
 
-  if (loading) return h("div", { className: "pad" }, "Բեռնվում է…");
+  /* ===== Splash loader – Contactum logo ===== */
+  if (loading) {
+    return h(
+      "div",
+      {
+        style: {
+          position: "fixed",
+          inset: 0,
+          background: "#ffffff",
+          display: "grid",
+          placeItems: "center",
+          zIndex: 999,
+        },
+      },
+      h(
+        "div",
+        { style: { textAlign: "center" } },
+        h("img", {
+          src: contactumLogo,
+          alt: "KHContactum",
+          style: { width: 120, height: "auto", marginBottom: 16 },
+        }),
+        h(
+          "div",
+          {
+            style: {
+              fontSize: 14,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+              color: "#444",
+            },
+          },
+          "Digital Visit Card"
+        )
+      )
+    );
+  }
+
   if (err)     return h("div", { className: "pad" }, "Սխալ: " + err);
   if (!info)   return h("div", { className: "pad" }, "Տվյալ չկա");
 
@@ -462,12 +494,7 @@ export default function HomePage({ cardId = "101" }) {
                     onKeywordClick: (kw) => setActiveBrandKeyword(kw),
                   })
                 : null,
-              h(SharePage, {
-                cardId,
-                info,
-                lang: htmlLang,
-                autoOpenConfirm: autoAddPrompt,   // ✅ popup prop
-              })
+              h(SharePage, { cardId, info, lang: htmlLang })
             )
       )
     );
