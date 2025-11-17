@@ -668,8 +668,8 @@ export default function SharePage({ info, cardId, lang }) {
                 className: "btn",
                 style: {
                   flex: 1,
-                  background: qrMode === "online" ? "#111" : "#eee",
-                  color: qrMode === "online" ? "#fff" : "#111",
+                  background: qrMode === "online" ? "#eee" : "#111",
+                  color: qrMode === "online" ? "#111" : "#eee",
                 },
                 onClick: () => setQrMode("online"),
               },
@@ -682,8 +682,8 @@ export default function SharePage({ info, cardId, lang }) {
                 className: "btn",
                 style: {
                   flex: 1,
-                  background: qrMode === "offline" ? "#111" : "#eee",
-                  color: qrMode === "offline" ? "#fff" : "#111",
+                  background: qrMode === "offline" ? "#eee" : "#111",
+                  color: qrMode === "offline" ? "#111" : "#eee",
                 },
                 onClick: () => setQrMode("offline"),
               },
