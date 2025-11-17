@@ -99,10 +99,11 @@ export default function IconsPage({
   if (chipColor)  containerStyle["--icons-chip-bg"]     = chipColor;
   if (labelColor) containerStyle["--icons-label-color"] = labelColor;
 
-  // 1 սյունակով layout-ի համար glass card bg + border
-  if (layoutStyle !== "dzev4" && cols === 1) {
+  // 1 սյունակով layout-ի համար glass card bg + border (բոլոր dzev-ների համար, բացի dzev4-ից)
+  const isOneCol = layoutStyle !== "dzev4" && cols === 1;
+  if (isOneCol) {
     const cardBg =
-      rowCardColor || chipColor || "rgba(15, 23, 42, 0.78)"; // default մուգ, թափանցիկ
+      rowCardColor || chipColor || "rgba(15, 23, 42, 0.78)";
     containerStyle["--icons-card-bg"] = cardBg;
     containerStyle["--icons-card-border"] =
       "rgba(255, 255, 255, 0.22)";
@@ -145,6 +146,7 @@ export default function IconsPage({
       const aClass = [];
       if (layoutStyle === "dzev1") aClass.push("grid-item");
       if (layoutStyle === "dzev4") aClass.push("icon-wrap");
+      if (isOneCol) aClass.push("icon-row-card"); // 👉 glass card 1 սյունակով
 
       const aProps = {
         key: i,
@@ -156,7 +158,6 @@ export default function IconsPage({
       };
 
       if (layoutStyle === "dzev4") {
-        // Կենտրոնում շրջան, որին ավելացնում ենք orbitAngle-ը
         const base = (360 / total) * i;
         const angle = orbitAngle + base;
         aProps.style = { "--angle": `${angle}deg` };
