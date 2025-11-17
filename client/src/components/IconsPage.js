@@ -49,6 +49,7 @@ export default function IconsPage({
   cols = 4,
   glowEnabled = false,
   glowColor,
+  bgColor,          // 👈 ՆՈՐ՝ icons block-ի ֆոն
   lang = "am"
 }) {
   /* ===== dzev4 — ձեռքով պտտվող շրջան (ոչ ավտոմատ) ===== */
@@ -72,7 +73,6 @@ export default function IconsPage({
     const x = getClientX(e);
     const dx = x - lastXRef.current;
     lastXRef.current = x;
-    // multiplier-ը փոխիր ցանկությանդ համաձայն (արագություն)
     setOrbitAngle((a) => a + dx * 0.6);
   };
 
@@ -98,15 +98,15 @@ export default function IconsPage({
   if (glowColor)  containerStyle["--icons-glow-color"]  = glowColor;
   if (chipColor)  containerStyle["--icons-chip-bg"]     = chipColor;
   if (labelColor) containerStyle["--icons-label-color"] = labelColor;
+  if (bgColor)    containerStyle["--icons-section-bg"]  = bgColor;      // 👈 ՆՈՐ՝ block background
 
   if (layoutStyle !== "dzev4" && cols === 1) {
     const cardBg = rowCardColor || chipColor;
     if (cardBg) containerStyle["--icons-card-bg"] = cardBg;
     containerStyle["--icons-card-border"] =
-      "color-mix(in oklab, var(--icons-card-bg, #fff), #000 8%)";
+      "color-mix(in oklab, var(--icons-card-bg, rgba(15,23,42,.6)), #000 8%)";
   }
 
-  // dzev4 — այլևս transform չկան, միայն UX
   if (layoutStyle === "dzev4") {
     containerStyle.touchAction = "pan-y";
     containerStyle.cursor = "grab";
@@ -154,7 +154,6 @@ export default function IconsPage({
       };
 
       if (layoutStyle === "dzev4") {
-        // Կենտրոնում շրջան, որին ավելացնում ենք orbitAngle-ը
         const base = (360 / total) * i;
         const angle = orbitAngle + base;
         aProps.style = { "--angle": `${angle}deg` };
