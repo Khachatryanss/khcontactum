@@ -10,6 +10,7 @@ import waIcon    from "../img/wp.png";
 import mailIcon  from "../img/email.png";
 import viberIcon from "../img/vb.png";
 import igIcon    from "../img/insta.png";
+import contactumLogo from "../img/Contactum.png";   // ✅ KHContactum logo
 
 const h = React.createElement;
 
@@ -51,6 +52,9 @@ const TEXT = {
     offlineNote: "Սկանելուց հետո կարող եք պահպանել կոնտակտների մեջ։",
     shareDefault: "Դիտիր իմ KHContactum.com թվային քարտը։",
     mailSubject: "KHContactum թվային քարտ",
+    confirmTitle: "Ավելացնե՞լ {{name}} կոնտակտների ցանկում։",
+    confirmYes: "Այո",
+    confirmNo: "Ոչ",
   },
   ru: {
     qrTitle: "Share / QR",
@@ -65,6 +69,9 @@ const TEXT = {
     offlineNote: "После сканирования можно сохранить в контактах.",
     shareDefault: "Посмотри мою цифровую карточку KHContactum.com.",
     mailSubject: "Цифровая визитка KHContactum",
+    confirmTitle: "Добавить {{name}} в список контактов?",
+    confirmYes: "Да",
+    confirmNo: "Нет",
   },
   en: {
     qrTitle: "Share / QR",
@@ -78,6 +85,9 @@ const TEXT = {
     offlineNote: "After scanning you can save it to your contacts.",
     shareDefault: "Check out my KHContactum.com digital card.",
     mailSubject: "KHContactum digital card",
+    confirmTitle: "Add {{name}} to contacts list?",
+    confirmYes: "Yes",
+    confirmNo: "No",
   },
   ar: {
     qrTitle: "Share / QR",
@@ -91,6 +101,9 @@ const TEXT = {
     offlineNote: "بعد المسح يمكنك حفظه في جهات الاتصال.",
     shareDefault: "اطّلع على بطاقتي الرقمية على KHContactum.com.",
     mailSubject: "بطاقة KHContactum الرقمية",
+    confirmTitle: "إضافة {{name}} إلى قائمة جهات الاتصال؟",
+    confirmYes: "نعم",
+    confirmNo: "لا",
   },
   fr: {
     qrTitle: "Share / QR",
@@ -105,6 +118,9 @@ const TEXT = {
     offlineNote: "Après le scan vous pouvez l’enregistrer dans vos contacts.",
     shareDefault: "Découvrez ma carte numérique KHContactum.com.",
     mailSubject: "Carte numérique KHContactum",
+    confirmTitle: "Ajouter {{name}} à la liste de contacts ?",
+    confirmYes: "Oui",
+    confirmNo: "Non",
   },
 };
 
@@ -268,13 +284,11 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
     if (!value) continue;
     value = String(value).trim();
 
-    // phone icon – skip, եթե նույնն է offline phone-ի հետ
     if (kind === "phone" || kind === "tel") {
       const vNorm = normalizePhone(value.replace(/^tel:/i, ""));
       if (normOffline && vNorm === normOffline) continue;
     }
 
-    // email icon – լիովին skip, որ vCard-ի մեջ չընկնի
     if (
       kind === "email" ||
       /^mailto:/i.test(value) ||
@@ -324,7 +338,6 @@ function buildVCard(name, phone, contactMeta) {
     );
   }
 
-  // միայն URL-ներ՝ KHContactum Digital Card + icon-ների linker
   let idx = 1;
   for (const u of urls) {
     if (!u || !u.url) continue;
@@ -445,11 +458,19 @@ async function saveVCardUniversal({
 
 /**
  * lang-ը կարող ես փոխանցել HomePage-ից.
+ * autoOpenConfirm → VisitCard հղմամբ մտնելու դեպքում բացի popup
  */
-export default function SharePage({ info, cardId, lang }) {
+export default function SharePage({ info, cardId, lang, autoOpenConfirm = false }) {
   const share = normalizeShare(info && info.share);
   const [qrOpen, setQrOpen] = React.useState(false);
   const [qrMode, setQrMode] = React.useState("online");
+  const [confirmOpen, setConfirmOpen] = React.useState(false);   // ✅ popup-ի state
+
+  React.useEffect(() => {
+    if (autoOpenConfirm) {
+      setConfirmOpen(true);
+    }
+  }, [autoOpenConfirm]);
 
   const activeLang =
     lang ||
@@ -463,10 +484,13 @@ export default function SharePage({ info, cardId, lang }) {
     share.onlineUrl || defaultOnlineUrl(cardId)
   );
 
-  const offlineName = share.offlineFullName || info?.company?.name?.en || "";
+  const offlineName =
+    share.offlineFullName ||
+    info?.company?.name?.en ||
+    info?.company?.name?.am ||
+    "";
   const offlinePhone = share.offlinePhone || "";
 
-  // KHContactum Digital Card + icon links
   const contactMeta = React.useMemo(
     () => collectContactMeta(info, offlinePhone, activeLang, onlineUrl),
     [info, offlinePhone, activeLang, onlineUrl]
@@ -543,9 +567,15 @@ export default function SharePage({ info, cardId, lang }) {
     "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
     encodedQr;
 
-  // ✅ label – ակտիվի վերջում checkmark
   const onlineLabel  = qrMode === "online"  ? `${t.qrOnline} ✅`  : t.qrOnline;
   const offlineLabel = qrMode === "offline" ? `${t.qrOffline} ✅` : t.qrOffline;
+
+  const confirmName =
+    offlineName ||
+    info?.company?.name?.[activeLang] ||
+    "this contact";
+  const confirmText = (t.confirmTitle || "Add {{name}} to contacts list?")
+    .replace("{{name}}", confirmName);
 
   return h(
     "section",
@@ -617,6 +647,7 @@ export default function SharePage({ info, cardId, lang }) {
       t.addBtn
     ),
 
+    /* ===== QR MODAL ===== */
     qrOpen &&
       h(
         "div",
@@ -663,7 +694,6 @@ export default function SharePage({ info, cardId, lang }) {
             "×"
           ),
 
-          // ONLINE / OFFLINE toggle buttons
           h(
             "div",
             { style: { display: "flex", gap: 8, marginBottom: 12 } },
@@ -674,7 +704,6 @@ export default function SharePage({ info, cardId, lang }) {
                 className: "btn",
                 style: {
                   flex: 1,
-                  // Active → white bg, black text; Inactive → black bg, white text
                   background: qrMode === "online" ? "#ffffff" : "#000000",
                   color: qrMode === "online" ? "#000000" : "#ffffff",
                 },
@@ -711,6 +740,84 @@ export default function SharePage({ info, cardId, lang }) {
               { className: "small", style: { marginTop: 4 } },
               t.offlineNote
             )
+        )
+      ),
+
+    /* ===== CONTACTUM POPUP (VisitCard) ===== */
+    confirmOpen &&
+      h(
+        "div",
+        {
+          style: {
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.6)",
+            zIndex: 50,
+            display: "grid",
+            placeItems: "center",
+          },
+          onClick: () => setConfirmOpen(false),
+        },
+        h(
+          "div",
+          {
+            className: "card",
+            style: {
+              maxWidth: 420,
+              width: "90%",
+              padding: 24,
+              textAlign: "center",
+            },
+            onClick: (e) => e.stopPropagation(),
+          },
+          h("img", {
+            src: contactumLogo,
+            alt: "KHContactum",
+            style: { width: 80, height: "auto", margin: "0 auto 16px" },
+          }),
+          h(
+            "p",
+            {
+              style: {
+                marginBottom: 20,
+                fontSize: 16,
+                fontWeight: 500,
+              },
+            },
+            confirmText
+          ),
+          h(
+            "div",
+            {
+              style: {
+                display: "flex",
+                justifyContent: "center",
+                gap: 16,
+              },
+            },
+            h(
+              "button",
+              {
+                type: "button",
+                className: "btn",
+                onClick: async () => {
+                  await downloadVCard();
+                  setConfirmOpen(false);
+                },
+              },
+              t.confirmYes
+            ),
+            h(
+              "button",
+              {
+                type: "button",
+                className: "btn",
+                style: { background: "#f5f5f5", color: "#000" },
+                onClick: () => setConfirmOpen(false),
+              },
+              t.confirmNo
+            )
+          )
         )
       )
   );

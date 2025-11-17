@@ -145,7 +145,6 @@ function VideoLoop({ src, style }) {
     const v = videoRef.current;
     if (!v || !src) return;
 
-    // Required attributes for stable autoplay (mobile + desktop)
     v.muted = true;                v.setAttribute("muted", "");
     v.playsInline = true;          v.setAttribute("playsinline", "");
     v.autoplay = true;             v.setAttribute("autoplay", "");
@@ -185,7 +184,6 @@ function VideoLoop({ src, style }) {
       }
     };
 
-    // IntersectionObserver → resume when visible
     let io = null;
     if (typeof window !== "undefined" && "IntersectionObserver" in window) {
       io = new IntersectionObserver(
@@ -199,7 +197,6 @@ function VideoLoop({ src, style }) {
       io.observe(v);
     }
 
-    // first attempt
     tryPlay();
 
     v.addEventListener("canplay", onCanPlay);
@@ -258,12 +255,35 @@ export default function HomePage({ cardId = "101" }) {
     (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
   );
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
+  const [autoAddPrompt, setAutoAddPrompt] = React.useState(false);   // ✅ VisitCard popup flag
 
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
     try { document.documentElement.lang = htmlLang; } catch {}
   }, [htmlLang]);
+
+  // ✅ special VisitCard / add-contact detection from URL
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const search = window.location.search || "";
+      const hash   = window.location.hash   || "";
+      const sp = new URLSearchParams(search);
+
+      const flag =
+        sp.get("add") === "1" ||
+        sp.get("add") === "true" ||
+        sp.has("visit") ||
+        sp.has("visitcard") ||
+        sp.has("visitCard") ||
+        hash === "#add-contact";
+
+      if (flag) setAutoAddPrompt(true);
+    } catch (e) {
+      console.warn("autoAddPrompt parse error", e);
+    }
+  }, []);
 
   React.useEffect(() => {
     let killed = false;
@@ -459,7 +479,12 @@ export default function HomePage({ cardId = "101" }) {
                     onKeywordClick: (kw) => setActiveBrandKeyword(kw),
                   })
                 : null,
-              h(SharePage, { cardId, info, lang: htmlLang })
+              h(SharePage, {
+                cardId,
+                info,
+                lang: htmlLang,
+                autoOpenConfirm: autoAddPrompt,   // ✅ VisitCard popup prop
+              })
             )
       )
     );
