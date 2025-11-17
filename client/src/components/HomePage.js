@@ -329,7 +329,7 @@ export default function HomePage({ cardId = "101" }) {
               color: "#444",
             },
           },
-          "Digital Visit Card"
+          "KHContactum Digital Card"
         )
       )
     );
