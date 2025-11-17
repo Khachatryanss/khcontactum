@@ -152,8 +152,11 @@ const ICON_KIND_LABELS = {
   website: "Website",
   web: "Website",
   globe: "Website",
-  mail: "Email",
-  email: "Email",
+  mail: "Mail",
+  email: "Mail",
+  messenger: "Messenger",
+  location: "Location",
+  maps: "Location",
   digital: "Digital profile",
   profile: "Profile",
 };
@@ -176,11 +179,37 @@ function guessLabelFromUrl(u) {
   return "";
 }
 
+/** info-ից առաջին email-ը գտնելու փոքր helper (առանց URL-ներ ավելացնելու) */
+function findFirstEmail(node) {
+  if (!node) return "";
+  if (typeof node === "string") {
+    const s = node.trim();
+    if (s.includes("@") && !s.includes(" ")) return s;
+    return "";
+  }
+  if (Array.isArray(node)) {
+    for (const v of node) {
+      const e = findFirstEmail(v);
+      if (e) return e;
+    }
+    return "";
+  }
+  if (typeof node === "object") {
+    for (const k of Object.keys(node)) {
+      const v = node[k];
+      const e = findFirstEmail(v);
+      if (e) return e;
+    }
+  }
+  return "";
+}
+
 /**
  * Կոնտակտի meta՝
  *   email  → EMAIL
- *   urls   → առաջինը KHContactum Card (onlineUrl),
- *            հետո՝ icon-ներից եկած linker, հաջորդը՝ info-ից deep-scan.
+ *   urls   → միայն
+ *     - KHContactum Card (onlineUrl)
+ *     - icon-ներից եկած linker (միայն օգտագործված icon-ներ)
  */
 function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
   const meta = { email: "", urls: [] };
@@ -196,7 +225,7 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
       !/^https?:\/\//i.test(s) &&
       !/^(tel|sms|viber|whatsapp|wa):/i.test(s)
     ) {
-      s = "https://" + s.replace(/^https?:\/\//i, "");
+      s = "https://" + s.replace(/^https?:\/\/[^/]+\//i, "");
     }
     return s;
   }
@@ -222,7 +251,7 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
     addUrl(onlineUrl, "KHContactum Card");
   }
 
-  /* ---- 1) icons / iconRows → URLs + icon label ---- */
+  /* ---- 1) icons / iconRows → միայն դրանցից URL-ներ ---- */
 
   let icons = [];
   if (info) {
@@ -235,11 +264,11 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
     }
   }
 
-  // map url→label, որ deep-scan-ի ժամանակ օգտագործենք
-  const iconUrlLabelMap = {};
-
   for (const item of icons) {
     if (!item) continue;
+
+    // եթե ունես enabled / hidden flag-եր, այստեղից էլ կարող ես ֆիլտրել
+    if (item.enabled === false || item.hidden === true) continue;
 
     const kindRaw =
       (item.kind || item.type || item.icon || item.code || "").toString();
@@ -286,71 +315,14 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
     }
     if (!label) label = "link";
 
-    const norm = normalizeUrl(value);
-    if (!norm) continue;
-
-    iconUrlLabelMap[norm] = label;
-    addUrl(norm, label);
+    addUrl(value, label);
   }
 
-  /* ---- 2) deep-scan info → emails + urls (fallback) ---- */
+  /* ---- 2) email fallback info-ից (առանց URL-ների) ---- */
 
-  function walk(node, keyHint) {
-    if (!node) return;
-
-    if (typeof node === "string") {
-      const s = node.trim();
-      if (!s) return;
-
-      if (s.includes("@") && !s.startsWith("http")) {
-        addEmail(s);
-      }
-
-      if (/^(https?:\/\/|www\.)/i.test(s)) {
-        const norm = normalizeUrl(s);
-        let label =
-          iconUrlLabelMap[norm] || guessLabelFromUrl(s) || "link";
-        addUrl(norm, label);
-      }
-      return;
-    }
-
-    if (Array.isArray(node)) {
-      node.forEach((v) => walk(v));
-      return;
-    }
-
-    if (typeof node === "object") {
-      for (const k of Object.keys(node)) {
-        const v = node[k];
-
-        if (
-          typeof v === "string" &&
-          !meta.email &&
-          /mail/i.test(k) &&
-          v.includes("@")
-        ) {
-          addEmail(v);
-        }
-
-        if (
-          typeof v === "string" &&
-          /site|url|link|profile|web/i.test(k) &&
-          /^(https?:\/\/|www\.)/i.test(v)
-        ) {
-          const norm = normalizeUrl(v);
-          let label =
-            iconUrlLabelMap[norm] || guessLabelFromUrl(v) || "link";
-          addUrl(norm, label);
-        }
-
-        walk(v, k);
-      }
-    }
-  }
-
-  if (info) {
-    walk(info);
+  if (!meta.email && info) {
+    const e = findFirstEmail(info);
+    if (e) addEmail(e);
   }
 
   return meta;
@@ -379,7 +351,7 @@ function buildVCard(name, phone, contactMeta) {
   }
 
   if (email) {
-    // Հանեցինք TYPE=WORK, որ "work" չերևա
+    // առանց WORK, որ "work" label չերևա
     lines.push("EMAIL;TYPE=INTERNET;TYPE=pref:" + email);
   }
 
@@ -520,7 +492,7 @@ export default function SharePage({ info, cardId, lang }) {
   const offlineName = share.offlineFullName || info?.company?.name?.en || "";
   const offlinePhone = share.offlinePhone || "";
 
-  // KHContactum Card + icon links + fallback urls
+  // KHContactum Card + icon links
   const contactMeta = React.useMemo(
     () => collectContactMeta(info, offlinePhone, activeLang, onlineUrl),
     [info, offlinePhone, activeLang, onlineUrl]
