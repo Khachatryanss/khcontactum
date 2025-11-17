@@ -2,13 +2,15 @@
 import React from "react";
 import { getPublicInfoByCardId, API } from "../api.js";
 import "./Responcive.css";
-import IconsPage from "./IconsPage.js";
-import BrandsPage from "./BrandsPage.js";
+
+import IconsPage     from "./IconsPage.js";
+import BrandsPage    from "./BrandsPage.js";
 import BrandInfoPage from "./BrandInfoPage.js";
-import SharePage from "./SharePage.js";
+import SharePage     from "./SharePage.js";
 
 const h = React.createElement;
 
+/* ------------ utils ------------ */
 function absSrc(u = "") {
   if (!u) return "";
   if (/^(data:|https?:\/\/|blob:)/i.test(u)) return u;
@@ -18,6 +20,7 @@ function absSrc(u = "") {
     const apiUrl = new URL(API);
     return `${apiUrl.origin}${path}`;
   } catch (e) {
+    console.warn("absSrc: bad API, fallback to window.origin", API, e);
     if (typeof window !== "undefined" && window.location?.origin) {
       return window.location.origin.replace(/\/$/, "") + path;
     }
@@ -36,15 +39,18 @@ function hyphenateHy(text, uiLang = "hy") {
   const toPh = (s) => s.replace(/ու/g, U_DIGR);
   const fromPh = (s) => s.replace(new RegExp(U_DIGR, "g"), "ու");
   const VOWEL = new Set(["ա","ե","է","ը","ի","ո","օ","և",U_DIGR]);
+
   function hyphenateWord(w) {
     if (!w) return w;
     if (w.length < 6) return w;
+
     let src = toPh(w);
     const chars = Array.from(src);
     const breaks = [];
     const isV = (ch) => VOWEL.has(ch);
     const isC = (ch) => !VOWEL.has(ch);
     let lastBreak = -6;
+
     for (let i = 0; i < chars.length - 2; i++) {
       const a = chars[i], b = chars[i+1], c = chars[i+2];
       let place = -1;
@@ -63,6 +69,7 @@ function hyphenateHy(text, uiLang = "hy") {
     }
     return fromPh(chars.join(""));
   }
+
   const out = String(text)
     .split(TOKENS)
     .map((chunk) => {
@@ -129,7 +136,7 @@ function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr"]) {
 }
 
 /* =========================
-   ROBUST AUTOPLAY VIDEO LOOP (no touch listeners)
+   ROBUST AUTOPLAY VIDEO LOOP
    ========================= */
 function VideoLoop({ src, style }) {
   const videoRef = React.useRef(null);
@@ -138,7 +145,7 @@ function VideoLoop({ src, style }) {
     const v = videoRef.current;
     if (!v || !src) return;
 
-    // Required attributes for mobile autoplay
+    // Required attributes for stable autoplay (mobile + desktop)
     v.muted = true;                v.setAttribute("muted", "");
     v.playsInline = true;          v.setAttribute("playsinline", "");
     v.autoplay = true;             v.setAttribute("autoplay", "");
@@ -146,31 +153,49 @@ function VideoLoop({ src, style }) {
     v.controls = false;
 
     let killed = false;
-    // resilient play attempts
+
     const tryPlay = () => {
-      if (killed) return;
+      if (killed || !v) return;
       const p = v.play?.();
-      if (p && p.catch) p.catch(() => {
-        // retry softly after a frame & after a short delay
-        if (!killed) requestAnimationFrame(() => setTimeout(tryPlay, 120));
-      });
+      if (p && p.catch) {
+        p.catch(() => {
+          if (!killed) {
+            requestAnimationFrame(() => {
+              setTimeout(tryPlay, 120);
+            });
+          }
+        });
+      }
     };
 
     const onCanPlay = () => tryPlay();
-    const onEnded   = () => { v.currentTime = 0; tryPlay(); };
+    const onEnded   = () => {
+      if (!v) return;
+      v.currentTime = 0;
+      tryPlay();
+    };
     const onPause   = () => {
-      if (!killed && document.visibilityState === "visible") tryPlay();
+      if (!killed && typeof document !== "undefined" && document.visibilityState === "visible") {
+        tryPlay();
+      }
     };
     const onVisibility = () => {
-      if (!killed && document.visibilityState === "visible") tryPlay();
+      if (!killed && typeof document !== "undefined" && document.visibilityState === "visible") {
+        tryPlay();
+      }
     };
 
-    // IntersectionObserver: resume when visible
+    // IntersectionObserver → resume when visible
     let io = null;
-    if ("IntersectionObserver" in window) {
-      io = new IntersectionObserver((entries) => {
-        entries.forEach((en) => { if (en.isIntersecting) tryPlay(); });
-      }, { threshold: 0.05 });
+    if (typeof window !== "undefined" && "IntersectionObserver" in window) {
+      io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((en) => {
+            if (en.isIntersecting) tryPlay();
+          });
+        },
+        { threshold: 0.05 }
+      );
       io.observe(v);
     }
 
@@ -178,17 +203,21 @@ function VideoLoop({ src, style }) {
     tryPlay();
 
     v.addEventListener("canplay", onCanPlay);
-    v.addEventListener("ended", onEnded);
-    v.addEventListener("pause", onPause);
-    document.addEventListener("visibilitychange", onVisibility);
+    v.addEventListener("ended",   onEnded);
+    v.addEventListener("pause",   onPause);
+    if (typeof document !== "undefined") {
+      document.addEventListener("visibilitychange", onVisibility);
+    }
 
     return () => {
       killed = true;
       if (io) io.disconnect();
       v.removeEventListener("canplay", onCanPlay);
-      v.removeEventListener("ended", onEnded);
-      v.removeEventListener("pause", onPause);
-      document.removeEventListener("visibilitychange", onVisibility);
+      v.removeEventListener("ended",   onEnded);
+      v.removeEventListener("pause",   onPause);
+      if (typeof document !== "undefined") {
+        document.removeEventListener("visibilitychange", onVisibility);
+      }
     };
   }, [src]);
 
@@ -201,6 +230,7 @@ function VideoLoop({ src, style }) {
     playsInline: true,
     autoPlay: true,
     preload: "auto",
+    loop: true,
     disableRemotePlayback: true,
     style,
   });
@@ -381,21 +411,8 @@ export default function HomePage({ cardId = "101" }) {
           },
         },
         bg.type === "video" && bg.videoUrl
-          ? h("video", {
+          ? h(VideoLoop, {
               src: absSrc(bg.videoUrl),
-              muted: true, playsInline: true, loop: true, autoPlay: true,
-              preload: "auto", disableRemotePlayback: true,
-              ref: (el) => {
-                if (!el) return;
-                el.muted = true;
-                el.setAttribute("muted", "");
-                el.setAttribute("playsinline", "");
-                el.setAttribute("autoplay", "");
-                el.setAttribute("loop", "");
-                // փորձել անմիջապես նվագարկել
-                const p = el.play?.();
-                if (p && p.catch) p.catch(() => {});
-              },
               style: { width: "100%", height: "100%", objectFit: "cover" },
             })
           : null
@@ -450,5 +467,3 @@ export default function HomePage({ cardId = "101" }) {
     return h("div", { className: "pad" }, "Render error: " + (e.message || String(e)));
   }
 }
-
-

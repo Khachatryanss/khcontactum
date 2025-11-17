@@ -1,78 +1,333 @@
-// client/src/tabs/HomeTab.js
+// client/src/components/HomePage.js
 import React from "react";
-import {
-  adminInfoFetch,   // alias of adminGetInfo(token)
-  adminInfoSave,    // alias of adminSaveInfo(token, payload)
-  adminUploadFile,  // alias of uploadFile(token, file, field)
-} from "../api.js";
-import { fileUrl } from "../utils/fileUrl.js";
+import { getPublicInfoByCardId, API } from "../api.js";
+import "./Responcive.css";
+import IconsPage from "./IconsPage.js";
+import BrandsPage from "./BrandsPage.js";
+import BrandInfoPage from "./BrandInfoPage.js";
+import SharePage from "./SharePage.js";
 
 const h = React.createElement;
 
-const ALL_LANGS = [
-  { code: "am", label: "Հայերեն (AM)" },
-  { code: "ru", label: "Русский (RU)" },
-  { code: "en", label: "English (EN)" },
-  { code: "ar", label: "العربية (AR)" },
-  { code: "fr", label: "Français (FR)" }
-];
-
-function useDebounced(fn, delay = 350) {
-  const ref = React.useRef();
-  return React.useCallback((...args) => {
-    clearTimeout(ref.current);
-    ref.current = setTimeout(() => fn(...args), delay);
-  }, [fn, delay]);
+/* ------------ utils ------------ */
+function absSrc(u = "") {
+  if (!u) return "";
+  if (/^(data:|https?:\/\/|blob:)/i.test(u)) return u;
+  let path = String(u).trim().replace(/^server\//i, "");
+  if (!path.startsWith("/")) path = "/" + path;
+  try {
+    const apiUrl = new URL(API);
+    return `${apiUrl.origin}${path}`;
+  } catch (e) {
+    console.warn("absSrc: bad API, fallback to window.origin", API, e);
+    if (typeof window !== "undefined" && window.location?.origin) {
+      return window.location.origin.replace(/\/$/, "") + path;
+    }
+    return path;
+  }
 }
 
-function isVideoUrl(u = "") {
-  return /\.(mp4|webm|ogg)(\?.*)?$/i.test(u || "");
+function isVideo(u = "") {
+  return /\.(mp4|webm|ogg)(\?.*)?$/i.test(u);
 }
 
-/* ---- common preview video (keeps playing) ---- */
-function PreviewVideo({ src, style }) {
+/* ===== Armenian hyphenation ===== */
+function hyphenateHy(text, uiLang = "hy") {
+  if (!text) return "";
+  const TOKENS =
+    /(\bhttps?:\/\/\S+|\b\S+@\S+\.\S+|\b[\d._\-]+(?:\b|$))/gi;
+  const U_DIGR = "\uE000";
+  const toPh = (s) => s.replace(/ու/g, U_DIGR);
+  const fromPh = (s) => s.replace(new RegExp(U_DIGR, "g"), "ու");
+  const VOWEL = new Set([
+    "ա",
+    "ե",
+    "է",
+    "ը",
+    "ի",
+    "ո",
+    "օ",
+    "և",
+    U_DIGR,
+  ]);
+  function hyphenateWord(w) {
+    if (!w) return w;
+    if (w.length < 6) return w;
+    let src = toPh(w);
+    const chars = Array.from(src);
+    const breaks = [];
+    const isV = (ch) => VOWEL.has(ch);
+    const isC = (ch) => !VOWEL.has(ch);
+    let lastBreak = -6;
+    for (let i = 0; i < chars.length - 2; i++) {
+      const a = chars[i],
+        b = chars[i + 1],
+        c = chars[i + 2];
+      let place = -1;
+      if (isV(a) && isC(b) && isV(c)) place = i + 1;
+      if (
+        isV(a) &&
+        isC(b) &&
+        isC(c) &&
+        i + 3 < chars.length &&
+        isV(chars[i + 3])
+      )
+        place = i + 2;
+      if (place > 1 && place < chars.length - 2) {
+        if (place - lastBreak >= 6) {
+          breaks.push(place);
+          lastBreak = place;
+        }
+      }
+    }
+    for (let k = breaks.length - 1; k >= 0; k--) {
+      const at = breaks[k];
+      chars.splice(at, 0, "\u00AD");
+    }
+    return fromPh(chars.join(""));
+  }
+  const out = String(text)
+    .split(TOKENS)
+    .map((chunk) => {
+      if (TOKENS.test(chunk)) {
+        TOKENS.lastIndex = 0;
+        return chunk;
+      }
+      TOKENS.lastIndex = 0;
+      return chunk.replace(/[\p{Script=Armenian}]+/gu, hyphenateWord);
+    })
+    .join("");
+  return out.normalize("NFC");
+}
+
+function idealColsForLang(lang) {
+  switch (lang) {
+    case "hy":
+      return [30, 34];
+    case "ru":
+      return [32, 38];
+    case "en":
+      return [36, 42];
+    case "ar":
+      return [30, 34];
+    case "fr":
+      return [36, 42];
+    default:
+      return [34, 40];
+  }
+}
+
+/* ==== Lang dropdown ==== */
+function LangDropdown({ value, onChange, langs = ["am", "ru", "en"] }) {
+  const [open, setOpen] = React.useState(false);
+  React.useEffect(() => {
+    const onDoc = (e) => {
+      if (!e.target.closest?.(".lang-dd")) setOpen(false);
+    };
+    document.addEventListener("click", onDoc);
+    return () => document.removeEventListener("click", onDoc);
+  }, []);
+  return h(
+    "div",
+    {
+      className: "lang-dd",
+      style: {
+        position: "absolute",
+        right: 10,
+        top: 10,
+        zIndex: 2,
+      },
+    },
+    h(
+      "button",
+      {
+        className: "chip active",
+        onClick: () => setOpen((v) => !v),
+        style: { minWidth: 48 },
+      },
+      (value || "am").toUpperCase()
+    ),
+    open &&
+      h(
+        "div",
+        {
+          className: "card",
+          style: {
+            position: "absolute",
+            right: 0,
+            top: "calc(100% + 6px)",
+            padding: 6,
+            display: "grid",
+            gap: 6,
+            zIndex: 3,
+          },
+        },
+        ...langs.map((code) =>
+          h(
+            "button",
+            {
+              key: code,
+              className:
+                "chip" + (code === value ? " active" : ""),
+              onClick: () => {
+                localStorage.setItem("lang", code);
+                onChange(code);
+                setOpen(false);
+              },
+            },
+            code.toUpperCase()
+          )
+        )
+      )
+  );
+}
+
+function rgbaToCss(obj) {
+  if (!obj || typeof obj !== "object") return "";
+  const { r = 0, g = 0, b = 0, a = 1 } = obj;
+  return `rgba(${(+r | 0)}, ${(+g | 0)}, ${(+b | 0)}, ${
+    isFinite(+a) ? +a : 1
+  })`;
+}
+
+function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr"]) {
+  if (!v) return "";
+  if (typeof v === "string") return v;
+  const order = [lang].concat(
+    fallbacks.filter((x) => x !== lang)
+  );
+  for (let i = 0; i < order.length; i++) {
+    const k = order[i];
+    const s = v && v[k];
+    if (s && String(s).trim()) return String(s).trim();
+  }
+  return "";
+}
+
+/* =========================
+   ROBUST AUTOPLAY VIDEO LOOP
+   ========================= */
+function VideoLoop({ src, style }) {
   const videoRef = React.useRef(null);
 
   React.useEffect(() => {
     const v = videoRef.current;
     if (!v || !src) return;
 
-    const safePlay = () => {
-      if (!v) return;
-      const p = v.play();
-      if (p && p.catch) p.catch(() => {});
+    let killed = false;
+
+    // required attrs for mobile autoplay
+    v.muted = true;
+    v.setAttribute("muted", "");
+    v.playsInline = true;
+    v.setAttribute("playsinline", "");
+    v.autoplay = true;
+    v.setAttribute("autoplay", "");
+    v.loop = true;
+    v.setAttribute("loop", "");
+    v.controls = false;
+
+    const tryPlay = () => {
+      if (killed || !v) return;
+      const p = v.play?.();
+      if (p && p.catch) {
+        p.catch(() => {
+          if (killed) return;
+          // try again a bit later
+          requestAnimationFrame(() =>
+            setTimeout(tryPlay, 200)
+          );
+        });
+      }
     };
 
-    const onCanPlay = () => safePlay();
+    const onCanPlay = () => tryPlay();
     const onEnded = () => {
       if (!v) return;
       v.currentTime = 0;
-      safePlay();
+      tryPlay();
     };
     const onPause = () => {
-      if (!v) return;
-      if (document.visibilityState === "visible") {
-        safePlay();
+      if (killed || !v) return;
+      if (
+        document.visibilityState === "visible" &&
+        !v.ended
+      ) {
+        tryPlay();
       }
     };
     const onVisibility = () => {
-      if (document.visibilityState === "visible") {
-        safePlay();
+      if (
+        !killed &&
+        document.visibilityState === "visible"
+      ) {
+        tryPlay();
       }
     };
+    const onWaiting = () => {
+      if (killed || !v) return;
+      tryPlay();
+    };
+    const onStalled = () => {
+      if (killed || !v) return;
+      tryPlay();
+    };
 
-    safePlay();
+    // watchdog – amen 5 վրկ-ը մի անգամ ստուգում ենք
+    const watchdog = setInterval(() => {
+      if (killed || !v) return;
+      if (
+        v.readyState >= 2 &&
+        (v.paused || v.ended)
+      ) {
+        tryPlay();
+      }
+    }, 5000);
+
+    // intersection observer – erb card@ tesanum enq, nor krknic darnum e
+    let io = null;
+    if (
+      typeof window !== "undefined" &&
+      "IntersectionObserver" in window
+    ) {
+      io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((en) => {
+            if (en.isIntersecting) tryPlay();
+          });
+        },
+        { threshold: 0.05 }
+      );
+      io.observe(v);
+    }
+
+    // first attempt
+    tryPlay();
 
     v.addEventListener("canplay", onCanPlay);
     v.addEventListener("ended", onEnded);
     v.addEventListener("pause", onPause);
-    document.addEventListener("visibilitychange", onVisibility);
+    v.addEventListener("waiting", onWaiting);
+    v.addEventListener("stalled", onStalled);
+    document.addEventListener(
+      "visibilitychange",
+      onVisibility
+    );
 
     return () => {
+      killed = true;
+      if (io) io.disconnect();
+      clearInterval(watchdog);
+      if (!v) return;
       v.removeEventListener("canplay", onCanPlay);
       v.removeEventListener("ended", onEnded);
       v.removeEventListener("pause", onPause);
-      document.removeEventListener("visibilitychange", onVisibility);
+      v.removeEventListener("waiting", onWaiting);
+      v.removeEventListener("stalled", onStalled);
+      document.removeEventListener(
+        "visibilitychange",
+        onVisibility
+      );
     };
   }, [src]);
 
@@ -82,767 +337,436 @@ function PreviewVideo({ src, style }) {
     ref: videoRef,
     src,
     muted: true,
-    autoPlay: true,
     playsInline: true,
+    autoPlay: true,
     preload: "auto",
     disableRemotePlayback: true,
-    style
+    style,
   });
 }
 
-export default function HomeTab() {
-  const token =
-    sessionStorage.getItem("adminToken") ||
-    localStorage.getItem("adminToken") || "";
-
-  const [loading, setLoading] = React.useState(true);
-  const [saving,  setSaving ] = React.useState(false);
-  const [msg,     setMsg    ] = React.useState("");
-
-  // ակտիվ լեզուների հերթականություն
-  const [langs, setLangs] = React.useState(["am","ru","en","ar","fr"]);
-
-  // canonical state -> DB json
-  const [company, setCompany] = React.useState({
-    name: { am: "", ru: "", en: "", ar: "", fr: "" },
-    nameColor: "#000000",
-  });
-  const [profile, setProfile] = React.useState({
-    about: { am: "", ru: "", en: "", ar: "", fr: "" },
-    aboutColor: "#000000",
-    avatar: "",
-  });
-  const [background, setBackground] = React.useState({
-    type: "color",
-    color: "#ffffff",
-    imageUrl: "",
-    videoUrl: "",
-  });
-
-  const ALL_CODES = ALL_LANGS.map(x => x.code);
-
-  // normalize helper to keep full shape
-  function normAll({ c = {}, p = {}, b = {} }) {
-    const srcName  = (c && c.name)  || c || {};
-    const srcAbout = (p && p.about) || p || {};
-
-    const normName  = {};
-    const normAbout = {};
-
-    ALL_CODES.forEach(code => {
-      normName[code]  = srcName[code]  || "";
-      normAbout[code] = srcAbout[code] || "";
-    });
-
-    setCompany({
-      name: normName,
-      nameColor: c?.nameColor || "#000000",
-    });
-    setProfile({
-      about: normAbout,
-      aboutColor: p?.aboutColor || "#000000",
-      avatar: p?.avatar || "",
-    });
-    setBackground({
-      type: b?.type || "color",
-      color: b?.color || "#ffffff",
-      imageUrl: b?.imageUrl || "",
-      videoUrl: b?.videoUrl || "",
-    });
+/* ===== Avatar media (image / video) ===== */
+function AvatarMedia({ src, isVideo, initials }) {
+  const commonStyle = {
+    width: 150,
+    height: 150,
+    borderRadius: "50%",
+    objectFit: "cover",
+    margin: "0 auto 8px",
+    display: "block",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
+  };
+  if (!src) {
+    return h(
+      "div",
+      {
+        style: {
+          ...commonStyle,
+          background: "#f2f2f2",
+          display: "grid",
+          placeItems: "center",
+          fontWeight: 700,
+          color: "#999",
+        },
+      },
+      (initials || "KH").slice(0, 2).toUpperCase()
+    );
   }
+  if (!isVideo)
+    return h("img", {
+      src,
+      alt: "avatar",
+      style: commonStyle,
+      loading: "lazy",
+    });
+  return h(VideoLoop, { src, style: commonStyle });
+}
+
+export default function HomePage({ cardId = "101" }) {
+  const [loading, setLoading] = React.useState(true);
+  const [err, setErr] = React.useState("");
+  const [info, setInfo] = React.useState(null);
+  const [lang, setLang] = React.useState(
+    (typeof window !== "undefined"
+      ? localStorage.getItem("lang")
+      : "am") || "am"
+  );
+  const [activeBrandKeyword, setActiveBrandKeyword] =
+    React.useState("");
+
+  const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
+    try {
+      document.documentElement.lang = htmlLang;
+    } catch {}
+  }, [htmlLang]);
+
+  React.useEffect(() => {
+    let killed = false;
     (async () => {
       try {
         setLoading(true);
-        const resp = await adminInfoFetch(token); // ⚠️ with token
-        const data = resp?.data || resp || {};
-        const rootInfo = data?.information || {};
-        const c = data?.company   || rootInfo.company   || {};
-        const p = data?.profile   || rootInfo.profile   || {};
-        const b = data?.background|| rootInfo.background|| {};
-        normAll({ c, p, b });
-
-        // languages from server
-        const rawAvail =
-          Array.isArray(data?.available_langs)    ? data.available_langs :
-          Array.isArray(rootInfo.available_langs) ? rootInfo.available_langs :
-          ["am","ru","en","ar","fr"];
-
-        const cleanAvail = rawAvail.filter(code => ALL_CODES.includes(code));
-        let langsArr = cleanAvail.length ? cleanAvail : ["am","ru","en","ar","fr"];
-
-        const def =
-          data?.default_lang ||
-          rootInfo.default_lang ||
-          langsArr[0] ||
-          "am";
-
-        if (def) {
-          if (!langsArr.includes(def)) {
-            langsArr = [def].concat(langsArr);
-          } else {
-            langsArr = [def].concat(langsArr.filter(c => c !== def));
+        setErr("");
+        const resp = await getPublicInfoByCardId(cardId);
+        const data = resp?.data ?? resp ?? {};
+        const root = data?.information || data || {};
+        if (!killed) {
+          setInfo(root);
+          if (!localStorage.getItem("lang")) {
+            const def =
+              root &&
+              root.default_lang &&
+              Array.isArray(root.available_langs)
+                ? root.available_langs.includes(
+                    root.default_lang
+                  )
+                  ? root.default_lang
+                  : undefined
+                : undefined;
+            if (def) setLang(def);
           }
         }
-
-        const seen = new Set();
-        langsArr = langsArr.filter(c => {
-          if (seen.has(c)) return false;
-          seen.add(c);
-          return true;
-        });
-
-        setLangs(langsArr);
       } catch (e) {
-        setMsg(e.message || "Load error");
+        if (!killed) setErr(e.message || "Error");
       } finally {
-        setLoading(false);
+        if (!killed) setLoading(false);
       }
     })();
-  }, [token]);
+    return () => {
+      killed = true;
+    };
+  }, [cardId]);
 
-  // setters
-  const setNameFor = (code) => (e) => {
-    const v = e.target.value;
-    setCompany(s => ({
-      name: {
-        ...(s?.name || {}),
-        [code]: v
-      },
-      nameColor: s?.nameColor ?? "#000000",
-    }));
-    debouncedAutoSave();
-  };
+  if (loading)
+    return h("div", { className: "pad" }, "Բեռնվում է…");
+  if (err)
+    return h("div", { className: "pad" }, "Սխալ: " + err);
+  if (!info)
+    return h("div", { className: "pad" }, "Տվյալ չկա");
 
-  const setAboutFor = (code) => (e) => {
-    const v = e.target.value;
-    setProfile(s => ({
-      about: {
-        ...(s?.about || {}),
-        [code]: v
-      },
-      aboutColor: s?.aboutColor ?? "#000000",
-      avatar: s?.avatar || "",
-    }));
-    debouncedAutoSave();
-  };
+  try {
+    const serverLangs =
+      Array.isArray(info?.available_langs) &&
+      info.available_langs.length
+        ? info.available_langs.slice(0, 5)
+        : ["am", "ru", "en", "ar", "fr"];
 
-  const setNameColor = (v) => {
-    setCompany(s => ({
-      name: { ...(s.name || {}) },
-      nameColor: v
-    }));
-    debouncedAutoSave();
-  };
+    const nameByLang = {
+      hy: info?.company?.name?.am || "",
+      ru: info?.company?.name?.ru || "",
+      en: info?.company?.name?.en || "",
+      ar: info?.company?.name?.ar || "",
+      fr: info?.company?.name?.fr || "",
+    };
 
-  const setAboutColor = (v) => {
-    setProfile(s => ({
-      about: { ...(s.about || {}) },
-      aboutColor: v,
-      avatar: s.avatar || ""
-    }));
-    debouncedAutoSave();
-  };
+    const desc = info?.description || {};
+    const about = info?.profile?.about || {};
+    const textByLang = {
+      hy: (desc?.am ?? about?.am) || "",
+      ru: (desc?.ru ?? about?.ru) || "",
+      en: (desc?.en ?? about?.en) || "",
+      ar: (desc?.ar ?? about?.ar) || "",
+      fr: (desc?.fr ?? about?.fr) || "",
+    };
 
-  const setBgType  = (v) => {
-    setBackground(s => ({
-      type: v,
-      color: s?.color ?? "#ffffff",
-      imageUrl: "",
-      videoUrl: ""
-    }));
-    debouncedAutoSave();
-  };
+    const nameColor =
+      info?.company?.nameColor || "#111";
+    const descColor =
+      info?.description?.color ||
+      info?.profile?.aboutColor ||
+      "#666";
 
-  const setBgColor = (v) => {
-    setBackground(s => ({
-      type: s?.type || "color",
-      color: v,
-      imageUrl: s?.imageUrl || "",
-      videoUrl: s?.videoUrl || ""
-    }));
-    debouncedAutoSave();
-  };
+    const avTop = info?.avatar;
+    const avProf = info?.profile?.avatar;
 
-  const setBgMediaManual = (v) => {
-    setBackground(s => {
-      const t = s?.type || "color";
-      return {
-        type: t,
-        color: s?.color ?? "#ffffff",
-        imageUrl: t === "image" ? v : "",
-        videoUrl: t === "video" ? v : ""
+    const companyLogo =
+      info?.company?.logoUrl ||
+      info?.company?.logo_url ||
+      (typeof info?.company?.logo === "string"
+        ? info.company.logo
+        : info?.company?.logo?.imageUrl || "");
+
+    const fallbackLogo =
+      info?.assets?.logo_url ||
+      info?.logo_url ||
+      companyLogo ||
+      "";
+
+    let avatarUrl = "";
+    let avatarType = "";
+
+    if (typeof avTop === "string") avatarUrl = avTop;
+    else if (avTop && typeof avTop === "object") {
+      avatarType = avTop.type || "";
+      if (avatarType === "image")
+        avatarUrl =
+          avTop.imageUrl || avTop.videoUrl || "";
+      else if (avatarType === "video")
+        avatarUrl =
+          avTop.videoUrl || avTop.imageUrl || "";
+      else
+        avatarUrl =
+          avTop.imageUrl || avTop.videoUrl || "";
+    }
+
+    if (!avatarUrl && avProf) {
+      if (typeof avProf === "string") avatarUrl = avProf;
+      else if (typeof avProf === "object")
+        avatarUrl =
+          avProf.imageUrl || avProf.videoUrl || "";
+    }
+    if (!avatarUrl && fallbackLogo)
+      avatarUrl = fallbackLogo;
+
+    const avatarAbs = absSrc(avatarUrl);
+    const avatarIsVideo =
+      avatarType === "video"
+        ? true
+        : avatarType === "image"
+        ? false
+        : isVideo(avatarAbs);
+
+    const bg =
+      info?.background || {
+        type: "color",
+        color: "#ffffff",
+        imageUrl: "",
+        videoUrl: "",
       };
-    });
-    debouncedAutoSave();
-  };
 
-  const setAvatarManual = (v) => {
-    setProfile(s => ({
-      about: {
-        ...(s?.about || {})
-      },
-      aboutColor: s?.aboutColor ?? "#000000",
-      avatar: v || s?.avatar || ""
-    }));
-    debouncedAutoSave();
-  };
+    const name =
+      nameByLang[htmlLang] ||
+      nameByLang.hy ||
+      nameByLang.en ||
+      "—";
+    const descriptionRaw =
+      textByLang[htmlLang] || "";
+    const description =
+      htmlLang === "hy"
+        ? hyphenateHy(descriptionRaw, "hy")
+        : hyphenateHy(descriptionRaw, htmlLang);
 
-  const onBgFile = async (e) => {
-    try {
-      const f = e.target.files?.[0];
-      if (!f) return;
-      const { ok, url, path, error } = await adminUploadFile(token, f);
-      if (!ok) throw new Error(error || "Upload failed");
+    const [minCh, maxCh] = idealColsForLang(htmlLang);
 
-      // DB-ի մեջ պահելու համար օգտագործում ենք path-ը, եթե կա, հակառակ դեպքում՝ url
-      const stored = path || url;
+    const descStyle = {
+      color: descColor,
+      margin: "15px auto 0",
+      lineHeight: 1.6,
+      maxWidth: `clamp(${minCh}ch, 90%, ${maxCh}ch)`,
+      textAlign: "justify",
+      textJustify: "inter-word",
+      overflowWrap: "break-word",
+      wordBreak: "break-word",
+    };
 
-      if (background.type === "image") {
-        setBackground(s => ({
-          type: s?.type || "image",
-          color: s?.color ?? "#ffffff",
-          imageUrl: stored,
-          videoUrl: ""
-        }));
-      } else if (background.type === "video") {
-        setBackground(s => ({
-          type: s?.type || "video",
-          color: s?.color ?? "#ffffff",
-          imageUrl: "",
-          videoUrl: stored
-        }));
-      }
+    const icons = info?.icons || {};
+    const links = Array.isArray(icons.links)
+      ? icons.links
+      : [];
+    const styles = icons?.styles || {};
 
-      setMsg("Ֆոնը վերբեռնված է");
-      debouncedAutoSave();
-    } catch (e2) {
-      setMsg(e2.message || "Upload error");
-    } finally {
-      e.target.value = "";
-    }
-  };
+    const labelColor =
+      styles.labelCss || styles.labelHEX || "";
+    const chipColor =
+      styles.chipCss || rgbaToCss(styles.chipRGBA) || "";
+    const rowCardColor =
+      styles.rowCardCss ||
+      rgbaToCss(styles.rowCardRGBA) ||
+      "";
+    const layoutStyle =
+      styles.layoutStyle || "dzev1";
+    const cols = Number(styles.cols || 4);
+    const glowEnabled = !!styles.glowEnabled;
+    const glowColor = styles.glowColor || "#7dd3fc";
 
-  const onAvatarFile = async (e) => {
-    try {
-      const f = e.target.files?.[0];
-      if (!f) return;
-      const { ok, url, path, error } = await adminUploadFile(token, f);
-      if (!ok) throw new Error(error || "Upload failed");
+    const brandsArray = Array.isArray(info?.brands)
+      ? info.brands
+      : [];
+    const brandsCols = Number(
+      info?.brandsCols || 3
+    );
+    const brandsTitleColor =
+      info?.brandsTitleColor || "#000000";
+    const brandsTitleText =
+      info?.brandsTitleText || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ";
+    const brandsBgColor =
+      info?.brandsBgColor || "#ffffff";
+    const brandsNameColor =
+      info?.brandsNameColor || "#000000";
 
-      const stored = path || url;
-
-      setProfile(s => ({
-        about: {
-          ...(s?.about || {})
-        },
-        aboutColor: s?.aboutColor ?? "#000000",
-        avatar: stored || s?.avatar || ""
-      }));
-
-      setMsg("Ավատարը վերբեռնված է");
-      debouncedAutoSave();
-    } catch (e2) {
-      setMsg(e2.message || "Upload error");
-    } finally {
-      e.target.value = "";
-    }
-  };
-
-  const doSave = React.useCallback(async () => {
-    try {
-      setSaving(true);
-      setMsg("");
-      const payload = {
-        company,
-        profile,
-        background,
-        available_langs: langs,
-        default_lang: (langs && langs[0]) || "am"
-      };
-      const { ok, error } = await adminInfoSave(token, payload);
-      if (ok === false) throw new Error(error || "Save failed");
-      setMsg("Պահպանված է ✅");
-    } catch (e) {
-      setMsg(e.message || "Save error");
-    } finally {
-      setSaving(false);
-    }
-  }, [token, company, profile, background, langs]);
-
-  const debouncedAutoSave = useDebounced(() => { doSave(); }, 800);
-
-  const rawMediaUrl =
-    background.type === "video" ? background.videoUrl :
-    background.type === "image" ? background.imageUrl : "";
-
-  const mediaUrl = fileUrl(rawMediaUrl);
-
-  const isVid = background.type === "video" || isVideoUrl(rawMediaUrl);
-
-  const toggleLang = (code) => {
-    setLangs(prev => {
-      const exists = prev.includes(code);
-      if (exists) {
-        if (prev.length === 1) return prev; // չթողնենք, որ մնա առանց լեզվի
-        return prev.filter(c => c !== code);
-      }
-      return [...prev, code];
-    });
-    debouncedAutoSave();
-  };
-
-  const moveLang = (code, dir) => {
-    setLangs(prev => {
-      const idx = prev.indexOf(code);
-      if (idx === -1) return prev;
-      const nextIdx = dir === "up" ? idx - 1 : idx + 1;
-      if (nextIdx < 0 || nextIdx >= prev.length) return prev;
-      const arr = prev.slice();
-      const [item] = arr.splice(idx, 1);
-      arr.splice(nextIdx, 0, item);
-      return arr;
-    });
-    debouncedAutoSave();
-  };
-
-  if (loading) {
-    return h("div", { className:"pad" }, "Բեռնվում է…");
-  }
-
-  return h("div", {
-      className:"pad",
-      style:{ maxWidth: 860, margin: "0 auto" }
-    },
-
-    msg
-      ? h("div", { className:"note", style:{ marginBottom: 10 }}, msg)
-      : null,
-
-    /* LANGUAGES */
-    h("h2", {
-      className:"company-title",
-      style:{ textAlign:"center", marginBottom: 6 }
-    }, "ԼԵԶՈՒՆԵՐ"),
-
-    h("div", {
-      className:"card",
-      style:{
-        padding: 10,
-        marginBottom: 16,
-        display:"grid",
-        gap:8
-      }
-    },
-      h("div", {
-        className:"small",
-        style:{ opacity:.75 }
-      }, "Ընտրիր, թե որ լեզուներն են ակտիվ։ Առաջինը կլինի public-ի default լեզուն։"),
-
-      ALL_LANGS.map(({ code, label }) => {
-        const active = langs.includes(code);
-        const idx = langs.indexOf(code);
-        return h("div", {
-          key: code,
-          className:"row",
-          style:{
-            alignItems:"center",
-            gap:8,
-            opacity: active ? 1 : 0.5
-          }
-        },
-          h("button", {
-            type:"button",
-            className: "chip" + (active ? " active" : ""),
-            onClick: () => toggleLang(code),
-            style:{ minWidth: 54 }
-          }, code.toUpperCase()),
-
-          h("span", { style:{ flex:1, fontSize:13 } }, label),
-
-          active && h("span", {
-            className:"small",
-            style:{ minWidth:60, fontSize:11, opacity:.8 }
-          }, idx === 0 ? "Default" : `#${idx+1}`),
-
-          h("div", { style:{ display:"flex", gap:4 } },
-            h("button", {
-              type:"button",
-              className:"btn small",
-              disabled: idx <= 0 || !active,
-              onClick: () => moveLang(code, "up")
-            }, "↑"),
-            h("button", {
-              type:"button",
-              className:"btn small",
-              disabled: idx === -1 || idx >= langs.length - 1 || !active,
-              onClick: () => moveLang(code, "down")
-            }, "↓")
-          )
-        );
-      })
-    ),
-
-    /* AVATAR */
-    h("h3", {
-      style:{ marginTop:16 }
-    }, "Avatar"),
-
-    h("div", {
-      className:"row",
-      style:{ alignItems:"center", gap:8, marginTop:6 }
-    },
-      h("input", {
-        className:"input",
-        value: profile?.avatar || "",
-        onChange: e => setAvatarManual(e.target.value),
-        placeholder:"/file/... կամ URL"
-      }),
-
-      h("label", {
-        className:"btn",
-        style:{ alignSelf:"center", cursor:"pointer" }
-      }, "Վերբեռնել",
-        h("input", {
-          type:"file",
-          accept:"image/*,video/*",
-          style:{ display:"none" },
-          onChange: onAvatarFile
-        })
-      )
-    ),
-
-    // Avatar preview (կլոր դաշտ)
-    h("div", {
-      style:{
-        marginTop:8,
-        display:"flex",
-        alignItems:"center",
-        gap:10
-      }
-    },
-      h("div", {
-        style:{
-          width:64,
-          height:64,
-          borderRadius:"50%",
-          overflow:"hidden",
-          background:"#f5f5f5",
-          display:"grid",
-          placeItems:"center",
-          border:"1px solid rgba(0,0,0,.08)"
-        }
-      },
-        profile?.avatar
-          ? (isVideoUrl(profile.avatar)
-              ? h(PreviewVideo, {
-                  src: fileUrl(profile.avatar),
-                  style:{ width:"100%", height:"100%", objectFit:"cover" }
-                })
-              : h("img", {
-                  src: fileUrl(profile.avatar),
-                  alt:"avatar preview",
-                  style:{ width:"100%", height:"100%", objectFit:"cover" }
-                })
-            )
-          : h("div", {
-              style:{ opacity:.6, fontSize:11 }
-            }, "No avatar")
-      )
-    ),
-
-    /* COMPANY NAME */
-    h("h2", {
-      className:"company-title",
-      style:{ marginTop:20, textAlign:"center" }
-    }, "COMPANY NAME"),
-
-    langs.map(code => {
-      const meta = ALL_LANGS.find(x => x.code === code);
-      const label = meta ? meta.label.split(" ")[0] : code.toUpperCase();
-      const placeholder =
-        code === "am" ? "Անուն (AM)" :
-        code === "ru" ? "Название (RU)" :
-        code === "en" ? "Company Name (EN)" :
-        code === "ar" ? "اسم الشركة (AR)" :
-        "Nom de l'entreprise (FR)";
-
-      return h("div", {
-        key: code,
-        style:{ display: "grid", gap: 6, marginTop: 8 }
-      },
-        h("label", {
-          style:{ fontSize:12, opacity:.7, alignSelf:"start" }
-        }, label),
-
-        h("input", {
-          className:"input",
-          value: (company?.name && company.name[code]) || "",
-          onChange: setNameFor(code),
-          placeholder,
-          style:{
-            color: company?.nameColor || "#000000",
-            fontWeight: 600
-          }
-        })
-      );
-    }),
-
-    h("div", {
-      className:"row",
-      style:{ gap:8, alignItems:"center", marginTop:10 }
-    },
-      h("label", {
-        style:{ minWidth:130, opacity:.8 }
-      }, "Name Color"),
-
-      h("input", {
-        type:"color",
-        value:company?.nameColor || "#000000",
-        onChange: e=>setNameColor(e.target.value),
-        style:{
-          width:48,
-          height:36,
-          padding:0,
-          border:"none",
-          background:"none"
-        }
-      }),
-
-      h("input", {
-        className:"input",
-        style:{ maxWidth:140 },
-        value:company?.nameColor || "#000000",
-        onChange: e=>setNameColor(e.target.value),
-        placeholder:"#000000"
-      })
-    ),
-
-    /* DESCRIPTION */
-    h("h2", {
-      className:"company-title",
-      style:{ marginTop:20, textAlign:"center" }
-    }, "DESCRIPTION"),
-
-    langs.map(code => {
-      const meta = ALL_LANGS.find(x => x.code === code);
-      const label = meta ? meta.label.split(" ")[0] : code.toUpperCase();
-      const placeholder =
-        code === "am" ? "Նկարագրություն (AM)" :
-        code === "ru" ? "Описание (RU)" :
-        code === "en" ? "Description (EN)" :
-        code === "ar" ? "الوصف (AR)" :
-        "Description (FR)";
-
-      return h("div", {
-        key: code,
-        style:{ display:"grid", gap:6, marginTop:8 }
-      },
-        h("label", {
-          style:{ fontSize:12, opacity:.7, alignSelf:"start" }
-        }, label),
-
-        h("textarea", {
-          className:"textarea",
-          rows:4,
-          value: (profile?.about && profile.about[code]) || "",
-          onChange: setAboutFor(code),
-          placeholder,
-          style:{
-            color: profile?.aboutColor || "#000000"
-          }
-        })
-      );
-    }),
-
-    h("div", {
-      className:"row",
-      style:{ gap:8, alignItems:"center", marginTop:10 }
-    },
-      h("label", {
-        style:{ minWidth:130, opacity:.8 }
-      }, "Description Color"),
-
-      h("input", {
-        type:"color",
-        value:profile?.aboutColor || "#000000",
-        onChange: e=>setAboutColor(e.target.value),
-        style:{
-          width:48,
-          height:36,
-          padding:0,
-          border:"none",
-          background:"none"
-        }
-      }),
-
-      h("input", {
-        className:"input",
-        style:{ maxWidth:140 },
-        value:profile?.aboutColor || "#000000",
-        onChange: e=>setAboutColor(e.target.value),
-        placeholder:"#000000"
-      })
-    ),
-
-    /* BACKGROUND */
-    h("h2", {
-      className:"company-title",
-      style:{ marginTop:20, textAlign:"center" }
-    }, "BACKGROUND"),
-
-    h("div", {
-      className:"row",
-      style:{ gap:8, alignItems:"center", marginTop:10 }
-    },
-      h("label", {
-        style:{ minWidth:130, opacity:.8 }
-      }, "Type"),
-
-      h("select", {
-        className:"input",
-        value: background?.type || "color",
-        onChange: e => setBgType(e.target.value),
-        style:{ maxWidth:180 }
-      },
-        h("option",{ value:"color" }, "Color"),
-        h("option",{ value:"image" }, "Image"),
-        h("option",{ value:"video" }, "Video")
-      )
-    ),
-
-    background?.type === "color" && h(React.Fragment, null,
-      h("div", {
-        className:"row",
-        style:{ gap:8, alignItems:"center", marginTop:10 }
-      },
-        h("label", {
-          style:{ minWidth:130, opacity:.8 }
-        }, "Background Color"),
-
-        h("input", {
-          type:"color",
-          value:background?.color || "#ffffff",
-          onChange: e=>setBgColor(e.target.value),
-          style:{
-            width:48,
-            height:36,
-            padding:0,
-            border:"none",
-            background:"none"
-          }
-        }),
-
-        h("input", {
-          className:"input",
-          style:{ maxWidth:140 },
-          value:background?.color || "#ffffff",
-          onChange: e=>setBgColor(e.target.value),
-          placeholder:"#ffffff"
-        })
-      ),
-
-      h("div", {
-        style:{
-          marginTop:8,
-          borderRadius:10,
-          overflow:"hidden",
-          border:"1px solid rgba(0,0,0,.08)"
-        }
-      },
-        h("div", {
-          style:{
-            height:60,
-            background:background?.color || "#ffffff",
-            display:"grid",
-            placeItems:"center",
-            fontSize:12,
-            opacity:.8
-          }
-        }, "Preview")
-      )
-    ),
-
-    (background?.type === "image" || background?.type === "video") && h(React.Fragment,null,
-      h("div", {
-        className:"row",
-        style:{ gap:8, alignItems:"center", marginTop:10 }
-      },
-        h("label", {
-          style:{ minWidth:130, opacity:.8 }
-        }, background?.type === "image" ? "Image URL" : "Video URL"),
-
-        h("input", {
-          className:"input",
-          value: background?.type === "image"
-            ? (background?.imageUrl || "")
-            : (background?.videoUrl || ""),
-          onChange: e => setBgMediaManual(e.target.value),
-          placeholder: background?.type === "image"
-            ? "/file/... կամ https://..."
-            : "/file/video.mp4 կամ https://..."
-        }),
-
-        h("label", {
-          className:"btn",
-          style:{ alignSelf:"center", cursor:"pointer" }
-        }, "Վերբեռնել",
-          h("input", {
-            type:"file",
-            accept: background?.type === "image" ? "image/*" : "video/*",
-            style:{ display:"none" },
-            onChange: onBgFile
-          })
-        )
-      ),
-
-      h("div", {
-        style:{
-          marginTop:8,
-          borderRadius:10,
-          overflow:"hidden",
-          border:"1px solid rgba(0,0,0,.08)",
-          display:"grid",
-          placeItems:"center",
-          height:140,
-          background:"#f5f5f5"
-        }
-      },
-        (background?.imageUrl || background?.videoUrl)
-          ? (isVid
-              ? h(PreviewVideo, {
-                  src: mediaUrl,
-                  style:{
-                    width:"100%",
-                    height:"100%",
-                    objectFit:"cover"
-                  }
-                })
-              : h("img", {
-                  src: mediaUrl,
-                  style:{
-                    width:"100%",
-                    height:"100%",
-                    objectFit:"cover"
-                  }
-                })
-            )
-          : h("div", {
-              style:{ opacity:.6, fontSize:12 }
-            }, "No media selected")
-      )
-    ),
-
-    h("div", {
-      className:"row",
-      style:{ justifyContent:"flex-end", marginTop:16 }
-    },
-      h("button", {
-        className:"btn",
-        disabled: saving,
-        onClick: doSave
-      }, saving ? "Պահպանում…" : "Պահպանել")
+    const brandInfos = Array.isArray(
+      info?.brandInfos
     )
-  );
+      ? info.brandInfos
+      : [];
+    const showBrandInfo = !!activeBrandKeyword;
+
+    return h(
+      "div",
+      {
+        className: "public-home",
+        style: {
+          position: "relative",
+          width: "100%",
+          height: "100%",
+          minHeight: "100%",
+          overflow: "hidden",
+        },
+      },
+      /* BACKGROUND LAYER */
+      h(
+        "div",
+        {
+          className: "public-bg-layer",
+          style: {
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: "none",
+            overflow: "hidden",
+            background:
+              bg.type === "color"
+                ? bg.color || "#ffffff"
+                : bg.type === "image"
+                ? `url(${absSrc(
+                    bg.imageUrl
+                  )}) center/cover no-repeat`
+                : "transparent",
+          },
+        },
+        bg.type === "video" && bg.videoUrl
+          ? h(VideoLoop, {
+              src: absSrc(bg.videoUrl),
+              style: {
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              },
+            })
+          : null
+      ),
+
+      /* SCROLL LAYER */
+      h(
+        "div",
+        {
+          className: "public-scroll-layer",
+          id: "publicScroll",
+          style: {
+            position: "relative",
+            zIndex: 1,
+            width: "100%",
+            height: "100%",
+            maxHeight: "100%",
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            padding: "12px",
+          },
+        },
+        h(LangDropdown, {
+          value: lang,
+          onChange: setLang,
+          langs: serverLangs,
+        }),
+
+        showBrandInfo
+          ? h(BrandInfoPage, {
+              brandInfos,
+              keyword: activeBrandKeyword,
+              lang: htmlLang,
+              onBack: () =>
+                setActiveBrandKeyword(""),
+            })
+          : h(
+              "div",
+              { style: { position: "relative" } },
+              /* HERO CARD */
+              h(
+                "section",
+                {
+                  className: "card",
+                  style: {
+                    textAlign: "center",
+                    paddingTop: 10,
+                    paddingBottom: 18,
+                  },
+                },
+                h(AvatarMedia, {
+                  src: avatarAbs,
+                  isVideo: avatarIsVideo,
+                  initials: (name || "KH")
+                    .slice(0, 2)
+                    .toUpperCase(),
+                }),
+                h(
+                  "h1",
+                  {
+                    className: "hero-title",
+                    style: {
+                      color: nameColor,
+                      margin: "15px 0 4px",
+                      fontSize: 35,
+                    },
+                  },
+                  name
+                ),
+                h(
+                  "p",
+                  {
+                    className: "hero-desc",
+                    style: descStyle,
+                    lang: htmlLang,
+                    dir: htmlLang === "ar" ? "rtl" : "ltr",
+                  },
+                  description
+                )
+              ),
+
+              /* ICONS */
+              links.length
+                ? h(IconsPage, {
+                    links,
+                    labelColor,
+                    chipColor,
+                    rowCardColor,
+                    layoutStyle,
+                    cols,
+                    glowEnabled,
+                    glowColor,
+                    lang: htmlLang,
+                  })
+                : null,
+
+              /* BRANDS */
+              brandsArray.length
+                ? h(BrandsPage, {
+                    brands: brandsArray,
+                    brandsTitleColor,
+                    brandsTitleText,
+                    brandsCols,
+                    brandsBgColor,
+                    brandsNameColor,
+                    lang: htmlLang,
+                    onKeywordClick: (kw) =>
+                      setActiveBrandKeyword(kw),
+                  })
+                : null,
+
+              /* SHARE */
+              h(SharePage, {
+                cardId,
+                info,
+                lang: htmlLang,
+              })
+            )
+      )
+    );
+  } catch (e) {
+    return h(
+      "div",
+      { className: "pad" },
+      "Render error: " + (e.message || String(e))
+    );
+  }
 }
