@@ -256,12 +256,19 @@ export default function HomePage({ cardId = "101" }) {
     (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
   );
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
+  const [splashDone, setSplashDone] = React.useState(false);   // ✅ splash timer
 
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
     try { document.documentElement.lang = htmlLang; } catch {}
   }, [htmlLang]);
+
+  /* ✅ splash-ը գոնե 2 վրկ պահելու համար */
+  React.useEffect(() => {
+    const t = setTimeout(() => setSplashDone(true), 2000);
+    return () => clearTimeout(t);
+  }, []);
 
   React.useEffect(() => {
     let killed = false;
@@ -289,8 +296,9 @@ export default function HomePage({ cardId = "101" }) {
     return () => { killed = true; };
   }, [cardId]);
 
-  /* ===== Splash loader – Contactum logo ===== */
-  if (loading) {
+  /* ===== Splash loader – Contactum logo =====
+     կերևա, քանի դեռ (loading === true) ԿԱՄ (splashDone === false)  */
+  if (!splashDone || loading) {
     return h(
       "div",
       {
