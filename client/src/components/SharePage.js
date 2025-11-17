@@ -159,17 +159,29 @@ const ICON_KIND_LABELS = {
 };
 
 /**
- * info-ից հավաքում ենք
- *   email  → EMAIL դաշտ
- *   link-եր → ՄԻԱՅՆ icon-ներից (icons / iconRows),
- *      ամեն լಿಂքի label = icon-ի անունը (Telegram, WhatsApp, Website…)
+ * Կոնտակտի meta՝
+ *   email  → EMAIL
+ *   urls   → առաջինը KHContactum Card (onlineUrl),
+ *            հետո՝ icon-ներից եկած linker, հաջորդը՝ info-ից deep-scan.
  */
-function collectContactMeta(info, offlinePhone, lang) {
+function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
   const meta = { email: "", urls: [] };
-  if (!info) return meta;
+  const seenUrls = new Set();
+  if (!info && !onlineUrl) return meta;
 
   const normOffline = normalizePhone(offlinePhone);
-  const seenUrls = new Set();
+
+  function normalizeUrl(u) {
+    let s = (u || "").toString().trim();
+    if (!s) return "";
+    if (
+      !/^https?:\/\//i.test(s) &&
+      !/^(tel|sms|viber|whatsapp|wa):/i.test(s)
+    ) {
+      s = "https://" + s.replace(/^https?:\/\//i, "");
+    }
+    return s;
+  }
 
   function addEmail(email) {
     const clean = (email || "").toString().trim().replace(/^mailto:/i, "");
@@ -178,33 +190,35 @@ function collectContactMeta(info, offlinePhone, lang) {
   }
 
   function addUrl(url, label) {
-    let u = (url || "").toString().trim();
-    if (!u) return;
-
-    if (
-      !/^https?:\/\//i.test(u) &&
-      !/^(tel|sms|viber|whatsapp|wa):/i.test(u)
-    ) {
-      u = "https://" + u.replace(/^https?:\/\//i, "");
-    }
-
-    if (seenUrls.has(u)) return;
-    seenUrls.add(u);
+    const norm = normalizeUrl(url);
+    if (!norm) return;
+    if (seenUrls.has(norm)) return;
+    seenUrls.add(norm);
 
     const lab = (label || "link").toString().trim() || "link";
-    meta.urls.push({ label: lab, url: u });
+    meta.urls.push({ label: lab, url: norm });
   }
 
-  /* ---- 1) icons / iconRows → URLs (ու label-ներ) ---- */
+  // 0) KHContactum Card՝ առաջին URL-ը
+  if (onlineUrl) {
+    addUrl(onlineUrl, "KHContactum Card");
+  }
+
+  /* ---- 1) icons / iconRows → URLs + icon label ---- */
 
   let icons = [];
-  if (Array.isArray(info.icons)) {
-    icons = info.icons;
-  } else if (Array.isArray(info.iconRows)) {
-    icons = info.iconRows.flatMap((row) =>
-      Array.isArray(row?.items) ? row.items : row ? [row] : []
-    );
+  if (info) {
+    if (Array.isArray(info.icons)) {
+      icons = info.icons;
+    } else if (Array.isArray(info.iconRows)) {
+      icons = info.iconRows.flatMap((row) =>
+        Array.isArray(row?.items) ? row.items : row ? [row] : []
+      );
+    }
   }
+
+  // map url→label, որ deep-scan-ի ժամանակ օգտագործենք
+  const iconUrlLabelMap = {};
 
   for (const item of icons) {
     if (!item) continue;
@@ -240,7 +254,6 @@ function collectContactMeta(info, offlinePhone, lang) {
       continue;
     }
 
-    // label՝ նախ icon label-ից, հետո kind map-ից
     let label =
       pickLang(item.label, lang) ||
       item.name ||
@@ -249,31 +262,43 @@ function collectContactMeta(info, offlinePhone, lang) {
       ICON_KIND_LABELS[kindRaw.toLowerCase()] ||
       "link";
 
-    addUrl(value, label);
+    const norm = normalizeUrl(value);
+    if (!norm) continue;
+
+    iconUrlLabelMap[norm] = label;
+    addUrl(norm, label);
   }
 
-  /* ---- 2) ամբողջ info-ի deep-scan → միայն email fallback-ի համար ---- */
+  /* ---- 2) deep-scan info → emails + urls (fallback) ---- */
 
-  function walkEmails(node, keyHint) {
+  function walk(node) {
     if (!node) return;
 
     if (typeof node === "string") {
       const s = node.trim();
       if (!s) return;
+
       if (s.includes("@") && !s.startsWith("http")) {
         addEmail(s);
+      }
+
+      if (/^(https?:\/\/|www\.)/i.test(s)) {
+        const norm = normalizeUrl(s);
+        const label = iconUrlLabelMap[norm] || "link";
+        addUrl(norm, label);
       }
       return;
     }
 
     if (Array.isArray(node)) {
-      node.forEach((v) => walkEmails(v));
+      node.forEach(walk);
       return;
     }
 
     if (typeof node === "object") {
       for (const k of Object.keys(node)) {
         const v = node[k];
+
         if (
           typeof v === "string" &&
           !meta.email &&
@@ -282,12 +307,25 @@ function collectContactMeta(info, offlinePhone, lang) {
         ) {
           addEmail(v);
         }
-        walkEmails(v, k);
+
+        if (
+          typeof v === "string" &&
+          /site|url|link|profile|web/i.test(k) &&
+          /^(https?:\/\/|www\.)/i.test(v)
+        ) {
+          const norm = normalizeUrl(v);
+          const label = iconUrlLabelMap[norm] || "link";
+          addUrl(norm, label);
+        }
+
+        walk(v);
       }
     }
   }
 
-  walkEmails(info);
+  if (info) {
+    walk(info);
+  }
 
   return meta;
 }
@@ -315,6 +353,8 @@ function buildVCard(name, phone, contactMeta) {
   }
 
   if (email) {
+    // label-ը վերահսկել չենք կարող 100%, բայց TYPE=WORK-ը դնում ենք,
+    // իսկ URL-ները կգան KHContactum Card + icon labels-ով
     lines.push(
       "EMAIL;TYPE=INTERNET;TYPE=WORK;TYPE=pref:" + email
     );
@@ -457,10 +497,10 @@ export default function SharePage({ info, cardId, lang }) {
   const offlineName = share.offlineFullName || info?.company?.name?.en || "";
   const offlinePhone = share.offlinePhone || "";
 
-  // icons-ից հավաքած email + urls
+  // KHContactum Card + icon links + fallback urls
   const contactMeta = React.useMemo(
-    () => collectContactMeta(info, offlinePhone, activeLang),
-    [info, offlinePhone, activeLang]
+    () => collectContactMeta(info, offlinePhone, activeLang, onlineUrl),
+    [info, offlinePhone, activeLang, onlineUrl]
   );
 
   const shareText = (() => {
