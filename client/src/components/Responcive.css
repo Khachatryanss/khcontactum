@@ -1223,81 +1223,78 @@
 
 /****************************************************************/
 
-/* --- CONTACTUM POPUP MODERN GLASS --- */
+/* ===== CONTACTUM ADD-TO-CONTACTS POPUP ===== */
+
 .contactum-popup-backdrop {
   position: fixed;
   inset: 0;
-  backdrop-filter: blur(9px) brightness(0.6);
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 99999;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.55);     /* ամբողջ էջը մթնում է */
+  backdrop-filter: blur(10px);
   display: flex;
   justify-content: center;
-  align-items: flex-end;
-  padding: 0 0 30px;
+  align-items: center;
 }
 
+/* ՄԻԱՅՆ փոքր բլոկը է background ունի */
 .contactum-popup {
-  width: 92%;
-  max-width: 430px;
-  background: rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(40px) saturate(180%);
-  border-radius: 28px;
-  padding: 25px 22px 30px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
-  color: white;
-  animation: popupSlideUp 0.35s ease-out;
+  width: 90%;
+  max-width: 420px;
+  background: rgba(8, 8, 12, 0.9);     /* մուգ, թեթև glass */
+  color: #ffffff;
+  border-radius: 24px;
+  padding: 22px 20px 20px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   text-align: center;
-  border: 1px solid rgba(255,255,255,0.15);
+  animation: contactumPopupUp 0.28s ease-out;
 }
 
-@keyframes popupSlideUp {
-  from { 
-    transform: translateY(120px); 
+@keyframes contactumPopupUp {
+  from {
+    transform: translateY(40px);
     opacity: 0;
   }
   to {
-    transform: translateY(0); 
+    transform: translateY(0);
     opacity: 1;
   }
 }
 
-.contactum-popup img {
-  width: 58px;
-  margin-bottom: 12px;
-}
-
 .contactum-popup-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 18px;
+  color: #ffffff;                     /* սպիտակ տեքստ */
 }
 
 .contactum-popup-buttons {
   display: flex;
-  gap: 12px;
-  margin-top: 18px;
+  gap: 10px;
 }
 
 .contactum-btn {
   flex: 1;
-  padding: 12px 0;
   border-radius: 14px;
-  font-size: 16px;
+  padding: 11px 0;
+  font-size: 15px;
   font-weight: 600;
+  border: none;
   cursor: pointer;
-  border: 0;
 }
 
 .contactum-btn-yes {
-  background: #ffffff;
-  color: #000;
+  background: #ffffff;                /* սպիտակ կոճակ */
+  color: #000000;
 }
 
 .contactum-btn-no {
-  background: rgba(255,255,255,0.2);
-  color: #fff;
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
 }
+
 
 
 /*********************************************************************************/

@@ -10,7 +10,7 @@ import waIcon    from "../img/wp.png";
 import mailIcon  from "../img/email.png";
 import viberIcon from "../img/vb.png";
 import igIcon    from "../img/insta.png";
-import contactumLogo from "../img/Contactum.png";   // ✅ KHContactum logo
+// import contactumLogo from "../img/Contactum.png";   // logo-ն հիմա չենք օգտագործում
 
 const h = React.createElement;
 
@@ -284,11 +284,13 @@ function collectContactMeta(info, offlinePhone, lang, onlineUrl) {
     if (!value) continue;
     value = String(value).trim();
 
+    // phone icon – skip, եթե նույնն է offline phone-ի հետ
     if (kind === "phone" || kind === "tel") {
       const vNorm = normalizePhone(value.replace(/^tel:/i, ""));
       if (normOffline && vNorm === normOffline) continue;
     }
 
+    // email icon – լիովին skip, որ vCard-ի մեջ չընկնի
     if (
       kind === "email" ||
       /^mailto:/i.test(value) ||
@@ -464,7 +466,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
   const share = normalizeShare(info && info.share);
   const [qrOpen, setQrOpen] = React.useState(false);
   const [qrMode, setQrMode] = React.useState("online");
-  const [confirmOpen, setConfirmOpen] = React.useState(false);   // ✅ popup-ի state
+  const [confirmOpen, setConfirmOpen] = React.useState(false);   // popup state
 
   React.useEffect(() => {
     if (autoOpenConfirm) {
@@ -491,6 +493,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
     "";
   const offlinePhone = share.offlinePhone || "";
 
+  // KHContactum Digital Card + icon links
   const contactMeta = React.useMemo(
     () => collectContactMeta(info, offlinePhone, activeLang, onlineUrl),
     [info, offlinePhone, activeLang, onlineUrl]
@@ -578,228 +581,203 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
     .replace("{{name}}", confirmName);
 
   return h(
-    "section",
-    { style: { marginTop: 24, marginBottom: 44, textAlign: "center" } },
-
-    h("h2", { style: { marginBottom: 4 } }, t.qrTitle),
-    h(
-      "p",
-      {
-        className: "small",
-        style: { marginBottom: 16, maxWidth: 360, marginInline: "auto" },
-      },
-      t.qrDesc
-    ),
+    React.Fragment,
+    null,
 
     h(
-      "button",
-      {
-        type: "button",
-        className: "btn",
-        style: {
-          width: "80%",
-          maxWidth: 360,
-          margin: "0 auto 18px",
-          background: btnBgColor,
-          color: btnTextColor,
+      "section",
+      { style: { marginTop: 24, marginBottom: 44, textAlign: "center" } },
+
+      h("h2", { style: { marginBottom: 4 } }, t.qrTitle),
+      h(
+        "p",
+        {
+          className: "small",
+          style: { marginBottom: 16, maxWidth: 360, marginInline: "auto" },
         },
-        onClick: () => setQrOpen(true),
-      },
-      t.scanBtn
-    ),
+        t.qrDesc
+      ),
 
-    h(
-      "h3",
-      { style: { margin: "0 0 10px", fontSize: 16, color: shareTitleColor } },
-      t.shareTitle
-    ),
-
-    h(
-      "div",
-      {
-        style: {
-          display: "flex",
-          justifyContent: "center",
-          gap: 14,
-          marginBottom: 20,
-          flexWrap: "wrap",
+      h(
+        "button",
+        {
+          type: "button",
+          className: "btn",
+          style: {
+            width: "80%",
+            maxWidth: 360,
+            margin: "0 auto 18px",
+            background: btnBgColor,
+            color: btnTextColor,
+          },
+          onClick: () => setQrOpen(true),
         },
-      },
-      enabledKinds.map((kind) =>
-        h(ShareIcon, { key: kind, kind, onClick: () => onShare(kind) })
-      )
-    ),
+        t.scanBtn
+      ),
 
-    h(
-      "button",
-      {
-        type: "button",
-        className: "btn",
-        style: {
-          width: "80%",
-          maxWidth: 360,
-          margin: "0 auto",
-          background: btnBgColor,
-          color: btnTextColor,
-        },
-        onClick: downloadVCard,
-      },
-      t.addBtn
-    ),
+      h(
+        "h3",
+        { style: { margin: "0 0 10px", fontSize: 16, color: shareTitleColor } },
+        t.shareTitle
+      ),
 
-    /* ===== QR MODAL ===== */
-    qrOpen &&
       h(
         "div",
         {
           style: {
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.6)",
-            zIndex: 40,
-            display: "grid",
-            placeItems: "center",
+            display: "flex",
+            justifyContent: "center",
+            gap: 14,
+            marginBottom: 20,
+            flexWrap: "wrap",
           },
-          onClick: () => setQrOpen(false),
         },
-        h(
-          "div",
-          {
-            className: "card",
-            style: {
-              position: "relative",
-              maxWidth: 360,
-              width: "90%",
-              padding: 16,
-              textAlign: "center",
-            },
-            onClick: (e) => e.stopPropagation(),
-          },
-
-          h(
-            "button",
-            {
-              type: "button",
-              onClick: () => setQrOpen(false),
-              style: {
-                position: "absolute",
-                right: 8,
-                top: 6,
-                border: "none",
-                background: "transparent",
-                fontSize: 20,
-                cursor: "pointer",
-              },
-            },
-            "×"
-          ),
-
-          h(
-            "div",
-            { style: { display: "flex", gap: 8, marginBottom: 12 } },
-            h(
-              "button",
-              {
-                type: "button",
-                className: "btn",
-                style: {
-                  flex: 1,
-                  background: qrMode === "online" ? "#ffffff" : "#000000",
-                  color: qrMode === "online" ? "#000000" : "#ffffff",
-                },
-                onClick: () => setQrMode("online"),
-              },
-              onlineLabel
-            ),
-            h(
-              "button",
-              {
-                type: "button",
-                className: "btn",
-                style: {
-                  flex: 1,
-                  background: qrMode === "offline" ? "#ffffff" : "#000000",
-                  color: qrMode === "offline" ? "#000000" : "#ffffff",
-                },
-                onClick: () => setQrMode("offline"),
-              },
-              offlineLabel
-            )
-          ),
-
-          h("img", {
-            src: qrImgSrc,
-            alt: "QR code ",
-            loading: "lazy",
-            style: { width: 260, height: 260, margin: "0 auto 8px" },
-          }),
-
-          qrMode === "offline" &&
-            h(
-              "div",
-              { className: "small", style: { marginTop: 4 } },
-              t.offlineNote
-            )
+        enabledKinds.map((kind) =>
+          h(ShareIcon, { key: kind, kind, onClick: () => onShare(kind) })
         )
       ),
 
-    /* ===== CONTACTUM POPUP (VisitCard) ===== */
+      h(
+        "button",
+        {
+          type: "button",
+          className: "btn",
+          style: {
+            width: "80%",
+            maxWidth: 360,
+            margin: "0 auto",
+            background: btnBgColor,
+            color: btnTextColor,
+          },
+          onClick: downloadVCard,
+        },
+        t.addBtn
+      ),
+
+      /* ===== QR MODAL ===== */
+      qrOpen &&
+        h(
+          "div",
+          {
+            style: {
+              position: "fixed",
+              inset: 0,
+              background: "rgba(0,0,0,0.6)",
+              zIndex: 40,
+              display: "grid",
+              placeItems: "center",
+            },
+            onClick: () => setQrOpen(false),
+          },
+          h(
+            "div",
+            {
+              className: "card",
+              style: {
+                position: "relative",
+                maxWidth: 360,
+                width: "90%",
+                padding: 16,
+                textAlign: "center",
+              },
+              onClick: (e) => e.stopPropagation(),
+            },
+
+            h(
+              "button",
+              {
+                type: "button",
+                onClick: () => setQrOpen(false),
+                style: {
+                  position: "absolute",
+                  right: 8,
+                  top: 6,
+                  border: "none",
+                  background: "transparent",
+                  fontSize: 20,
+                  cursor: "pointer",
+                },
+              },
+              "×"
+            ),
+
+            h(
+              "div",
+              { style: { display: "flex", gap: 8, marginBottom: 12 } },
+              h(
+                "button",
+                {
+                  type: "button",
+                  className: "btn",
+                  style: {
+                    flex: 1,
+                    background: qrMode === "online" ? "#ffffff" : "#000000",
+                    color: qrMode === "online" ? "#000000" : "#ffffff",
+                  },
+                  onClick: () => setQrMode("online"),
+                },
+                onlineLabel
+              ),
+              h(
+                "button",
+                {
+                  type: "button",
+                  className: "btn",
+                  style: {
+                    flex: 1,
+                    background: qrMode === "offline" ? "#ffffff" : "#000000",
+                    color: qrMode === "offline" ? "#000000" : "#ffffff",
+                  },
+                  onClick: () => setQrMode("offline"),
+                },
+                offlineLabel
+              )
+            ),
+
+            h("img", {
+              src: qrImgSrc,
+              alt: "QR code ",
+              loading: "lazy",
+              style: { width: 260, height: 260, margin: "0 auto 8px" },
+            }),
+
+            qrMode === "offline" &&
+              h(
+                "div",
+                { className: "small", style: { marginTop: 4 } },
+                t.offlineNote
+              )
+          )
+        )
+    ),
+
+    /* ===== CONTACTUM POPUP (VisitCard) – GLASS DARK ===== */
     confirmOpen &&
       h(
         "div",
         {
-          style: {
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.6)",
-            zIndex: 50,
-            display: "grid",
-            placeItems: "center",
-          },
+          className: "contactum-popup-backdrop",
           onClick: () => setConfirmOpen(false),
         },
         h(
           "div",
           {
-            className: "card",
-            style: {
-              maxWidth: 420,
-              width: "90%",
-              padding: 24,
-              textAlign: "center",
-            },
+            className: "contactum-popup",
             onClick: (e) => e.stopPropagation(),
           },
-          // h("img", {
-          //   src: contactumLogo,
-          //   alt: "KHContactum",
-          //   style: { width: 80, height: "auto", margin: "0 auto 16px" },
-          // }),
           h(
-            "p",
-            {
-              style: {
-                marginBottom: 20,
-                fontSize: 16,
-                fontWeight: 500,
-              },
-            },
+            "div",
+            { className: "contactum-popup-title" },
             confirmText
           ),
           h(
             "div",
-            {
-              style: {
-                display: "flex",
-                justifyContent: "center",
-                gap: 16,
-              },
-            },
+            { className: "contactum-popup-buttons" },
             h(
               "button",
               {
                 type: "button",
-                className: "btn",
+                className: "contactum-btn contactum-btn-yes",
                 onClick: async () => {
                   await downloadVCard();
                   setConfirmOpen(false);
@@ -811,8 +789,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
               "button",
               {
                 type: "button",
-                className: "btn",
-                style: { background: "#f5f5f5", color: "#000" },
+                className: "contactum-btn contactum-btn-no",
                 onClick: () => setConfirmOpen(false),
               },
               t.confirmNo
