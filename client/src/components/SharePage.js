@@ -667,7 +667,7 @@ export default function SharePage({ info, cardId, lang }) {
                   background: qrMode === "online" ? "#111" : "#eee",
                   color: qrMode === "online" ? "#fff" : "#111",
                 },
-                onClick: () => setQrMode("online ✅"),
+                onClick: () => setQrMode("online"),
               },
               t.qrOnline
             ),
@@ -681,7 +681,7 @@ export default function SharePage({ info, cardId, lang }) {
                   background: qrMode === "offline" ? "#111" : "#eee",
                   color: qrMode === "offline" ? "#fff" : "#111",
                 },
-                onClick: () => setQrMode("offline ✅"),
+                onClick: () => setQrMode("offline"),
               },
               t.qrOffline
             )
