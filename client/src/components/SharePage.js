@@ -60,7 +60,6 @@ const TEXT = {
     offlineNote: "После сканирования можно сохранить в контактах.",
     shareDefault: "Посмотри мою цифровую карточку KHContactum.com.",
     mailSubject: "Цифровая визитка KHContactum",
-
   },
   en: {
     scanBtn: "SCAN QR CODE",
@@ -71,7 +70,6 @@ const TEXT = {
     offlineNote: "After scanning you can save it to your contacts.",
     shareDefault: "Check out my KHContactum.com digital card.",
     mailSubject: "KHContactum digital card",
-
   },
   ar: {
     scanBtn: "مسح رمز QR",
@@ -82,7 +80,6 @@ const TEXT = {
     offlineNote: "بعد المسح يمكنك حفظه في جهات الاتصال.",
     shareDefault: "اطّلع على بطاقتي الرقمية على KHContactum.com.",
     mailSubject: "بطاقة KHContactum الرقمية",
-
   },
   fr: {
     scanBtn: "SCANNER LE QR CODE",
@@ -93,7 +90,6 @@ const TEXT = {
     offlineNote: "Après le scan vous pouvez l’enregistrer dans vos contacts.",
     shareDefault: "Découvrez ma carte numérique KHContactum.com.",
     mailSubject: "Carte numérique KHContactum",
-
   },
 };
 
@@ -145,8 +141,73 @@ function isIOS() {
   return /iPad|iPhone|iPod/.test(ua) || (/\bMacintosh\b/.test(ua) && "ontouchend" in window);
 }
 
+/* ===== helpers for collecting extra contact fields from icons ===== */
+function normalizePhone(p) {
+  return (p || "").toString().replace(/[^\d+]/g, "");
+}
+
+function collectExtraContactFields(info, offlinePhone, lang) {
+  const result = [];
+  if (!info) return result;
+
+  const normOffline = normalizePhone(offlinePhone);
+
+  // icons կարող են լինել info.icons կամ info.iconRows-ում։
+  let icons = [];
+  if (Array.isArray(info.icons)) {
+    icons = info.icons;
+  } else if (Array.isArray(info.iconRows)) {
+    // iconRows → flatten
+    icons = info.iconRows.flatMap((row) =>
+      Array.isArray(row?.items) ? row.items : row ? [row] : []
+    );
+  }
+
+  for (const item of icons) {
+    if (!item) continue;
+    const kind =
+      (item.kind || item.type || item.icon || item.code || "").toString().toLowerCase();
+
+    // value / link
+    let value =
+      item.href ||
+      item.url ||
+      item.link ||
+      item.value ||
+      item.phone ||
+      item.text ||
+      "";
+    if (!value) continue;
+
+    value = String(value).trim();
+
+    // եթե tel: link է, հանենք prefix-ը
+    if (/^tel:/i.test(value)) {
+      value = value.replace(/^tel:/i, "");
+    }
+
+    // նույն հեռախոսահամարը, ինչ offlinePhone-ն է → բաց թողնել
+    if (normOffline && normalizePhone(value) === normOffline) {
+      continue;
+    }
+
+    // label
+    let label =
+      pickLang(item.label, lang) ||
+      item.name ||
+      item.title ||
+      kind;
+    label = (label || "").toString().trim();
+    if (!label) label = kind || "link";
+
+    result.push({ label, value });
+  }
+
+  return result;
+}
+
 /* CRLF պարտադիր մի շարք կոնտակտ-կլայենտների համար (iOS/Outlook և այլն) */
-function buildVCard(name, phone) {
+function buildVCard(name, phone, extraFields = []) {
   const safeName = (name || "").trim() || "KHContactum";
   const safePhone = (phone || "").trim();
   const lines = [
@@ -156,8 +217,25 @@ function buildVCard(name, phone) {
     "FN:" + safeName,
   ];
   if (safePhone) {
-    lines.push("TEL;TYPE=CELL,VOICE;TYPE=pref:" + safePhone.replace(/\s+/g, ""));
+    lines.push(
+      "TEL;TYPE=CELL,VOICE;TYPE=pref:" +
+        safePhone.replace(/\s+/g, "")
+    );
   }
+
+  // Յուրաքանչյուր icon → NOTE դաշտում առանձին տող
+  extraFields.forEach((f) => {
+    if (!f || !f.value) return;
+    const label = (f.label || "link").toString().trim();
+    const value = (f.value || "").toString().trim();
+    lines.push(
+      "NOTE:" +
+        label.replace(/\r?\n/g, " ") +
+        ": " +
+        value.replace(/\r?\n/g, " ")
+    );
+  });
+
   lines.push("END:VCARD");
   return lines.join("\r\n");
 }
@@ -237,8 +315,8 @@ function ShareIcon({ kind, onClick }) {
    vCard saver — անմիջապես բերում է կոնտակտի preview-ը,
    չի բացում share sheet և չի տանում էջից դուրս
    ========= */
-async function saveVCardUniversal({ name, phone, fileName = "contact.vcf" }) {
-  const vcard = buildVCard(name, phone);
+async function saveVCardUniversal({ name, phone, extraFields = [], fileName = "contact.vcf" }) {
+  const vcard = buildVCard(name, phone, extraFields);
   const blob = new Blob([vcard], { type: "text/x-vcard;charset=utf-8" });
   const url = URL.createObjectURL(blob);
 
@@ -287,6 +365,12 @@ export default function SharePage({ info, cardId, lang }) {
 
   const offlineName = share.offlineFullName || info?.company?.name?.en || "";
   const offlinePhone = share.offlinePhone || "";
+
+  // Վերցնում ենք icon-ներից լրացուցիչ դաշտերը (email, сайт, LinkedIn, WhatsApp և այլն)
+  const extraFields = React.useMemo(
+    () => collectExtraContactFields(info, offlinePhone, activeLang),
+    [info, offlinePhone, activeLang]
+  );
 
   // === shareText լուծարում՝ բազմալեզու աջակցությամբ ===
   const shareText = (() => {
@@ -340,7 +424,7 @@ export default function SharePage({ info, cardId, lang }) {
   }
 
   function currentQrValue() {
-    if (qrMode === "offline") return buildVCard(offlineName, offlinePhone);
+    if (qrMode === "offline") return buildVCard(offlineName, offlinePhone, extraFields);
     return onlineUrl;
   }
 
@@ -348,6 +432,7 @@ export default function SharePage({ info, cardId, lang }) {
     await saveVCardUniversal({
       name: offlineName,
       phone: offlinePhone,
+      extraFields,
       fileName: (offlineName || "contact").replace(/[^\w\-]+/g, "_") + ".vcf",
     });
   }
