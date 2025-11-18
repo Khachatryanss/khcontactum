@@ -502,7 +502,13 @@ export default function HomePage({ cardId = "101" }) {
                     onKeywordClick: (kw) => setActiveBrandKeyword(kw),
                   })
                 : null,
-              h(SharePage, { cardId, info, lang: htmlLang })
+                h(SharePage, {
+                cardId,
+                info,
+                lang: htmlLang,
+                autoOpenConfirm: true,   // ✅ բացի pop-up–ը բոլոր սարքերում
+              })
+
             )
       )
     );
