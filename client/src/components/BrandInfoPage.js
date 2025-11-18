@@ -2,7 +2,6 @@
 import React from "react";
 import "./Responcive.css";
 import { fileUrl } from "../utils/fileUrl.js";
-import { API } from "../api.js";
 
 const h = React.createElement;
 
@@ -50,25 +49,10 @@ function writeRatingMap(map) {
   } catch {}
 }
 
-/* ---------- avatar placeholder text per language ---------- */
-function noPhotoLabel(lang) {
-  const k = (lang || "").toLowerCase();
-  if (k === "hy" || k === "am") return "նկար";
-  if (k === "ru") return "фото";
-  if (k === "ar") return "صورة";
-  if (k === "fr") return "photo";
-  return "photo";
-}
-
 /* ---------- server rating helper ---------- */
-async function sendRatingToServer({ cardId, workerKey, prevStatus, nextStatus }) {
+async function sendBrandRating(cardId, workerKey, prevStatus, nextStatus) {
   try {
-    if (!cardId || !workerKey || prevStatus === nextStatus) return null;
-
-    const base = API || "";
-    const url = (base.replace(/\/+$/,"")) + "/public/brand-rating";
-
-    const res = await fetch(url, {
+    await fetch("/api/public/brand-rating", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -78,22 +62,9 @@ async function sendRatingToServer({ cardId, workerKey, prevStatus, nextStatus })
         nextStatus,
       }),
     });
-
-    if (!res.ok) return null;
-
-    const data = await res.json().catch(() => null);
-    if (!data) return null;
-
-    const likes    = Number(data.likes);
-    const dislikes = Number(data.dislikes);
-
-    if (Number.isFinite(likes) && Number.isFinite(dislikes)) {
-      return { likes, dislikes };
-    }
   } catch (e) {
-    console.warn("sendRatingToServer failed", e);
+    console.warn("brand-rating request failed", e);
   }
-  return null;
 }
 
 /* մեկ աշխատակցի քարտ */
@@ -134,11 +105,6 @@ function WorkerCard({ item, lang, cardId }) {
     return () => clearInterval(timer);
   }, [hasSlides, slides.length]);
 
-  /* ---------- colors from admin ---------- */
-  const nameColor   = (item.nameColor   || "#ffffff").toString();
-  const bioColor    = (item.bioColor    || "#ffffff").toString();
-  const bioBgColor  = (item.bioBgColor  || "rgba(0,0,0,0.55)").toString();
-
   /* ---------- rating state ---------- */
 
   const ratingAllowed = item.ratingEnabled !== false; // default true
@@ -148,86 +114,99 @@ function WorkerCard({ item, lang, cardId }) {
     (item.keyword && String(item.keyword)) ||
     ("worker-" + (name || "?"));
 
-  const [vote, setVote] = React.useState(() => {
-    const baseLikes    = Number(item.likes ?? 0) || 0;
-    const baseDislikes = Number(item.dislikes ?? 0) || 0;
+  const [vote, setVote] = React.useState(() => ({
+    likes: Number(item.likes ?? 0) || 0,
+    dislikes: Number(item.dislikes ?? 0) || 0,
+    status: "none"
+  }));
 
-    const map   = readRatingMap();
+  React.useEffect(() => {
+    const map = readRatingMap();
     const saved = map[workerKey];
     if (saved && typeof saved === "object") {
-      return {
-        likes:    baseLikes,
-        dislikes: baseDislikes,
+      setVote({
+        likes: Number(saved.likes ?? item.likes ?? 0) || 0,
+        dislikes: Number(saved.dislikes ?? item.dislikes ?? 0) || 0,
         status:
           saved.status === "like" || saved.status === "dislike"
             ? saved.status
-            : "none",
-      };
+            : "none"
+      });
+    } else {
+      setVote({
+        likes: Number(item.likes ?? 0) || 0,
+        dislikes: Number(item.dislikes ?? 0) || 0,
+        status: "none"
+      });
     }
-    return { likes: baseLikes, dislikes: baseDislikes, status: "none" };
-  });
+  }, [workerKey, item.likes, item.dislikes]);
 
-  function persistStatus(status) {
+  function persist(next) {
     const map = readRatingMap();
-    map[workerKey] = { status };
+    map[workerKey] = {
+      likes: next.likes,
+      dislikes: next.dislikes,
+      status: next.status
+    };
     writeRatingMap(map);
   }
 
-  function applyVote(type) {
+  function handleLike() {
     setVote(prev => {
-      const prevStatus = prev.status;
       let next = { ...prev };
+      let from = prev.status || "none";
+      let to;
 
-      if (type === "like") {
-        if (prev.status === "like") {
-          next.likes  = Math.max(0, prev.likes - 1);
-          next.status = "none";
-        } else if (prev.status === "dislike") {
-          next.dislikes = Math.max(0, prev.dislikes - 1);
-          next.likes    = prev.likes + 1;
-          next.status   = "like";
-        } else {
-          next.likes  = prev.likes + 1;
-          next.status = "like";
-        }
-      } else if (type === "dislike") {
-        if (prev.status === "dislike") {
-          next.dislikes = Math.max(0, prev.dislikes - 1);
-          next.status   = "none";
-        } else if (prev.status === "like") {
-          next.likes    = Math.max(0, prev.likes - 1);
-          next.dislikes = prev.dislikes + 1;
-          next.status   = "dislike";
-        } else {
-          next.dislikes = prev.dislikes + 1;
-          next.status   = "dislike";
-        }
+      if (prev.status === "like") {
+        next.likes = Math.max(0, prev.likes - 1);
+        next.status = "none";
+        to = "none";
+      } else if (prev.status === "dislike") {
+        next.dislikes = Math.max(0, prev.dislikes - 1);
+        next.likes = prev.likes + 1;
+        next.status = "like";
+        to = "like";
+      } else {
+        next.likes = prev.likes + 1;
+        next.status = "like";
+        to = "like";
       }
 
-      const nextStatus = next.status;
-      persistStatus(nextStatus);
-
-      // 🔁 fire-and-forget server update, հետո sync count-երը սերվերից
-      sendRatingToServer({
-        cardId,
-        workerKey,
-        prevStatus,
-        nextStatus,
-      }).then(server => {
-        if (server) {
-          setVote(v => ({
-            ...v,
-            likes:    server.likes,
-            dislikes: server.dislikes,
-          }));
-        }
-      });
-
+      // fire & forget server + localStorage
+      sendBrandRating(cardId, workerKey, from, to);
+      persist(next);
       return next;
     });
   }
 
-  const likeActive    = vote.status === "like";
+  function handleDislike() {
+    setVote(prev => {
+      let next = { ...prev };
+      let from = prev.status || "none";
+      let to;
+
+      if (prev.status === "dislike") {
+        next.dislikes = Math.max(0, prev.dislikes - 1);
+        next.status = "none";
+        to = "none";
+      } else if (prev.status === "like") {
+        next.likes = Math.max(0, prev.likes - 1);
+        next.dislikes = prev.dislikes + 1;
+        next.status = "dislike";
+        to = "dislike";
+      } else {
+        next.dislikes = prev.dislikes + 1;
+        next.status = "dislike";
+        to = "dislike";
+      }
+
+      sendBrandRating(cardId, workerKey, from, to);
+      persist(next);
+      return next;
+    });
+  }
+
+  const likeActive = vote.status === "like";
   const dislikeActive = vote.status === "dislike";
 
   return h(
@@ -262,13 +241,8 @@ function WorkerCard({ item, lang, cardId }) {
             style:{ width:"100%", height:"100%", objectFit:"cover" }
           })
         : h("span", {
-            style:{
-              fontWeight:700,
-              fontSize:16,
-              color:"#777",
-              textTransform:"lowercase"
-            }
-          }, noPhotoLabel(lang))
+            style:{ fontWeight:700, fontSize:22, color:"#777" }
+          }, (name || "?").slice(0,2).toUpperCase())
     ),
 
     /* անուն */
@@ -277,7 +251,7 @@ function WorkerCard({ item, lang, cardId }) {
         margin:"4px 0 8px",
         fontSize:18,
         fontWeight:700,
-        color: nameColor,
+        color: item.nameColor || "#ffffff"
       }
     }, name || "—"),
 
@@ -288,12 +262,12 @@ function WorkerCard({ item, lang, cardId }) {
         maxWidth:320,
         padding:"10px 12px",
         borderRadius:14,
-        background: bioBgColor,
-        color: bioColor,
+        background: item.bioBgColor || "#000000",
         fontSize:14,
         lineHeight:1.5,
         textAlign:"left",
-        whiteSpace:"pre-line"
+        whiteSpace:"pre-line",
+        color: item.bioColor || "#ffffff"
       }
     }, desc),
 
@@ -329,7 +303,7 @@ function WorkerCard({ item, lang, cardId }) {
 
         h("button", {
           type:"button",
-          onClick: () => goPrev(),
+          onClick: goPrev,
           style:{
             position:"absolute",
             left:8,
@@ -349,7 +323,7 @@ function WorkerCard({ item, lang, cardId }) {
 
         h("button", {
           type:"button",
-          onClick: () => goNext(),
+          onClick: goNext,
           style:{
             position:"absolute",
             right:8,
@@ -411,7 +385,7 @@ function WorkerCard({ item, lang, cardId }) {
       },
         h("button", {
           type:"button",
-          onClick: () => applyVote("like"),
+          onClick: handleLike,
           style:{
             display:"flex",
             alignItems:"center",
@@ -434,7 +408,7 @@ function WorkerCard({ item, lang, cardId }) {
 
         h("button", {
           type:"button",
-          onClick: () => applyVote("dislike"),
+          onClick: handleDislike,
           style:{
             display:"flex",
             alignItems:"center",
@@ -461,7 +435,7 @@ function WorkerCard({ item, lang, cardId }) {
 
 /**
  * Props:
- * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], ratingEnabled, nameColor, bioColor, bioBgColor, likes, dislikes }]
+ * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], ratingEnabled, likes, dislikes }]
  * - keyword
  * - lang
  * - cardId
@@ -471,7 +445,7 @@ export default function BrandInfoPage({
   brandInfos = [],
   keyword = "",
   lang = "am",
-  cardId = "",
+  cardId,
   onBack
 }) {
   React.useEffect(() => {
