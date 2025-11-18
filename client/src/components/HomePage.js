@@ -258,8 +258,8 @@ export default function HomePage({ cardId = "101" }) {
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
   const [splashDone, setSplashDone] = React.useState(false);   // ✅ splash timer
 
-  // ✅ popup–ը մեկ անգամ բացելու flag
-  const [sharePopupShown, setSharePopupShown] = React.useState(false);
+  // ✅ popup auto-open flag – միայն առաջին անգամ
+  const [shareAutoOpen, setShareAutoOpen] = React.useState(true);
 
   const htmlLang = lang === "am" ? "hy" : lang;
 
@@ -299,12 +299,16 @@ export default function HomePage({ cardId = "101" }) {
     return () => { killed = true; };
   }, [cardId]);
 
-  // ✅ info բեռնվել է → նշում ենք, որ popup–ը արդեն “բացված” է լինի
+  /* ✅ popup-ը թող ավտոմատ բացվի միայն
+     երբ առաջին անգամ ենք գլխավոր էջում (activeBrandKeyword === "").
+     Հետո flag-ը false ենք դարձնում, որ այլևս չբացվի */
   React.useEffect(() => {
-    if (!sharePopupShown && !loading && info) {
-      setSharePopupShown(true);
+    if (shareAutoOpen && !activeBrandKeyword) {
+      // առաջին render-ում auto-open true է,
+      // հետո անմիջապես false, որ հետ գալուց այլևս չբացվի
+      setShareAutoOpen(false);
     }
-  }, [sharePopupShown, loading, info]);
+  }, [shareAutoOpen, activeBrandKeyword]);
 
   /* ===== Splash loader – Contactum logo =====
      կերևա, քանի դեռ (loading === true) ԿԱՄ (splashDone === false)  */
@@ -516,8 +520,8 @@ export default function HomePage({ cardId = "101" }) {
                 cardId,
                 info,
                 lang: htmlLang,
-                // ✅ auto-open միայն առաջին մուտքի ժամանակ
-                autoOpenConfirm: !sharePopupShown,
+                // ✅ popup-ը ավտոմատ կբացվի միայն առաջին մուտքի ժամանակ
+                autoOpenConfirm: shareAutoOpen,
               })
             )
       )
