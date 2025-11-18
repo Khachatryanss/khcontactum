@@ -29,7 +29,6 @@ function hasKeyword(itemKeyword, activeKeyword) {
 }
 
 /* ---------- rating helpers (localStorage) ---------- */
-
 const RATING_STORAGE_KEY = "brand-worker-rating-v1";
 
 function readRatingMap() {
@@ -64,30 +63,43 @@ function getWorkerRatingState(workerId) {
   return { value: null };
 }
 
-/* ---------- main component ---------- */
+/* ---------- MAIN COMPONENT ---------- */
 /**
  * Props:
- *   - info: public info object (պահում է brandInfos / brandWorkers)
- *   - lang: active language code
- *   - activeKeyword: ընտրված brand keyword (BrandsPage-ից)
+ *   - info: public info
+ *   - lang
+ *   - activeKeyword
  */
 export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
+  // 🔍 Փորձում ենք workers array գտնել տարբեր field-ներից
   const workers = React.useMemo(() => {
     if (!info) return [];
-    if (Array.isArray(info.brandInfos)) return info.brandInfos;
-    if (Array.isArray(info.brandWorkers)) return info.brandWorkers;
+
+    const candidates = [
+      info.brandInfos,
+      info.brandWorkers,
+      info.workers,
+      info.workerList,
+      info.brandInfo, // եթե մի օր singular լինի, բայց array
+    ];
+
+    for (const c of candidates) {
+      if (Array.isArray(c) && c.length) return c;
+    }
     return [];
   }, [info]);
 
   if (!workers.length) return null;
 
-  // keyword-ով worker, եթե չկա՝ առաջինը
+  // keyword-ով ընտրում ենք worker, եթե չկա՝ վերցնում առաջինը
   const selected =
     workers.find((w) => hasKeyword(w.keyword, activeKeyword)) || workers[0];
 
+  if (!selected) return null;
+
   const workerId = selected.id || selected.keyword || "worker";
 
-  // i18n դաշտեր
+  // ---- i18n դաշտեր ----
   const workerName =
     pickLang(selected.name, lang) ||
     pickLang(selected.title, lang) ||
@@ -97,18 +109,18 @@ export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
     pickLang(selected.description, lang) ||
     "";
 
-  // avatar + gallery
+  // ---- avatar + gallery ----
   const avatarSrc = selected.avatar ? fileUrl(selected.avatar) : "";
   const gallery = Array.isArray(selected.gallery)
     ? selected.gallery.filter(Boolean)
     : [];
 
-  // 🎨 գույներ admin-ից (BrandInfoTab-ից պահված դաշտեր)
-  const nameColor   = selected.nameColor   || "#ffffff";           // name text color
-  const bioColor    = selected.bioColor    || "#ffffff";           // description text color
-  const bioBgColor  = selected.bioBgColor  || "rgba(0,0,0,0.75)";  // description background
+  // 🎨 գույներ admin-ից
+  const nameColor  = selected.nameColor  || "#ffffff";
+  const bioColor   = selected.bioColor   || "#ffffff";
+  const bioBgColor = selected.bioBgColor || "rgba(0,0,0,0.75)";
 
-  /* ----- rating state ----- */
+  // ---- rating state ----
   const [ratingValue, setRatingValue] = React.useState(
     getWorkerRatingState(workerId).value
   );
@@ -129,7 +141,7 @@ export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
   function handleRate(next) {
     if (!workerId) return;
     if (ratingValue === next) {
-      // նույնն էր՝ reset
+      // reset
       setRatingValue(null);
       const map = readRatingMap();
       delete map[workerId];
@@ -142,7 +154,7 @@ export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
     writeRatingMap(map);
   }
 
-  /* ----- slider state ----- */
+  // ---- slider ----
   const [slideIndex, setSlideIndex] = React.useState(0);
 
   React.useEffect(() => {
@@ -159,11 +171,11 @@ export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
     setSlideIndex((idx) => {
       const len = gallery.length;
       if (!len) return 0;
-      const next = (idx + dir + len) % len;
-      return next;
+      return (idx + dir + len) % len;
     });
   }
 
+  // ---- UI ----
   return h(
     "section",
     {
@@ -175,7 +187,7 @@ export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
       },
     },
 
-    /* ----- avatar ----- */
+    /* avatar */
     h(
       "div",
       {
@@ -239,7 +251,7 @@ export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
       )
     ),
 
-    /* ----- name pill (գույնը admin-ից) ----- */
+    /* name pill (գույնը admin-ից) */
     workerName &&
       h(
         "div",
@@ -253,7 +265,6 @@ export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
         h(
           "div",
           {
-            className: "brand-worker-name-pill",
             style: {
               padding: "8px 18px",
               borderRadius: 999,
@@ -265,19 +276,18 @@ export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
               whiteSpace: "nowrap",
               textOverflow: "ellipsis",
               overflow: "hidden",
-              color: nameColor, // <<<
+              color: nameColor,
             },
           },
           workerName
         )
       ),
 
-    /* ----- slider ----- */
+    /* slider */
     hasSlider &&
       h(
         "div",
         {
-          className: "brand-worker-slider-wrap",
           style: {
             margin: "8px auto 10px",
             maxWidth: 280,
@@ -348,43 +358,40 @@ export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
           )
       ),
 
-    /* ----- bio block (ֆոնի ու տեքստի գույները admin-ից) ----- */
+    /* bio block (background + text color admin-ից) */
     workerBio &&
       h(
         "div",
         {
-          className: "brand-worker-bio-wrap",
           style: {
             marginTop: 12,
             marginInline: "auto",
             maxWidth: 280,
             borderRadius: 18,
             padding: "10px 14px",
-            background: bioBgColor, // <<<
+            background: bioBgColor,
             boxShadow: "0 8px 20px rgba(0,0,0,0.6)",
           },
         },
         h(
           "p",
           {
-            className: "brand-worker-bio",
             style: {
               margin: 0,
               fontSize: 13,
               lineHeight: 1.45,
-              color: bioColor, // <<<
+              color: bioColor,
             },
           },
           workerBio
         )
       ),
 
-    /* ----- rating row ----- */
+    /* rating row */
     selected.ratingEnabled !== false &&
       h(
         "div",
         {
-          className: "brand-worker-rating-row",
           style: {
             marginTop: 16,
             display: "flex",
@@ -438,11 +445,7 @@ export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
             },
           },
           "👍",
-          h(
-            "span",
-            { style: { fontWeight: 600 } },
-            String(likes)
-          )
+          h("span", { style: { fontWeight: 600 } }, String(likes))
         ),
         h(
           "button",
@@ -471,11 +474,7 @@ export default function BrandInfoPage({ info, lang = "am", activeKeyword }) {
             },
           },
           "👎",
-          h(
-            "span",
-            { style: { fontWeight: 600 } },
-            String(dislikes)
-          )
+          h("span", { style: { fontWeight: 600 } }, String(dislikes))
         )
       )
   );
