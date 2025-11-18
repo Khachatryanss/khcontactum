@@ -47,7 +47,8 @@ r.use((req, _res, next) => {
   next();
 });
 
-/* ---------- fetch information by card_id ---------- */
+/* ---------- fetch helpers ---------- */
+
 async function fetchInformationByCardId(cardId) {
   const q = `
     SELECT ai.information
@@ -60,17 +61,93 @@ async function fetchInformationByCardId(cardId) {
   return rows[0]?.information || null;
 }
 
-/* ---------- save information by card_id (rating-ի համար) ---------- */
-async function saveInformationByCardId(cardId, information) {
+// rating-ի համար պետք է նաև admin_id-ն
+async function fetchAdminInfoRowByCardId(cardId) {
   const q = `
-    UPDATE admin_info AS ai
-    SET information = $2
-    FROM admins AS a
-    WHERE ai.admin_id = a.id
-      AND a.card_id   = $1
-      AND a.is_active = TRUE
+    SELECT ai.admin_id, ai.information
+    FROM admins a
+    JOIN admin_info ai ON ai.admin_id = a.id
+    WHERE a.card_id = $1 AND a.is_active = TRUE
+    LIMIT 1
   `;
-  await pool.query(q, [cardId, information]);
+  const { rows } = await pool.query(q, [cardId]);
+  if (!rows[0]) return null;
+  return {
+    admin_id: rows[0].admin_id,
+    information: rows[0].information || {}
+  };
+}
+
+/* ---------- rating helpers ---------- */
+
+function ratingDelta(prevStatus = "none", nextStatus = "none") {
+  // վերադարձնում է { dLikes, dDislikes }
+  if (prevStatus === nextStatus) return { dLikes: 0, dDislikes: 0 };
+
+  const norm = (s) =>
+    s === "like" || s === "dislike" || s === "none" ? s : "none";
+
+  const prev = norm(prevStatus);
+  const next = norm(nextStatus);
+
+  let dLikes = 0;
+  let dDislikes = 0;
+
+  if (prev === "none" && next === "like") {
+    dLikes = 1;
+  } else if (prev === "none" && next === "dislike") {
+    dDislikes = 1;
+  } else if (prev === "like" && next === "none") {
+    dLikes = -1;
+  } else if (prev === "dislike" && next === "none") {
+    dDislikes = -1;
+  } else if (prev === "like" && next === "dislike") {
+    dLikes = -1;
+    dDislikes = 1;
+  } else if (prev === "dislike" && next === "like") {
+    dDislikes = -1;
+    dLikes = 1;
+  }
+
+  return { dLikes, dDislikes };
+}
+
+function applyRatingToInformation(information = {}, workerKey, prevStatus, nextStatus) {
+  const { dLikes, dDislikes } = ratingDelta(prevStatus, nextStatus);
+  if (!dLikes && !dDislikes) {
+    return { changed: false, information };
+  }
+
+  const clone = { ...(information || {}) };
+  const list = Array.isArray(clone.brandInfos) ? [...clone.brandInfos] : [];
+  const keyStr = String(workerKey || "");
+
+  let changed = false;
+
+  const updated = list.map((item) => {
+    const idKey =
+      (item && item.id != null ? String(item.id) : "") ||
+      (item && item.keyword != null ? String(item.keyword) : "");
+
+    if (!idKey || idKey !== keyStr) return item;
+
+    const likes = Math.max(0, Number(item.likes ?? 0) + dLikes);
+    const dislikes = Math.max(0, Number(item.dislikes ?? 0) + dDislikes);
+
+    changed = true;
+    return {
+      ...item,
+      likes,
+      dislikes
+    };
+  });
+
+  if (!changed) {
+    return { changed: false, information };
+  }
+
+  clone.brandInfos = updated;
+  return { changed: true, information: clone };
 }
 
 /* ========== PUBLIC API ========== */
@@ -151,62 +228,39 @@ r.get("/c/:card_id", async (req, res) => {
   }
 });
 
-/* ========== BRAND RATING (Like / Dislike) ========== */
+/* ========== BRAND RATING API ========== */
 /**
- * POST /api/public/brand-rating
  * body: { cardId, workerKey, prevStatus, nextStatus }
- * prevStatus / nextStatus: "none" | "like" | "dislike"
- *
- * Վերադարձնում է թարմացված { likes, dislikes }
+ * prevStatus / nextStatus ∈ "none" | "like" | "dislike"
  */
 r.post("/brand-rating", async (req, res) => {
   try {
     const { cardId, workerKey, prevStatus, nextStatus } = req.body || {};
+    const cardNum = Number(cardId);
 
-    const numericCardId = Number(cardId);
-    if (!Number.isFinite(numericCardId) || !workerKey) {
-      return res.status(400).json({ error: "Bad cardId or workerKey" });
+    if (!Number.isFinite(cardNum) || !workerKey) {
+      return res.status(400).json({ error: "Bad payload" });
     }
 
-    const information = await fetchInformationByCardId(numericCardId);
-    if (!information) {
+    const row = await fetchAdminInfoRowByCardId(cardNum);
+    if (!row) {
       return res.status(404).json({ error: "Card not found" });
     }
 
-    const list = Array.isArray(information.brandInfos)
-      ? information.brandInfos
-      : [];
+    const { admin_id, information } = row;
+    const { changed, information: nextInfo } =
+      applyRatingToInformation(information, workerKey, prevStatus, nextStatus);
 
-    const idx = list.findIndex((x) =>
-      String(x.id || x.keyword || "")
-        .toLowerCase()
-        .trim() === String(workerKey).toLowerCase().trim()
-    );
-
-    if (idx === -1) {
-      return res.status(404).json({ error: "Worker not found" });
+    if (!changed) {
+      return res.json({ ok: true, changed: false });
     }
 
-    const w = { ...(list[idx] || {}) };
-    w.likes = Number(w.likes || 0) || 0;
-    w.dislikes = Number(w.dislikes || 0) || 0;
+    await pool.query(
+      "UPDATE admin_info SET information = $2 WHERE admin_id = $1",
+      [admin_id, nextInfo]
+    );
 
-    const apply = (from, to) => {
-      if (from === to) return;
-      if (from === "like") w.likes = Math.max(0, w.likes - 1);
-      if (from === "dislike") w.dislikes = Math.max(0, w.dislikes - 1);
-      if (to === "like") w.likes += 1;
-      if (to === "dislike") w.dislikes += 1;
-    };
-
-    apply(prevStatus || "none", nextStatus || "none");
-
-    list[idx] = w;
-    information.brandInfos = list;
-
-    await saveInformationByCardId(numericCardId, information);
-
-    return res.json({ likes: w.likes, dislikes: w.dislikes });
+    return res.json({ ok: true, changed: true });
   } catch (e) {
     console.error("brand-rating error:", e);
     return res.status(500).json({ error: "Server error" });
