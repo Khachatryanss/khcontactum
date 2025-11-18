@@ -2,7 +2,7 @@
 import React from "react";
 import "./Responcive.css";
 
-// png icon-ներ
+// png icon-ներ (հիմա UI-ում չենք ցույց տալիս, բայց թողնում ենք, եթե պետք գա հետագայում)
 import fbIcon    from "../img/face.png";
 import tgIcon    from "../img/tele.png";
 import lnIcon    from "../img/linkdin.png";
@@ -10,7 +10,6 @@ import waIcon    from "../img/wp.png";
 import mailIcon  from "../img/email.png";
 import viberIcon from "../img/vb.png";
 import igIcon    from "../img/insta.png";
-// import contactumLogo from "../img/Contactum.png";   // logo-ն հիմա չենք օգտագործում
 
 const h = React.createElement;
 
@@ -124,6 +123,7 @@ const TEXT = {
   },
 };
 
+/* quick flags դեռ պահում ենք struct-ի մեջ (admin panel-ի համար) */
 const DEFAULT_QUICK = {
   fb: true,
   tg: true,
@@ -356,76 +356,6 @@ function buildVCard(name, phone, contactMeta) {
   return lines.join("\r\n");
 }
 
-/** icon meta՝ png-ներով */
-const SHARE_ICON_META = {
-  fb:   { label: "Facebook",  img: fbIcon },
-  tg:   { label: "Telegram",  img: tgIcon },
-  ln:   { label: "LinkedIn",  img: lnIcon },
-  wa:   { label: "WhatsApp",  img: waIcon },
-  mail: { label: "Email",     img: mailIcon },
-  viber:{ label: "Viber",     img: viberIcon },
-  ig:   { label: "Instagram", img: igIcon },
-};
-
-function buildShareUrl(kind, url, text, mailSubject) {
-  const msg = (text ? text + " " : "") + url;
-  const encUrl  = encodeURIComponent(url);
-  const encText = encodeURIComponent(text || "");
-  const encBoth = encodeURIComponent(msg);
-
-  switch (kind) {
-    case "fb":
-      return "https://www.facebook.com/sharer/sharer.php?u=" + encUrl;
-    case "tg":
-      return "https://t.me/share/url?url=" + encUrl + "&text=" + encText;
-    case "ln":
-      return "https://www.linkedin.com/sharing/share-offsite/?url=" + encUrl;
-    case "wa":
-      return "https://wa.me/?text=" + encBoth;
-    case "mail":
-      return (
-        "mailto:?subject=" +
-        encodeURIComponent(mailSubject || "KHContactum digital card") +
-        "&body=" +
-        encBoth
-      );
-    case "viber":
-      return "viber://forward?text=" + encBoth;
-    case "ig":
-      return url;
-    default:
-      return url;
-  }
-}
-
-/** icon button (png) */
-function ShareIcon({ kind, onClick }) {
-  const meta = SHARE_ICON_META[kind];
-  if (!meta) return null;
-
-  return h(
-    "button",
-    {
-      type: "button",
-      className: "share-icon-btn share-icon-" + kind,
-      onClick,
-      title: meta.label,
-      style: {
-        border: "none",
-        background: "transparent",
-        padding: 0,
-        cursor: "pointer",
-      },
-    },
-    h("img", {
-      src: meta.img,
-      alt: meta.label,
-      loading: "lazy",
-      style: { width: 36, height: 36, display: "block" },
-    })
-  );
-}
-
 /* ========= vCard saver ========= */
 async function saveVCardUniversal({
   name,
@@ -515,10 +445,9 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
   const btnBgColor      = share.styles.btnBgColor      || "#000000";
   const shareTitleColor = share.styles.shareTitleColor || "#000000";
 
-  const quick = share.quick || DEFAULT_QUICK;
-  const enabledKinds = Object.keys(quick).filter((k) => quick[k]);
-
-  function onShare(kind) {
+  // ✅ ՆՈՐ ընդհանուր share handler – օգտագործում է navigator.share,
+  //    իսկ եթե չկա, fallback է անում URL բացելուն / copy-ին
+  function onShareUniversal() {
     const url =
       onlineUrl ||
       (typeof window !== "undefined"
@@ -526,25 +455,34 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
         : "");
     if (!url) return;
 
-    if (kind === "ig" && typeof navigator !== "undefined" && navigator.share) {
-      navigator
-        .share({ title: "KHContactum", text: shareText, url })
-        .catch(() => {});
+    const title =
+      offlineName ||
+      (info?.company?.name && info.company.name[activeLang]) ||
+      "KHContactum";
+
+    const payload = {
+      title,
+      text: shareText,
+      url,
+    };
+
+    if (typeof navigator !== "undefined" && navigator.share) {
+      navigator.share(payload).catch(() => {});
       return;
     }
 
-    const href = buildShareUrl(kind, url, shareText, t.mailSubject);
+    if (
+      typeof navigator !== "undefined" &&
+      navigator.clipboard &&
+      typeof window !== "undefined" &&
+      window.isSecureContext
+    ) {
+      navigator.clipboard.writeText(url).catch(() => {});
+      return;
+    }
 
-    if (href.startsWith("http")) {
-      window.open(href, "_blank", "noopener,noreferrer");
-    } else {
-      const a = document.createElement("a");
-      a.href = href;
-      a.target = "_blank";
-      a.rel = "noopener";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+    if (typeof window !== "undefined") {
+      window.open(url, "_blank", "noopener,noreferrer");
     }
   }
 
@@ -615,27 +553,29 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
         t.scanBtn
       ),
 
+      // ======== ՆՈՐ «Կիսվել իմ քարտով» button =========
       h(
         "h3",
         { style: { margin: "0 0 10px", fontSize: 16, color: shareTitleColor } },
         t.shareTitle
       ),
-
       h(
-        "div",
+        "button",
         {
+          type: "button",
+          className: "btn",
           style: {
-            display: "flex",
-            justifyContent: "center",
-            gap: 14,
-            marginBottom: 20,
-            flexWrap: "wrap",
+            width: "80%",
+            maxWidth: 360,
+            margin: "0 auto 20px",
+            background: btnBgColor,
+            color: btnTextColor,
           },
+          onClick: onShareUniversal,
         },
-        enabledKinds.map((kind) =>
-          h(ShareIcon, { key: kind, kind, onClick: () => onShare(kind) })
-        )
+        t.shareTitle
       ),
+      // ======== END share button =========
 
       h(
         "button",
