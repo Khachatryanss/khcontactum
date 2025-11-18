@@ -47,8 +47,7 @@ r.use((req, _res, next) => {
   next();
 });
 
-/* ---------- fetch / save information by card_id ---------- */
-
+/* ---------- fetch information by card_id ---------- */
 async function fetchInformationByCardId(cardId) {
   const q = `
     SELECT ai.information
@@ -59,18 +58,6 @@ async function fetchInformationByCardId(cardId) {
   `;
   const { rows } = await pool.query(q, [cardId]);
   return rows[0]?.information || null;
-}
-
-async function saveInformationByCardId(cardId, info) {
-  const q = `
-    UPDATE admin_info AS ai
-    SET information = $2::jsonb
-    FROM admins AS a
-    WHERE ai.admin_id = a.id
-      AND a.card_id = $1
-  `;
-  const payload = info || {};
-  await pool.query(q, [cardId, JSON.stringify(payload)]);
 }
 
 /* ========== PUBLIC API ========== */
@@ -98,66 +85,81 @@ r.get("/card/:card_id", async (req, res) => {
   }
 });
 
-/**
- * Persist brand worker rating (like / dislike) for public BrandInfo
- *
- * POST /api/public/card/:card_id/brandinfo/:worker_key/rating
- * body: { likes: number, dislikes: number }
- *
- * `worker_key` կարող է համընկնել
- *  - item.id
- *  - կամ item.keyword
- */
-r.post("/card/:card_id/brandinfo/:worker_key/rating", async (req, res) => {
+/* ========= LIKE / DISLIKE RATING (BrandInfo) =========
+   URL: POST /api/public/card/:card_id/brandinfo/:workerKey/rating
+   Body: { likes: number, dislikes: number }
+   Պահում ենք admin_info.information.brandInfos մեջ։
+*/
+r.post("/card/:card_id/brandinfo/:workerKey/rating", async (req, res) => {
   const cardId = Number(req.params.card_id);
-  const workerKey = (req.params.worker_key || "").toString();
+  const workerKey = String(req.params.workerKey || "").trim();
   if (!Number.isFinite(cardId) || !workerKey) {
     return res.status(400).json({ error: "Bad params" });
   }
 
+  let { likes, dislikes } = req.body || {};
+  likes = Number(likes);
+  dislikes = Number(dislikes);
+  if (!Number.isFinite(likes) || likes < 0) likes = 0;
+  if (!Number.isFinite(dislikes) || dislikes < 0) dislikes = 0;
+
   try {
-    const info = await fetchInformationByCardId(cardId);
-    if (!info) {
+    // վերցնում ենք admin_id + information
+    const q = `
+      SELECT a.id AS admin_id, ai.information
+      FROM admins a
+      JOIN admin_info ai ON ai.admin_id = a.id
+      WHERE a.card_id = $1 AND a.is_active = TRUE
+      LIMIT 1
+    `;
+    const { rows } = await pool.query(q, [cardId]);
+    if (!rows.length) {
       return res.status(404).json({ error: "Not found" });
     }
+    const adminId = rows[0].admin_id;
+    const info = rows[0].information || {};
 
-    const likes = Number(req.body?.likes ?? 0);
-    const dislikes = Number(req.body?.dislikes ?? 0);
+    let brandInfos = Array.isArray(info.brandInfos)
+      ? info.brandInfos
+      : Array.isArray(info.brandWorkers)
+      ? info.brandWorkers
+      : [];
 
-    if (!Array.isArray(info.brandInfos)) {
-      info.brandInfos = [];
-    }
-
-    const list = info.brandInfos;
-    const idx = list.findIndex((x) => {
-      const idStr = x?.id != null ? String(x.id) : "";
-      const kwStr = x?.keyword != null ? String(x.keyword) : "";
-      return idStr === workerKey || kwStr === workerKey;
+    let changed = false;
+    brandInfos = brandInfos.map((w) => {
+      const k =
+        (w.id && String(w.id)) ||
+        (w.keyword && String(w.keyword)) ||
+        "";
+      if (k === workerKey) {
+        changed = true;
+        return {
+          ...w,
+          likes,
+          dislikes,
+        };
+      }
+      return w;
     });
 
-    if (idx === -1) {
-      return res.status(404).json({ error: "Worker not found" });
+    if (!changed) {
+      // եթե workerKey չգտնվեց, ուղղակի չենք փոխում
+      return res.json({ ok: true, updated: false });
     }
 
-    // overwrite absolute counts (front-end–ը արդեն հաշվել է)
-    const w = list[idx] || {};
-    list[idx] = {
-      ...w,
-      likes: Number.isFinite(likes) && likes >= 0 ? likes : 0,
-      dislikes: Number.isFinite(dislikes) && dislikes >= 0 ? dislikes : 0,
+    const nextInfo = {
+      ...info,
+      brandInfos,
     };
 
-    await saveInformationByCardId(cardId, info);
+    await pool.query(
+      "UPDATE admin_info SET information = $1 WHERE admin_id = $2",
+      [nextInfo, adminId]
+    );
 
-    return res.json({
-      ok: true,
-      card_id: cardId,
-      worker_key: workerKey,
-      likes: list[idx].likes,
-      dislikes: list[idx].dislikes,
-    });
+    return res.json({ ok: true, updated: true });
   } catch (e) {
-    console.error("rating update error:", e);
+    console.error("rating update error", e);
     return res.status(500).json({ error: "Server error" });
   }
 });
