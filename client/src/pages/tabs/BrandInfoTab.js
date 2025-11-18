@@ -13,6 +13,10 @@ const BRANDINFO_TEXT = {
     ratingLabel: "Like / Dislike",
     nameLabel: "Անուն:",
     bioLabel: "Նկարագրություն:",
+    // 👇 Name color / Description color / Description background color
+    nameColorLabel: "Անվան գույնը (Name color)",
+    bioColorLabel: "Նկարագրության գույնը (Description color)",
+    bioBgColorLabel: "Նկարագրության ֆոնի գույնը (Description background color)",
     sliderLabel: "Սլայդեր (մինչև 5 նկար, 6:9)",
     deleteWorkerButton: "Ջնջել",
     addWorkerButton: "Ավելացնել",
@@ -35,6 +39,10 @@ const BRANDINFO_TEXT = {
     ratingLabel: "Like / Dislike",
     nameLabel: "Имя :",
     bioLabel: "Описание :",
+    nameColorLabel: "Цвет имени (Name color)",
+    bioColorLabel: "Цвет описания (Description color)",
+    bioBgColorLabel:
+      "Цвет фона описания (Description background color)",
     sliderLabel: "Слайдер (до 5 изображений, 6:9)",
     deleteWorkerButton: "Удалить",
     addWorkerButton: "Добавить",
@@ -57,6 +65,9 @@ const BRANDINFO_TEXT = {
     ratingLabel: "Like / Dislike",
     nameLabel: "Name:",
     bioLabel: "Description:",
+    nameColorLabel: "Name color",
+    bioColorLabel: "Description color",
+    bioBgColorLabel: "Description background color",
     sliderLabel: "Slider (up to 5 images, 6:9)",
     deleteWorkerButton: "Delete",
     addWorkerButton: "Add",
@@ -79,6 +90,10 @@ const BRANDINFO_TEXT = {
     ratingLabel: "Like / Dislike",
     nameLabel: "الاسم:",
     bioLabel: "الوصف:",
+    nameColorLabel: "لون الاسم (Name color)",
+    bioColorLabel: "لون الوصف (Description color)",
+    bioBgColorLabel:
+      "لون خلفية الوصف (Description background color)",
     sliderLabel: "سلايدر (حتى ٥ صور، 6:9)",
     deleteWorkerButton: "حذف",
     addWorkerButton: "إضافة",
@@ -102,6 +117,10 @@ const BRANDINFO_TEXT = {
     ratingLabel: "Like / Dislike",
     nameLabel: "Nom :",
     bioLabel: "Description :",
+    nameColorLabel: "Couleur du nom (Name color)",
+    bioColorLabel: "Couleur de la description (Description color)",
+    bioBgColorLabel:
+      "Couleur du fond de description (Description background color)",
     sliderLabel: "Slider (jusqu’à 5 images, 6:9)",
     deleteWorkerButton: "Supprimer",
     addWorkerButton: "Ajouter",
@@ -118,7 +137,6 @@ const BRANDINFO_TEXT = {
     saveFailed: "Échec de l’enregistrement",
   },
 };
-
 
 /* ---------- helpers ---------- */
 function filesBase() {
@@ -225,7 +243,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
 
   const [baseInfo, setBaseInfo] = React.useState(null);
 
-  // workers: [{ id, keyword, name:{}, bio:{}, avatar, gallery[], ratingEnabled }]
+  // workers: [{ id, keyword, name:{}, bio:{}, avatar, gallery[], ratingEnabled, nameColor, bioColor, bioBgColor }]
   const [workers, setWorkers] = React.useState([]);
 
   const [loading, setLoading] = React.useState(false);
@@ -255,6 +273,9 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
           avatar: (x.avatar || "").toString().trim(),
           gallery: cleanGallery(x.gallery),
           ratingEnabled: x.ratingEnabled !== false, // default TRUE
+          nameColor: (x.nameColor || "#ffffff").toString(),
+          bioColor: (x.bioColor || "#ffffff").toString(),
+          bioBgColor: (x.bioBgColor || "#000000").toString(),
         }));
         setWorkers(prepared);
       } catch (e) {
@@ -299,6 +320,9 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         avatar: "",
         gallery: [],
         ratingEnabled: true,
+        nameColor: "#ffffff",
+        bioColor: "#ffffff",
+        bioBgColor: "#000000",
       },
     ]);
   }
@@ -379,6 +403,9 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         avatar: (w.avatar || "").toString().trim(),
         gallery: cleanGallery(w.gallery),
         ratingEnabled: !!w.ratingEnabled,
+        nameColor: (w.nameColor || "#ffffff").toString(),
+        bioColor: (w.bioColor || "#ffffff").toString(),
+        bioBgColor: (w.bioBgColor || "#000000").toString(),
       }));
 
       const next = { ...(baseInfo || {}) };
@@ -405,6 +432,9 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         avatar: (x.avatar || "").toString().trim(),
         gallery: cleanGallery(x.gallery),
         ratingEnabled: x.ratingEnabled !== false,
+        nameColor: (x.nameColor || "#ffffff").toString(),
+        bioColor: (x.bioColor || "#ffffff").toString(),
+        bioBgColor: (x.bioBgColor || "#000000").toString(),
       }));
       setWorkers(prepared);
 
@@ -453,7 +483,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
           // avatar + upload overlay
           h(
             "div",
-            { className: "worker-avatar", id: "avatarUpload"},
+            { className: "worker-avatar", id: "avatarUpload" },
             w.avatar
               ? h("img", { src: absPreview(w.avatar), alt: "worker" })
               : h(
@@ -467,7 +497,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
               "label",
               {
                 className: "btn pill btn-small avatar-upload",
-                id: "text"
+                id: "text",
               },
               T.avatarLabel,
               h("input", {
@@ -514,6 +544,93 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
                 checked: !!w.ratingEnabled,
                 onChange: (e) =>
                   onWorkerField(w.id, "ratingEnabled", e.target.checked),
+              })
+            ),
+
+            // Name color
+            h(
+              "div",
+              {
+                className: "row",
+                style: {
+                  marginTop: 4,
+                  gap: 8,
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                },
+              },
+              h("label", { className: "lbl" }, T.nameColorLabel),
+              h("input", {
+                type: "color",
+                value: w.nameColor || "#ffffff",
+                onChange: (e) =>
+                  onWorkerField(w.id, "nameColor", e.target.value),
+                style: {
+                  width: 52,
+                  height: 28,
+                  padding: 0,
+                  border: "none",
+                  background: "transparent",
+                  cursor: "pointer",
+                },
+              })
+            ),
+
+            // Description color
+            h(
+              "div",
+              {
+                className: "row",
+                style: {
+                  marginTop: 4,
+                  gap: 8,
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                },
+              },
+              h("label", { className: "lbl" }, T.bioColorLabel),
+              h("input", {
+                type: "color",
+                value: w.bioColor || "#ffffff",
+                onChange: (e) =>
+                  onWorkerField(w.id, "bioColor", e.target.value),
+                style: {
+                  width: 52,
+                  height: 28,
+                  padding: 0,
+                  border: "none",
+                  background: "transparent",
+                  cursor: "pointer",
+                },
+              })
+            ),
+
+            // Description background color
+            h(
+              "div",
+              {
+                className: "row",
+                style: {
+                  marginTop: 4,
+                  gap: 8,
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                },
+              },
+              h("label", { className: "lbl" }, T.bioBgColorLabel),
+              h("input", {
+                type: "color",
+                value: w.bioBgColor || "#000000",
+                onChange: (e) =>
+                  onWorkerField(w.id, "bioBgColor", e.target.value),
+                style: {
+                  width: 52,
+                  height: 28,
+                  padding: 0,
+                  border: "none",
+                  background: "transparent",
+                  cursor: "pointer",
+                },
               })
             ),
 
