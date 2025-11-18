@@ -13,7 +13,6 @@ const BRANDINFO_TEXT = {
     ratingLabel: "Like / Dislike",
     nameLabel: "Անուն:",
     bioLabel: "Նկարագրություն:",
-    // 👇 Name color / Description color / Description background color
     nameColorLabel: "Անվան գույնը",
     bioColorLabel: "Նկարագրության գույնը",
     bioBgColorLabel: "Նկարագրության ֆոնի գույնը",
@@ -41,8 +40,7 @@ const BRANDINFO_TEXT = {
     bioLabel: "Описание :",
     nameColorLabel: "Цвет имени",
     bioColorLabel: "Цвет описания",
-    bioBgColorLabel:
-      "Цвет фона описания",
+    bioBgColorLabel: "Цвет фона описания",
     sliderLabel: "Слайдер (до 5 изображений, 6:9)",
     deleteWorkerButton: "Удалить",
     addWorkerButton: "Добавить",
@@ -92,8 +90,7 @@ const BRANDINFO_TEXT = {
     bioLabel: "الوصف:",
     nameColorLabel: "لون الاسم)",
     bioColorLabel: "لون الوصف",
-    bioBgColorLabel:
-      "لون خلفية الوصف",
+    bioBgColorLabel: "لون خلفية الوصف",
     sliderLabel: "سلايدر (حتى ٥ صور، 6:9)",
     deleteWorkerButton: "حذف",
     addWorkerButton: "إضافة",
@@ -119,8 +116,7 @@ const BRANDINFO_TEXT = {
     bioLabel: "Description :",
     nameColorLabel: "Couleur du nom",
     bioColorLabel: "Couleur de la description",
-    bioBgColorLabel:
-      "Couleur du fond de description",
+    bioBgColorLabel: "Couleur du fond de description",
     sliderLabel: "Slider (jusqu’à 5 images, 6:9)",
     deleteWorkerButton: "Supprimer",
     addWorkerButton: "Ajouter",
@@ -250,6 +246,9 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
   const [saving, setSaving] = React.useState(false);
   const [msg, setMsg] = React.useState("");
 
+  // scroll container ref – որպեսզի «Ավելացնել» սեղմելուց հետո նիժևը սքրոլ անենք
+  const listRef = React.useRef(null);
+
   React.useEffect(() => {
     (async () => {
       try {
@@ -310,21 +309,36 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
   }
 
   function addWorker() {
-    setWorkers((list) => [
-      ...list,
-      {
-        id: uid(),
-        keyword: "",
-        name: toI18nObj(""),
-        bio: toI18nObj(""),
-        avatar: "",
-        gallery: [],
-        ratingEnabled: true,
-        nameColor: "#ffffff",
-        bioColor: "#ffffff",
-        bioBgColor: "#000000",
-      },
-    ]);
+    setWorkers((list) => {
+      const next = [
+        ...list,
+        {
+          id: uid(),
+          keyword: "",
+          name: toI18nObj(""),
+          bio: toI18nObj(""),
+          avatar: "",
+          gallery: [],
+          ratingEnabled: true,
+          nameColor: "#ffffff",
+          bioColor: "#ffffff",
+          bioBgColor: "#000000",
+        },
+      ];
+
+      // փոքր delay, որ նոր քարտը render լինի, հետո scroll անենք ներքև
+      setTimeout(() => {
+        const el = listRef.current;
+        if (el) {
+          el.scrollTo({
+            top: el.scrollHeight + 120,
+            behavior: "smooth",
+          });
+        }
+      }, 60);
+
+      return next;
+    });
   }
 
   function delWorker(id) {
@@ -472,233 +486,252 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
       T.keywordHint
     ),
 
+    // scrollable list (buttons fixed ներքևում)
     h(
       "div",
-      { className: "admin-workers" },
-      workers.map((w) =>
-        h(
-          "div",
-          { key: w.id, className: "worker-row card" },
-
-          // avatar + upload overlay
+      { className: "admin-workers-scroll", ref: listRef },
+      h(
+        "div",
+        { className: "admin-workers" },
+        workers.map((w) =>
           h(
             "div",
-            { className: "worker-avatar", id: "avatarUpload" },
-            w.avatar
-              ? h("img", { src: absPreview(w.avatar), alt: "worker" })
-              : h(
-                  "span",
-                  { className: "worker-avatar-initials" },
-                  (w.name && (w.name.am || w.name.en || "?"))
-                    .slice(0, 2)
-                    .toUpperCase()
-                ),
-            h(
-              "label",
-              {
-                className: "btn pill btn-small avatar-upload",
-                id: "text",
-              },
-              T.avatarLabel,
-              h("input", {
-                type: "file",
-                accept: "image/*",
-                style: { display: "none" },
-                onChange: (e) => {
-                  const f = e.target.files && e.target.files[0];
-                  if (f) uploadWorkerAvatar(w.id, f);
-                  e.target.value = "";
-                },
-              })
-            )
-          ),
+            { key: w.id, className: "worker-row card" },
 
-          // main fields
-          h(
-            "div",
-            { className: "worker-main" },
-
+            // avatar + upload overlay
             h(
               "div",
-              { className: "row" },
-              h("label", { className: "lbl" }, T.keywordLabel + ":"),
-              h("input", {
-                className: "input",
-                style: { flex: 1 },
-                value: w.keyword || "",
-                "data-fieldkey": w.id + ":keyword",
-                autoComplete: "off",
-                spellCheck: false,
-                onChange: (e) =>
-                  onWorkerField(w.id, "keyword", e.target.value),
-              })
-            ),
-
-            // Like / Dislike toggle
-            h(
-              "div",
-              { className: "row", style: { marginTop: 4 } },
-              h("label", { className: "lbl" }, T.ratingLabel),
-              h("input", {
-                type: "checkbox",
-                checked: !!w.ratingEnabled,
-                onChange: (e) =>
-                  onWorkerField(w.id, "ratingEnabled", e.target.checked),
-              })
-            ),
-
-            // Name color
-            h(
-              "div",
-              {
-                className: "row",
-                style: {
-                  marginTop: 4,
-                  gap: 8,
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                },
-              },
-              h("label", { className: "lbl" }, T.nameColorLabel),
-              h("input", {
-                type: "color",
-                value: w.nameColor || "#ffffff",
-                onChange: (e) =>
-                  onWorkerField(w.id, "nameColor", e.target.value),
-                style: {
-                  width: 52,
-                  height: 28,
-                  padding: 0,
-                  border: "none",
-                  background: "transparent",
-                  cursor: "pointer",
-                },
-              })
-            ),
-
-            // Description color
-            h(
-              "div",
-              {
-                className: "row",
-                style: {
-                  marginTop: 4,
-                  gap: 8,
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                },
-              },
-              h("label", { className: "lbl" }, T.bioColorLabel),
-              h("input", {
-                type: "color",
-                value: w.bioColor || "#ffffff",
-                onChange: (e) =>
-                  onWorkerField(w.id, "bioColor", e.target.value),
-                style: {
-                  width: 52,
-                  height: 28,
-                  padding: 0,
-                  border: "none",
-                  background: "transparent",
-                  cursor: "pointer",
-                },
-              })
-            ),
-
-            // Description background color
-            h(
-              "div",
-              {
-                className: "row",
-                style: {
-                  marginTop: 4,
-                  gap: 8,
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                },
-              },
-              h("label", { className: "lbl" }, T.bioBgColorLabel),
-              h("input", {
-                type: "color",
-                value: w.bioBgColor || "#000000",
-                onChange: (e) =>
-                  onWorkerField(w.id, "bioBgColor", e.target.value),
-                style: {
-                  width: 52,
-                  height: 28,
-                  padding: 0,
-                  border: "none",
-                  background: "transparent",
-                  cursor: "pointer",
-                },
-              })
-            ),
-
-            h(I18nRow, {
-              brandId: w.id + ":name",
-              label: T.nameLabel,
-              value: w.name,
-              onChange: (L, v, fieldKey) =>
-                onWorkerName(w.id, L, v, fieldKey),
-              langs: activeLangs,
-            }),
-
-            h(I18nRow, {
-              brandId: w.id + ":bio",
-              label: T.bioLabel,
-              value: w.bio,
-              onChange: (L, v, fieldKey) => onWorkerBio(w.id, L, v, fieldKey),
-              langs: activeLangs,
-            }),
-
-            h(
-              "div",
-              { className: "worker-gallery-block" },
+              { className: "worker-avatar", id: "avatarUpload" },
+              w.avatar
+                ? h("img", { src: absPreview(w.avatar), alt: "worker" })
+                : h(
+                    "span",
+                    { className: "worker-avatar-initials" },
+                    (w.name && (w.name.am || w.name.en || "?"))
+                      .slice(0, 2)
+                      .toUpperCase()
+                  ),
               h(
-                "div",
-                { className: "lbl", style: { marginBottom: 6 } },
-                T.sliderLabel
-              ),
-              h(
-                "div",
-                { className: "worker-gallery-row" },
-                [0, 1, 2, 3, 4].map((idx) => {
-                  const src = w.gallery && w.gallery[idx] ? w.gallery[idx] : "";
-                  return h(
-                    "label",
-                    {
-                      key: idx,
-                      className: "gallery-slot",
-                    },
-                    src
-                      ? h("img", { src: absPreview(src), alt: "slide" })
-                      : h("span", { className: "gallery-plus" }, "+"),
-                    h("input", {
-                      type: "file",
-                      accept: "image/*",
-                      style: { display: "none" },
-                      onChange: (e) => {
-                        const f = e.target.files && e.target.files[0];
-                        if (f) uploadWorkerGallery(w.id, f, idx);
-                        e.target.value = "";
-                      },
-                    })
-                  );
+                "label",
+                {
+                  className: "btn pill btn-small avatar-upload",
+                  id: "text",
+                },
+                T.avatarLabel,
+                h("input", {
+                  type: "file",
+                  accept: "image/*",
+                  style: { display: "none" },
+                  onChange: (e) => {
+                    const f = e.target.files && e.target.files[0];
+                    if (f) uploadWorkerAvatar(w.id, f);
+                    e.target.value = "";
+                  },
                 })
               )
             ),
 
+            // main fields
             h(
               "div",
-              { className: "row", style: { marginTop: 6 } },
+              { className: "worker-main" },
+
               h(
-                "button",
+                "div",
+                { className: "row" },
+                h("label", { className: "lbl" }, T.keywordLabel + ":"),
+                h("input", {
+                  className: "input",
+                  style: { flex: 1 },
+                  value: w.keyword || "",
+                  "data-fieldkey": w.id + ":keyword",
+                  autoComplete: "off",
+                  spellCheck: false,
+                  onChange: (e) =>
+                    onWorkerField(w.id, "keyword", e.target.value),
+                })
+              ),
+
+              // Like / Dislike toggle
+              h(
+                "div",
+                { className: "row", style: { marginTop: 4 } },
+                h("label", { className: "lbl" }, T.ratingLabel),
+                h("input", {
+                  type: "checkbox",
+                  checked: !!w.ratingEnabled,
+                  onChange: (e) =>
+                    onWorkerField(
+                      w.id,
+                      "ratingEnabled",
+                      e.target.checked
+                    ),
+                })
+              ),
+
+              // Name color
+              h(
+                "div",
                 {
-                  type: "button",
-                  className: "btn pill danger btn-small",
-                  onClick: () => delWorker(w.id),
+                  className: "row",
+                  style: {
+                    marginTop: 4,
+                    gap: 8,
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                  },
                 },
-                T.deleteWorkerButton
+                h("label", { className: "lbl" }, T.nameColorLabel),
+                h("input", {
+                  type: "color",
+                  value: w.nameColor || "#ffffff",
+                  onChange: (e) =>
+                    onWorkerField(w.id, "nameColor", e.target.value),
+                  style: {
+                    width: 52,
+                    height: 28,
+                    padding: 0,
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+                  },
+                })
+              ),
+
+              // Description color
+              h(
+                "div",
+                {
+                  className: "row",
+                  style: {
+                    marginTop: 4,
+                    gap: 8,
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                  },
+                },
+                h("label", { className: "lbl" }, T.bioColorLabel),
+                h("input", {
+                  type: "color",
+                  value: w.bioColor || "#ffffff",
+                  onChange: (e) =>
+                    onWorkerField(w.id, "bioColor", e.target.value),
+                  style: {
+                    width: 52,
+                    height: 28,
+                    padding: 0,
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+                  },
+                })
+              ),
+
+              // Description background color
+              h(
+                "div",
+                {
+                  className: "row",
+                  style: {
+                    marginTop: 4,
+                    gap: 8,
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                  },
+                },
+                h("label", { className: "lbl" }, T.bioBgColorLabel),
+                h("input", {
+                  type: "color",
+                  value: w.bioBgColor || "#000000",
+                  onChange: (e) =>
+                    onWorkerField(w.id, "bioBgColor", e.target.value),
+                  style: {
+                    width: 52,
+                    height: 28,
+                    padding: 0,
+                    border: "none",
+                    background: "transparent",
+                    cursor: "pointer",
+                  },
+                })
+              ),
+
+              h(I18nRow, {
+                brandId: w.id + ":name",
+                label: T.nameLabel,
+                value: w.name,
+                onChange: (L, v, fieldKey) =>
+                  onWorkerName(w.id, L, v, fieldKey),
+                langs: activeLangs,
+              }),
+
+              h(I18nRow, {
+                brandId: w.id + ":bio",
+                label: T.bioLabel,
+                value: w.bio,
+                onChange: (L, v, fieldKey) =>
+                  onWorkerBio(w.id, L, v, fieldKey),
+                langs: activeLangs,
+              }),
+
+              h(
+                "div",
+                { className: "worker-gallery-block" },
+                h(
+                  "div",
+                  { className: "lbl", style: { marginBottom: 6 } },
+                  T.sliderLabel
+                ),
+                h(
+                  "div",
+                  { className: "worker-gallery-row" },
+                  [0, 1, 2, 3, 4].map((idx) => {
+                    const src =
+                      w.gallery && w.gallery[idx] ? w.gallery[idx] : "";
+                    return h(
+                      "label",
+                      {
+                        key: idx,
+                        className: "gallery-slot",
+                      },
+                      src
+                        ? h("img", {
+                            src: absPreview(src),
+                            alt: "slide",
+                          })
+                        : h(
+                            "span",
+                            { className: "gallery-plus" },
+                            "+"
+                          ),
+                      h("input", {
+                        type: "file",
+                        accept: "image/*",
+                        style: { display: "none" },
+                        onChange: (e) => {
+                          const f =
+                            e.target.files && e.target.files[0];
+                          if (f) uploadWorkerGallery(w.id, f, idx);
+                          e.target.value = "";
+                        },
+                      })
+                    );
+                  })
+                )
+              ),
+
+              h(
+                "div",
+                { className: "row", style: { marginTop: 6 } },
+                h(
+                  "button",
+                  {
+                    type: "button",
+                    className: "btn pill danger btn-small",
+                    onClick: () => delWorker(w.id),
+                  },
+                  T.deleteWorkerButton
+                )
               )
             )
           )
@@ -706,6 +739,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
       )
     ),
 
+    // fixed bottom buttons
     h(
       "div",
       { className: "footer-actions" },
@@ -736,6 +770,8 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
       "style",
       null,
       [
+        ".admin-scroll-root{display:flex;flex-direction:column;height:100%;max-height:100%;overscroll-behavior:contain;}",
+        ".admin-workers-scroll{flex:1;overflow-y:auto;padding-bottom:12px;margin-bottom:6px;}",
         ".admin-workers{display:flex;flex-direction:column;gap:12px;}",
         ".worker-row{display:grid;grid-template-columns:96px 1fr;gap:12px;}",
         "@media(max-width:520px){.worker-row{grid-template-columns:80px 1fr;}}",
@@ -760,9 +796,8 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         ".btn.pill{border-radius:999px;}",
         ".btn.danger{background:#e8554d;}",
         ".btn.strong{font-weight:700;}",
-        ".footer-actions{margin-top:10px;display:flex;align-items:center;gap:10px;}",
+        ".footer-actions{position:sticky;bottom:0;display:flex;align-items:center;gap:10px;padding-top:8px;padding-bottom:6px;background:#fff;border-top:1px solid #ececec;}",
         ".small-msg{margin-left:8px;font-size:12px;color:#444;}",
-        ".admin-scroll-root{overscroll-behavior:contain;}",
         ".small{font-size:12px;color:#666;}",
       ].join("\n")
     )
