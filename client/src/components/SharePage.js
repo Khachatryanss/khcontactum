@@ -458,26 +458,6 @@ async function saveVCardUniversal({
   }
 }
 
-/* ======== helper to open href with proper target ======== */
-function openHrefSmart(href) {
-  if (!href) return;
-
-  // mailto: և custom schemes → թողնում ենք OS-ին
-  if (!href.startsWith("http")) {
-    const a = document.createElement("a");
-    a.href = href;
-    a.target = "_blank";
-    a.rel = "noopener";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    return;
-  }
-
-  // http/https
-  window.open(href, "_blank", "noopener,noreferrer");
-}
-
 /**
  * lang-ը կարող ես փոխանցել HomePage-ից.
  * autoOpenConfirm → VisitCard հղմամբ մտնելու դեպքում բացի popup
@@ -546,29 +526,26 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
         : "");
     if (!url) return;
 
-    const canNativeShare =
-      typeof navigator !== "undefined" &&
-      typeof navigator.share === "function";
-
-    // Մոբայլ share-sheet՝ Facebook / LinkedIn / Instagram համար
-    if (canNativeShare && (kind === "fb" || kind === "ln" || kind === "ig")) {
+    if (kind === "ig" && typeof navigator !== "undefined" && navigator.share) {
       navigator
         .share({ title: "KHContactum", text: shareText, url })
-        .catch(() => {
-          const hrefFallback = buildShareUrl(
-            kind,
-            url,
-            shareText,
-            t.mailSubject
-          );
-          openHrefSmart(hrefFallback);
-        });
+        .catch(() => {});
       return;
     }
 
-    // Մնացած դեպքերում → ուղղակի deep link / web link
     const href = buildShareUrl(kind, url, shareText, t.mailSubject);
-    openHrefSmart(href);
+
+    if (href.startsWith("http")) {
+      window.open(href, "_blank", "noopener,noreferrer");
+    } else {
+      const a = document.createElement("a");
+      a.href = href;
+      a.target = "_blank";
+      a.rel = "noopener";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
   }
 
   function currentQrValue() {
