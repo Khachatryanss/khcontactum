@@ -29,15 +29,15 @@ function normalizeInformation(info = {}) {
     ...info,
     logo_url: absUrl(rawLogo || ""),
     background: {
-      type: info?.background?.type || "color",
-      color: info?.background?.color || "#ffffff",
+      type    : info?.background?.type || "color",
+      color   : info?.background?.color || "#ffffff",
       imageUrl: absUrl(info?.background?.imageUrl || ""),
-      videoUrl: absUrl(info?.background?.videoUrl || ""),
+      videoUrl: absUrl(info?.background?.videoUrl || "")
     },
     profile: {
       ...(info.profile || {}),
-      avatar: absUrl(info?.profile?.avatar || rawLogo || ""),
-    },
+      avatar: absUrl(info?.profile?.avatar || rawLogo || "")
+    }
   };
 }
 
@@ -77,89 +77,10 @@ r.get("/card/:card_id", async (req, res) => {
     return res.json({
       ok: true,
       card_id: cardId,
-      data: normalizeInformation(information),
+      data: normalizeInformation(information)
     });
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: "Server error" });
-  }
-});
-
-/* ========= LIKE / DISLIKE RATING (BrandInfo) =========
-   URL: POST /api/public/card/:card_id/brandinfo/:workerKey/rating
-   Body: { likes: number, dislikes: number }
-   Պահում ենք admin_info.information.brandInfos մեջ։
-*/
-r.post("/card/:card_id/brandinfo/:workerKey/rating", async (req, res) => {
-  const cardId = Number(req.params.card_id);
-  const workerKey = String(req.params.workerKey || "").trim();
-  if (!Number.isFinite(cardId) || !workerKey) {
-    return res.status(400).json({ error: "Bad params" });
-  }
-
-  let { likes, dislikes } = req.body || {};
-  likes = Number(likes);
-  dislikes = Number(dislikes);
-  if (!Number.isFinite(likes) || likes < 0) likes = 0;
-  if (!Number.isFinite(dislikes) || dislikes < 0) dislikes = 0;
-
-  try {
-    // վերցնում ենք admin_id + information
-    const q = `
-      SELECT a.id AS admin_id, ai.information
-      FROM admins a
-      JOIN admin_info ai ON ai.admin_id = a.id
-      WHERE a.card_id = $1 AND a.is_active = TRUE
-      LIMIT 1
-    `;
-    const { rows } = await pool.query(q, [cardId]);
-    if (!rows.length) {
-      return res.status(404).json({ error: "Not found" });
-    }
-    const adminId = rows[0].admin_id;
-    const info = rows[0].information || {};
-
-    let brandInfos = Array.isArray(info.brandInfos)
-      ? info.brandInfos
-      : Array.isArray(info.brandWorkers)
-      ? info.brandWorkers
-      : [];
-
-    let changed = false;
-    brandInfos = brandInfos.map((w) => {
-      const k =
-        (w.id && String(w.id)) ||
-        (w.keyword && String(w.keyword)) ||
-        "";
-      if (k === workerKey) {
-        changed = true;
-        return {
-          ...w,
-          likes,
-          dislikes,
-        };
-      }
-      return w;
-    });
-
-    if (!changed) {
-      // եթե workerKey չգտնվեց, ուղղակի չենք փոխում
-      return res.json({ ok: true, updated: false });
-    }
-
-    const nextInfo = {
-      ...info,
-      brandInfos,
-    };
-
-    await pool.query(
-      "UPDATE admin_info SET information = $1 WHERE admin_id = $2",
-      [nextInfo, adminId]
-    );
-
-    return res.json({ ok: true, updated: true });
-  } catch (e) {
-    console.error("rating update error", e);
     return res.status(500).json({ error: "Server error" });
   }
 });
@@ -188,10 +109,10 @@ r.get("/c/:card_id", async (req, res) => {
     const profile =
       prows[0] || {
         display_name: "",
-        headline: "",
-        bio: "",
-        contacts: {},
-        updated_at: null,
+        headline    : "",
+        bio         : "",
+        contacts    : {},
+        updated_at  : null
       };
 
     const { rows: irows } = await pool.query(
@@ -203,13 +124,13 @@ r.get("/c/:card_id", async (req, res) => {
     );
 
     return res.json({
-      admin: {
-        id: admin.id,
+      admin : {
+        id      : admin.id,
         username: admin.username,
-        card_id: admin.card_id,
+        card_id : admin.card_id
       },
       profile,
-      items: irows,
+      items  : irows
     });
   } catch (e) {
     console.error(e);
