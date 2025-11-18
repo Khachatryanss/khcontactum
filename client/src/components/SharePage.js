@@ -42,7 +42,7 @@ function ensureAbsoluteUrl(u) {
 const TEXT = {
   am: {
     qrTitle: "Share / QR",
-    qrDesc: "QR કոդով և share հղումով կարող եք կիսվել ձեր քարտով։",
+    qrDesc: "QR կոդով և share հղումով կարող եք կիսվել ձեր քարտով։",
 
     scanBtn: "Սկանավորել QR կոդը",
     shareTitle: "Կիսվել իմ քարտով",
@@ -55,12 +55,6 @@ const TEXT = {
     confirmTitle: "Ավելացնե՞լ {{name}} կոնտակտների ցանկում։",
     confirmYes: "Այո",
     confirmNo: "Ոչ",
-
-    mailChoiceTitle: "Ընտրեք, թե որ հավելվածով ուղարկեք նամակը։",
-    mailApple: "Mail (iPhone)",
-    mailMailApp: "Mail App",
-    mailGmail: "Gmail",
-    mailOtherEmail: "Այլ mail հավելված",
   },
   ru: {
     qrTitle: "Share / QR",
@@ -78,12 +72,6 @@ const TEXT = {
     confirmTitle: "Добавить {{name}} в список контактов?",
     confirmYes: "Да",
     confirmNo: "Нет",
-
-    mailChoiceTitle: "Выберите приложение для отправки письма.",
-    mailApple: "Mail (iPhone)",
-    mailMailApp: "Mail App",
-    mailGmail: "Gmail",
-    mailOtherEmail: "Другое почтовое приложение",
   },
   en: {
     qrTitle: "Share / QR",
@@ -100,12 +88,6 @@ const TEXT = {
     confirmTitle: "Add {{name}} to contacts list?",
     confirmYes: "Yes",
     confirmNo: "No",
-
-    mailChoiceTitle: "Choose which app to use for email.",
-    mailApple: "Mail (iPhone)",
-    mailMailApp: "Mail App",
-    mailGmail: "Gmail",
-    mailOtherEmail: "Other mail app",
   },
   ar: {
     qrTitle: "Share / QR",
@@ -122,12 +104,6 @@ const TEXT = {
     confirmTitle: "إضافة {{name}} إلى قائمة جهات الاتصال؟",
     confirmYes: "نعم",
     confirmNo: "لا",
-
-    mailChoiceTitle: "اختر التطبيق الذي تريد استخدامه للإيميل.",
-    mailApple: "Mail (iPhone)",
-    mailMailApp: "Mail App",
-    mailGmail: "Gmail",
-    mailOtherEmail: "تطبيق بريد آخر",
   },
   fr: {
     qrTitle: "Share / QR",
@@ -145,12 +121,6 @@ const TEXT = {
     confirmTitle: "Ajouter {{name}} à la liste de contacts ?",
     confirmYes: "Oui",
     confirmNo: "Non",
-
-    mailChoiceTitle: "Choisissez l’application pour envoyer l’email.",
-    mailApple: "Mail (iPhone)",
-    mailMailApp: "Mail App",
-    mailGmail: "Gmail",
-    mailOtherEmail: "Autre application mail",
   },
 };
 
@@ -413,7 +383,6 @@ function buildShareUrl(kind, url, text, mailSubject) {
     case "wa":
       return "https://wa.me/?text=" + encBoth;
     case "mail":
-      // mail-ը հիմա կառավարում ենք առանձին popup-ով
       return (
         "mailto:?subject=" +
         encodeURIComponent(mailSubject || "KHContactum digital card") +
@@ -489,35 +458,35 @@ async function saveVCardUniversal({
   }
 }
 
+/* ======== helper to open href with proper target ======== */
+function openHrefSmart(href) {
+  if (!href) return;
+
+  // mailto: և custom schemes → թողնում ենք OS-ին
+  if (!href.startsWith("http")) {
+    const a = document.createElement("a");
+    a.href = href;
+    a.target = "_blank";
+    a.rel = "noopener";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    return;
+  }
+
+  // http/https
+  window.open(href, "_blank", "noopener,noreferrer");
+}
+
 /**
  * lang-ը կարող ես փոխանցել HomePage-ից.
  * autoOpenConfirm → VisitCard հղմամբ մտնելու դեպքում բացի popup
  */
-export default function SharePage({
-  info,
-  cardId,
-  lang,
-  autoOpenConfirm = false,
-}) {
+export default function SharePage({ info, cardId, lang, autoOpenConfirm = false }) {
   const share = normalizeShare(info && info.share);
   const [qrOpen, setQrOpen] = React.useState(false);
   const [qrMode, setQrMode] = React.useState("online");
-  const [confirmOpen, setConfirmOpen] = React.useState(false);   // vCard popup
-  const [mailDialogOpen, setMailDialogOpen] = React.useState(false);
-
-  const [platform, setPlatform] = React.useState("other");
-
-  React.useEffect(() => {
-    if (typeof navigator !== "undefined") {
-      const ua = navigator.userAgent || "";
-      if (/Android/i.test(ua)) setPlatform("android");
-      else if (/iPhone|iPad|iPod/i.test(ua)) setPlatform("ios");
-      else setPlatform("other");
-    }
-  }, []);
-
-  const isIOS = platform === "ios";
-  const isAndroid = platform === "android";
+  const [confirmOpen, setConfirmOpen] = React.useState(false);   // popup state
 
   React.useEffect(() => {
     if (autoOpenConfirm) {
@@ -569,62 +538,6 @@ export default function SharePage({
   const quick = share.quick || DEFAULT_QUICK;
   const enabledKinds = Object.keys(quick).filter((k) => quick[k]);
 
-  /* ===== mail share helpers ===== */
-
-  function buildMailPayload() {
-    const subject = t.mailSubject || "KHContactum digital card";
-    const body = (shareText || "") + " " + (onlineUrl || "");
-    return {
-      subject,
-      body,
-      mailto:
-        "mailto:?subject=" +
-        encodeURIComponent(subject) +
-        "&body=" +
-        encodeURIComponent(body),
-      gmailWeb:
-        "https://mail.google.com/mail/?view=cm&fs=1&su=" +
-        encodeURIComponent(subject) +
-        "&body=" +
-        encodeURIComponent(body),
-      gmailIOS:
-        "googlegmail:///co?subject=" +
-        encodeURIComponent(subject) +
-        "&body=" +
-        encodeURIComponent(body),
-    };
-  }
-
-  function sendMailVia(target) {
-    const payload = buildMailPayload();
-
-    if (isIOS) {
-      if (target === "gmail") {
-        // փորձ Gmail iOS app, եթե չկա՝ fallback mailto
-        const win = window.open(payload.gmailIOS, "_blank");
-        setTimeout(() => {
-          if (win && !win.closed) return;
-          window.location.href = payload.mailto;
-        }, 1200);
-      } else {
-        // Apple Mail կամ Mail App – համակարգի default mail handler
-        window.location.href = payload.mailto;
-      }
-    } else if (isAndroid) {
-      if (target === "gmail") {
-        // Gmail web/app
-        window.open(payload.gmailWeb, "_blank", "noopener,noreferrer");
-      } else {
-        window.location.href = payload.mailto;
-      }
-    } else {
-      // desktop կամ ուրիշ պլատֆորմ
-      window.location.href = payload.mailto;
-    }
-
-    setMailDialogOpen(false);
-  }
-
   function onShare(kind) {
     const url =
       onlineUrl ||
@@ -633,32 +546,29 @@ export default function SharePage({
         : "");
     if (!url) return;
 
-    // mail → բացում ենք մեր popup–ը
-    if (kind === "mail") {
-      setMailDialogOpen(true);
-      return;
-    }
+    const canNativeShare =
+      typeof navigator !== "undefined" &&
+      typeof navigator.share === "function";
 
-    if (kind === "ig" && typeof navigator !== "undefined" && navigator.share) {
+    // Մոբայլ share-sheet՝ Facebook / LinkedIn / Instagram համար
+    if (canNativeShare && (kind === "fb" || kind === "ln" || kind === "ig")) {
       navigator
         .share({ title: "KHContactum", text: shareText, url })
-        .catch(() => {});
+        .catch(() => {
+          const hrefFallback = buildShareUrl(
+            kind,
+            url,
+            shareText,
+            t.mailSubject
+          );
+          openHrefSmart(hrefFallback);
+        });
       return;
     }
 
+    // Մնացած դեպքերում → ուղղակի deep link / web link
     const href = buildShareUrl(kind, url, shareText, t.mailSubject);
-
-    if (href.startsWith("http")) {
-      window.open(href, "_blank", "noopener,noreferrer");
-    } else {
-      const a = document.createElement("a");
-      a.href = href;
-      a.target = "_blank";
-      a.rel = "noopener";
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
+    openHrefSmart(href);
   }
 
   function currentQrValue() {
@@ -697,7 +607,6 @@ export default function SharePage({
     React.Fragment,
     null,
 
-    /* ===== MAIN SECTION ===== */
     h(
       "section",
       { style: { marginTop: 24, marginBottom: 44, textAlign: "center" } },
@@ -908,89 +817,6 @@ export default function SharePage({
               },
               t.confirmNo
             )
-          )
-        )
-      ),
-
-    /* ===== MAIL APP CHOICE POPUP ===== */
-    mailDialogOpen &&
-      h(
-        "div",
-        {
-          className: "contactum-popup-backdrop",
-          onClick: () => setMailDialogOpen(false),
-        },
-        h(
-          "div",
-          {
-            className: "contactum-popup",
-            onClick: (e) => e.stopPropagation(),
-          },
-          h(
-            "div",
-            { className: "contactum-popup-title" },
-            t.mailChoiceTitle
-          ),
-          h(
-            "div",
-            { className: "contactum-popup-buttons" },
-            isIOS &&
-              h(
-                React.Fragment,
-                null,
-                h(
-                  "button",
-                  {
-                    type: "button",
-                    className: "contactum-btn contactum-btn-yes",
-                    onClick: () => sendMailVia("apple"),
-                  },
-                  t.mailApple
-                ),
-                h(
-                  "button",
-                  {
-                    type: "button",
-                    className: "contactum-btn contactum-btn-no",
-                    onClick: () => sendMailVia("mailapp"),
-                  },
-                  t.mailMailApp
-                )
-              ),
-            isAndroid &&
-              h(
-                React.Fragment,
-                null,
-                h(
-                  "button",
-                  {
-                    type: "button",
-                    className: "contactum-btn contactum-btn-yes",
-                    onClick: () => sendMailVia("gmail"),
-                  },
-                  t.mailGmail
-                ),
-                h(
-                  "button",
-                  {
-                    type: "button",
-                    className: "contactum-btn contactum-btn-no",
-                    onClick: () => sendMailVia("mailapp"),
-                  },
-                  t.mailMailApp
-                )
-              ),
-            !isIOS &&
-              !isAndroid &&
-              h(
-                "button",
-                {
-                  type: "button",
-                  className: "contactum-btn contactum-btn-yes",
-                  onClick: () => sendMailVia("default"),
-                },
-                t.mailOtherEmail
-              )
           )
         )
       )
