@@ -49,6 +49,16 @@ function writeRatingMap(map) {
   } catch {}
 }
 
+/* ---------- avatar placeholder text per language ---------- */
+function noPhotoLabel(lang) {
+  const k = (lang || "").toLowerCase();
+  if (k === "hy" || k === "am") return "նկար";
+  if (k === "ru") return "фото";
+  if (k === "ar") return "صورة";
+  if (k === "fr") return "photo";
+  return "photo"; // default EN
+}
+
 /* մեկ աշխատակցի քարտ */
 function WorkerCard({ item, lang }) {
   const name = pickLang(item.name, lang);
@@ -211,8 +221,13 @@ function WorkerCard({ item, lang }) {
             style:{ width:"100%", height:"100%", objectFit:"cover" }
           })
         : h("span", {
-            style:{ fontWeight:700, fontSize:22, color:"#777" }
-          }, (name || "?").slice(0,2).toUpperCase())
+            style:{
+              fontWeight:700,
+              fontSize:16,
+              color:"#777",
+              textTransform:"lowercase"
+            }
+          }, noPhotoLabel(lang))      // 👈 «նկар / photo / фото / صورة»
     ),
 
     /* անուն */
@@ -221,7 +236,7 @@ function WorkerCard({ item, lang }) {
         margin:"4px 0 8px",
         fontSize:18,
         fontWeight:700,
-        color: nameColor,              // 👈 գույնը admin-ից
+        color: nameColor,
       }
     }, name || "—"),
 
@@ -232,8 +247,8 @@ function WorkerCard({ item, lang }) {
         maxWidth:320,
         padding:"10px 12px",
         borderRadius:14,
-        background: bioBgColor,        // 👈 ֆոնի գույնը admin-ից
-        color: bioColor,               // 👈 տեքստի գույնը admin-ից
+        background: bioBgColor,
+        color: bioColor,
         fontSize:14,
         lineHeight:1.5,
         textAlign:"left",
