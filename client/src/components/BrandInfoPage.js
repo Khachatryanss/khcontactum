@@ -2,14 +2,13 @@
 import React from "react";
 import "./Responcive.css";
 import { fileUrl } from "../utils/fileUrl.js";
-import { API } from "../api.js";
 
 const h = React.createElement;
 
-function pickLang(v, lang, fallbacks = ["am", "en", "ru", "ar", "fr"]) {
+function pickLang(v, lang, fallbacks = ["am","en","ru","ar","fr"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
-  const order = [lang, ...fallbacks.filter((x) => x !== lang)];
+  const order = [lang, ...fallbacks.filter(x => x !== lang)];
   for (const k of order) {
     const s = v?.[k];
     if (s && String(s).trim()) return String(s).trim();
@@ -23,19 +22,19 @@ function hasKeyword(itemKeyword, activeKeyword) {
   const raw = (itemKeyword || "").toString();
   return raw
     .split(",")
-    .map((s) => s.trim().toLowerCase())
+    .map(s => s.trim().toLowerCase())
     .filter(Boolean)
     .includes(kw);
 }
 
-/* ---------- localStorage helpers (SADE status-ի համար) ---------- */
+/* ---------- rating helpers (localStorage) ---------- */
 
-const STATUS_STORAGE_KEY = "brand-worker-rating-status-v1";
+const RATING_STORAGE_KEY = "brand-worker-rating-v1";
 
-function readStatusMap() {
+function readRatingMap() {
   if (typeof window === "undefined") return {};
   try {
-    const raw = window.localStorage.getItem(STATUS_STORAGE_KEY);
+    const raw = window.localStorage.getItem(RATING_STORAGE_KEY);
     if (!raw) return {};
     const parsed = JSON.parse(raw);
     if (parsed && typeof parsed === "object") return parsed;
@@ -43,16 +42,25 @@ function readStatusMap() {
   return {};
 }
 
-function writeStatusMap(map) {
+function writeRatingMap(map) {
   if (typeof window === "undefined") return;
   try {
-    window.localStorage.setItem(STATUS_STORAGE_KEY, JSON.stringify(map));
+    window.localStorage.setItem(RATING_STORAGE_KEY, JSON.stringify(map));
   } catch {}
 }
 
-/* ---------- մեկ աշխատակցի քարտ ---------- */
+/* ---------- avatar placeholder text per language ---------- */
+function noPhotoLabel(lang) {
+  const k = (lang || "").toLowerCase();
+  if (k === "hy" || k === "am") return "նկար";
+  if (k === "ru") return "фото";
+  if (k === "ar") return "صورة";
+  if (k === "fr") return "photo";
+  return "photo"; // default EN
+}
 
-function WorkerCard({ item, lang, cardId }) {
+/* մեկ աշխատակցի քարտ */
+function WorkerCard({ item, lang }) {
   const name = pickLang(item.name, lang);
 
   const descSource = item.description || item.bio || "";
@@ -61,154 +69,119 @@ function WorkerCard({ item, lang, cardId }) {
   const slidesSource =
     Array.isArray(item.slides) && item.slides.length
       ? item.slides
-      : Array.isArray(item.gallery)
-      ? item.gallery
-      : [];
+      : (Array.isArray(item.gallery) ? item.gallery : []);
 
   const slides = slidesSource.map(fileUrl).filter(Boolean).slice(0, 5);
+
   const avatarAbs = fileUrl(item.avatar || "");
 
   const [index, setIndex] = React.useState(0);
   const hasSlides = slides.length > 0;
-  const currentIdx = hasSlides
-    ? (index % slides.length + slides.length) % slides.length
-    : 0;
+  const currentIdx = hasSlides ? (index % slides.length + slides.length) % slides.length : 0;
   const currentSlide = hasSlides ? slides[currentIdx] : "";
 
   const goPrev = () => {
     if (!hasSlides) return;
-    setIndex((i) => (i - 1 + slides.length) % slides.length);
+    setIndex(i => (i - 1 + slides.length) % slides.length);
   };
   const goNext = () => {
     if (!hasSlides) return;
-    setIndex((i) => (i + 1) % slides.length);
+    setIndex(i => (i + 1) % slides.length);
   };
 
   React.useEffect(() => {
     if (!hasSlides) return;
     const timer = setInterval(() => {
-      setIndex((i) => (i + 1) % slides.length);
+      setIndex(i => (i + 1) % slides.length);
     }, 5000);
     return () => clearInterval(timer);
   }, [hasSlides, slides.length]);
 
-  /* ---------- rating state (global + local) ---------- */
+  /* ---------- colors from admin ---------- */
+  const nameColor   = (item.nameColor   || "#ffffff").toString();
+  const bioColor    = (item.bioColor    || "#ffffff").toString();
+  const bioBgColor  = (item.bioBgColor  || "rgba(0,0,0,0.55)").toString();
+
+  /* ---------- rating state ---------- */
 
   const ratingAllowed = item.ratingEnabled !== false; // default true
 
-  // workerKey — նույնը, ինչ սերվերը ստուգում է (id կամ keyword)
   const workerKey =
     (item.id && String(item.id)) ||
     (item.keyword && String(item.keyword)) ||
-    "worker-" + (name || "?");
+    ("worker-" + (name || "?"));
 
-  // Քաունթերը գալիս են DB-ից (item.likes / item.dislikes)
   const [vote, setVote] = React.useState(() => ({
     likes: Number(item.likes ?? 0) || 0,
     dislikes: Number(item.dislikes ?? 0) || 0,
-    status: "none", // այս սարքի ընտրությունը
+    status: "none"
   }));
 
-  // item.likes / item.dislikes փոխվելիս թարմացնում ենք state-ը
   React.useEffect(() => {
-    setVote((prev) => ({
-      ...prev,
-      likes: Number(item.likes ?? 0) || 0,
-      dislikes: Number(item.dislikes ?? 0) || 0,
-    }));
-  }, [item.likes, item.dislikes]);
-
-  // localStorage-ից կարդում ենք միայն status-ը (like/dislike/none)
-  React.useEffect(() => {
-    const map = readStatusMap();
+    const map = readRatingMap();
     const saved = map[workerKey];
-    if (!saved || typeof saved !== "object") return;
-    const s =
-      saved.status === "like" || saved.status === "dislike"
-        ? saved.status
-        : "none";
-    setVote((prev) => ({ ...prev, status: s }));
-  }, [workerKey]);
-
-  function persistStatus(status) {
-    const map = readStatusMap();
-    map[workerKey] = { status };
-    writeStatusMap(map);
-  }
-
-  async function syncToServer(nextLikes, nextDislikes) {
-    try {
-      const url = `${API}/public/card/${cardId}/brandinfo/${encodeURIComponent(
-        workerKey
-      )}/rating`;
-      await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          likes: nextLikes,
-          dislikes: nextDislikes,
-        }),
+    if (saved && typeof saved === "object") {
+      setVote({
+        likes: Number(saved.likes ?? item.likes ?? 0) || 0,
+        dislikes: Number(saved.dislikes ?? item.dislikes ?? 0) || 0,
+        status:
+          saved.status === "like" || saved.status === "dislike"
+            ? saved.status
+            : "none"
       });
-      // error-ը չենք ցույց տալիս user-ին, բայց console-ում կերևա
-    } catch (e) {
-      console.warn("rating sync failed", e);
+    } else {
+      setVote({
+        likes: Number(item.likes ?? 0) || 0,
+        dislikes: Number(item.dislikes ?? 0) || 0,
+        status: "none"
+      });
     }
+  }, [workerKey, item.likes, item.dislikes]);
+
+  function persist(next) {
+    const map = readRatingMap();
+    map[workerKey] = {
+      likes: next.likes,
+      dislikes: next.dislikes,
+      status: next.status
+    };
+    writeRatingMap(map);
   }
 
   function handleLike() {
-    if (!ratingAllowed) return;
-    setVote((prev) => {
-      let likes = prev.likes;
-      let dislikes = prev.dislikes;
-      let status = prev.status;
-
-      if (status === "like") {
-        // undo like
-        likes = Math.max(0, likes - 1);
-        status = "none";
-      } else if (status === "dislike") {
-        // dislike → like
-        dislikes = Math.max(0, dislikes - 1);
-        likes = likes + 1;
-        status = "like";
+    setVote(prev => {
+      let next = { ...prev };
+      if (prev.status === "like") {
+        next.likes = Math.max(0, prev.likes - 1);
+        next.status = "none";
+      } else if (prev.status === "dislike") {
+        next.dislikes = Math.max(0, prev.dislikes - 1);
+        next.likes = prev.likes + 1;
+        next.status = "like";
       } else {
-        // none → like
-        likes = likes + 1;
-        status = "like";
+        next.likes = prev.likes + 1;
+        next.status = "like";
       }
-
-      const next = { likes, dislikes, status };
-      persistStatus(status);
-      syncToServer(likes, dislikes);
+      persist(next);
       return next;
     });
   }
 
   function handleDislike() {
-    if (!ratingAllowed) return;
-    setVote((prev) => {
-      let likes = prev.likes;
-      let dislikes = prev.dislikes;
-      let status = prev.status;
-
-      if (status === "dislike") {
-        // undo dislike
-        dislikes = Math.max(0, dislikes - 1);
-        status = "none";
-      } else if (status === "like") {
-        // like → dislike
-        likes = Math.max(0, likes - 1);
-        dislikes = dislikes + 1;
-        status = "dislike";
+    setVote(prev => {
+      let next = { ...prev };
+      if (prev.status === "dislike") {
+        next.dislikes = Math.max(0, prev.dislikes - 1);
+        next.status = "none";
+      } else if (prev.status === "like") {
+        next.likes = Math.max(0, prev.likes - 1);
+        next.dislikes = prev.dislikes + 1;
+        next.status = "dislike";
       } else {
-        // none → dislike
-        dislikes = dislikes + 1;
-        status = "dislike";
+        next.dislikes = prev.dislikes + 1;
+        next.status = "dislike";
       }
-
-      const next = { likes, dislikes, status };
-      persistStatus(status);
-      syncToServer(likes, dislikes);
+      persist(next);
       return next;
     });
   }
@@ -223,282 +196,240 @@ function WorkerCard({ item, lang, cardId }) {
       style: {
         marginBottom: 16,
         padding: 16,
-        textAlign: "center",
-      },
+        textAlign: "center"
+      }
     },
 
     /* avatar շրջան */
-    h(
-      "div",
-      {
-        style: {
-          width: 100,
-          height: 100,
-          borderRadius: "50%",
-          margin: "0 auto 10px",
-          overflow: "hidden",
-          background: "#f4f4f4",
-          display: "grid",
-          placeItems: "center",
-        },
-      },
+    h("div", {
+      style:{
+        width:100,
+        height:100,
+        borderRadius:"50%",
+        margin:"0 auto 10px",
+        overflow:"hidden",
+        background:"#f4f4f4",
+        display:"grid",
+        placeItems:"center",
+      }
+    },
       avatarAbs
         ? h("img", {
             src: avatarAbs,
             alt: name || "worker",
             loading: "lazy",
-            style: { width: "100%", height: "100%", objectFit: "cover" },
+            style:{ width:"100%", height:"100%", objectFit:"cover" }
           })
-        : h(
-            "span",
-            {
-              style: { fontWeight: 700, fontSize: 22, color: "#777" },
-            },
-            (name || "?")
-              .toString()
-              .slice(0, 2)
-              .toUpperCase()
-          )
+        : h("span", {
+            style:{
+              fontWeight:700,
+              fontSize:16,
+              color:"#777",
+              textTransform:"lowercase"
+            }
+          }, noPhotoLabel(lang))      // 👈 «նկар / photo / фото / صورة»
     ),
 
     /* անուն */
-    h(
-      "h3",
-      {
-        style: {
-          margin: "4px 0 8px",
-          fontSize: 18,
-          fontWeight: 700,
-        },
-      },
-      name || "—"
-    ),
+    h("h3", {
+      style:{
+        margin:"4px 0 8px",
+        fontSize:18,
+        fontWeight:700,
+        color: nameColor,
+      }
+    }, name || "—"),
 
     /* նկարագրություն */
-    desc &&
-      h(
-        "div",
-        {
-          style: {
-            margin: "0 auto 14px",
-            maxWidth: 320,
-            padding: "10px 12px",
-            borderRadius: 14,
-            background: "#fafafa",
-            fontSize: 14,
-            lineHeight: 1.5,
-            textAlign: "left",
-            whiteSpace: "pre-line",
-          },
-        },
-        desc
-      ),
+    desc && h("div", {
+      style:{
+        margin:"0 auto 14px",
+        maxWidth:320,
+        padding:"10px 12px",
+        borderRadius:14,
+        background: bioBgColor,
+        color: bioColor,
+        fontSize:14,
+        lineHeight:1.5,
+        textAlign:"left",
+        whiteSpace:"pre-line"
+      }
+    }, desc),
 
     /* slider */
-    hasSlides &&
-      h(
-        "div",
-        {
-          style: {
-            margin: "0 auto 12px",
-            maxWidth: 340,
-          },
-        },
-        h(
-          "div",
-          {
-            style: {
-              position: "relative",
-              borderRadius: 18,
-              overflow: "hidden",
-              background: "#f3f3f3",
-              height: 190,
-              display: "grid",
-              placeItems: "center",
-            },
-          },
-          currentSlide &&
-            h("img", {
-              src: currentSlide,
-              alt: "",
-              loading: "lazy",
-              style: {
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                transition: "opacity .35s ease",
-              },
-            }),
+    hasSlides && h("div", {
+      style:{
+        margin:"0 auto 12px",
+        maxWidth:340
+      }
+    },
+      h("div", {
+        style:{
+          position:"relative",
+          borderRadius:18,
+          overflow:"hidden",
+          background:"#f3f3f3",
+          height:190,
+          display:"grid",
+          placeItems:"center"
+        }
+      },
+        currentSlide && h("img", {
+          src: currentSlide,
+          alt:"",
+          loading: "lazy",
+          style:{
+            width:"100%",
+            height:"100%",
+            objectFit:"cover",
+            transition: "opacity .35s ease"
+          }
+        }),
 
-          h(
-            "button",
-            {
-              type: "button",
-              onClick: goPrev,
-              style: {
-                position: "absolute",
-                left: 8,
-                top: "50%",
-                transform: "translateY(-50%)",
-                width: 30,
-                height: 30,
-                borderRadius: "50%",
-                border: "none",
-                background: "rgba(0,0,0,.45)",
-                color: "#fff",
-                display: "grid",
-                placeItems: "center",
-                cursor: "pointer",
-              },
-            },
-            "<"
-          ),
+        h("button", {
+          type:"button",
+          onClick: goPrev,
+          style:{
+            position:"absolute",
+            left:8,
+            top:"50%",
+            transform:"translateY(-50%)",
+            width:30,
+            height:30,
+            borderRadius:"50%",
+            border:"none",
+            background:"rgba(0,0,0,.45)",
+            color:"#fff",
+            display:"grid",
+            placeItems:"center",
+            cursor:"pointer"
+          }
+        }, "<"),
 
-          h(
-            "button",
-            {
-              type: "button",
-              onClick: goNext,
-              style: {
-                position: "absolute",
-                right: 8,
-                top: "50%",
-                transform: "translateY(-50%)",
-                width: 30,
-                height: 30,
-                borderRadius: "50%",
-                border: "none",
-                background: "rgba(0,0,0,.45)",
-                color: "#fff",
-                display: "grid",
-                placeItems: "center",
-                cursor: "pointer",
-              },
-            },
-            ">"
-          )
-        ),
-
-        h(
-          "div",
-          {
-            style: {
-              marginTop: 6,
-              display: "flex",
-              justifyContent: "center",
-              gap: 6,
-            },
-          },
-          slides.map((_, i) =>
-            h("span", {
-              key: i,
-              style: {
-                width: 8,
-                height: 8,
-                borderRadius: "50%",
-                background: i === currentIdx ? "#111" : "#d0d0d0",
-              },
-            })
-          )
-        )
+        h("button", {
+          type:"button",
+          onClick: goNext,
+          style:{
+            position:"absolute",
+            right:8,
+            top:"50%",
+            transform:"translateY(-50%)",
+            width:30,
+            height:30,
+            borderRadius:"50%",
+            border:"none",
+            background:"rgba(0,0,0,.45)",
+            color:"#fff",
+            display:"grid",
+            placeItems:"center",
+            cursor:"pointer"
+          }
+        }, ">")
       ),
 
-    /* rating block – միայն եթե միացված է */
-    ratingAllowed &&
-      h(
-        React.Fragment,
-        null,
-        h(
-          "div",
-          {
-            style: {
-              marginTop: 10,
-              fontSize: 13,
-              color: "#555",
-              textAlign: "center",
-            },
-          },
-          "Գնահատեք աշխատակցին։"
-        ),
-
-        h(
-          "div",
-          {
-            style: {
-              marginTop: 6,
-              display: "flex",
-              justifyContent: "center",
-              gap: 12,
-            },
-          },
-          h(
-            "button",
-            {
-              type: "button",
-              onClick: handleLike,
-              style: {
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "6px 14px",
-                borderRadius: 999,
-                border: "none",
-                cursor: "pointer",
-                fontSize: 13,
-                fontWeight: 600,
-                background: likeActive ? "#16a34a" : "#e5f7ea",
-                color: likeActive ? "#fff" : "#166534",
-                minWidth: 70,
-                justifyContent: "center",
-              },
-            },
-            h("span", null, "👍"),
-            h("span", null, String(vote.likes ?? 0))
-          ),
-
-          h(
-            "button",
-            {
-              type: "button",
-              onClick: handleDislike,
-              style: {
-                display: "flex",
-                alignItems: "center",
-                gap: 6,
-                padding: "6px 14px",
-                borderRadius: 999,
-                border: "none",
-                cursor: "pointer",
-                fontSize: 13,
-                fontWeight: 600,
-                background: dislikeActive ? "#f97316" : "#fff7ed",
-                color: dislikeActive ? "#fff" : "#9a3412",
-                minWidth: 70,
-                justifyContent: "center",
-              },
-            },
-            h("span", null, "👎"),
-            h("span", null, String(vote.dislikes ?? 0))
-          )
+      h("div", {
+        style:{
+          marginTop:6,
+          display:"flex",
+          justifyContent:"center",
+          gap:6
+        }
+      },
+        slides.map((_, i) =>
+          h("span", {
+            key:i,
+            style:{
+              width:8,
+              height:8,
+              borderRadius:"50%",
+              background: i === currentIdx ? "#111" : "#d0d0d0"
+            }
+          })
         )
       )
+    ),
+
+    /* rating block – միայն եթե admin–ը միացրել է */
+    ratingAllowed && h(React.Fragment, null,
+      h("div", {
+        style:{
+          marginTop: 10,
+          fontSize: 13,
+          color: "#555",
+          textAlign: "center"
+        }
+      }, "Գնահատեք աշխատակցին։"),
+
+      h("div", {
+        style:{
+          marginTop: 6,
+          display:"flex",
+          justifyContent:"center",
+          gap:12
+        }
+      },
+        h("button", {
+          type:"button",
+          onClick: handleLike,
+          style:{
+            display:"flex",
+            alignItems:"center",
+            gap:6,
+            padding:"6px 14px",
+            borderRadius:999,
+            border:"none",
+            cursor:"pointer",
+            fontSize:13,
+            fontWeight:600,
+            background: likeActive ? "#16a34a" : "#e5f7ea",
+            color: likeActive ? "#fff" : "#166534",
+            minWidth:70,
+            justifyContent:"center"
+          }
+        },
+          h("span", null, "👍"),
+          h("span", null, String(vote.likes ?? 0))
+        ),
+
+        h("button", {
+          type:"button",
+          onClick: handleDislike,
+          style:{
+            display:"flex",
+            alignItems:"center",
+            gap:6,
+            padding:"6px 14px",
+            borderRadius:999,
+            border:"none",
+            cursor:"pointer",
+            fontSize:13,
+            fontWeight:600,
+            background: dislikeActive ? "#f97316" : "#fff7ed",
+            color: dislikeActive ? "#fff" : "#9a3412",
+            minWidth:70,
+            justifyContent:"center"
+          }
+        },
+          h("span", null, "👎"),
+          h("span", null, String(vote.dislikes ?? 0))
+        )
+      )
+    )
   );
 }
 
 /**
  * Props:
- * - cardId      – current card_id (101...)
- * - brandInfos  – [{ id, keyword, name, bio, likes, dislikes, ... }]
+ * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], ratingEnabled, nameColor, bioColor, bioBgColor }]
  * - keyword
  * - lang
  * - onBack()
  */
 export default function BrandInfoPage({
-  cardId,
   brandInfos = [],
   keyword = "",
   lang = "am",
-  onBack,
+  onBack
 }) {
   React.useEffect(() => {
     const container = document.querySelector(".public-scroll-layer");
@@ -509,7 +440,7 @@ export default function BrandInfoPage({
     }
   }, [keyword]);
 
-  const list = (Array.isArray(brandInfos) ? brandInfos : []).filter((item) =>
+  const list = (Array.isArray(brandInfos) ? brandInfos : []).filter(item =>
     hasKeyword(item.keyword, keyword)
   );
 
@@ -524,8 +455,8 @@ export default function BrandInfoPage({
           display: "flex",
           alignItems: "center",
           marginBottom: 10,
-          gap: 8,
-        },
+          gap: 8
+        }
       },
       h(
         "button",
@@ -533,18 +464,14 @@ export default function BrandInfoPage({
           type: "button",
           className: "btn",
           style: { padding: "6px 10px", borderRadius: 999 },
-          onClick: () => onBack && onBack(),
+          onClick: () => onBack && onBack()
         },
         "←"
       ),
-      h(
-        "h2",
-        {
-          className: "company-title",
-          style: { margin: 0, fontSize: 20 },
-        },
-        "Ինֆորմացիա"
-      )
+      h("h2", {
+        className: "company-title",
+        style: { margin: 0, fontSize: 20 }
+      }, "Ինֆորմացիա")
     ),
 
     !list.length &&
@@ -552,17 +479,16 @@ export default function BrandInfoPage({
         "div",
         {
           className: "card",
-          style: { padding: 12, fontSize: 14 },
+          style: { padding: 12, fontSize: 14 }
         },
         "Տվյալ keyword-ով աշխատակից դեռ չկա։"
       ),
 
-    ...list.map((item) =>
+    ...list.map(item =>
       h(WorkerCard, {
         key: item.id || item.keyword || Math.random().toString(36),
         item,
-        lang,
-        cardId,
+        lang
       })
     )
   );

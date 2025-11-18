@@ -240,19 +240,8 @@ function AvatarMedia({ src, isVideo, initials }) {
     margin: "0 auto 8px", display: "block", boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
   };
   if (!src) {
-    return h(
-      "div",
-      {
-        style: {
-          ...commonStyle,
-          background: "#f2f2f2",
-          display: "grid",
-          placeItems: "center",
-          fontWeight: 700,
-          color: "#999",
-        },
-      },
-      (initials || "photo").slice(0, 2).toUpperCase()
+    return h("div", { style: { ...commonStyle, background: "#f2f2f2", display: "grid", placeItems: "center", fontWeight: 700, color: "#999" } },
+      (initials || "KH").slice(0, 2).toUpperCase()
     );
   }
   if (!isVideo) return h("img", { src, alt: "avatar", style: commonStyle, loading: "lazy" });
@@ -307,7 +296,8 @@ export default function HomePage({ cardId = "101" }) {
     return () => { killed = true; };
   }, [cardId]);
 
-  /* ===== Splash loader – Contactum logo ===== */
+  /* ===== Splash loader – Contactum logo =====
+     կերևա, քանի դեռ (loading === true) ԿԱՄ (splashDone === false)  */
   if (!splashDone || loading) {
     return h(
       "div",
@@ -477,13 +467,7 @@ export default function HomePage({ cardId = "101" }) {
                    overflowY: "auto", WebkitOverflowScrolling: "touch", padding: "12px" } },
         h(LangDropdown, { value: lang, onChange: setLang, langs: serverLangs }),
         showBrandInfo
-          ? h(BrandInfoPage, {
-              brandInfos,
-              keyword: activeBrandKeyword,
-              lang: htmlLang,
-              cardId,                    // ✅ փոխանցում ենք cardId-ը
-              onBack: () => setActiveBrandKeyword("")
-            })
+          ? h(BrandInfoPage, { brandInfos, keyword: activeBrandKeyword, lang: htmlLang, onBack: () => setActiveBrandKeyword("") })
           : h(
               "div",
               { style: { position: "relative" } },
@@ -506,33 +490,25 @@ export default function HomePage({ cardId = "101" }) {
               links.length
                 ? h(IconsPage, { links, labelColor, chipColor, rowCardColor, layoutStyle, cols, glowEnabled, glowColor, lang: htmlLang })
                 : null,
-               brandsArray.length
-        ? h(BrandsPage, {
-            brands: brandsArray,
-            brandsTitleColor,
-            brandsTitleText,
-            brandsCols,
-            brandsBgColor,
-            brandsNameColor,
-            lang: htmlLang,
-            onKeywordClick: (kw) => setActiveBrandKeyword(kw),
-          })
-        : null,
-      showBrandInfo
-        ? h(BrandInfoPage, {
-            cardId,                 // ← ԱՅՍՏԵՂ Ավելացվել է cardId
-            brandInfos,
-            keyword: activeBrandKeyword,
-            lang: htmlLang,
-            onBack: () => setActiveBrandKeyword(""),
-          })
-        : null,
-              h(SharePage, {
+              brandsArray.length
+                ? h(BrandsPage, {
+                    brands: brandsArray,
+                    brandsTitleColor,
+                    brandsTitleText,
+                    brandsCols,
+                    brandsBgColor,
+                    brandsNameColor,
+                    lang: htmlLang,
+                    onKeywordClick: (kw) => setActiveBrandKeyword(kw),
+                  })
+                : null,
+                h(SharePage, {
                 cardId,
                 info,
                 lang: htmlLang,
-                autoOpenConfirm: true,
+                autoOpenConfirm: true,   // ✅ բացի pop-up–ը բոլոր սարքերում
               })
+
             )
       )
     );
