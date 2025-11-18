@@ -29,15 +29,15 @@ function normalizeInformation(info = {}) {
     ...info,
     logo_url: absUrl(rawLogo || ""),
     background: {
-      type    : info?.background?.type || "color",
-      color   : info?.background?.color || "#ffffff",
+      type: info?.background?.type || "color",
+      color: info?.background?.color || "#ffffff",
       imageUrl: absUrl(info?.background?.imageUrl || ""),
-      videoUrl: absUrl(info?.background?.videoUrl || "")
+      videoUrl: absUrl(info?.background?.videoUrl || ""),
     },
     profile: {
       ...(info.profile || {}),
-      avatar: absUrl(info?.profile?.avatar || rawLogo || "")
-    }
+      avatar: absUrl(info?.profile?.avatar || rawLogo || ""),
+    },
   };
 }
 
@@ -47,7 +47,7 @@ r.use((req, _res, next) => {
   next();
 });
 
-/* ---------- fetch helpers ---------- */
+/* ---------- fetch / save information by card_id ---------- */
 
 async function fetchInformationByCardId(cardId) {
   const q = `
@@ -61,93 +61,16 @@ async function fetchInformationByCardId(cardId) {
   return rows[0]?.information || null;
 }
 
-// rating-ի համար պետք է նաև admin_id-ն
-async function fetchAdminInfoRowByCardId(cardId) {
+async function saveInformationByCardId(cardId, info) {
   const q = `
-    SELECT ai.admin_id, ai.information
-    FROM admins a
-    JOIN admin_info ai ON ai.admin_id = a.id
-    WHERE a.card_id = $1 AND a.is_active = TRUE
-    LIMIT 1
+    UPDATE admin_info AS ai
+    SET information = $2::jsonb
+    FROM admins AS a
+    WHERE ai.admin_id = a.id
+      AND a.card_id = $1
   `;
-  const { rows } = await pool.query(q, [cardId]);
-  if (!rows[0]) return null;
-  return {
-    admin_id: rows[0].admin_id,
-    information: rows[0].information || {}
-  };
-}
-
-/* ---------- rating helpers ---------- */
-
-function ratingDelta(prevStatus = "none", nextStatus = "none") {
-  // վերադարձնում է { dLikes, dDislikes }
-  if (prevStatus === nextStatus) return { dLikes: 0, dDislikes: 0 };
-
-  const norm = (s) =>
-    s === "like" || s === "dislike" || s === "none" ? s : "none";
-
-  const prev = norm(prevStatus);
-  const next = norm(nextStatus);
-
-  let dLikes = 0;
-  let dDislikes = 0;
-
-  if (prev === "none" && next === "like") {
-    dLikes = 1;
-  } else if (prev === "none" && next === "dislike") {
-    dDislikes = 1;
-  } else if (prev === "like" && next === "none") {
-    dLikes = -1;
-  } else if (prev === "dislike" && next === "none") {
-    dDislikes = -1;
-  } else if (prev === "like" && next === "dislike") {
-    dLikes = -1;
-    dDislikes = 1;
-  } else if (prev === "dislike" && next === "like") {
-    dDislikes = -1;
-    dLikes = 1;
-  }
-
-  return { dLikes, dDislikes };
-}
-
-function applyRatingToInformation(information = {}, workerKey, prevStatus, nextStatus) {
-  const { dLikes, dDislikes } = ratingDelta(prevStatus, nextStatus);
-  if (!dLikes && !dDislikes) {
-    return { changed: false, information };
-  }
-
-  const clone = { ...(information || {}) };
-  const list = Array.isArray(clone.brandInfos) ? [...clone.brandInfos] : [];
-  const keyStr = String(workerKey || "");
-
-  let changed = false;
-
-  const updated = list.map((item) => {
-    const idKey =
-      (item && item.id != null ? String(item.id) : "") ||
-      (item && item.keyword != null ? String(item.keyword) : "");
-
-    if (!idKey || idKey !== keyStr) return item;
-
-    const likes = Math.max(0, Number(item.likes ?? 0) + dLikes);
-    const dislikes = Math.max(0, Number(item.dislikes ?? 0) + dDislikes);
-
-    changed = true;
-    return {
-      ...item,
-      likes,
-      dislikes
-    };
-  });
-
-  if (!changed) {
-    return { changed: false, information };
-  }
-
-  clone.brandInfos = updated;
-  return { changed: true, information: clone };
+  const payload = info || {};
+  await pool.query(q, [cardId, JSON.stringify(payload)]);
 }
 
 /* ========== PUBLIC API ========== */
@@ -167,10 +90,74 @@ r.get("/card/:card_id", async (req, res) => {
     return res.json({
       ok: true,
       card_id: cardId,
-      data: normalizeInformation(information)
+      data: normalizeInformation(information),
     });
   } catch (e) {
     console.error(e);
+    return res.status(500).json({ error: "Server error" });
+  }
+});
+
+/**
+ * Persist brand worker rating (like / dislike) for public BrandInfo
+ *
+ * POST /api/public/card/:card_id/brandinfo/:worker_key/rating
+ * body: { likes: number, dislikes: number }
+ *
+ * `worker_key` կարող է համընկնել
+ *  - item.id
+ *  - կամ item.keyword
+ */
+r.post("/card/:card_id/brandinfo/:worker_key/rating", async (req, res) => {
+  const cardId = Number(req.params.card_id);
+  const workerKey = (req.params.worker_key || "").toString();
+  if (!Number.isFinite(cardId) || !workerKey) {
+    return res.status(400).json({ error: "Bad params" });
+  }
+
+  try {
+    const info = await fetchInformationByCardId(cardId);
+    if (!info) {
+      return res.status(404).json({ error: "Not found" });
+    }
+
+    const likes = Number(req.body?.likes ?? 0);
+    const dislikes = Number(req.body?.dislikes ?? 0);
+
+    if (!Array.isArray(info.brandInfos)) {
+      info.brandInfos = [];
+    }
+
+    const list = info.brandInfos;
+    const idx = list.findIndex((x) => {
+      const idStr = x?.id != null ? String(x.id) : "";
+      const kwStr = x?.keyword != null ? String(x.keyword) : "";
+      return idStr === workerKey || kwStr === workerKey;
+    });
+
+    if (idx === -1) {
+      return res.status(404).json({ error: "Worker not found" });
+    }
+
+    // overwrite absolute counts (front-end–ը արդեն հաշվել է)
+    const w = list[idx] || {};
+    list[idx] = {
+      ...w,
+      likes: Number.isFinite(likes) && likes >= 0 ? likes : 0,
+      dislikes: Number.isFinite(dislikes) && dislikes >= 0 ? dislikes : 0,
+    };
+
+    await saveInformationByCardId(cardId, info);
+
+    return res.json({
+      ok: true,
+      card_id: cardId,
+      worker_key: workerKey,
+      likes: list[idx].likes,
+      dislikes: list[idx].dislikes,
+    });
+  } catch (e) {
+    console.error("rating update error:", e);
     return res.status(500).json({ error: "Server error" });
   }
 });
@@ -199,10 +186,10 @@ r.get("/c/:card_id", async (req, res) => {
     const profile =
       prows[0] || {
         display_name: "",
-        headline    : "",
-        bio         : "",
-        contacts    : {},
-        updated_at  : null
+        headline: "",
+        bio: "",
+        contacts: {},
+        updated_at: null,
       };
 
     const { rows: irows } = await pool.query(
@@ -214,55 +201,16 @@ r.get("/c/:card_id", async (req, res) => {
     );
 
     return res.json({
-      admin : {
-        id      : admin.id,
+      admin: {
+        id: admin.id,
         username: admin.username,
-        card_id : admin.card_id
+        card_id: admin.card_id,
       },
       profile,
-      items  : irows
+      items: irows,
     });
   } catch (e) {
     console.error(e);
-    return res.status(500).json({ error: "Server error" });
-  }
-});
-
-/* ========== BRAND RATING API ========== */
-/**
- * body: { cardId, workerKey, prevStatus, nextStatus }
- * prevStatus / nextStatus ∈ "none" | "like" | "dislike"
- */
-r.post("/brand-rating", async (req, res) => {
-  try {
-    const { cardId, workerKey, prevStatus, nextStatus } = req.body || {};
-    const cardNum = Number(cardId);
-
-    if (!Number.isFinite(cardNum) || !workerKey) {
-      return res.status(400).json({ error: "Bad payload" });
-    }
-
-    const row = await fetchAdminInfoRowByCardId(cardNum);
-    if (!row) {
-      return res.status(404).json({ error: "Card not found" });
-    }
-
-    const { admin_id, information } = row;
-    const { changed, information: nextInfo } =
-      applyRatingToInformation(information, workerKey, prevStatus, nextStatus);
-
-    if (!changed) {
-      return res.json({ ok: true, changed: false });
-    }
-
-    await pool.query(
-      "UPDATE admin_info SET information = $2 WHERE admin_id = $1",
-      [admin_id, nextInfo]
-    );
-
-    return res.json({ ok: true, changed: true });
-  } catch (e) {
-    console.error("brand-rating error:", e);
     return res.status(500).json({ error: "Server error" });
   }
 });
