@@ -236,38 +236,15 @@ function VideoLoop({ src, style }) {
 
 function AvatarMedia({ src, isVideo, initials }) {
   const commonStyle = {
-    width: 150,
-    height: 150,
-    borderRadius: "50%",
-    objectFit: "cover",
-    margin: "0 auto 8px",
-    display: "block",
-    boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
+    width: 150, height: 150, borderRadius: "50%", objectFit: "cover",
+    margin: "0 auto 8px", display: "block", boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
   };
   if (!src) {
-    return h(
-      "div",
-      {
-        style: {
-          ...commonStyle,
-          background: "#f2f2f2",
-          display: "grid",
-          placeItems: "center",
-          fontWeight: 700,
-          color: "#999",
-        },
-      },
+    return h("div", { style: { ...commonStyle, background: "#f2f2f2", display: "grid", placeItems: "center", fontWeight: 700, color: "#999" } },
       (initials || "KH").slice(0, 2).toUpperCase()
     );
   }
-  if (!isVideo) {
-    return h("img", {
-      src,
-      alt: "avatar",
-      style: commonStyle,
-      loading: "lazy",
-    });
-  }
+  if (!isVideo) return h("img", { src, alt: "avatar", style: commonStyle, loading: "lazy" });
   return h(VideoLoop, { src, style: commonStyle });
 }
 
@@ -279,14 +256,12 @@ export default function HomePage({ cardId = "101" }) {
     (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
   );
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
-  const [splashDone, setSplashDone] = React.useState(false); // ✅ splash timer
+  const [splashDone, setSplashDone] = React.useState(false);   // ✅ splash timer
 
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
-    try {
-      document.documentElement.lang = htmlLang;
-    } catch {}
+    try { document.documentElement.lang = htmlLang; } catch {}
   }, [htmlLang]);
 
   /* ✅ splash-ը գոնե 2 վրկ պահելու համար */
@@ -299,22 +274,16 @@ export default function HomePage({ cardId = "101" }) {
     let killed = false;
     (async () => {
       try {
-        setLoading(true);
-        setErr("");
+        setLoading(true); setErr("");
         const resp = await getPublicInfoByCardId(cardId);
         const data = resp?.data ?? resp ?? {};
         const root = data?.information || data || {};
         if (!killed) {
           setInfo(root);
           if (!localStorage.getItem("lang")) {
-            const def =
-              root &&
-              root.default_lang &&
-              Array.isArray(root.available_langs)
-                ? root.available_langs.includes(root.default_lang)
-                  ? root.default_lang
-                  : undefined
-                : undefined;
+            const def = (root && root.default_lang && Array.isArray(root.available_langs))
+              ? (root.available_langs.includes(root.default_lang) ? root.default_lang : undefined)
+              : undefined;
             if (def) setLang(def);
           }
         }
@@ -324,9 +293,7 @@ export default function HomePage({ cardId = "101" }) {
         if (!killed) setLoading(false);
       }
     })();
-    return () => {
-      killed = true;
-    };
+    return () => { killed = true; };
   }, [cardId]);
 
   /* ===== Splash loader – Contactum logo =====
@@ -368,8 +335,8 @@ export default function HomePage({ cardId = "101" }) {
     );
   }
 
-  if (err) return h("div", { className: "pad" }, "Սխալ: " + err);
-  if (!info) return h("div", { className: "pad" }, "Տվյալ չկա");
+  if (err)     return h("div", { className: "pad" }, "Սխալ: " + err);
+  if (!info)   return h("div", { className: "pad" }, "Տվյալ չկա");
 
   try {
     const serverLangs =
@@ -395,15 +362,10 @@ export default function HomePage({ cardId = "101" }) {
       fr: (desc?.fr ?? about?.fr) || "",
     };
 
-    const nameColor =
-      info?.company?.nameColor ||
-      "#111";
-    const descColor =
-      info?.description?.color ||
-      info?.profile?.aboutColor ||
-      "#666";
+    const nameColor = info?.company?.nameColor || "#111";
+    const descColor = info?.description?.color || info?.profile?.aboutColor || "#666";
 
-    const avTop = info?.avatar;
+    const avTop  = info?.avatar;
     const avProf = info?.profile?.avatar;
 
     const companyLogo =
@@ -413,8 +375,7 @@ export default function HomePage({ cardId = "101" }) {
         ? info.company.logo
         : info?.company?.logo?.imageUrl || "");
 
-    const fallbackLogo =
-      info?.assets?.logo_url || info?.logo_url || companyLogo || "";
+    const fallbackLogo = info?.assets?.logo_url || info?.logo_url || companyLogo || "";
 
     let avatarUrl = "";
     let avatarType = "";
@@ -422,43 +383,25 @@ export default function HomePage({ cardId = "101" }) {
     if (typeof avTop === "string") avatarUrl = avTop;
     else if (avTop && typeof avTop === "object") {
       avatarType = avTop.type || "";
-      if (avatarType === "image")
-        avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
-      else if (avatarType === "video")
-        avatarUrl = avTop.videoUrl || avTop.imageUrl || "";
-      else avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
+      if (avatarType === "image")      avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
+      else if (avatarType === "video") avatarUrl = avTop.videoUrl || avTop.imageUrl || "";
+      else                             avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
     }
 
     if (!avatarUrl && avProf) {
       if (typeof avProf === "string") avatarUrl = avProf;
-      else if (typeof avProf === "object")
-        avatarUrl = avProf.imageUrl || avProf.videoUrl || "";
+      else if (typeof avProf === "object") avatarUrl = avProf.imageUrl || avProf.videoUrl || "";
     }
     if (!avatarUrl && fallbackLogo) avatarUrl = fallbackLogo;
 
-    const avatarAbs = absSrc(avatarUrl);
-    const avatarIsVideo =
-      avatarType === "video"
-        ? true
-        : avatarType === "image"
-        ? false
-        : isVideo(avatarAbs);
+    const avatarAbs     = absSrc(avatarUrl);
+    const avatarIsVideo = avatarType === "video" ? true : (avatarType === "image" ? false : isVideo(avatarAbs));
 
-    const bg =
-      info?.background || {
-        type: "color",
-        color: "#ffffff",
-        imageUrl: "",
-        videoUrl: "",
-      };
+    const bg = info?.background || { type: "color", color: "#ffffff", imageUrl: "", videoUrl: "" };
 
-    const name =
-      nameByLang[htmlLang] || nameByLang.hy || nameByLang.en || "—";
+    const name = nameByLang[htmlLang] || nameByLang.hy || nameByLang.en || "—";
     const descriptionRaw = textByLang[htmlLang] || "";
-    const description =
-      htmlLang === "hy"
-        ? hyphenateHy(descriptionRaw, "hy")
-        : hyphenateHy(descriptionRaw, htmlLang);
+    const description = htmlLang === "hy" ? hyphenateHy(descriptionRaw, "hy") : hyphenateHy(descriptionRaw, htmlLang);
 
     const [minCh, maxCh] = idealColsForLang(htmlLang);
 
@@ -477,128 +420,62 @@ export default function HomePage({ cardId = "101" }) {
     const links = Array.isArray(icons.links) ? icons.links : [];
     const styles = icons?.styles || {};
 
-    const labelColor = styles.labelCss || styles.labelHEX || "";
-    const chipColor =
-      styles.chipCss || rgbaToCss(styles.chipRGBA) || "";
-    const rowCardColor =
-      styles.rowCardCss || rgbaToCss(styles.rowCardRGBA) || "";
-    const layoutStyle = styles.layoutStyle || "dzev1";
-    const cols = Number(styles.cols || 4);
-    const glowEnabled = !!styles.glowEnabled;
-    const glowColor = styles.glowColor || "#7dd3fc";
+    const labelColor   = styles.labelCss || styles.labelHEX || "";
+    const chipColor    = styles.chipCss || rgbaToCss(styles.chipRGBA) || "";
+    const rowCardColor = styles.rowCardCss || rgbaToCss(styles.rowCardRGBA) || "";
+    const layoutStyle  = styles.layoutStyle || "dzev1";
+    const cols         = Number(styles.cols || 4);
+    const glowEnabled  = !!styles.glowEnabled;
+    const glowColor    = styles.glowColor || "#7dd3fc";
 
-    const brandsArray = Array.isArray(info?.brands) ? info.brands : [];
-    const brandsCols = Number(info?.brandsCols || 3);
+    const brandsArray      = Array.isArray(info?.brands) ? info.brands : [];
+    const brandsCols       = Number(info?.brandsCols || 3);
     const brandsTitleColor = info?.brandsTitleColor || "#000000";
-    const brandsTitleText =
-      info?.brandsTitleText || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ";
-    const brandsBgColor = info?.brandsBgColor || "#ffffff";
-    const brandsNameColor = info?.brandsNameColor || "#000000";
+    const brandsTitleText  = info?.brandsTitleText || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ";
+    const brandsBgColor    = info?.brandsBgColor || "#ffffff";
+    const brandsNameColor  = info?.brandsNameColor || "#000000";
 
-    const brandInfos = Array.isArray(info?.brandInfos)
-      ? info.brandInfos
-      : [];
+    const brandInfos = Array.isArray(info?.brandInfos) ? info.brandInfos : [];
     const showBrandInfo = !!activeBrandKeyword;
 
     return h(
       "div",
-      {
-        className: "public-home",
-        style: {
-          position: "relative",
-          width: "100%",
-          height: "100%",
-          minHeight: "100%",
-          overflow: "hidden",
-        },
-      },
+      { className: "public-home", style: { position: "relative", width: "100%", height: "100%", minHeight: "100%", overflow: "hidden" } },
       h(
         "div",
         {
           className: "public-bg-layer",
           style: {
-            position: "absolute",
-            inset: 0,
-            zIndex: 0,
-            pointerEvents: "none",
-            overflow: "hidden",
+            position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden",
             background:
-              bg.type === "color"
-                ? bg.color || "#ffffff"
-                : bg.type === "image"
-                ? `url(${absSrc(bg.imageUrl)}) center/cover no-repeat`
-                : "transparent",
+              bg.type === "color" ? (bg.color || "#ffffff")
+              : bg.type === "image" ? `url(${absSrc(bg.imageUrl)}) center/cover no-repeat`
+              : "transparent",
           },
         },
         bg.type === "video" && bg.videoUrl
           ? h(VideoLoop, {
               src: absSrc(bg.videoUrl),
-              style: {
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              },
+              style: { width: "100%", height: "100%", objectFit: "cover" },
             })
           : null
       ),
       h(
         "div",
-        {
-          className: "public-scroll-layer",
-          id: "publicScroll",
-          style: {
-            position: "relative",
-            zIndex: 1,
-            width: "100%",
-            height: "100%",
-            maxHeight: "100%",
-            overflowY: "auto",
-            WebkitOverflowScrolling: "touch",
-            padding: "12px",
-          },
-        },
-        h(LangDropdown, {
-          value: lang,
-          onChange: setLang,
-          langs: serverLangs,
-        }),
+        { className: "public-scroll-layer", id: "publicScroll",
+          style: { position: "relative", zIndex: 1, width: "100%", height: "100%", maxHeight: "100%",
+                   overflowY: "auto", WebkitOverflowScrolling: "touch", padding: "12px" } },
+        h(LangDropdown, { value: lang, onChange: setLang, langs: serverLangs }),
         showBrandInfo
-          ? h(BrandInfoPage, {
-              brandInfos,
-              keyword: activeBrandKeyword,
-              lang: htmlLang,
-              onBack: () => setActiveBrandKeyword(""),
-            })
+          ? h(BrandInfoPage, { brandInfos, keyword: activeBrandKeyword, lang: htmlLang, onBack: () => setActiveBrandKeyword("") })
           : h(
               "div",
               { style: { position: "relative" } },
               h(
                 "section",
-                {
-                  className: "card",
-                  style: {
-                    textAlign: "center",
-                    paddingTop: 10,
-                    paddingBottom: 18,
-                  },
-                },
-                h(AvatarMedia, {
-                  src: avatarAbs,
-                  isVideo: avatarIsVideo,
-                  initials: (name || "KH").slice(0, 2),
-                }),
-                h(
-                  "h1",
-                  {
-                    className: "hero-title",
-                    style: {
-                      color: nameColor,
-                      margin: "15px 0 4px",
-                      fontSize: 35,
-                    },
-                  },
-                  name
-                ),
+                { className: "card", style: { textAlign: "center", paddingTop: 10, paddingBottom: 18 } },
+                h(AvatarMedia, { src: avatarAbs, isVideo: avatarIsVideo, initials: (name || "KH").slice(0, 2) }),
+                h("h1", { className: "hero-title", style: { color: nameColor, margin: "15px 0 4px", fontSize: 35 } }, name),
                 h(
                   "p",
                   {
@@ -611,17 +488,7 @@ export default function HomePage({ cardId = "101" }) {
                 )
               ),
               links.length
-                ? h(IconsPage, {
-                    links,
-                    labelColor,
-                    chipColor,
-                    rowCardColor,
-                    layoutStyle,
-                    cols,
-                    glowEnabled,
-                    glowColor,
-                    lang: htmlLang,
-                  })
+                ? h(IconsPage, { links, labelColor, chipColor, rowCardColor, layoutStyle, cols, glowEnabled, glowColor, lang: htmlLang })
                 : null,
               brandsArray.length
                 ? h(BrandsPage, {
@@ -632,24 +499,20 @@ export default function HomePage({ cardId = "101" }) {
                     brandsBgColor,
                     brandsNameColor,
                     lang: htmlLang,
-                    onKeywordClick: (kw) =>
-                      setActiveBrandKeyword(kw),
+                    onKeywordClick: (kw) => setActiveBrandKeyword(kw),
                   })
                 : null,
-              h(SharePage, {
+                h(SharePage, {
                 cardId,
                 info,
                 lang: htmlLang,
-                autoOpenConfirm: true, // popup call-ը միշտ ակտիվ
+                autoOpenConfirm: true,   // ✅ բացի pop-up–ը բոլոր սարքերում
               })
+
             )
       )
     );
   } catch (e) {
-    return h(
-      "div",
-      { className: "pad" },
-      "Render error: " + (e.message || String(e))
-    );
+    return h("div", { className: "pad" }, "Render error: " + (e.message || String(e)));
   }
 }
