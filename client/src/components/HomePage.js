@@ -506,18 +506,27 @@ export default function HomePage({ cardId = "101" }) {
               links.length
                 ? h(IconsPage, { links, labelColor, chipColor, rowCardColor, layoutStyle, cols, glowEnabled, glowColor, lang: htmlLang })
                 : null,
-              brandsArray.length
-                ? h(BrandsPage, {
-                    brands: brandsArray,
-                    brandsTitleColor,
-                    brandsTitleText,
-                    brandsCols,
-                    brandsBgColor,
-                    brandsNameColor,
-                    lang: htmlLang,
-                    onKeywordClick: (kw) => setActiveBrandKeyword(kw),
-                  })
-                : null,
+               brandsArray.length
+        ? h(BrandsPage, {
+            brands: brandsArray,
+            brandsTitleColor,
+            brandsTitleText,
+            brandsCols,
+            brandsBgColor,
+            brandsNameColor,
+            lang: htmlLang,
+            onKeywordClick: (kw) => setActiveBrandKeyword(kw),
+          })
+        : null,
+      showBrandInfo
+        ? h(BrandInfoPage, {
+            cardId,                 // ← ԱՅՍՏԵՂ Ավելացվել է cardId
+            brandInfos,
+            keyword: activeBrandKeyword,
+            lang: htmlLang,
+            onBack: () => setActiveBrandKeyword(""),
+          })
+        : null,
               h(SharePage, {
                 cardId,
                 info,
