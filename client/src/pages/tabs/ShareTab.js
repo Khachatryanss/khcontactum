@@ -25,6 +25,7 @@ const SHARE_UI_TEXT = {
     phoneLabel: "Հեռախոս",
     phonePlaceholder: "+374...",
 
+    // quickTitle / quickIntro էլ ունենք, բայց UI-ում այլևս չենք օգտագործում
     quickTitle: "Արագ կիսվելու ձևեր",
     quickIntro: "Ընտրիր՝ որ icon-ները երևան կիսվելու հատվածում։",
 
@@ -301,13 +302,6 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
     setShare((prev) => ({ ...prev, [key]: value }));
   }
 
-  function setQuick(key, value) {
-    setShare((prev) => ({
-      ...prev,
-      quick: { ...(prev.quick || {}), [key]: !!value },
-    }));
-  }
-
   function setStyleColor(key, value) {
     setShare((prev) => ({
       ...prev,
@@ -385,12 +379,6 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
       )
     );
   }
-
-  const channelLabels =
-    (T && T.channelLabels) || SHARE_UI_TEXT.am.channelLabels;
-
-  const urlPlaceholder =
-    ONLINE_BASE + (cardId ? String(cardId) : "101");
 
   return h(
     React.Fragment,
@@ -519,28 +507,6 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
       )
     ),
 
-    // QUICK SHARE
-    h("h4", { className: "title mb-1" }, T.quickTitle),
-    h("p", { className: "small mb-2" }, T.quickIntro),
-
-    ["fb", "tg", "ln", "wa", "mail", "viber", "ig"].map((key) => {
-      const checked = !!share.quick[key];
-      return h(
-        "label",
-        {
-          key,
-          className: "row mb-1",
-          style: { alignItems: "center", gap: 8 },
-        },
-        h("input", {
-          type: "checkbox",
-          checked,
-          onChange: (e) => setQuick(key, e.target.checked),
-        }),
-        h("span", { className: "small" }, channelLabels[key] || key)
-      );
-    }),
-
     // COLORS
     h(
       "h4",
@@ -549,7 +515,6 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
     ),
     colorRow(T.colorBtnText, "btnTextColor"),
     colorRow(T.colorBtnBg, "btnBgColor"),
-    colorRow(T.colorShareTitle, "shareTitleColor"),
 
     h(
       "div",
