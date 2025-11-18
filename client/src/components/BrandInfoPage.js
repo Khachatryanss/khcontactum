@@ -87,6 +87,11 @@ function WorkerCard({ item, lang }) {
     return () => clearInterval(timer);
   }, [hasSlides, slides.length]);
 
+  /* ---------- colors from admin ---------- */
+  const nameColor   = (item.nameColor   || "#ffffff").toString();
+  const bioColor    = (item.bioColor    || "#ffffff").toString();
+  const bioBgColor  = (item.bioBgColor  || "rgba(0,0,0,0.55)").toString();
+
   /* ---------- rating state ---------- */
 
   const ratingAllowed = item.ratingEnabled !== false; // default true
@@ -202,7 +207,7 @@ function WorkerCard({ item, lang }) {
         ? h("img", {
             src: avatarAbs,
             alt: name || "worker",
-            loading: "lazy",                             // ⬅ lazy avatar
+            loading: "lazy",
             style:{ width:"100%", height:"100%", objectFit:"cover" }
           })
         : h("span", {
@@ -215,7 +220,8 @@ function WorkerCard({ item, lang }) {
       style:{
         margin:"4px 0 8px",
         fontSize:18,
-        fontWeight:700
+        fontWeight:700,
+        color: nameColor,              // 👈 գույնը admin-ից
       }
     }, name || "—"),
 
@@ -226,7 +232,8 @@ function WorkerCard({ item, lang }) {
         maxWidth:320,
         padding:"10px 12px",
         borderRadius:14,
-        background:"#fafafa",
+        background: bioBgColor,        // 👈 ֆոնի գույնը admin-ից
+        color: bioColor,               // 👈 տեքստի գույնը admin-ից
         fontSize:14,
         lineHeight:1.5,
         textAlign:"left",
@@ -255,7 +262,7 @@ function WorkerCard({ item, lang }) {
         currentSlide && h("img", {
           src: currentSlide,
           alt:"",
-          loading: "lazy",                               // ⬅ lazy slides
+          loading: "lazy",
           style:{
             width:"100%",
             height:"100%",
@@ -398,7 +405,7 @@ function WorkerCard({ item, lang }) {
 
 /**
  * Props:
- * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], ratingEnabled }]
+ * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], ratingEnabled, nameColor, bioColor, bioBgColor }]
  * - keyword
  * - lang
  * - onBack()
