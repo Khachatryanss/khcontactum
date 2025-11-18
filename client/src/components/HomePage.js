@@ -258,6 +258,9 @@ export default function HomePage({ cardId = "101" }) {
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
   const [splashDone, setSplashDone] = React.useState(false);   // ✅ splash timer
 
+  // ✅ nor state – pop-up-ը ավտոմատ բացենք միայն առաջին անգամ
+  const [shareAutoOpened, setShareAutoOpened] = React.useState(false);
+
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
@@ -296,8 +299,16 @@ export default function HomePage({ cardId = "101" }) {
     return () => { killed = true; };
   }, [cardId]);
 
-  /* ===== Splash loader – Contactum logo =====
-     կերևա, քանի դեռ (loading === true) ԿԱՄ (splashDone === false)  */
+  // ✅ Երբ splash-ը ավարտված է և loading-ը false է,
+  // առաջին անգամ էջը ցույց տալիս ավտոմատ pop-up բացում ենք,
+  // բայց նույն HomePage-ի կյանքի ընթացքում այլևս ոչ
+  React.useEffect(() => {
+    if (splashDone && !loading && !shareAutoOpened) {
+      setShareAutoOpened(true);
+    }
+  }, [splashDone, loading, shareAutoOpened]);
+
+  /* ===== Splash loader – Contactum logo ===== */
   if (!splashDone || loading) {
     return h(
       "div",
@@ -502,13 +513,14 @@ export default function HomePage({ cardId = "101" }) {
                     onKeywordClick: (kw) => setActiveBrandKeyword(kw),
                   })
                 : null,
-                h(SharePage, {
+              h(SharePage, {
                 cardId,
                 info,
                 lang: htmlLang,
-                autoOpenConfirm: true,   // ✅ բացի pop-up–ը բոլոր սարքերում
+                // ✅ pop-up–ը ավտոմատ բացվի միայն առաջին անգամ (HomePage mount-ի պահին),
+                // brand-ների էջերից հետ գալուց այլևս չի բացվի
+                autoOpenConfirm: !shareAutoOpened,
               })
-
             )
       )
     );
