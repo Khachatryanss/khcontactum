@@ -13,7 +13,6 @@ const BRANDINFO_TEXT = {
     ratingLabel: "Like / Dislike",
     nameLabel: "Անուն:",
     bioLabel: "Նկարագրություն:",
-    // 👇 Name color / Description color / Description background color
     nameColorLabel: "Անվան գույնը",
     bioColorLabel: "Նկարագրության գույնը",
     bioBgColorLabel: "Նկարագրության ֆոնի գույնը",
@@ -32,7 +31,6 @@ const BRANDINFO_TEXT = {
     loadFailed: "Ներբեռնումը ձախողվեց",
     saveFailed: "Պահպանելը ձախողվեց",
   },
-
   ru: {
     keywordHint: "Этот блок связывается с брендами через поле keyword.",
     keywordLabel: "Keyword",
@@ -41,8 +39,7 @@ const BRANDINFO_TEXT = {
     bioLabel: "Описание :",
     nameColorLabel: "Цвет имени",
     bioColorLabel: "Цвет описания",
-    bioBgColorLabel:
-      "Цвет фона описания",
+    bioBgColorLabel: "Цвет фона описания",
     sliderLabel: "Слайдер (до 5 изображений, 6:9)",
     deleteWorkerButton: "Удалить",
     addWorkerButton: "Добавить",
@@ -58,7 +55,6 @@ const BRANDINFO_TEXT = {
     loadFailed: "Ошибка при загрузке",
     saveFailed: "Ошибка при сохранении",
   },
-
   en: {
     keywordHint: "This section is linked to brands via the keyword field.",
     keywordLabel: "Keyword",
@@ -83,17 +79,16 @@ const BRANDINFO_TEXT = {
     loadFailed: "Load failed",
     saveFailed: "Save failed",
   },
-
   ar: {
-    keywordHint: "يتم ربط هذا القسم بالعلامات التجارية عبر حقل الـ keyword.",
+    keywordHint:
+      "يتم ربط هذا القسم بالعلامات التجارية عبر حقل الـ keyword.",
     keywordLabel: "الكلمة المفتاحية",
     ratingLabel: "Like / Dislike",
     nameLabel: "الاسم:",
     bioLabel: "الوصف:",
     nameColorLabel: "لون الاسم)",
     bioColorLabel: "لون الوصف",
-    bioBgColorLabel:
-      "لون خلفية الوصف",
+    bioBgColorLabel: "لون خلفية الوصف",
     sliderLabel: "سلايدر (حتى ٥ صور، 6:9)",
     deleteWorkerButton: "حذف",
     addWorkerButton: "إضافة",
@@ -109,7 +104,6 @@ const BRANDINFO_TEXT = {
     loadFailed: "فشل التحميل",
     saveFailed: "فشل الحفظ",
   },
-
   fr: {
     keywordHint:
       "Cette section est reliée aux marques via le champ keyword.",
@@ -119,8 +113,7 @@ const BRANDINFO_TEXT = {
     bioLabel: "Description :",
     nameColorLabel: "Couleur du nom",
     bioColorLabel: "Couleur de la description",
-    bioBgColorLabel:
-      "Couleur du fond de description",
+    bioBgColorLabel: "Couleur du fond de description",
     sliderLabel: "Slider (jusqu’à 5 images, 6:9)",
     deleteWorkerButton: "Supprimer",
     addWorkerButton: "Ajouter",
@@ -243,7 +236,8 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
 
   const [baseInfo, setBaseInfo] = React.useState(null);
 
-  // workers: [{ id, keyword, name:{}, bio:{}, avatar, gallery[], ratingEnabled, nameColor, bioColor, bioBgColor }]
+  // workers: [{ id, keyword, name, bio, avatar, gallery[], ratingEnabled,
+  //            nameColor, bioColor, bioBgColor, likes, dislikes }]
   const [workers, setWorkers] = React.useState([]);
 
   const [loading, setLoading] = React.useState(false);
@@ -276,6 +270,9 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
           nameColor: (x.nameColor || "#ffffff").toString(),
           bioColor: (x.bioColor || "#ffffff").toString(),
           bioBgColor: (x.bioBgColor || "#000000").toString(),
+          // ⚠️ ավելացրած դաշտեր՝ պահելու համար
+          likes: Number(x.likes ?? 0) || 0,
+          dislikes: Number(x.dislikes ?? 0) || 0,
         }));
         setWorkers(prepared);
       } catch (e) {
@@ -323,6 +320,8 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         nameColor: "#ffffff",
         bioColor: "#ffffff",
         bioBgColor: "#000000",
+        likes: 0,
+        dislikes: 0,
       },
     ]);
   }
@@ -406,6 +405,9 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         nameColor: (w.nameColor || "#ffffff").toString(),
         bioColor: (w.bioColor || "#ffffff").toString(),
         bioBgColor: (w.bioBgColor || "#000000").toString(),
+        // ⚠️ պահպանում ենք արդեն հավաքած քաունթերը
+        likes: Number(w.likes ?? 0) || 0,
+        dislikes: Number(w.dislikes ?? 0) || 0,
       }));
 
       const next = { ...(baseInfo || {}) };
@@ -435,6 +437,8 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         nameColor: (x.nameColor || "#ffffff").toString(),
         bioColor: (x.bioColor || "#ffffff").toString(),
         bioBgColor: (x.bioBgColor || "#000000").toString(),
+        likes: Number(x.likes ?? 0) || 0,
+        dislikes: Number(x.dislikes ?? 0) || 0,
       }));
       setWorkers(prepared);
 
