@@ -296,8 +296,7 @@ export default function HomePage({ cardId = "101" }) {
     return () => { killed = true; };
   }, [cardId]);
 
-  /* ===== Splash loader – Contactum logo =====
-     կերևա, քանի դեռ (loading === true) ԿԱՄ (splashDone === false)  */
+  /* ===== Splash loader – Contactum logo ===== */
   if (!splashDone || loading) {
     return h(
       "div",
@@ -467,7 +466,13 @@ export default function HomePage({ cardId = "101" }) {
                    overflowY: "auto", WebkitOverflowScrolling: "touch", padding: "12px" } },
         h(LangDropdown, { value: lang, onChange: setLang, langs: serverLangs }),
         showBrandInfo
-          ? h(BrandInfoPage, { brandInfos, keyword: activeBrandKeyword, lang: htmlLang, onBack: () => setActiveBrandKeyword("") })
+          ? h(BrandInfoPage, {
+              brandInfos,
+              keyword: activeBrandKeyword,
+              lang: htmlLang,
+              cardId,                             // ✅ փոխանցում ենք rating-ի համար
+              onBack: () => setActiveBrandKeyword("")
+            })
           : h(
               "div",
               { style: { position: "relative" } },
@@ -502,13 +507,12 @@ export default function HomePage({ cardId = "101" }) {
                     onKeywordClick: (kw) => setActiveBrandKeyword(kw),
                   })
                 : null,
-                h(SharePage, {
+              h(SharePage, {
                 cardId,
                 info,
                 lang: htmlLang,
-                autoOpenConfirm: true,   // ✅ բացի pop-up–ը բոլոր սարքերում
+                autoOpenConfirm: true,
               })
-
             )
       )
     );

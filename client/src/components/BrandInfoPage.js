@@ -2,6 +2,7 @@
 import React from "react";
 import "./Responcive.css";
 import { fileUrl } from "../utils/fileUrl.js";
+import { API } from "../api.js";
 
 const h = React.createElement;
 
@@ -56,11 +57,47 @@ function noPhotoLabel(lang) {
   if (k === "ru") return "фото";
   if (k === "ar") return "صورة";
   if (k === "fr") return "photo";
-  return "photo"; // default EN
+  return "photo";
+}
+
+/* ---------- server rating helper ---------- */
+async function sendRatingToServer({ cardId, workerKey, prevStatus, nextStatus }) {
+  try {
+    if (!cardId || !workerKey || prevStatus === nextStatus) return null;
+
+    const base = API || "";
+    const url = (base.replace(/\/+$/,"")) + "/public/brand-rating";
+
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        cardId,
+        workerKey,
+        prevStatus,
+        nextStatus,
+      }),
+    });
+
+    if (!res.ok) return null;
+
+    const data = await res.json().catch(() => null);
+    if (!data) return null;
+
+    const likes    = Number(data.likes);
+    const dislikes = Number(data.dislikes);
+
+    if (Number.isFinite(likes) && Number.isFinite(dislikes)) {
+      return { likes, dislikes };
+    }
+  } catch (e) {
+    console.warn("sendRatingToServer failed", e);
+  }
+  return null;
 }
 
 /* մեկ աշխատակցի քարտ */
-function WorkerCard({ item, lang }) {
+function WorkerCard({ item, lang, cardId }) {
   const name = pickLang(item.name, lang);
 
   const descSource = item.description || item.bio || "";
@@ -111,82 +148,86 @@ function WorkerCard({ item, lang }) {
     (item.keyword && String(item.keyword)) ||
     ("worker-" + (name || "?"));
 
-  const [vote, setVote] = React.useState(() => ({
-    likes: Number(item.likes ?? 0) || 0,
-    dislikes: Number(item.dislikes ?? 0) || 0,
-    status: "none"
-  }));
+  const [vote, setVote] = React.useState(() => {
+    const baseLikes    = Number(item.likes ?? 0) || 0;
+    const baseDislikes = Number(item.dislikes ?? 0) || 0;
 
-  React.useEffect(() => {
-    const map = readRatingMap();
+    const map   = readRatingMap();
     const saved = map[workerKey];
     if (saved && typeof saved === "object") {
-      setVote({
-        likes: Number(saved.likes ?? item.likes ?? 0) || 0,
-        dislikes: Number(saved.dislikes ?? item.dislikes ?? 0) || 0,
+      return {
+        likes:    baseLikes,
+        dislikes: baseDislikes,
         status:
           saved.status === "like" || saved.status === "dislike"
             ? saved.status
-            : "none"
-      });
-    } else {
-      setVote({
-        likes: Number(item.likes ?? 0) || 0,
-        dislikes: Number(item.dislikes ?? 0) || 0,
-        status: "none"
-      });
+            : "none",
+      };
     }
-  }, [workerKey, item.likes, item.dislikes]);
+    return { likes: baseLikes, dislikes: baseDislikes, status: "none" };
+  });
 
-  function persist(next) {
+  function persistStatus(status) {
     const map = readRatingMap();
-    map[workerKey] = {
-      likes: next.likes,
-      dislikes: next.dislikes,
-      status: next.status
-    };
+    map[workerKey] = { status };
     writeRatingMap(map);
   }
 
-  function handleLike() {
+  function applyVote(type) {
     setVote(prev => {
+      const prevStatus = prev.status;
       let next = { ...prev };
-      if (prev.status === "like") {
-        next.likes = Math.max(0, prev.likes - 1);
-        next.status = "none";
-      } else if (prev.status === "dislike") {
-        next.dislikes = Math.max(0, prev.dislikes - 1);
-        next.likes = prev.likes + 1;
-        next.status = "like";
-      } else {
-        next.likes = prev.likes + 1;
-        next.status = "like";
+
+      if (type === "like") {
+        if (prev.status === "like") {
+          next.likes  = Math.max(0, prev.likes - 1);
+          next.status = "none";
+        } else if (prev.status === "dislike") {
+          next.dislikes = Math.max(0, prev.dislikes - 1);
+          next.likes    = prev.likes + 1;
+          next.status   = "like";
+        } else {
+          next.likes  = prev.likes + 1;
+          next.status = "like";
+        }
+      } else if (type === "dislike") {
+        if (prev.status === "dislike") {
+          next.dislikes = Math.max(0, prev.dislikes - 1);
+          next.status   = "none";
+        } else if (prev.status === "like") {
+          next.likes    = Math.max(0, prev.likes - 1);
+          next.dislikes = prev.dislikes + 1;
+          next.status   = "dislike";
+        } else {
+          next.dislikes = prev.dislikes + 1;
+          next.status   = "dislike";
+        }
       }
-      persist(next);
+
+      const nextStatus = next.status;
+      persistStatus(nextStatus);
+
+      // 🔁 fire-and-forget server update, հետո sync count-երը սերվերից
+      sendRatingToServer({
+        cardId,
+        workerKey,
+        prevStatus,
+        nextStatus,
+      }).then(server => {
+        if (server) {
+          setVote(v => ({
+            ...v,
+            likes:    server.likes,
+            dislikes: server.dislikes,
+          }));
+        }
+      });
+
       return next;
     });
   }
 
-  function handleDislike() {
-    setVote(prev => {
-      let next = { ...prev };
-      if (prev.status === "dislike") {
-        next.dislikes = Math.max(0, prev.dislikes - 1);
-        next.status = "none";
-      } else if (prev.status === "like") {
-        next.likes = Math.max(0, prev.likes - 1);
-        next.dislikes = prev.dislikes + 1;
-        next.status = "dislike";
-      } else {
-        next.dislikes = prev.dislikes + 1;
-        next.status = "dislike";
-      }
-      persist(next);
-      return next;
-    });
-  }
-
-  const likeActive = vote.status === "like";
+  const likeActive    = vote.status === "like";
   const dislikeActive = vote.status === "dislike";
 
   return h(
@@ -227,7 +268,7 @@ function WorkerCard({ item, lang }) {
               color:"#777",
               textTransform:"lowercase"
             }
-          }, noPhotoLabel(lang))      // 👈 «նկар / photo / фото / صورة»
+          }, noPhotoLabel(lang))
     ),
 
     /* անուն */
@@ -288,7 +329,7 @@ function WorkerCard({ item, lang }) {
 
         h("button", {
           type:"button",
-          onClick: goPrev,
+          onClick: () => goPrev(),
           style:{
             position:"absolute",
             left:8,
@@ -308,7 +349,7 @@ function WorkerCard({ item, lang }) {
 
         h("button", {
           type:"button",
-          onClick: goNext,
+          onClick: () => goNext(),
           style:{
             position:"absolute",
             right:8,
@@ -370,7 +411,7 @@ function WorkerCard({ item, lang }) {
       },
         h("button", {
           type:"button",
-          onClick: handleLike,
+          onClick: () => applyVote("like"),
           style:{
             display:"flex",
             alignItems:"center",
@@ -393,7 +434,7 @@ function WorkerCard({ item, lang }) {
 
         h("button", {
           type:"button",
-          onClick: handleDislike,
+          onClick: () => applyVote("dislike"),
           style:{
             display:"flex",
             alignItems:"center",
@@ -420,15 +461,17 @@ function WorkerCard({ item, lang }) {
 
 /**
  * Props:
- * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], ratingEnabled, nameColor, bioColor, bioBgColor }]
+ * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], ratingEnabled, nameColor, bioColor, bioBgColor, likes, dislikes }]
  * - keyword
  * - lang
+ * - cardId
  * - onBack()
  */
 export default function BrandInfoPage({
   brandInfos = [],
   keyword = "",
   lang = "am",
+  cardId = "",
   onBack
 }) {
   React.useEffect(() => {
@@ -488,7 +531,8 @@ export default function BrandInfoPage({
       h(WorkerCard, {
         key: item.id || item.keyword || Math.random().toString(36),
         item,
-        lang
+        lang,
+        cardId
       })
     )
   );
