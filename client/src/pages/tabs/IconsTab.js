@@ -661,11 +661,18 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   /* ------ CRUD in memory ------ */
   const validate = (it) => {
     const href = (it.href || "").trim();
-    if (!it.label || typeof it.label !== "object")
+
+    // label object կա՞
+    if (!it.label || typeof it.label !== "object") {
       return { ok: false, msg: T.validateLabelsMissing };
-    const nameAM = (it.label.am || "").trim();
-    if (!nameAM) return { ok: false, msg: T.validateAmMissing };
+    }
+
+    // ⚠️ AM-ի պարտադիր ստուգումը հանված է
+    // const nameAM = (it.label.am || "").trim();
+    // if (!nameAM) return { ok: false, msg: T.validateAmMissing };
+
     if (!href) return { ok: false, msg: T.validateHrefMissing };
+
     const fa = faClass(it.icon);
     return {
       ok: true,
@@ -868,7 +875,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         }),
         h("input", {
           className: "input",
-          
           value: style.labelHEX,
           onChange: (e) =>
             setStyle((s) => ({ ...s, labelHEX: e.target.value })),
