@@ -258,6 +258,9 @@ export default function HomePage({ cardId = "101" }) {
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
   const [splashDone, setSplashDone] = React.useState(false);   // ✅ splash timer
 
+  // ✅ popup–ը մեկ անգամ բացելու flag
+  const [sharePopupShown, setSharePopupShown] = React.useState(false);
+
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
@@ -295,6 +298,13 @@ export default function HomePage({ cardId = "101" }) {
     })();
     return () => { killed = true; };
   }, [cardId]);
+
+  // ✅ info բեռնվել է → նշում ենք, որ popup–ը արդեն “բացված” է լինի
+  React.useEffect(() => {
+    if (!sharePopupShown && !loading && info) {
+      setSharePopupShown(true);
+    }
+  }, [sharePopupShown, loading, info]);
 
   /* ===== Splash loader – Contactum logo =====
      կերևա, քանի դեռ (loading === true) ԿԱՄ (splashDone === false)  */
@@ -502,13 +512,13 @@ export default function HomePage({ cardId = "101" }) {
                     onKeywordClick: (kw) => setActiveBrandKeyword(kw),
                   })
                 : null,
-                h(SharePage, {
+              h(SharePage, {
                 cardId,
                 info,
                 lang: htmlLang,
-                autoOpenConfirm: true,   // ✅ բացի pop-up–ը բոլոր սարքերում
+                // ✅ auto-open միայն առաջին մուտքի ժամանակ
+                autoOpenConfirm: !sharePopupShown,
               })
-
             )
       )
     );
