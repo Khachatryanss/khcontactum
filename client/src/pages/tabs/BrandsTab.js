@@ -3,11 +3,14 @@ import React from "react";
 import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
 
 const h = React.createElement;
-const LANGS = ["am", "ru", "en", "ar", "fr"];
+// 👇 ավելացրեցինք kz, chn
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn"];
 
 /* ---------- UI TEXT ---------- */
 const BRANDS_UI_TEXT = {
   am: {
+    heading: "Բրենդների բաժին",
+
     titleColorLabel: "Վերնագրի գույն :",
     nameColorLabel: "Անունների գույն :",
     titleTextLabel: "Վերնագրի տեքստը:",
@@ -31,7 +34,7 @@ const BRANDS_UI_TEXT = {
     savingButton: "Պահպանում…",
     loading: "Բեռնվում է…",
 
-    fileTypeError: "Ընդունվում են միայն նկար ֆայլեր",
+    fileTypeError: "Ընդունվում են միայն նկար կամ վիդեո ֆայլեր",
     uploadOk: "Լոգոն վերբեռնվեց ✔",
     uploadFailed: "Վերբեռնումը ձախողվեց",
     loadFailed: "Ներբեռնումը ձախողվեց",
@@ -40,6 +43,8 @@ const BRANDS_UI_TEXT = {
   },
 
   en: {
+    heading: "Brands",
+
     titleColorLabel: "Title color:",
     nameColorLabel: "Name color:",
     titleTextLabel: "Title text:",
@@ -63,7 +68,7 @@ const BRANDS_UI_TEXT = {
     savingButton: "Saving…",
     loading: "Loading…",
 
-    fileTypeError: "Only image files are accepted",
+    fileTypeError: "Only image or video files are accepted",
     uploadOk: "Logo uploaded ✔",
     uploadFailed: "Upload failed",
     loadFailed: "Loading failed",
@@ -72,6 +77,8 @@ const BRANDS_UI_TEXT = {
   },
 
   ru: {
+    heading: "Бренды",
+
     titleColorLabel: "Цвет заголовка:",
     nameColorLabel: "Цвет названий:",
     titleTextLabel: "Текст заголовка:",
@@ -95,7 +102,7 @@ const BRANDS_UI_TEXT = {
     savingButton: "Сохранение…",
     loading: "Загрузка…",
 
-    fileTypeError: "Допускаются только файлы изображений",
+    fileTypeError: "Допускаются только файлы изображений или видео",
     uploadOk: "Логотип загружен ✔",
     uploadFailed: "Ошибка загрузки",
     loadFailed: "Ошибка при загрузке",
@@ -104,6 +111,8 @@ const BRANDS_UI_TEXT = {
   },
 
   ar: {
+    heading: "قسم العلامات التجارية",
+
     titleColorLabel: "لون العنوان:",
     nameColorLabel: "لون الأسماء:",
     titleTextLabel: "نص العنوان:",
@@ -127,7 +136,7 @@ const BRANDS_UI_TEXT = {
     savingButton: "جاري الحفظ…",
     loading: "جاري التحميل…",
 
-    fileTypeError: "يُقبل فقط ملفات الصور",
+    fileTypeError: "يُقبل فقط ملفات الصور أو الفيديو",
     uploadOk: "تم رفع الشعار ✔",
     uploadFailed: "فشل الرفع",
     loadFailed: "فشل التحميل",
@@ -136,6 +145,8 @@ const BRANDS_UI_TEXT = {
   },
 
   fr: {
+    heading: "Section marques",
+
     titleColorLabel: "Couleur du titre :",
     nameColorLabel: "Couleur des noms :",
     titleTextLabel: "Texte du titre :",
@@ -159,12 +170,84 @@ const BRANDS_UI_TEXT = {
     savingButton: "Enregistrement…",
     loading: "Chargement…",
 
-    fileTypeError: "Seuls les fichiers image sont acceptés",
+    fileTypeError:
+      "Seuls les fichiers image ou vidéo sont acceptés",
     uploadOk: "Logo téléversé ✔",
     uploadFailed: "Échec du téléversement",
     loadFailed: "Échec du chargement",
     savedOk: "Enregistré ✅",
     saveFailed: "Échec de l’enregistrement",
+  },
+
+  // 🇰🇿 Kazakh
+  kz: {
+    heading: "Бренд баптаулары",
+
+    titleColorLabel: "Тақырып түсі:",
+    nameColorLabel: "Атаулар түсі:",
+    titleTextLabel: "Тақырып мәтіні:",
+    colsLabel: "Баған саны:",
+    colsOption3: "3",
+    colsOption2: "2",
+    colsOption1: "1 (бір баған)",
+    rowBgLabel: "Бір бағанды карталардың фоны (1-баған)",
+
+    brandNameLabel: "Бренд атауы:",
+    uploadButton: "Жүктеу",
+    deleteButton: "Жою",
+    linkTypeLabel: "Сілтеме түрі:",
+    linkTypeKeyword: "Кілт сөз",
+    linkTypeUrl: "URL",
+    keywordPlaceholder: "мысалы goodrealty",
+    hrefPlaceholder: "https://example.com/...",
+
+    addButton: "Қосу",
+    saveButton: "Сақтау",
+    savingButton: "Сақталуда…",
+    loading: "Жүктелуде…",
+
+    fileTypeError:
+      "Тек сурет немесе видео файлдар қабылданады",
+    uploadOk: "Логотип жүктелді ✔",
+    uploadFailed: "Жүктеу сәтсіз аяқталды",
+    loadFailed: "Жүктеу сәтсіз аяқталды",
+    savedOk: "Сақталды ✅",
+    saveFailed: "Сақтау сәтсіз аяқталды",
+  },
+
+  // 🇨🇳 Chinese
+  chn: {
+    heading: "品牌设置",
+
+    titleColorLabel: "标题颜色：",
+    nameColorLabel: "名称颜色：",
+    titleTextLabel: "标题文本：",
+    colsLabel: "列数：",
+    colsOption3: "3",
+    colsOption2: "2",
+    colsOption1: "1（单列）",
+    rowBgLabel: "单列表卡片背景（第 1 列）",
+
+    brandNameLabel: "品牌名称：",
+    uploadButton: "上传",
+    deleteButton: "删除",
+    linkTypeLabel: "链接类型：",
+    linkTypeKeyword: "关键字",
+    linkTypeUrl: "URL",
+    keywordPlaceholder: "例如 goodrealty",
+    hrefPlaceholder: "https://example.com/...",
+
+    addButton: "添加",
+    saveButton: "保存",
+    savingButton: "正在保存…",
+    loading: "正在加载…",
+
+    fileTypeError: "仅接受图片或视频文件",
+    uploadOk: "Logo 已上传 ✔",
+    uploadFailed: "上传失败",
+    loadFailed: "加载失败",
+    savedOk: "已保存 ✅",
+    saveFailed: "保存失败",
   },
 };
 
@@ -207,7 +290,9 @@ function uid() {
 /* ---------- focus/ caret restore ---------- */
 function focusAndRestoreCaret(fieldKey, pos) {
   if (!fieldKey) return;
-  const el = document.querySelector('input[data-fieldkey="' + fieldKey + '"]');
+  const el = document.querySelector(
+    'input[data-fieldkey="' + fieldKey + '"]'
+  );
   if (!el) return;
   try {
     el.focus();
@@ -237,9 +322,14 @@ function FloatingMenu({ anchorEl, open, children }) {
     "div",
     {
       className: "floating-menu",
-      style: { position: "fixed", top: pos.top, left: pos.left, zIndex: 9999 },
+      style: {
+        position: "fixed",
+        top: pos.top,
+        left: pos.left,
+        zIndex: 9999,
+      },
       onWheel: (e) => e.stopPropagation(),
-      onTouchMove: (e) => e.stopPropagation()
+      onTouchMove: (e) => e.stopPropagation(),
     },
     children
   );
@@ -258,7 +348,9 @@ function I18nRow({ brandId, label, value, onChange, langs }) {
       "div",
       { className: "i18n-vertical" },
       ...usedLangs.map((L) => {
-        const fieldKey = brandId ? brandId + ":" + L + ":name" : "title:" + L;
+        const fieldKey = brandId
+          ? brandId + ":" + L + ":name"
+          : "title:" + L;
         const rtlProps =
           L === "ar" ? { dir: "rtl", style: { textAlign: "right" } } : {};
         return h(
@@ -278,10 +370,10 @@ function I18nRow({ brandId, label, value, onChange, langs }) {
                 onChange: (e) => {
                   const pos = {
                     start: e.target.selectionStart,
-                    end: e.target.selectionEnd
+                    end: e.target.selectionEnd,
                   };
                   onChange && onChange(L, e.target.value, fieldKey, pos);
-                }
+                },
               },
               rtlProps
             )
@@ -310,7 +402,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
   const [brands, setBrands] = React.useState([]);
 
   const [titleColor, setTitleColor] = React.useState("#000000");
-  const [nameColor, setNameColor]   = React.useState("#000000");
+  const [nameColor, setNameColor] = React.useState("#000000");
   const [titleTextI18n, setTitleText] = React.useState(
     toI18nObj("ՄԵՐ ԲՐԵՆԴՆԵՐԸ")
   );
@@ -326,7 +418,8 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
 
   // scroll-to-bottom
   const bottomRef = React.useRef(null);
-  const [scrollToBottomFlag, setScrollToBottomFlag] = React.useState(false);
+  const [scrollToBottomFlag, setScrollToBottomFlag] =
+    React.useState(false);
 
   React.useEffect(() => {
     (async () => {
@@ -351,14 +444,16 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
               href,
               logo: (x?.logo || "").trim(),
               linkType,
-              keyword
+              keyword,
             };
           })
         );
 
         setTitleColor(info.brandsTitleColor || "#000000");
         setNameColor(info.brandsNameColor || "#000000");
-        setTitleText(toI18nObj(info.brandsTitleText || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ"));
+        setTitleText(
+          toI18nObj(info.brandsTitleText || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ")
+        );
         setCols(Number(info.brandsCols || 3));
         setRowBg(info.brandsBgColor || "#fcfcfc");
       } catch (e) {
@@ -390,7 +485,9 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
   /* ------ local CRUD ------ */
   const onBrandField = (id, key, val, fieldKey, pos) => {
     if (fieldKey) lastFocusRef.current = { key: fieldKey, pos };
-    setBrands((list) => list.map((b) => (b.id === id ? { ...b, [key]: val } : b)));
+    setBrands((list) =>
+      list.map((b) => (b.id === id ? { ...b, [key]: val } : b))
+    );
   };
 
   const onBrandNameLang = (id, lang, val, fieldKey, pos) => {
@@ -411,27 +508,33 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         href: "",
         keyword: "",
         linkType: "keyword",
-        logo: ""
-      }
+        logo: "",
+      },
     ]);
     // հաջորդ render–ին scroll անի ներքև
     setScrollToBottomFlag(true);
   };
 
-  const delBrand = (id) => setBrands((list) => list.filter((b) => b.id !== id));
+  const delBrand = (id) =>
+    setBrands((list) => list.filter((b) => b.id !== id));
 
   const uploadBrandLogo =
     (id, file) =>
     async () => {
       try {
         if (!file) return;
-        if (!file.type.startsWith("image/") && !file.type.startsWith("video/")) {
+        if (
+          !file.type.startsWith("image/") &&
+          !file.type.startsWith("video/")
+        ) {
           setMsg(T.fileTypeError);
           return;
         }
         const blobUrl = URL.createObjectURL(file);
         setBrands((list) =>
-          list.map((b) => (b.id === id ? { ...b, logo: blobUrl, _blob: true } : b))
+          list.map((b) =>
+            b.id === id ? { ...b, logo: blobUrl, _blob: true } : b
+          )
         );
 
         const r = await uploadFile(token, file, "brands");
@@ -463,13 +566,13 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         href: (b.href || "").trim(),
         logo: b._blob ? "" : (b.logo || "").trim(),
         linkType: b.linkType || "url",
-        keyword: (b.keyword || "").trim()
+        keyword: (b.keyword || "").trim(),
       }));
 
       const next = { ...(baseInfo || {}) };
       next.brands = cleanBrands;
       next.brandsTitleColor = titleColor || "#000000";
-      next.brandsNameColor  = nameColor || "#000000";
+      next.brandsNameColor = nameColor || "#000000";
       next.brandsTitleText = trimI18nObj(titleTextI18n);
       next.brandsCols = Number(cols) || 3;
       next.brandsBgColor = (rowBg || "").trim();
@@ -485,14 +588,15 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           const keyword = (x?.keyword || "").trim();
           const href = (x?.href || "").trim();
           const linkType =
-            x?.linkType || (keyword ? "keyword" : href ? "url" : "keyword");
+            x?.linkType ||
+            (keyword ? "keyword" : href ? "url" : "keyword");
           return {
             id: x.id || uid(),
             name: toI18nObj(x?.name ?? ""),
             href,
             logo: (x?.logo || "").trim(),
             linkType,
-            keyword
+            keyword,
           };
         })
       );
@@ -521,7 +625,11 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       "h2",
       {
         className: "company-title",
-        style: { marginTop: 8, textAlign: "left", marginBottom: 6 }
+        style: {
+          marginTop: 8,
+          textAlign: "left",
+          marginBottom: 6,
+        },
       },
       T.heading
     ),
@@ -537,7 +645,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           type: "color",
           value: titleColor,
           onChange: (e) => setTitleColor(e.target.value),
-          className: "color-input"
+          className: "color-input",
         }),
         h("span", { className: "hex" }, titleColor)
       ),
@@ -550,7 +658,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           type: "color",
           value: nameColor,
           onChange: (e) => setNameColor(e.target.value),
-          className: "color-input"
+          className: "color-input",
         }),
         h("span", { className: "hex" }, nameColor)
       ),
@@ -563,7 +671,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           lastFocusRef.current = { key: fieldKey, pos };
           setTitleText((o) => ({ ...o, [L]: v }));
         },
-        langs: activeLangs
+        langs: activeLangs,
       }),
 
       h(
@@ -575,8 +683,9 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           {
             className: "input",
             value: String(cols),
-            onChange: (e) => setCols(Number(e.target.value) || 3),
-            style: { width: 160 }
+            onChange: (e) =>
+              setCols(Number(e.target.value) || 3),
+            style: { width: 160 },
           },
           h("option", { value: "3" }, T.colsOption3),
           h("option", { value: "2" }, T.colsOption2),
@@ -598,12 +707,14 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
             b.logo
               ? h("img", {
                   src: absPreview(b.logo),
-                  alt: b.name?.am || "logo"
+                  alt: b.name?.am || "logo",
                 })
               : h(
                   "span",
                   { className: "brand-initials" },
-                  (b.name?.am || "?").slice(0, 2).toUpperCase()
+                  (b.name?.am || "?")
+                    .slice(0, 2)
+                    .toUpperCase()
                 )
           ),
           h(
@@ -617,7 +728,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
                 {
                   className: "btn pill",
                   style: { cursor: "pointer" },
-                  onMouseDown: (e) => e.preventDefault()
+                  onMouseDown: (e) => e.preventDefault(),
                 },
                 T.uploadButton,
                 h("input", {
@@ -628,7 +739,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
                     const f = e.target.files?.[0];
                     if (f) uploadBrandLogo(b.id, f)();
                     e.target.value = "";
-                  }
+                  },
                 })
               ),
               h(
@@ -636,7 +747,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
                 {
                   className: "btn pill danger",
                   type: "button",
-                  onClick: () => delBrand(b.id)
+                  onClick: () => delBrand(b.id),
                 },
                 T.deleteButton
               )
@@ -647,8 +758,14 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
               label: T.brandNameLabel,
               value: b.name,
               onChange: (L, v, fieldKey, pos) =>
-                onBrandNameLang(b.id, L, v, fieldKey, pos),
-              langs: activeLangs
+                onBrandNameLang(
+                  b.id,
+                  L,
+                  v,
+                  fieldKey,
+                  pos
+                ),
+              langs: activeLangs,
             }),
 
             h(
@@ -662,16 +779,25 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
                   style: { maxWidth: 220 },
                   value: b.linkType || "keyword",
                   onChange: (e) =>
-                    onBrandField(b.id, "linkType", e.target.value)
+                    onBrandField(
+                      b.id,
+                      "linkType",
+                      e.target.value
+                    ),
                 },
-                h("option", { value: "keyword" }, T.linkTypeKeyword),
+                h(
+                  "option",
+                  { value: "keyword" },
+                  T.linkTypeKeyword
+                ),
                 h("option", { value: "url" }, T.linkTypeUrl)
               )
             ),
 
             (function () {
               const fieldKey = b.id + ":keyword";
-              if ((b.linkType || "keyword") !== "keyword") return null;
+              if ((b.linkType || "keyword") !== "keyword")
+                return null;
               return h("input", {
                 className: "input",
                 "data-fieldkey": fieldKey,
@@ -682,7 +808,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
                 onChange: (e) => {
                   const pos = {
                     start: e.target.selectionStart,
-                    end: e.target.selectionEnd
+                    end: e.target.selectionEnd,
                   };
                   onBrandField(
                     b.id,
@@ -691,13 +817,14 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
                     fieldKey,
                     pos
                   );
-                }
+                },
               });
             })(),
 
             (function () {
               const fieldKey = b.id + ":href";
-              if ((b.linkType || "keyword") !== "url") return null;
+              if ((b.linkType || "keyword") !== "url")
+                return null;
               return h("input", {
                 className: "input",
                 "data-fieldkey": fieldKey,
@@ -708,10 +835,16 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
                 onChange: (e) => {
                   const pos = {
                     start: e.target.selectionStart,
-                    end: e.target.selectionEnd
+                    end: e.target.selectionEnd,
                   };
-                  onBrandField(b.id, "href", e.target.value, fieldKey, pos);
-                }
+                  onBrandField(
+                    b.id,
+                    "href",
+                    e.target.value,
+                    fieldKey,
+                    pos
+                  );
+                },
               });
             })()
           )
@@ -728,7 +861,11 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       { className: "footer-actions-fixed" },
       h(
         "button",
-        { className: "btn strong", type: "button", onClick: addBrand },
+        {
+          className: "btn strong",
+          type: "button",
+          onClick: addBrand,
+        },
         T.addButton
       ),
       h("div", { style: { flex: 1 } }),
@@ -738,7 +875,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           className: "btn strong",
           type: "button",
           onClick: save,
-          disabled: saving
+          disabled: saving,
         },
         saving ? T.savingButton : T.saveButton
       ),
@@ -749,29 +886,109 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       "style",
       null,
       `
-      .controls{ display:grid; gap:12px; margin:10px 0 14px; background:#fff; border:1px solid #eee; border-radius:16px; padding:12px; }
-      .row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+      .controls{
+        display:grid;
+        gap:12px;
+        margin:10px 0 14px;
+        background:#fff;
+        border:1px solid #eee;
+        border-radius:16px;
+        padding:12px;
+      }
+      .row{
+        display:flex;
+        align-items:center;
+        gap:12px;
+        flex-wrap:wrap;
+      }
       .lbl{ font-weight:600; min-width:max-content; }
-      .color-input{ width:48px; height:32px; border:none; padding:0; cursor:pointer; }
-      .hex{ font-family:monospace; font-size:12px; color:#444; }
+      .color-input{
+        width:48px;
+        height:32px;
+        border:none;
+        padding:0;
+        cursor:pointer;
+      }
+      .hex{
+        font-family:monospace;
+        font-size:12px;
+        color:#444;
+      }
       .i18n-row{ display:grid; gap:6px; }
       .i18n-vertical{ display:grid; gap:8px; grid-template-columns:1fr; }
       .i18n-item{ display:grid; gap:4px; }
       .tag{ font-size:12px; font-weight:700; opacity:.7; }
 
-      .admin-brands{ display:flex; flex-direction:column; gap:12px; }
-      .card{ background:#fff; border:1px solid #ececec; border-radius:16px; padding:12px; }
-      .brand-row{ display:grid; grid-template-columns:84px 1fr; gap:12px; }
-      @media (max-width:520px){ .brand-row{ grid-template-columns:64px 1fr; } }
-      .brand-logo{ width:84px; height:84px; border-radius:16px; overflow:hidden; background:#f2f2f2; display:grid; place-items:center; }
-      .brand-logo img{ width:100%; height:100%; object-fit:cover; }
-      .brand-initials{ color:#777; font-weight:700; }
-      .brand-main{ display:grid; gap:8px; align-content:start; }
-      .brand-actions{ display:flex; gap:8px; justify-content:flex-start; }
-      .btn{ padding:10px 14px; border:none; border-radius:12px; background:#111; color:#fff; cursor:pointer; }
-      .btn.pill{ border-radius:999px; } .btn.danger{ background:#e8554d; } .btn.strong{ font-weight:700; }
-      .input{ width:100%; padding:10px 12px; border:1px solid #ddd; border-radius:12px; background:#fff; }
-      .small-msg{ margin-left:8px; font-size:12px; color:#444; }
+      .admin-brands{
+        display:flex;
+        flex-direction:column;
+        gap:12px;
+      }
+      .card{
+        background:#fff;
+        border:1px solid #ececec;
+        border-radius:16px;
+        padding:12px;
+      }
+      .brand-row{
+        display:grid;
+        grid-template-columns:84px 1fr;
+        gap:12px;
+      }
+      @media (max-width:520px){
+        .brand-row{ grid-template-columns:64px 1fr; }
+      }
+      .brand-logo{
+        width:84px;
+        height:84px;
+        border-radius:16px;
+        overflow:hidden;
+        background:#f2f2f2;
+        display:grid;
+        place-items:center;
+      }
+      .brand-logo img{
+        width:100%;
+        height:100%;
+        object-fit:cover;
+      }
+      .brand-initials{
+        color:#777;
+        font-weight:700;
+      }
+      .brand-main{
+        display:grid;
+        gap:8px;
+        align-content:start;
+      }
+      .brand-actions{
+        display:flex;
+        gap:8px;
+        justify-content:flex-start;
+      }
+      .btn{
+        padding:10px 14px;
+        border:none;
+        border-radius:12px;
+        background:#111;
+        color:#fff;
+        cursor:pointer;
+      }
+      .btn.pill{ border-radius:999px; }
+      .btn.danger{ background:#e8554d; }
+      .btn.strong{ font-weight:700; }
+      .input{
+        width:100%;
+        padding:10px 12px;
+        border:1px solid #ddd;
+        border-radius:12px;
+        background:#fff;
+      }
+      .small-msg{
+        margin-left:8px;
+        font-size:12px;
+        color:#444;
+      }
 
       .admin-scroll-root{
         overscroll-behavior:contain;
@@ -799,8 +1016,13 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         padding:6px 0;
         min-width:220px;
       }
-      .floating-menu .menu-item{ padding:10px 14px; cursor:pointer; }
-      .floating-menu .menu-item:hover{ background:#f4f4f4; }
+      .floating-menu .menu-item{
+        padding:10px 14px;
+        cursor:pointer;
+      }
+      .floating-menu .menu-item:hover{
+        background:#f4f4f4;
+      }
     `
     )
   );

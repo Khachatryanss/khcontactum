@@ -16,7 +16,8 @@ import mailIcon     from "../img/mail.png";
 
 const h = React.createElement;
 
-const LANGS = ["en", "am", "fr", "ar", "ru"];
+// ավելացրեցի kz և chn
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn"];
 
 const TEXT = {
   am: {
@@ -25,7 +26,7 @@ const TEXT = {
     password: "Գաղտնաբառ",
     login: "Մուտք",
     description:
-      "KHContactum թվային այցեքարտեր.Բիզնեսը սկսվում է մեկ հպումով․KHContactum LLC -ին Khachatryans Holding CJSC-ի հերթական նորարարական նախագիծն է, որը միավորում է տեխնոլոգիան և բիզնեսը։Ստեղծված է առաջնորդների համար, ովքեր գնահատում են ոճը և արդյունավետությունը։Ակնթարթային շփում NFC կամ QR կոդով՝ անհատական պրեմիում ձևավորմամբ Ձեր բրենդի համար։ KHContactum — բիզնես հաղորդակցության նոր լեզուն։",
+      "KHContactum թվային այցեքարտեր. Բիզնեսը սկսվում է մեկ հպումով․ KHContactum LLC-ը Khachatryans Holding CJSC-ի հերթական նորարարական նախագիծն է, որը միավորում է տեխնոլոգիան և բիզնեսը։ Ստեղծված է առաջնորդների համար, ովքեր գնահատում են ոճը և արդյունավետությունը։ Ակնթարթային շփում NFC կամ QR կոդով՝ անհատական պրեմիում ձևավորմամբ ձեր բրենդի համար։ KHContactum — բիզնես հաղորդակցության նոր լեզուն։",
     contactsLabel: "Կապ մեզ հետ",
   },
   ru: {
@@ -34,7 +35,7 @@ const TEXT = {
     password: "Пароль",
     login: "Вход",
     description:
-      "Цифровые визитки KHContactum. Бизнес начинается с одного прикосновения. KHContactum LLC — ещё один инновационный проект компании «Хачатрянс Холдинг», объединяющий технологии и бизнес. Созданы для лидеров, ценящих стиль и эффективность. Мгновенный контакт по NFC или QR-коду с индивидуальным премиальным дизайном для вашего бренда. KHContactum — новый язык делового общения.",
+      "Цифровые визитки KHContactum. Бизнес начинается с одного прикосновения. KHContactum LLC — ещё один инновационный проект компании «Khachatryans Holding CJSC», объединяющий технологии и бизнес. Созданы для лидеров, ценящих стиль и эффективность. Мгновенный контакт по NFC или QR-коду с индивидуальным премиальным дизайном для вашего бренда. KHContactum — новый язык делового общения.",
     contactsLabel: "Связаться с нами",
   },
   en: {
@@ -52,7 +53,7 @@ const TEXT = {
     password: "كلمة المرور",
     login: "تسجيل الدخول",
     description:
-      "بطاقات أعمال رقمية من KHContactum. تبدأ الأعمال بلمسة واحدة. KHContactum LLC هو مشروع مبتكر آخر من شركة خاتشاتريانز القابضة، يجمع بين التكنولوجيا والأعمال. صُمم للقادة الذين يُقدّرون الأناقة والكفاءة. تواصل فوري عبر تقنية NFC أو رمز الاستجابة السريعة مع تصميم مميز فريد لعلامتك التجارية. KHContactum - لغة التواصل الجديدة في عالم الأعمال.",
+      "بطاقات أعمال رقمية من KHContactum. تبدأ الأعمال بلمسة واحدة. KHContactum LLC هو مشروع مبتكر آخر من شركة Khachatryans Holding CJSC، يجمع بين التكنولوجيا والأعمال. صُمم للقادة الذين يُقدّرون الأناقة والكفاءة. تواصل فوري عبر تقنية NFC أو رمز الاستجابة السريعة مع تصميم مميز وفريد لعلامتك التجارية. KHContactum - لغة التواصل الجديدة في عالم الأعمال.",
     contactsLabel: "اتصل بنا",
   },
   fr: {
@@ -61,8 +62,26 @@ const TEXT = {
     password: "Mot de passe",
     login: "Connexion",
     description:
-      "Cartes de visite numériques KHContactum. Le commerce commence en un clic. KHContactum LLC est un projet innovant de Khachatryans Holding CJSC, alliant technologie et affaires. Conçues pour les dirigeants qui privilégient l'élégance et l'efficacité. Contact instantané par NFC ou QR code, avec un design premium personnalisé pour votre marque. KHContactum : le nouveau langage de la communication d'entreprise.",
+      "Cartes de visite numériques KHContactum. Le business commence en un seul geste. KHContactum LLC est un projet innovant de Khachatryans Holding CJSC, alliant technologie et affaires. Conçues pour les dirigeants qui privilégient l'élégance et l'efficacité. Contact instantané via NFC ou QR code avec un design premium personnalisé pour votre marque. KHContactum : le nouveau langage de la communication d'entreprise.",
     contactsLabel: "Contactez-nous",
+  },
+  kz: {
+    appTitle: "KHContactum",
+    username: "Пайдаланушы аты",
+    password: "Құпиясөз",
+    login: "Кіру",
+    description:
+      "KHContactum цифрлық визиткалары. Бизнес бір жанасудан басталады. KHContactum LLC – Khachatryans Holding CJSC компаниясының технология мен бизнесті біріктіретін тағы бір инновациялық жобасы. Стиль мен тиімділікті бағалайтын көшбасшыларға арналған. NFC немесе QR-код арқылы бір сәтте байланыс, брендіңіз үшін премиум жеке дизайнмен. KHContactum — іскерлік коммуникацияның жаңа тілі.",
+    contactsLabel: "Бізбен байланыс",
+  },
+  chn: {
+    appTitle: "KHContactum",
+    username: "用户名",
+    password: "密码",
+    login: "登录",
+    description:
+      "KHContactum 数字名片。商业从一次触碰开始。KHContactum LLC 是 Khachatryans Holding CJSC 的又一个创新项目，将技术与商业相结合。专为重视风格与效率的领导者打造。通过 NFC 或二维码实现即时连接，为您的品牌提供专属高端设计。KHContactum —— 商务沟通的新语言。",
+    contactsLabel: "联系我们",
   },
 };
 
@@ -96,7 +115,9 @@ export default function AdminLogin({
 
   // current URL (որպես fallback՝ "/admin")
   const currentHref =
-    (typeof window !== "undefined" && window.location && window.location.href) ||
+    (typeof window !== "undefined" &&
+      window.location &&
+      window.location.href) ||
     "/admin";
 
   function handleLangChange(next) {
@@ -134,11 +155,11 @@ export default function AdminLogin({
 
       h(
         "div",
-        {
-          className: "admin-login-panel",
-          dir: lang === "ar" ? "rtl" : "ltr",
-          style: lang === "ar" ? { textAlign: "right" } : {},
-        },
+          {
+            className: "admin-login-panel",
+            dir: lang === "ar" ? "rtl" : "ltr",
+            style: lang === "ar" ? { textAlign: "right" } : {},
+          },
 
         h(
           "div",

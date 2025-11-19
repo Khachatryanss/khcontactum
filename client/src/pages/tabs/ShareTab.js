@@ -229,6 +229,98 @@ const SHARE_UI_TEXT = {
       ig: "Instagram",
     },
   },
+
+  // 🇰🇿 Kazakh
+  kz: {
+    titleMain: "Share / QR",
+    intro:
+      "Визиткаңызды QR-код және арнайы сілтеме арқылы бөлісе аласыз.",
+    onlineTitle: "Online QR · Сілтеме",
+    onlineLabel: "Картаңыздың public сілтемесі",
+    onlineHelp:
+      "Базалық бөлігі өзгермейді. Тек card_id / path енгізіңіз.",
+
+    offlineTitle: "Offline QR және контакттер",
+    offlineIntro:
+      "Бұл деректер офлайн QR-код және «Контакт тізіміне қосыңыз» батырмасы үшін қолданылады.",
+
+    fullNameLabel: "Аты-жөні",
+    phoneLabel: "Телефон",
+    phonePlaceholder: "+7...",
+
+    quickTitle: "Жылдам бөлісу тәсілдері",
+    quickIntro:
+      "Шеринг блоктарында қай иконкалар көрінетінін таңдаңыз.",
+
+    colorsTitle: "Түстер",
+    colorBtnText: "Батырма мәтінінің түсі",
+    colorBtnBg: "Батырма фонының түсі",
+    colorShareTitle: "«Менің картаммен бөлісу» мәтінінің түсі",
+
+    saveButton: "Сақтау",
+    savingButton: "Сақталуда...",
+    msgNoToken: "Token жоқ, қайтадан кіріңіз",
+    msgSaveOk: "Сақталды ✅",
+    msgSaveError: "Сақтау кезінде қате кетті",
+    pathReset: "card_id арқылы қалпына келтіру",
+    pathInvalid:
+      "Қате path: тек әріп/сан/-/_ рұқсат, бос орынсыз.",
+
+    channelLabels: {
+      fb: "Facebook",
+      tg: "Telegram",
+      ln: "LinkedIn",
+      wa: "WhatsApp",
+      mail: "Email",
+      viber: "Viber",
+      ig: "Instagram",
+    },
+  },
+
+  // 🇨🇳 Chinese (Simplified)
+  chn: {
+    titleMain: "Share / QR",
+    intro: "你可以通过二维码和分享链接来分享你的名片。",
+    onlineTitle: "在线 QR · 链接",
+    onlineLabel: "名片的公开链接",
+    onlineHelp:
+      "前缀是固定的，只需输入 card_id / 自定义路径即可。",
+
+    offlineTitle: "离线 QR 与联系人",
+    offlineIntro:
+      "这些信息将用于离线二维码以及“添加到联系人”按钮。",
+
+    fullNameLabel: "姓名",
+    phoneLabel: "电话",
+    phonePlaceholder: "+86...",
+
+    quickTitle: "快速分享方式",
+    quickIntro: "选择在分享区域显示哪些图标。",
+
+    colorsTitle: "颜色",
+    colorBtnText: "按钮文字颜色",
+    colorBtnBg: "按钮背景颜色",
+    colorShareTitle: "“分享我的名片”文字颜色",
+
+    saveButton: "保存",
+    savingButton: "正在保存...",
+    msgNoToken: "没有 token，请重新登录",
+    msgSaveOk: "已保存 ✅",
+    msgSaveError: "保存时出错",
+    pathReset: "重置为 card_id",
+    pathInvalid:
+      "路径无效：仅限字母/数字/-/_，不能包含空格。",
+
+    channelLabels: {
+      fb: "Facebook",
+      tg: "Telegram",
+      ln: "LinkedIn",
+      wa: "WhatsApp",
+      mail: "Email",
+      viber: "Viber",
+      ig: "Instagram",
+    },
+  },
 };
 
 /* ---------- defaults & helpers ---------- */

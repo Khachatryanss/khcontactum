@@ -17,10 +17,29 @@ const h = React.createElement;
 const PUBLIC_BASE = "https://khcontactum.com/";
 
 /* ===== helpers ===== */
-function pickLang(v, lang, fallbacks = ["am", "en", "ru", "ar", "fr"]) {
+/**
+ * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn})
+ * lang – "hy","ru","en","ar","fr","kz","chn" (HomePage-ից եկող htmlLang)
+ */
+function pickLang(v, lang = "hy", fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
-  const order = [lang, ...fallbacks.filter((x) => x !== lang)];
+
+  const primary = [];
+  const L = (lang || "").toLowerCase();
+
+  // Armenian mapping
+  if (L === "hy" || L === "am") {
+    primary.push("am", "hy");
+  } else {
+    primary.push(L);
+  }
+
+  const order = [
+    ...primary,
+    ...fallbacks.filter((x) => !primary.includes(x)),
+  ];
+
   for (const k of order) {
     const s = v?.[k];
     if (s && String(s).trim()) return String(s).trim();
@@ -37,7 +56,7 @@ function ensureAbsoluteUrl(u) {
   return PUBLIC_BASE + path;
 }
 
-/* ===== i18n text ===== */
+/* ===== i18n text (7 լեզու) ===== */
 const TEXT = {
   am: {
     qrTitle: "Share / QR",
@@ -120,6 +139,39 @@ const TEXT = {
     confirmTitle: "Ajouter {{name}} à la liste de contacts ?",
     confirmYes: "Oui",
     confirmNo: "Non",
+  },
+  kz: {
+    qrTitle: "Share / QR",
+    qrDesc:
+      "Визиткаңызды QR-код және сілтеме арқылы бөлісуге болады.",
+
+    scanBtn: "QR-КОДТЫ СКАНЕРЛЕУ",
+    shareTitle: "МЕНІҢ КАРТАМДЫ БӨЛІСУ",
+    addBtn: "МЕНІ БАЙЛАНЫС ТІЗІМІНЕ ҚОСУ",
+    qrOnline: "ОНЛАЙН QR-КОД",
+    qrOffline: "ОФФЛАЙН QR-КОД",
+    offlineNote: "Сканерлегеннен кейін контактілеріңізге сақтай аласыз.",
+    shareDefault: "Менің KHContactum.com цифрлық визиткамды қараңыз.",
+    mailSubject: "KHContactum цифрлық визиткасы",
+    confirmTitle: "«{{name}}» контактілер тізіміне қосылсын ба?",
+    confirmYes: "Иә",
+    confirmNo: "Жоқ",
+  },
+  chn: {
+    qrTitle: "分享 / QR",
+    qrDesc: "你可以通过二维码和分享链接发送你的名片。",
+
+    scanBtn: "扫描二维码",
+    shareTitle: "分享我的名片",
+    addBtn: "添加到通讯录",
+    qrOnline: "在线二维码",
+    qrOffline: "离线二维码",
+    offlineNote: "扫描后可以保存到联系人。",
+    shareDefault: "查看我的 KHContactum.com 数字名片。",
+    mailSubject: "KHContactum 数字名片",
+    confirmTitle: "将 {{name}} 添加到联系人？",
+    confirmYes: "是",
+    confirmNo: "否",
   },
 };
 
@@ -389,8 +441,8 @@ async function saveVCardUniversal({
 }
 
 /**
- * lang-ը կարող ես փոխանցել HomePage-ից.
- * autoOpenConfirm → VisitCard հղմամբ մտնելու դեպքում բացի popup
+ * lang-ը կարող ես փոխանցել HomePage-ից (htmlLang → "hy","ru","en","ar","fr","kz","chn").
+ * autoOpenConfirm → VisitCard հղումով մտնելու դեպքում բացի popup
  */
 export default function SharePage({ info, cardId, lang, autoOpenConfirm = false }) {
   const share = normalizeShare(info && info.share);
@@ -404,35 +456,43 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
     }
   }, [autoOpenConfirm]);
 
-  const activeLang =
+  const activeLangRaw =
     lang ||
     (typeof window !== "undefined"
       ? localStorage.getItem("lang") || "am"
       : "am");
 
-  const t = TEXT[activeLang] || TEXT.am;
+  // Armenian htmlLang ("hy") → TEXT.am
+  const textLangKey =
+    activeLangRaw === "hy" ? "am" : (activeLangRaw || "am");
+  const t = TEXT[textLangKey] || TEXT.am;
 
   const onlineUrl = ensureAbsoluteUrl(
     share.onlineUrl || defaultOnlineUrl(cardId)
   );
 
+  // ընկերության անունը – փորձենք pickLang-ով
+  const companyName =
+    (info && info.company && pickLang(info.company.name, activeLangRaw)) ||
+    "";
+
   const offlineName =
     share.offlineFullName ||
-    info?.company?.name?.en ||
-    info?.company?.name?.am ||
+    companyName ||
     "";
+
   const offlinePhone = share.offlinePhone || "";
 
   // KHContactum Digital Card + icon links
   const contactMeta = React.useMemo(
-    () => collectContactMeta(info, offlinePhone, activeLang, onlineUrl),
-    [info, offlinePhone, activeLang, onlineUrl]
+    () => collectContactMeta(info, offlinePhone, activeLangRaw, onlineUrl),
+    [info, offlinePhone, activeLangRaw, onlineUrl]
   );
 
   const shareText = (() => {
     const raw = share.shareText;
     if (raw && typeof raw === "object") {
-      const s = pickLang(raw, activeLang);
+      const s = pickLang(raw, activeLangRaw);
       if (s) return s;
     } else {
       const s = String(raw || "").trim();
@@ -445,8 +505,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
   const btnBgColor      = share.styles.btnBgColor      || "#000000";
   const shareTitleColor = share.styles.shareTitleColor || "#000000";
 
-  // ✅ ՆՈՐ ընդհանուր share handler – օգտագործում է navigator.share,
-  //    իսկ եթե չկա, fallback է անում URL բացելուն / copy-ին
+  // ✅ ՆՈՐ ընդհանուր share handler – navigator.share → fallback
   function onShareUniversal() {
     const url =
       onlineUrl ||
@@ -455,10 +514,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
         : "");
     if (!url) return;
 
-    const title =
-      offlineName ||
-      (info?.company?.name && info.company.name[activeLang]) ||
-      "KHContactum";
+    const title = offlineName || companyName || "KHContactum";
 
     const payload = {
       title,
@@ -513,8 +569,9 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
 
   const confirmName =
     offlineName ||
-    info?.company?.name?.[activeLang] ||
+    companyName ||
     "this contact";
+
   const confirmText = (t.confirmTitle || "Add {{name}} to contacts list?")
     .replace("{{name}}", confirmName);
 
@@ -553,7 +610,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
         t.scanBtn
       ),
 
-      // ======== ՆՈՐ «Կիսվել իմ քարտով» button =========
+      // ======== «Կիսվել իմ քարտով» button =========
       h(
         "h3",
         { style: { margin: "0 0 10px", fontSize: 16, color: shareTitleColor } },

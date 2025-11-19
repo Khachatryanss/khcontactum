@@ -19,10 +19,30 @@ function absLogo(u = "") {
   }
 }
 
-function pickLang(v, lang, fallbacks = ["am", "en", "ru", "ar", "fr"]) {
+/**
+ * v – կարող է լինել string կամ i18n object
+ * lang – գալիս է HomePage-ից որպես htmlLang: "hy","ru","en","ar","fr","kz","chn"
+ */
+function pickLang(v, lang = "hy", fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
-  const order = [lang, ...fallbacks.filter((x) => x !== lang)];
+
+  // առաջնային key-երը ըստ lang-ի
+  const primary = [];
+  switch (lang) {
+    case "hy":
+      primary.push("am", "hy");
+      break;
+    default:
+      primary.push(lang);
+      break;
+  }
+
+  const order = [
+    ...primary,
+    ...fallbacks.filter((x) => !primary.includes(x)),
+  ];
+
   for (const k of order) {
     const s = v?.[k];
     if (s && String(s).trim()) return String(s).trim();
@@ -37,10 +57,10 @@ const CROP_ZOOM = 1.1; // 1.08–1.12 միջակայքը OK է
  * Props:
  * - brands: [{ name, href, logo, linkType, keyword }]
  * - brandsTitleColor
- * - brandsTitleText
+ * - brandsTitleText (string կամ {am,ru,en,ar,fr,kz,chn})
  * - brandsNameColor
  * - brandsCols: 1 | 2 | 3
- * - lang
+ * - lang: htmlLang → "hy","ru","en","ar","fr","kz","chn"
  * - onKeywordClick(keyword) – optional
  */
 export default function BrandsPage({
@@ -49,7 +69,7 @@ export default function BrandsPage({
   brandsTitleText = "ՄԵՐ ԲՐԵՆԴՆԵՐԸ",
   brandsNameColor = "#000000",
   brandsCols = 3,
-  lang = "am",
+  lang = "hy",
   onKeywordClick,
 }) {
   if (!Array.isArray(brands) || !brands.length) return null;
@@ -232,16 +252,16 @@ export default function BrandsPage({
       { style: { display: "flex", justifyContent: "center" } },
       h(
         "div",
-        {
-          className: "brands-grid",
-          style: {
-            display: "grid",
-            gap: 16,
-            justifyContent: "center",
-            gridTemplateColumns:
-              cols === 2 ? "repeat(2, 120px)" : "repeat(3, 110px)",
+          {
+            className: "brands-grid",
+            style: {
+              display: "grid",
+              gap: 16,
+              justifyContent: "center",
+              gridTemplateColumns:
+                cols === 2 ? "repeat(2, 120px)" : "repeat(3, 110px)",
+            },
           },
-        },
         ...brands.map((b, i) => {
           const name = pickLang(b?.name, lang);
           const href = (b?.href || "").trim();

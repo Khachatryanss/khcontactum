@@ -7,6 +7,7 @@ const h = React.createElement;
 /* ---------- UI TEXT BY LANGUAGE ---------- */
 const PW_UI_TEXT = {
   am: {
+    title: "Գաղտնաբառի փոփոխություն",
 
     oldLabel: "Հին գաղտնաբառ",
     newLabel: "Նոր գաղտնաբառ",
@@ -40,6 +41,7 @@ const PW_UI_TEXT = {
   },
 
   ru: {
+    title: "Смена пароля",
 
     oldLabel: "Старый пароль",
     newLabel: "Новый пароль",
@@ -73,6 +75,7 @@ const PW_UI_TEXT = {
   },
 
   en: {
+    title: "Change password",
 
     oldLabel: "Current password",
     newLabel: "New password",
@@ -106,6 +109,7 @@ const PW_UI_TEXT = {
   },
 
   ar: {
+    title: "تغيير كلمة المرور",
 
     oldLabel: "كلمة المرور الحالية",
     newLabel: "كلمة المرور الجديدة",
@@ -139,6 +143,7 @@ const PW_UI_TEXT = {
   },
 
   fr: {
+    title: "Modification du mot de passe",
 
     oldLabel: "Ancien mot de passe",
     newLabel: "Nouveau mot de passe",
@@ -171,6 +176,76 @@ const PW_UI_TEXT = {
       "Ce mot de passe est déjà utilisé par un autre administrateur",
     toastRoute404:
       "La route de changement de mot de passe est introuvable sur le serveur",
+  },
+
+  // 🇰🇿 Kazakh
+  kz: {
+    title: "Құпиясөзді өзгерту",
+
+    oldLabel: "Ескі құпиясөз",
+    newLabel: "Жаңа құпиясөз",
+    repeatLabel: "Жаңа құпиясөзді қайталау",
+
+    oldPlaceholder: "Ескі құпиясөз",
+    newPlaceholder: "Жаңа құпиясөз",
+    repeatPlaceholder: "Жаңа құпиясөзді қайталау",
+
+    reqTitle: "Талаптар:",
+    reqLen: "Кемінде 8 таңба",
+    reqLow: "Кіші әріп",
+    reqUp: "Бас әріп",
+    reqNum: "Сан",
+    reqSym: "Таңба (., !, @, # …)",
+    reqDiffOld: "Ескі құпиясөзді қайталамау",
+
+    mismatch: "Құпиясөздер сәйкес келмейді",
+
+    saveButton: "Сақтау",
+    savingButton: "Сақталуда...",
+
+    hint:
+      "Ескерту: Сервер ескі құпиясөзді тексереді және жаңа құпиясөз басқа админде қолданылып жатса, оны қабылдамайды.",
+
+    toastNoToken: "Token жоқ",
+    toastSuccess: "Құпиясөз сәтті өзгертілді ✅",
+    toastWrongOld: "Ескі құпиясөз қате енгізілді",
+    toastInUse: "Бұл құпиясөз басқа админде қолданылып жатыр",
+    toastRoute404: "Серверде құпиясөзді өзгерту маршруты табылмады",
+  },
+
+  // 🇨🇳 Chinese (Simplified)
+  chn: {
+    title: "修改密码",
+
+    oldLabel: "当前密码",
+    newLabel: "新密码",
+    repeatLabel: "重复新密码",
+
+    oldPlaceholder: "当前密码",
+    newPlaceholder: "新密码",
+    repeatPlaceholder: "重复新密码",
+
+    reqTitle: "要求：",
+    reqLen: "至少 8 个字符",
+    reqLow: "至少一个小写字母",
+    reqUp: "至少一个大写字母",
+    reqNum: "至少一个数字",
+    reqSym: "至少一个符号 (., !, @, # …)",
+    reqDiffOld: "不能与旧密码相同",
+
+    mismatch: "两次输入的密码不一致",
+
+    saveButton: "保存",
+    savingButton: "正在保存...",
+
+    hint:
+      "提示：服务器会验证当前密码，如果新密码已经被其他管理员使用，将会被拒绝。",
+
+    toastNoToken: "没有 token",
+    toastSuccess: "密码已修改 ✅",
+    toastWrongOld: "当前密码不正确",
+    toastInUse: "该密码已被其他管理员使用",
+    toastRoute404: "服务器上找不到修改密码的接口",
   },
 };
 
@@ -293,7 +368,7 @@ export default function PasswordTab({ token: propToken, uiLang = "en" }) {
 
   return h(
     "div",
-    { className: "card", style: { display: "grid", gap: 10 }, id: "p  " },
+    { className: "card", style: { display: "grid", gap: 10 }, id: "p" },
 
     h(
       "h2",
@@ -385,11 +460,11 @@ export default function PasswordTab({ token: propToken, uiLang = "en" }) {
         vals.p2.length > 0 &&
         h(
           "div",
-          {
-            className: "small",
-            style: { color: "#a00000", marginTop: 4 },
-          },
-          T.mismatch
+            {
+              className: "small",
+              style: { color: "#a00000", marginTop: 4 },
+            },
+            T.mismatch
         )
     ),
 

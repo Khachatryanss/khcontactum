@@ -35,8 +35,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Նկար",
     avatarTypeVideo: "Վիդեո",
     avatarImageUrlLabel: "Avatar նկարի հղում",
-    avatarImageHint:
-      "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Avatar վիդեոյի հղում",
     avatarVideoHint: "Մաքս. 20 MB (mp4, webm, ogg)",
 
@@ -90,8 +89,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Изображение",
     avatarTypeVideo: "Видео",
     avatarImageUrlLabel: "Ссылка на аватар",
-    avatarImageHint:
-      "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Ссылка на видео-аватар",
     avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
 
@@ -145,8 +143,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Image",
     avatarTypeVideo: "Video",
     avatarImageUrlLabel: "Avatar Image URL",
-    avatarImageHint:
-      "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Avatar Video URL",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
 
@@ -200,9 +197,8 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "صورة",
     avatarTypeVideo: "فيديو",
     avatarImageUrlLabel: "رابط صورة الـ Avatar",
-    avatarImageHint:
-      "(PNG / JPG / JPEG / WEBP / GIF)",
-    avatarVideoUrlLabel: "رابط فيديو الـ Avatar",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "رابط Видео الـ Avatar",
     avatarVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
 
     companyNameTitle: "اسم الشركة",
@@ -217,7 +213,7 @@ const ADMIN_UI_TEXT = {
     backgroundTypeVideo: "فيديو",
     backgroundColorLabel: "لون الخلفية",
     backgroundImageUrlLabel: "رابط صورة الخلفية",
-    backgroundVideoUrlLabel: "رابط فيديو الخلفية",
+    backgroundVideoUrlLabel: "رابط Видео الخلفية",
     backgroundVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
 
     saveButton: "حفظ",
@@ -255,9 +251,8 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Image",
     avatarTypeVideo: "Vidéo",
     avatarImageUrlLabel: "URL de l’image avatar",
-    avatarImageHint:
-      "(PNG / JPG / JPEG / WEBP / GIF)",
-    avatarVideoUrlLabel: "URL de la vidéo avatar",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "URL de la видео avatar",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
 
     companyNameTitle: "NOM DE L’ENTREPRISE",
@@ -288,6 +283,116 @@ const ADMIN_UI_TEXT = {
 
     chooseFileLabel: "Choisir un файл",
   },
+
+  /* ---- Kazakh (KZ) ---- */
+  kz: {
+    tabs: {
+      home: "Басты бет",
+      icons: "Икондар",
+      brands: "Брендтер",
+      brandinfo: "Бренд туралы",
+      share: "Бөлісу / QR",
+      password: "Құпиясөзді өзгерту",
+    },
+    logout: "ШЫҒУ",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "ТІЛДЕР",
+    langsDescription:
+      "Белсенді тілдерді таңдаңыз және ретін өзгертіңіз; біріншісі public бетінің әдепкі тілі болады.",
+
+    avatarTitle: "AVATAR",
+    typeLabel: "Түрі",
+    avatarTypeImage: "Сурет",
+    avatarTypeVideo: "Видео",
+    avatarImageUrlLabel: "Avatar суретінің сілтемесі",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "Avatar видеосының сілтемесі",
+    avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "КОМПАНИЯ АТЫ",
+    nameColorLabel: "Атаудың түсі",
+
+    descriptionTitle: "СИПАТТАМА",
+    descriptionColorLabel: "Сипаттаманың түсі",
+
+    backgroundTitle: "ФОН",
+    backgroundTypeColor: "Түс",
+    backgroundTypeImage: "Сурет",
+    backgroundTypeVideo: "Видео",
+    backgroundColorLabel: "Фон түсі",
+    backgroundImageUrlLabel: "Фон суретінің сілтемесі",
+    backgroundVideoUrlLabel: "Фон видеосының сілтемесі",
+    backgroundVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
+
+    saveButton: "Сақтау",
+    savingButton: "Сақталуда...",
+    saveOk: "Сақталды ✅",
+    saveError: "Сақтау кезінде қате",
+
+    needLoginTitle: "Кіру қажет",
+    needLoginBody: "/ бетінде жүйеге кіріңіз.",
+    loading: "Жүктелуде…",
+
+    defaultBadge: "Әдепкі",
+
+    chooseFileLabel: "Файл таңдау",
+  },
+
+  /* ---- Chinese (CHN) – 简体中文 ---- */
+  chn: {
+    tabs: {
+      home: "首页",
+      icons: "图标",
+      brands: "品牌",
+      brandinfo: "品牌信息",
+      share: "分享 / QR",
+      password: "修改密码",
+    },
+    logout: "退出登录",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "语言",
+    langsDescription:
+      "选择启用的语言并调整顺序；第一个将作为公开页面的默认语言。",
+
+    avatarTitle: "头像",
+    typeLabel: "类型",
+    avatarTypeImage: "图片",
+    avatarTypeVideo: "视频",
+    avatarImageUrlLabel: "头像图片链接",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "头像视频链接",
+    avatarVideoHint: "最大 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "公司名称",
+    nameColorLabel: "名称颜色",
+
+    descriptionTitle: "描述",
+    descriptionColorLabel: "描述颜色",
+
+    backgroundTitle: "背景",
+    backgroundTypeColor: "纯色",
+    backgroundTypeImage: "图片",
+    backgroundTypeVideo: "视频",
+    backgroundColorLabel: "背景颜色",
+    backgroundImageUrlLabel: "背景图片链接",
+    backgroundVideoUrlLabel: "背景视频链接",
+    backgroundVideoHint: "最大 20 MB (mp4, webm, ogg)",
+
+    saveButton: "保存",
+    savingButton: "保存中...",
+    saveOk: "已保存 ✅",
+    saveError: "保存时出错",
+
+    needLoginTitle: "需要登录",
+    needLoginBody: "请在 / 页面登录。",
+    loading: "加载中…",
+
+    defaultBadge: "默认",
+
+    chooseFileLabel: "选择文件",
+  },
 };
 
 const DEFAULT_INFO = {
@@ -295,7 +400,15 @@ const DEFAULT_INFO = {
   avatar: { type: "image", imageUrl: "", videoUrl: "" },
 
   company: {
-    name: { am: "", ru: "", en: "", ar: "", fr: "" },
+    name: {
+      am: "",
+      ru: "",
+      en: "",
+      ar: "",
+      fr: "",
+      kz: "",
+      chn: "",
+    },
     nameColor: "#000000",
   },
 
@@ -305,6 +418,8 @@ const DEFAULT_INFO = {
     en: "",
     ar: "",
     fr: "",
+    kz: "",
+    chn: "",
     color: "#000000",
   },
 
@@ -323,6 +438,8 @@ const ALL_LANGS = [
   { code: "en", label: "English (EN)" },
   { code: "ar", label: "العربية (AR)" },
   { code: "fr", label: "Français (FR)" },
+  { code: "kz", label: "Қазақша (KZ)" },
+  { code: "chn", label: "中文 (CHN)" },
 ];
 const ALL_CODES = ALL_LANGS.map((x) => x.code);
 
@@ -346,6 +463,8 @@ function normalizeInfo(partial) {
         en: i.company?.name?.en || "",
         ar: i.company?.name?.ar || "",
         fr: i.company?.name?.fr || "",
+        kz: i.company?.name?.kz || "",
+        chn: i.company?.name?.chn || "",
       },
     },
 
@@ -355,6 +474,8 @@ function normalizeInfo(partial) {
       en: i.description?.en || "",
       ar: i.description?.ar || "",
       fr: i.description?.fr || "",
+      kz: i.description?.kz || "",
+      chn: i.description?.chn || "",
       color: i.description?.color || "#000000",
     },
 
@@ -410,7 +531,7 @@ export default function AdminDashboard({
   const T = ADMIN_UI_TEXT[uiLang] || ADMIN_UI_TEXT.en;
 
   // UI լեզուների selector-ի համար (նույն տրամաբանությունը, ինչ AdminLogin-ում)
-  const UI_LANGS = ["en", "am", "fr", "ar", "ru"];
+  const UI_LANGS = ["en", "am", "fr", "ar", "ru", "kz", "chn"];
 
   function handleUiLangChange(next) {
     if (!next || next === uiLang) return;
@@ -873,7 +994,7 @@ export default function AdminDashboard({
             className: "row",
             style: {
               alignItems: "center",
-              justifyContent: "space-between",
+              justifyContent: "space_between",
               marginBottom: title ? 8 : 0,
             },
           },
@@ -1079,10 +1200,16 @@ export default function AdminDashboard({
             ? "Company Name (EN)"
             : code === "ar"
             ? "الاسم (AR)"
-            : "Nom de l'entreprise (FR)";
+            : code === "fr"
+            ? "Nom de l'entreprise (FR)"
+            : code === "kz"
+            ? "Компания атауы (KZ)"
+            : "公司名称 (CHN)";
 
         const extraProps =
-          code === "ar" ? { dir: "rtl", placeholder } : { placeholder };
+          code === "ar"
+            ? { dir: "rtl", placeholder }
+            : { placeholder };
 
         return h(
           React.Fragment,
@@ -1127,10 +1254,16 @@ export default function AdminDashboard({
             ? "Description (EN)"
             : code === "ar"
             ? "الوصف (AR)"
-            : "Description (FR)";
+            : code === "fr"
+            ? "Description (FR)"
+            : code === "kz"
+            ? "Сипаттама (KZ)"
+            : "描述 (CHN)";
 
         const extraProps =
-          code === "ar" ? { dir: "rtl", placeholder } : { placeholder };
+          code === "ar"
+            ? { dir: "rtl", placeholder }
+            : { placeholder };
 
         return h(
           React.Fragment,

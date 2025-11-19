@@ -112,13 +112,21 @@ function idealColsForLang(lang) {
       return [30, 34];
     case "fr":
       return [36, 42];
+    case "kz":
+      return [32, 38];
+    case "chn":
+      return [28, 34];
     default:
       return [34, 40];
   }
 }
 
 /* ==== Lang dropdown ==== */
-function LangDropdown({ value, onChange, langs = ["am", "ru", "en"] }) {
+function LangDropdown({
+  value,
+  onChange,
+  langs = ["am", "ru", "en", "ar", "fr", "kz", "chn"],
+}) {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     const onDoc = (e) => {
@@ -167,8 +175,7 @@ function LangDropdown({ value, onChange, langs = ["am", "ru", "en"] }) {
             "button",
             {
               key: code,
-              className:
-                "chip" + (code === value ? " active" : ""),
+              className: "chip" + (code === value ? " active" : ""),
               onClick: () => {
                 localStorage.setItem("lang", code);
                 onChange(code);
@@ -190,12 +197,10 @@ function rgbaToCss(obj) {
   })`;
 }
 
-function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr"]) {
+function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
-  const order = [lang].concat(
-    fallbacks.filter((x) => x !== lang)
-  );
+  const order = [lang].concat(fallbacks.filter((x) => x !== lang));
   for (let i = 0; i < order.length; i++) {
     const k = order[i];
     const s = v && v[k];
@@ -449,8 +454,8 @@ export default function HomePage({ cardId = "101" }) {
     const serverLangs =
       Array.isArray(info?.available_langs) &&
       info.available_langs.length
-        ? info.available_langs.slice(0, 5)
-        : ["am", "ru", "en", "ar", "fr"];
+        ? info.available_langs.slice(0, 7)
+        : ["am", "ru", "en", "ar", "fr", "kz", "chn"];
 
     const nameByLang = {
       hy: info?.company?.name?.am || "",
@@ -458,6 +463,8 @@ export default function HomePage({ cardId = "101" }) {
       en: info?.company?.name?.en || "",
       ar: info?.company?.name?.ar || "",
       fr: info?.company?.name?.fr || "",
+      kz: info?.company?.name?.kz || "",
+      chn: info?.company?.name?.chn || "",
     };
 
     const desc = info?.description || {};
@@ -468,6 +475,8 @@ export default function HomePage({ cardId = "101" }) {
       en: (desc?.en ?? about?.en) || "",
       ar: (desc?.ar ?? about?.ar) || "",
       fr: (desc?.fr ?? about?.fr) || "",
+      kz: (desc?.kz ?? about?.kz) || "",
+      chn: (desc?.chn ?? about?.chn) || "",
     };
 
     const nameColor =

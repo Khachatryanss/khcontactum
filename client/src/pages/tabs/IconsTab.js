@@ -6,7 +6,8 @@ import "../icons.layout.css";
 const h = React.createElement;
 
 /* ---------------- constants & helpers ---------------- */
-const LANGS = ["am", "ru", "en", "ar", "fr"]; // ամբողջ հավաքածուն
+// ամբողջ հավաքածուն (7 լեզու)
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn"];
 const rtlProps = (code) =>
   code === "ar" ? { dir: "rtl", style: { textAlign: "right" } } : {};
 
@@ -14,7 +15,6 @@ const rtlProps = (code) =>
 const ICONS_UI_TEXT = {
   am: {
     styleLabel: "Ոճ",
-    // style options
     styleOption1: "Ձև 1",
     styleOption2: "Ձև 2",
     styleOption3: "Ձև 3",
@@ -39,6 +39,7 @@ const ICONS_UI_TEXT = {
     savedOk: "Պահվեց ✅",
     loadFailed: "Ներբեռնելը ձախողվեց",
     saveFailed: "Պահպանելը ձախողվեց",
+    title: "Իկոնների կարգավորումներ",
   },
 
   ru: {
@@ -67,6 +68,7 @@ const ICONS_UI_TEXT = {
     savedOk: "Сохранено ✅",
     loadFailed: "Не удалось загрузить",
     saveFailed: "Не удалось сохранить",
+    title: "Настройки иконок",
   },
 
   en: {
@@ -95,6 +97,7 @@ const ICONS_UI_TEXT = {
     savedOk: "Saved ✅",
     loadFailed: "Loading failed",
     saveFailed: "Saving failed",
+    title: "Icons settings",
   },
 
   ar: {
@@ -123,6 +126,7 @@ const ICONS_UI_TEXT = {
     savedOk: "تم الحفظ ✅",
     loadFailed: "فشل في التحميل",
     saveFailed: "فشل في الحفظ",
+    title: "إعدادات الأيقونات",
   },
 
   fr: {
@@ -151,6 +155,68 @@ const ICONS_UI_TEXT = {
     savedOk: "Enregistré ✅",
     loadFailed: "Échec du chargement",
     saveFailed: "Échec de l’enregistrement",
+    title: "Paramètres des icônes",
+  },
+
+  // 🇰🇿 Kazakh (KZ)
+  kz: {
+    styleLabel: "Стиль",
+    styleOption1: "Стиль 1",
+    styleOption2: "Стиль 2",
+    styleOption3: "Стиль 3",
+    styleOption4: "Стиль 4 (дөңгелек)",
+
+    colsLabel: "Бағандар",
+    labelColor: "Иконка атауларының түсі",
+    iconBg: "Иконкалардың фоны",
+    rowCardBg: "Жол иконкаларының фоны (1 баған)",
+    addButton: "Қосу",
+    deleteButton: "Жою",
+    saveButton: "Сақтау",
+    savingButton: "Сақталуда…",
+    loading: "Жүктелуде…",
+    urlPlaceholder: "Сілтеме (URL)",
+    presetButton: "Таңдау",
+    presetSearchPlaceholder: "Іздеу…",
+    validateLabelsMissing: "Атаулар өрістерін толтырыңыз",
+    validateAmMissing: "AM атауы өрісін толтырыңыз",
+    validateHrefMissing: "Сілтеме (URL) өрісін толтырыңыз",
+    rowsAttention:
+      "Назар аударыңыз: қызылмен белгіленген жолдарды толтырыңыз",
+    savedOk: "Сақталды ✅",
+    loadFailed: "Жүктеу сәтсіз аяқталды",
+    saveFailed: "Сақтау сәтсіз аяқталды",
+    title: "Иконка баптаулары",
+  },
+
+  // 🇨🇳 Chinese (CHN)
+  chn: {
+    styleLabel: "样式",
+    styleOption1: "样式 1",
+    styleOption2: "样式 2",
+    styleOption3: "样式 3",
+    styleOption4: "样式 4（圆形）",
+
+    colsLabel: "列数",
+    labelColor: "图标名称颜色",
+    iconBg: "图标背景",
+    rowCardBg: "行内图标背景（1 列）",
+    addButton: "添加",
+    deleteButton: "删除",
+    saveButton: "保存",
+    savingButton: "正在保存…",
+    loading: "正在加载…",
+    urlPlaceholder: "链接 (URL)",
+    presetButton: "选择",
+    presetSearchPlaceholder: "搜索…",
+    validateLabelsMissing: "请填写名称字段",
+    validateAmMissing: "请填写名称字段（AM）",
+    validateHrefMissing: "请填写链接 (URL) 字段",
+    rowsAttention: "注意：请填写标红的行",
+    savedOk: "已保存 ✅",
+    loadFailed: "加载失败",
+    saveFailed: "保存失败",
+    title: "图标设置",
   },
 };
 
@@ -242,15 +308,32 @@ function withUid(x) {
 }
 
 function normLabels(label) {
-  // պահում ենք բոլոր 5 լեզուները, անկախ active langs-ից
+  // պահում ենք բոլոր 7 լեզուները, անկախ active langs-ից
   if (label && typeof label === "object") {
-    const out = { am: "", ru: "", en: "", ar: "", fr: "", ...label };
+    const out = {
+      am: "",
+      ru: "",
+      en: "",
+      ar: "",
+      fr: "",
+      kz: "",
+      chn: "",
+      ...label,
+    };
     LANGS.forEach((k) => {
       out[k] = String(out[k] ?? "");
     });
     return out;
   }
-  return { am: String(label || ""), ru: "", en: "", ar: "", fr: "" };
+  return {
+    am: String(label || ""),
+    ru: "",
+    en: "",
+    ar: "",
+    fr: "",
+    kz: "",
+    chn: "",
+  };
 }
 
 /* ---- color helpers ---- */
@@ -548,7 +631,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
   const [baseInfo, setBaseInfo] = React.useState(null);
 
-  // items: { uid, id?, label:{am,ru,en,ar,fr}, href, icon }
+  // items: { uid, id?, label:{am,ru,en,ar,fr,kz,chn}, href, icon }
   const [items, setItems] = React.useState([]);
   const [style, setStyle] = React.useState({
     labelHEX: "#d9caa0",
@@ -660,7 +743,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       return { ok: false, msg: T.validateLabelsMissing };
     }
 
-    // ⚠️ AM-ի պարտադիր ստուգումը հանված է
+    // ⚠️ AM-ի պարտադիր ստուգումը թողնում ենք comment-ում
     // const nameAM = (it.label.am || "").trim();
     // if (!nameAM) return { ok: false, msg: T.validateAmMissing };
 
@@ -670,7 +753,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     return {
       ok: true,
       payload: {
-        // պահում ենք ամբողջ LANGS-ը DB-ում
+        // պահում ենք ամբողջ LANGS-ը DB-ում, ներառյալ kz/chn
         label: LANGS.reduce(
           (o, k) => ((o[k] = (it.label[k] || "").trim()), o),
           {}
@@ -694,7 +777,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         },
       ];
 
-      // փոքր delay, որ React-ը հասցնի DOM-ը նկարել
       setTimeout(() => {
         if (typeof document !== "undefined") {
           const el = document.querySelector(".icon-card:last-child");

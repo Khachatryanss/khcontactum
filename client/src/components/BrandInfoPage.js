@@ -5,10 +5,76 @@ import { fileUrl } from "../utils/fileUrl.js";
 
 const h = React.createElement;
 
-function pickLang(v, lang, fallbacks = ["am","en","ru","ar","fr"]) {
+/* ---------- i18n text for Brand Info ---------- */
+const BI_TEXT = {
+  hy: {
+    title: "Ինֆորմացիա",
+    empty: "Տվյալ keyword-ով աշխատակից դեռ չկա։",
+    rate: "Գնահատեք աշխատակցին։",
+    back: "Վերադառնալ",
+  },
+  ru: {
+    title: "Информация",
+    empty: "Пока нет сотрудника с таким ключевым словом.",
+    rate: "Оцените сотрудника.",
+    back: "Назад",
+  },
+  en: {
+    title: "Information",
+    empty: "There is no employee with this keyword yet.",
+    rate: "Rate this employee.",
+    back: "Back",
+  },
+  ar: {
+    title: "معلومات",
+    empty: "لا يوجد موظف بهذا الكلمة المفتاحية حتى الآن.",
+    rate: "قيّم هذا الموظف.",
+    back: "رجوع",
+  },
+  fr: {
+    title: "Informations",
+    empty: "Il n’y a pas encore d’employé avec ce mot-clé.",
+    rate: "Évaluez cet employé.",
+    back: "Retour",
+  },
+  kz: {
+    title: "Ақпарат",
+    empty: "Бұл кілт сөзі бар қызметкер әлі жоқ.",
+    rate: "Қызметкерді бағалаңыз.",
+    back: "Артқа",
+  },
+  chn: {
+    title: "信息",
+    empty: "当前关键词还没有员工。",
+    rate: "请评价该员工。",
+    back: "返回",
+  },
+};
+
+/* ---------- pickLang upgraded for 7 langs ---------- */
+/**
+ * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn})
+ * lang – htmlLang → "hy","ru","en","ar","fr","kz","chn"
+ */
+function pickLang(v, lang = "hy", fallbacks = ["am","en","ru","ar","fr","kz","chn"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
-  const order = [lang, ...fallbacks.filter(x => x !== lang)];
+
+  const primary = [];
+  const L = (lang || "").toLowerCase();
+
+  // Armenian mapping
+  if (L === "hy" || L === "am") {
+    primary.push("am", "hy");
+  } else {
+    primary.push(L);
+  }
+
+  const order = [
+    ...primary,
+    ...fallbacks.filter((x) => !primary.includes(x)),
+  ];
+
   for (const k of order) {
     const s = v?.[k];
     if (s && String(s).trim()) return String(s).trim();
@@ -56,11 +122,15 @@ function noPhotoLabel(lang) {
   if (k === "ru") return "фото";
   if (k === "ar") return "صورة";
   if (k === "fr") return "photo";
+  if (k === "kz") return "фото";      // кең тараված нұсակ
+  if (k === "chn") return "照片";
   return "photo"; // default EN
 }
 
 /* մեկ աշխատակցի քարտ */
 function WorkerCard({ item, lang }) {
+  const T = BI_TEXT[lang] || BI_TEXT.hy;
+
   const name = pickLang(item.name, lang);
 
   const descSource = item.description || item.bio || "";
@@ -77,7 +147,9 @@ function WorkerCard({ item, lang }) {
 
   const [index, setIndex] = React.useState(0);
   const hasSlides = slides.length > 0;
-  const currentIdx = hasSlides ? (index % slides.length + slides.length) % slides.length : 0;
+  const currentIdx = hasSlides
+    ? (index % slides.length + slides.length) % slides.length
+    : 0;
   const currentSlide = hasSlides ? slides[currentIdx] : "";
 
   const goPrev = () => {
@@ -227,7 +299,7 @@ function WorkerCard({ item, lang }) {
               color:"#777",
               textTransform:"lowercase"
             }
-          }, noPhotoLabel(lang))      // 👈 «նկар / photo / фото / صورة»
+          }, noPhotoLabel(lang))
     ),
 
     /* անուն */
@@ -358,7 +430,7 @@ function WorkerCard({ item, lang }) {
           color: "#555",
           textAlign: "center"
         }
-      }, "Գնահատեք աշխատակցին։"),
+      }, T.rate),
 
       h("div", {
         style:{
@@ -422,15 +494,17 @@ function WorkerCard({ item, lang }) {
  * Props:
  * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], ratingEnabled, nameColor, bioColor, bioBgColor }]
  * - keyword
- * - lang
+ * - lang (htmlLang → "hy","ru","en","ar","fr","kz","chn")
  * - onBack()
  */
 export default function BrandInfoPage({
   brandInfos = [],
   keyword = "",
-  lang = "am",
+  lang = "hy",
   onBack
 }) {
+  const T = BI_TEXT[lang] || BI_TEXT.hy;
+
   React.useEffect(() => {
     const container = document.querySelector(".public-scroll-layer");
     if (container && typeof container.scrollTo === "function") {
@@ -466,12 +540,14 @@ export default function BrandInfoPage({
           style: { padding: "6px 10px", borderRadius: 999 },
           onClick: () => onBack && onBack()
         },
-        "←"
+        "←",
+        " ",
+        T.back
       ),
       h("h2", {
         className: "company-title",
         style: { margin: 0, fontSize: 20 }
-      }, "Ինֆորմացիա")
+      }, T.title)
     ),
 
     !list.length &&
@@ -481,7 +557,7 @@ export default function BrandInfoPage({
           className: "card",
           style: { padding: 12, fontSize: 14 }
         },
-        "Տվյալ keyword-ով աշխատակից դեռ չկա։"
+        T.empty
       ),
 
     ...list.map(item =>

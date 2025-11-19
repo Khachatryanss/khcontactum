@@ -21,7 +21,7 @@ const ICON_MAP = {
   vimeo:"fa-brands fa-vimeo-v", vk:"fa-brands fa-vk", ok:"fa-brands fa-odnoklassniki",
   wechat:"fa-brands fa-weixin", line:"fa-brands fa-line",
   signal:"fa-brands fa-signal-messenger", zoom:"fa-solid fa-video",
-  wikipedia:"fa-brands fa-wikipedia-w",threads:"fa-brands fa-threads"
+  wikipedia:"fa-brands fa-wikipedia-w", threads:"fa-brands fa-threads"
 };
 
 function faClassFrom(item){
@@ -32,10 +32,38 @@ function faClassFrom(item){
   return ICON_MAP[key] || "fa-solid fa-link";
 }
 
-function pickLabel(label, lang="am"){
+/* ---------- multi-lang label picker (7 լեզու) ---------- */
+function pickLabel(label, lang = "hy"){
   if (label && typeof label === "object") {
-    const v = label[lang] || label.am || label.en || label.ru || label.fr || "";
-    return String(v || "");
+    // lang այստեղ գալիս է HomePage-ից՝ htmlLang:
+    // hy, ru, en, ar, fr, kz, chn
+    const primaryKeys = [];
+    switch (lang) {
+      case "hy":
+        primaryKeys.push("am", "hy");
+        break;
+      case "kz":
+        primaryKeys.push("kz");
+        break;
+      case "chn":
+        primaryKeys.push("chn");
+        break;
+      default:
+        primaryKeys.push(lang);
+    }
+
+    const fallbackOrder = [
+      ...primaryKeys,
+      "am", "en", "ru", "ar", "fr", "kz", "chn"
+    ];
+
+    for (const k of fallbackOrder) {
+      const v = label[k];
+      if (v && String(v).trim()) {
+        return String(v);
+      }
+    }
+    return "";
   }
   return String(label || "");
 }
@@ -49,7 +77,8 @@ export default function IconsPage({
   cols = 4,
   glowEnabled = false,
   glowColor,
-  lang = "am"
+  // lang = htmlLang → hy, ru, en, ar, fr, kz, chn
+  lang = "hy"
 }) {
   /* ===== dzev4 — ձեռքով պտտվող շրջան (ոչ ավտոմատ) ===== */
   const [orbitAngle, setOrbitAngle] = React.useState(0); // градусовով

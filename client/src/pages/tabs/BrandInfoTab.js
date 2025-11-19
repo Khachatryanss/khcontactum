@@ -3,11 +3,14 @@ import React from "react";
 import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
 
 const h = React.createElement;
-const LANGS = ["am", "ru", "en", "ar", "fr"];
+// 👇 ավելացրինք kz, chn
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn"];
 
 /* ---------- UI TEXT ---------- */
 const BRANDINFO_TEXT = {
   am: {
+    title: "Բրենդ ինֆո",
+
     keywordHint: "Այս հատվածը կապվում է բրենդների հետ keyword դաշտի միջոցով։",
     keywordLabel: "Keyword",
     ratingLabel: "Like / Dislike",
@@ -33,6 +36,8 @@ const BRANDINFO_TEXT = {
   },
 
   ru: {
+    title: "Информация о бренде",
+
     keywordHint: "Этот блок связывается с брендами через поле keyword.",
     keywordLabel: "Keyword",
     ratingLabel: "Like / Dislike",
@@ -58,6 +63,8 @@ const BRANDINFO_TEXT = {
   },
 
   en: {
+    title: "Brand Info",
+
     keywordHint: "This section is linked to brands via the keyword field.",
     keywordLabel: "Keyword",
     ratingLabel: "Like / Dislike",
@@ -83,12 +90,14 @@ const BRANDINFO_TEXT = {
   },
 
   ar: {
+    title: "معلومات العلامة التجارية",
+
     keywordHint: "يتم ربط هذا القسم بالعلامات التجارية عبر حقل الـ keyword.",
     keywordLabel: "الكلمة المفتاحية",
     ratingLabel: "Like / Dislike",
     nameLabel: "الاسم:",
     bioLabel: "الوصف:",
-    nameColorLabel: "لون الاسم)",
+    nameColorLabel: "لون الاسم",
     bioColorLabel: "لون الوصف",
     bioBgColorLabel: "لون خلفية الوصف",
     sliderLabel: "سلايدر (حتى ٥ صور، 6:9)",
@@ -108,6 +117,8 @@ const BRANDINFO_TEXT = {
   },
 
   fr: {
+    title: "Infos marque",
+
     keywordHint:
       "Cette section est reliée aux marques via le champ keyword.",
     keywordLabel: "Mot-clé",
@@ -131,6 +142,63 @@ const BRANDINFO_TEXT = {
     savedOk: "Enregistré ✅",
     loadFailed: "Échec du chargement",
     saveFailed: "Échec de l’enregistrement",
+  },
+
+  // 🇰🇿 Kazakh
+  kz: {
+    title: "Бренд туралы ақпарат",
+
+    keywordHint:
+      "Бұл бөлім брендтермен keyword өрісі арқылы байланысады.",
+    keywordLabel: "Keyword",
+    ratingLabel: "Like / Dislike",
+    nameLabel: "Аты:",
+    bioLabel: "Сипаттама:",
+    nameColorLabel: "Атау түсі",
+    bioColorLabel: "Сипаттама түсі",
+    bioBgColorLabel: "Сипаттама фонының түсі",
+    sliderLabel: "Слайдер (5 суретке дейін, 6:9)",
+    deleteWorkerButton: "Жою",
+    addWorkerButton: "Қосу",
+    saveButton: "Сақтау",
+    savingButton: "Сақталуда…",
+    loading: "Жүктелуде…",
+    avatarLabel: "Жүктеу",
+    fileTypeError: "Тек сурет файлдарына рұқсат етіледі",
+    uploadAvatarOk: "Аватар жүктелді ✔",
+    uploadImageOk: "Сурет жүктелді ✔",
+    uploadFailed: "Жүктеу сәтсіз аяқталды",
+    savedOk: "Сақталды ✅",
+    loadFailed: "Жүктеу сәтсіз аяқталды",
+    saveFailed: "Сақтау сәтсіз аяқталды",
+  },
+
+  // 🇨🇳 Chinese (Simplified)
+  chn: {
+    title: "品牌信息",
+
+    keywordHint: "本区域通过 keyword 字段与品牌数据关联。",
+    keywordLabel: "Keyword",
+    ratingLabel: "Like / Dislike",
+    nameLabel: "姓名：",
+    bioLabel: "描述：",
+    nameColorLabel: "姓名颜色",
+    bioColorLabel: "描述文字颜色",
+    bioBgColorLabel: "描述背景颜色",
+    sliderLabel: "轮播图（最多 5 张，6:9）",
+    deleteWorkerButton: "删除",
+    addWorkerButton: "添加",
+    saveButton: "保存",
+    savingButton: "正在保存…",
+    loading: "正在加载…",
+    avatarLabel: "上传",
+    fileTypeError: "仅允许上传图片文件",
+    uploadAvatarOk: "头像已上传 ✔",
+    uploadImageOk: "图片已上传 ✔",
+    uploadFailed: "上传失败",
+    savedOk: "已保存 ✅",
+    loadFailed: "加载失败",
+    saveFailed: "保存失败",
   },
 };
 
@@ -216,7 +284,8 @@ function I18nRow({ brandId, label, value, onChange, langs }) {
                 rows: 2,
                 value: value?.[L] ?? "",
                 onChange: (e) =>
-                  onChange && onChange(L, e.target.value, fieldKey, null),
+                  onChange &&
+                  onChange(L, e.target.value, fieldKey, null),
               },
               rtlProps
             )
@@ -234,7 +303,8 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
     localStorage.getItem("adminToken") ||
     "";
 
-  const activeLangs = Array.isArray(langs) && langs.length ? langs : LANGS;
+  const activeLangs =
+    Array.isArray(langs) && langs.length ? langs : LANGS;
   const T = BRANDINFO_TEXT[uiLang] || BRANDINFO_TEXT.en;
 
   const [baseInfo, setBaseInfo] = React.useState(null);
@@ -360,7 +430,9 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         const r = await uploadFile(token, file, "brandInfos.avatar");
         const serverPath = r?.url || r?.path || r?.location || "";
         setWorkers((list2) =>
-          list2.map((w) => (w.id === id ? { ...w, avatar: serverPath } : w))
+          list2.map((w) =>
+            w.id === id ? { ...w, avatar: serverPath } : w
+          )
         );
         setMsg(T.uploadAvatarOk);
       } catch (e) {
@@ -555,7 +627,11 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
                 type: "checkbox",
                 checked: !!w.ratingEnabled,
                 onChange: (e) =>
-                  onWorkerField(w.id, "ratingEnabled", e.target.checked),
+                  onWorkerField(
+                    w.id,
+                    "ratingEnabled",
+                    e.target.checked
+                  ),
               })
             ),
 
@@ -659,7 +735,8 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
               brandId: w.id + ":bio",
               label: T.bioLabel,
               value: w.bio,
-              onChange: (L, v, fieldKey) => onWorkerBio(w.id, L, v, fieldKey),
+              onChange: (L, v, fieldKey) =>
+                onWorkerBio(w.id, L, v, fieldKey),
               langs: activeLangs,
             }),
 
@@ -675,7 +752,8 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
                 "div",
                 { className: "worker-gallery-row" },
                 [0, 1, 2, 3, 4].map((idx) => {
-                  const src = w.gallery && w.gallery[idx] ? w.gallery[idx] : "";
+                  const src =
+                    w.gallery && w.gallery[idx] ? w.gallery[idx] : "";
                   return h(
                     "label",
                     {
@@ -684,13 +762,18 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
                     },
                     src
                       ? h("img", { src: absPreview(src), alt: "slide" })
-                      : h("span", { className: "gallery-plus" }, "+"),
+                      : h(
+                          "span",
+                          { className: "gallery-plus" },
+                          "+"
+                        ),
                     h("input", {
                       type: "file",
                       accept: "image/*",
                       style: { display: "none" },
                       onChange: (e) => {
-                        const f = e.target.files && e.target.files[0];
+                        const f =
+                          e.target.files && e.target.files[0];
                         if (f) uploadWorkerGallery(w.id, f, idx);
                         e.target.value = "";
                       },

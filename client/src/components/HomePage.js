@@ -84,16 +84,19 @@ function hyphenateHy(text, uiLang = "hy") {
 
 function idealColsForLang(lang) {
   switch (lang) {
-    case "hy": return [30, 34];
-    case "ru": return [32, 38];
-    case "en": return [36, 42];
-    case "ar": return [30, 34];
-    case "fr": return [36, 42];
-    default:   return [34, 40];
+    case "hy":  return [30, 34];
+    case "ru":  return [32, 38];
+    case "en":  return [36, 42];
+    case "ar":  return [30, 34];
+    case "fr":  return [36, 42];
+    case "kz":  return [34, 40];
+    case "chn": return [28, 34];
+    default:    return [34, 40];
   }
 }
 
-function LangDropdown({ value, onChange, langs = ["am", "ru", "en"] }) {
+// 👉 default-ում էլ արդեն 7 լեզուն է
+function LangDropdown({ value, onChange, langs = ["am", "ru", "en", "ar", "fr", "kz", "chn"] }) {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     const onDoc = (e) => { if (!e.target.closest?.(".lang-dd")) setOpen(false); };
@@ -103,16 +106,43 @@ function LangDropdown({ value, onChange, langs = ["am", "ru", "en"] }) {
   return h(
     "div",
     { className: "lang-dd", style: { position: "absolute", right: 10, top: 10, zIndex: 2 } },
-    h("button", { className: "chip active", onClick: () => setOpen(v => !v), style: { minWidth: 48 } }, (value || "am").toUpperCase()),
+    h(
+      "button",
+      {
+        className: "chip active",
+        onClick: () => setOpen(v => !v),
+        style: { minWidth: 48 },
+      },
+      (value || "am").toUpperCase()
+    ),
     open && h(
       "div",
-      { className: "card", style: { position: "absolute", right: 0, top: "calc(100% + 6px)", padding: 6, display: "grid", gap: 6, zIndex: 3 } },
+      {
+        className: "card",
+        style: {
+          position: "absolute",
+          right: 0,
+          top: "calc(100% + 6px)",
+          padding: 6,
+          display: "grid",
+          gap: 6,
+          zIndex: 3,
+        },
+      },
       ...langs.map(code =>
-        h("button", {
-          key: code,
-          className: "chip" + (code === value ? " active" : ""),
-          onClick: () => { localStorage.setItem("lang", code); onChange(code); setOpen(false); },
-        }, code.toUpperCase())
+        h(
+          "button",
+          {
+            key: code,
+            className: "chip" + (code === value ? " active" : ""),
+            onClick: () => {
+              localStorage.setItem("lang", code);
+              onChange(code);
+              setOpen(false);
+            },
+          },
+          code.toUpperCase()
+        )
       )
     )
   );
@@ -124,7 +154,8 @@ function rgbaToCss(obj) {
   return `rgba(${(+r | 0)}, ${(+g | 0)}, ${(+b | 0)}, ${(isFinite(+a) ? +a : 1)})`;
 }
 
-function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr"]) {
+// (այս պահին չի օգտագործվում, բայց թարմացրի 7 լեզվի համար)
+function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
   const order = [lang].concat(fallbacks.filter(x => x !== lang));
@@ -236,11 +267,27 @@ function VideoLoop({ src, style }) {
 
 function AvatarMedia({ src, isVideo, initials }) {
   const commonStyle = {
-    width: 150, height: 150, borderRadius: "50%", objectFit: "cover",
-    margin: "0 auto 8px", display: "block", boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
+    width: 150,
+    height: 150,
+    borderRadius: "50%",
+    objectFit: "cover",
+    margin: "0 auto 8px",
+    display: "block",
+    boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
   };
   if (!src) {
-    return h("div", { style: { ...commonStyle, background: "#f2f2f2", display: "grid", placeItems: "center", fontWeight: 700, color: "#999" } },
+    return h(
+      "div",
+      {
+        style: {
+          ...commonStyle,
+          background: "#f2f2f2",
+          display: "grid",
+          placeItems: "center",
+          fontWeight: 700,
+          color: "#999",
+        },
+      },
       (initials || "KH").slice(0, 2).toUpperCase()
     );
   }
@@ -258,13 +305,16 @@ export default function HomePage({ cardId = "101" }) {
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
   const [splashDone, setSplashDone] = React.useState(false);   // ✅ splash timer
 
-  // ✅ nor state – pop-up-ը ավտոմատ բացենք միայն առաջին անգամ
+  // ✅ pop-up share-ի ավտոմատ բացում՝ միայն առաջին անգամ
   const [shareAutoOpened, setShareAutoOpened] = React.useState(false);
 
+  // 🔤 ներսում աշխատող լեզվի key՝ hy/ru/en/ar/fr/kz/chn
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
-    try { document.documentElement.lang = htmlLang; } catch {}
+    try {
+      document.documentElement.lang = htmlLang;
+    } catch {}
   }, [htmlLang]);
 
   /* ✅ splash-ը գոնե 2 վրկ պահելու համար */
@@ -277,16 +327,22 @@ export default function HomePage({ cardId = "101" }) {
     let killed = false;
     (async () => {
       try {
-        setLoading(true); setErr("");
+        setLoading(true);
+        setErr("");
         const resp = await getPublicInfoByCardId(cardId);
         const data = resp?.data ?? resp ?? {};
         const root = data?.information || data || {};
         if (!killed) {
           setInfo(root);
           if (!localStorage.getItem("lang")) {
-            const def = (root && root.default_lang && Array.isArray(root.available_langs))
-              ? (root.available_langs.includes(root.default_lang) ? root.default_lang : undefined)
-              : undefined;
+            const def =
+              root &&
+              root.default_lang &&
+              Array.isArray(root.available_langs)
+                ? root.available_langs.includes(root.default_lang)
+                  ? root.default_lang
+                  : undefined
+                : undefined;
             if (def) setLang(def);
           }
         }
@@ -296,12 +352,12 @@ export default function HomePage({ cardId = "101" }) {
         if (!killed) setLoading(false);
       }
     })();
-    return () => { killed = true; };
+    return () => {
+      killed = true;
+    };
   }, [cardId]);
 
-  // ✅ Երբ splash-ը ավարտված է և loading-ը false է,
-  // առաջին անգամ էջը ցույց տալիս ավտոմատ pop-up բացում ենք,
-  // բայց նույն HomePage-ի կյանքի ընթացքում այլևս ոչ
+  // ✅ splash + loading ավարտվելուց հետո auto-open միայն մեկ անգամ
   React.useEffect(() => {
     if (splashDone && !loading && !shareAutoOpened) {
       setShareAutoOpened(true);
@@ -346,35 +402,41 @@ export default function HomePage({ cardId = "101" }) {
     );
   }
 
-  if (err)     return h("div", { className: "pad" }, "Սխալ: " + err);
-  if (!info)   return h("div", { className: "pad" }, "Տվյալ չկա");
+  if (err)   return h("div", { className: "pad" }, "Սխալ: " + err);
+  if (!info) return h("div", { className: "pad" }, "Տվյալ չկա");
 
   try {
     const serverLangs =
       Array.isArray(info?.available_langs) && info.available_langs.length
-        ? info.available_langs.slice(0, 5)
-        : ["am", "ru", "en", "ar", "fr"];
+        ? info.available_langs.slice(0, 7) // 👉 մինչև 7 լեզու backend-ից
+        : ["am", "ru", "en", "ar", "fr", "kz", "chn"];
 
     const nameByLang = {
-      hy: info?.company?.name?.am || "",
-      ru: info?.company?.name?.ru || "",
-      en: info?.company?.name?.en || "",
-      ar: info?.company?.name?.ar || "",
-      fr: info?.company?.name?.fr || "",
+      hy:  info?.company?.name?.am  || "",
+      ru:  info?.company?.name?.ru  || "",
+      en:  info?.company?.name?.en  || "",
+      ar:  info?.company?.name?.ar  || "",
+      fr:  info?.company?.name?.fr  || "",
+      kz:  info?.company?.name?.kz  || "",
+      chn: info?.company?.name?.chn || "",
     };
 
     const desc = info?.description || {};
     const about = info?.profile?.about || {};
+
     const textByLang = {
-      hy: (desc?.am ?? about?.am) || "",
-      ru: (desc?.ru ?? about?.ru) || "",
-      en: (desc?.en ?? about?.en) || "",
-      ar: (desc?.ar ?? about?.ar) || "",
-      fr: (desc?.fr ?? about?.fr) || "",
+      hy:  (desc?.am  ?? about?.am)  || "",
+      ru:  (desc?.ru  ?? about?.ru)  || "",
+      en:  (desc?.en  ?? about?.en)  || "",
+      ar:  (desc?.ar  ?? about?.ar)  || "",
+      fr:  (desc?.fr  ?? about?.fr)  || "",
+      kz:  (desc?.kz  ?? about?.kz)  || "",
+      chn: (desc?.chn ?? about?.chn) || "",
     };
 
     const nameColor = info?.company?.nameColor || "#111";
-    const descColor = info?.description?.color || info?.profile?.aboutColor || "#666";
+    const descColor =
+      info?.description?.color || info?.profile?.aboutColor || "#666";
 
     const avTop  = info?.avatar;
     const avProf = info?.profile?.avatar;
@@ -386,7 +448,8 @@ export default function HomePage({ cardId = "101" }) {
         ? info.company.logo
         : info?.company?.logo?.imageUrl || "");
 
-    const fallbackLogo = info?.assets?.logo_url || info?.logo_url || companyLogo || "";
+    const fallbackLogo =
+      info?.assets?.logo_url || info?.logo_url || companyLogo || "";
 
     let avatarUrl = "";
     let avatarType = "";
@@ -394,25 +457,47 @@ export default function HomePage({ cardId = "101" }) {
     if (typeof avTop === "string") avatarUrl = avTop;
     else if (avTop && typeof avTop === "object") {
       avatarType = avTop.type || "";
-      if (avatarType === "image")      avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
-      else if (avatarType === "video") avatarUrl = avTop.videoUrl || avTop.imageUrl || "";
-      else                             avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
+      if (avatarType === "image")
+        avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
+      else if (avatarType === "video")
+        avatarUrl = avTop.videoUrl || avTop.imageUrl || "";
+      else avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
     }
 
     if (!avatarUrl && avProf) {
       if (typeof avProf === "string") avatarUrl = avProf;
-      else if (typeof avProf === "object") avatarUrl = avProf.imageUrl || avProf.videoUrl || "";
+      else if (typeof avProf === "object")
+        avatarUrl = avProf.imageUrl || avProf.videoUrl || "";
     }
     if (!avatarUrl && fallbackLogo) avatarUrl = fallbackLogo;
 
     const avatarAbs     = absSrc(avatarUrl);
-    const avatarIsVideo = avatarType === "video" ? true : (avatarType === "image" ? false : isVideo(avatarAbs));
+    const avatarIsVideo =
+      avatarType === "video"
+        ? true
+        : avatarType === "image"
+        ? false
+        : isVideo(avatarAbs);
 
-    const bg = info?.background || { type: "color", color: "#ffffff", imageUrl: "", videoUrl: "" };
+    const bg =
+      info?.background || {
+        type: "color",
+        color: "#ffffff",
+        imageUrl: "",
+        videoUrl: "",
+      };
 
-    const name = nameByLang[htmlLang] || nameByLang.hy || nameByLang.en || "—";
+    const name =
+      nameByLang[htmlLang] ||
+      nameByLang.hy ||
+      nameByLang.en ||
+      "—";
+
     const descriptionRaw = textByLang[htmlLang] || "";
-    const description = htmlLang === "hy" ? hyphenateHy(descriptionRaw, "hy") : hyphenateHy(descriptionRaw, htmlLang);
+    const description =
+      htmlLang === "hy"
+        ? hyphenateHy(descriptionRaw, "hy")
+        : hyphenateHy(descriptionRaw, htmlLang);
 
     const [minCh, maxCh] = idealColsForLang(htmlLang);
 
@@ -427,8 +512,8 @@ export default function HomePage({ cardId = "101" }) {
       wordBreak: "break-word",
     };
 
-    const icons = info?.icons || {};
-    const links = Array.isArray(icons.links) ? icons.links : [];
+    const icons  = info?.icons || {};
+    const links  = Array.isArray(icons.links) ? icons.links : [];
     const styles = icons?.styles || {};
 
     const labelColor   = styles.labelCss || styles.labelHEX || "";
@@ -451,42 +536,103 @@ export default function HomePage({ cardId = "101" }) {
 
     return h(
       "div",
-      { className: "public-home", style: { position: "relative", width: "100%", height: "100%", minHeight: "100%", overflow: "hidden" } },
+      {
+        className: "public-home",
+        style: {
+          position: "relative",
+          width: "100%",
+          height: "100%",
+          minHeight: "100%",
+          overflow: "hidden",
+        },
+      },
       h(
         "div",
         {
           className: "public-bg-layer",
           style: {
-            position: "absolute", inset: 0, zIndex: 0, pointerEvents: "none", overflow: "hidden",
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: "none",
+            overflow: "hidden",
             background:
-              bg.type === "color" ? (bg.color || "#ffffff")
-              : bg.type === "image" ? `url(${absSrc(bg.imageUrl)}) center/cover no-repeat`
-              : "transparent",
+              bg.type === "color"
+                ? bg.color || "#ffffff"
+                : bg.type === "image"
+                ? `url(${absSrc(bg.imageUrl)}) center/cover no-repeat`
+                : "transparent",
           },
         },
         bg.type === "video" && bg.videoUrl
           ? h(VideoLoop, {
               src: absSrc(bg.videoUrl),
-              style: { width: "100%", height: "100%", objectFit: "cover" },
+              style: {
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              },
             })
           : null
       ),
       h(
         "div",
-        { className: "public-scroll-layer", id: "publicScroll",
-          style: { position: "relative", zIndex: 1, width: "100%", height: "100%", maxHeight: "100%",
-                   overflowY: "auto", WebkitOverflowScrolling: "touch", padding: "12px" } },
-        h(LangDropdown, { value: lang, onChange: setLang, langs: serverLangs }),
+        {
+          className: "public-scroll-layer",
+          id: "publicScroll",
+          style: {
+            position: "relative",
+            zIndex: 1,
+            width: "100%",
+            height: "100%",
+            maxHeight: "100%",
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            padding: "12px",
+          },
+        },
+        h(LangDropdown, {
+          value: lang,
+          onChange: setLang,
+          langs: serverLangs,
+        }),
         showBrandInfo
-          ? h(BrandInfoPage, { brandInfos, keyword: activeBrandKeyword, lang: htmlLang, onBack: () => setActiveBrandKeyword("") })
+          ? h(BrandInfoPage, {
+              brandInfos,
+              keyword: activeBrandKeyword,
+              lang: htmlLang,
+              onBack: () => setActiveBrandKeyword(""),
+            })
           : h(
               "div",
               { style: { position: "relative" } },
               h(
                 "section",
-                { className: "card", style: { textAlign: "center", paddingTop: 10, paddingBottom: 18 } },
-                h(AvatarMedia, { src: avatarAbs, isVideo: avatarIsVideo, initials: (name || "KH").slice(0, 2) }),
-                h("h1", { className: "hero-title", style: { color: nameColor, margin: "15px 0 4px", fontSize: 35 } }, name),
+                {
+                  className: "card",
+                  style: {
+                    textAlign: "center",
+                    paddingTop: 10,
+                    paddingBottom: 18,
+                  },
+                },
+                h(AvatarMedia, {
+                  src: avatarAbs,
+                  isVideo: avatarIsVideo,
+                  initials: (name || "KH").slice(0, 2),
+                }),
+                h(
+                  "h1",
+                  {
+                    className: "hero-title",
+                    style: {
+                      color: nameColor,
+                      margin: "15px 0 4px",
+                      fontSize: 35,
+                    },
+                  },
+                  name
+                ),
                 h(
                   "p",
                   {
@@ -499,7 +645,17 @@ export default function HomePage({ cardId = "101" }) {
                 )
               ),
               links.length
-                ? h(IconsPage, { links, labelColor, chipColor, rowCardColor, layoutStyle, cols, glowEnabled, glowColor, lang: htmlLang })
+                ? h(IconsPage, {
+                    links,
+                    labelColor,
+                    chipColor,
+                    rowCardColor,
+                    layoutStyle,
+                    cols,
+                    glowEnabled,
+                    glowColor,
+                    lang: htmlLang,
+                  })
                 : null,
               brandsArray.length
                 ? h(BrandsPage, {
@@ -517,14 +673,17 @@ export default function HomePage({ cardId = "101" }) {
                 cardId,
                 info,
                 lang: htmlLang,
-                // ✅ pop-up–ը ավտոմատ բացվի միայն առաջին անգամ (HomePage mount-ի պահին),
-                // brand-ների էջերից հետ գալուց այլևս չի բացվի
+                // ✅ առաջին լոադին auto-open, հետո՝ ոչ
                 autoOpenConfirm: !shareAutoOpened,
               })
             )
       )
     );
   } catch (e) {
-    return h("div", { className: "pad" }, "Render error: " + (e.message || String(e)));
+    return h(
+      "div",
+      { className: "pad" },
+      "Render error: " + (e.message || String(e))
+    );
   }
 }
