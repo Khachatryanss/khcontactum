@@ -688,16 +688,31 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     };
   };
 
+  // 🔽 ԱՎԵԼԱՑՆԵԼ՝ auto-scroll նոր icon-card-ի վրա
   const add = () =>
-    setItems((list) => [
-      ...list,
-      {
-        uid: uid(),
-        label: normLabels(""),
-        href: "",
-        icon: "fa-solid fa-link",
-      },
-    ]);
+    setItems((list) => {
+      const next = [
+        ...list,
+        {
+          uid: uid(),
+          label: normLabels(""),
+          href: "",
+          icon: "fa-solid fa-link",
+        },
+      ];
+
+      // փոքր delay, որ React-ը հասցնի DOM-ը նկարել
+      setTimeout(() => {
+        if (typeof document !== "undefined") {
+          const el = document.querySelector(".icon-card:last-child");
+          if (el && el.scrollIntoView) {
+            el.scrollIntoView({ behavior: "smooth", block: "end" });
+          }
+        }
+      }, 60);
+
+      return next;
+    });
 
   const onField = (uidKey, patch) => {
     setErrors((e) => {
