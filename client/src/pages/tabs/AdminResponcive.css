@@ -20,6 +20,10 @@ body {
     width: 100px;
 }
 
+.mb-4 {
+    width: 80%;
+}
+
 .small {
     font-size: 10px;
 }
