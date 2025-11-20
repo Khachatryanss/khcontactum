@@ -161,3 +161,14 @@ body {
 #nkarInput:nth-child(1) {
   width: 100px;
 }
+
+#nkariMecBajin {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 100%;
+}
+
+#nkariBajin {
+  width: 110px;
+}

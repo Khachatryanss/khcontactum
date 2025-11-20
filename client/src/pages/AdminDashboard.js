@@ -668,8 +668,8 @@ export default function AdminDashboard({
   function input(label, value, onChange, props) {
     return h(
       "label",
-      { className: "block mb-3" },
-      h("div", { className: "text-sm mb-1" }, label),
+      { className: "block mb-3", id: "nkariMecbajin" },
+      h("div", { className: "text-sm mb-1", id: "nkariBajin"}, label),
       h(
         "input",
         Object.assign(
