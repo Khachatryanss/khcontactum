@@ -6,7 +6,8 @@
   --icons-label-color: #d9caa0;
   --icons-glow-color: #7dd3fc;
 
-  --icons-orbit: 90px;         /* dzev4 ցիկլի շառավիղը */
+  /* dzev4 ցիկլի շառավիղը — մի քիչ մեծացրած, որ icon-ները չկպնեն */
+  --icons-orbit: 110px;
   --icons-spin-sec: 18s;
   --icons-spin-state: running;
 
@@ -468,15 +469,15 @@
   transform:
     translate(-50%, -50%)
     rotate(var(--angle, 0deg))
-    translateX(var(--icons-orbit, 135px))
+    translateX(var(--icons-orbit, 110px))
     rotate(calc(var(--angle, 0deg) * -1));
   text-decoration: none;
 }
 
-/* icon chip look */
+/* icon chip look — մի քիչ փոքրացրել ենք, որ շրջանի մեջ բաց երևա */
 .icons-dzev4 .icon-btn {
-  width: calc(58px * var(--icons-scale, 1));
-  height: calc(58px * var(--icons-scale, 1));
+  width: calc(54px * var(--icons-scale, 1));
+  height: calc(54px * var(--icons-scale, 1));
   border-radius: 18px;
   background:
     radial-gradient(120% 120% at 30% 15%, rgba(255,255,255,.35), transparent 55%),
@@ -508,7 +509,7 @@
 
 /* smaller screens */
 @media (max-width: 480px){
-  .icons-dzev4{
+  .icons-дzev4{
     max-width: 300px;
   }
 }
@@ -529,5 +530,3 @@
     line-height: 1.2;
   }
 }
-
-
