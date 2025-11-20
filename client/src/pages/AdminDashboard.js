@@ -993,6 +993,7 @@ export default function AdminDashboard({
           {
             className: "row",
             style: {
+              id: "mainMenuBarAdmin",
               alignItems: "center",
               justifyContent: "space_between",
               marginBottom: title ? 8 : 0,

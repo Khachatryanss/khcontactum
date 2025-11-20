@@ -32,7 +32,6 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  width: 100%;
   margin-bottom: 10px;
 }
 
@@ -574,4 +573,10 @@
     max-width: 36px;
     max-height: 36px;
   }
+}
+
+#mainMenuBarAdmin {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
