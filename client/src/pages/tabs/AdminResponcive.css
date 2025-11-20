@@ -16,6 +16,10 @@ body {
     width: 80px;
 }
 
+.mb-4 .input {
+    width: 80px;
+}
+
 .small {
     font-size: 10px;
 }
