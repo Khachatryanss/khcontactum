@@ -275,9 +275,6 @@
 
 /* ========== 1440px – 1919px (wide desktop) ========== */
 @media (min-width: 1440px) and (max-width: 1919px) {
-  .admin-login-root {
-    align-items: center;
-  }
 
   .admin-login-panel {
     max-width: 420px;
