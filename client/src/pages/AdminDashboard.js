@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import PhoneShell from "../PhoneShell.js";
 import { adminMe, adminGetInfo, adminSaveInfo, uploadFile } from "../api.js";
+import "./tabs/AdminResponcive.css"
 import { fileUrl } from "../utils/fileUrl.js";
 import IconsTab from "./tabs/IconsTab.js";
 import BrandsTab from "./tabs/BrandsTab.js";
