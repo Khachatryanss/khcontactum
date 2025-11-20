@@ -176,3 +176,68 @@ body {
 #nkariMecbajin ~ .btn {
   width: 120px;
 }
+
+/* ----- Base (ամեն պարագայում) ----- */
+.phone {
+  /* որ scale անելիս հեռախոսը տեղից չփախչի */
+  transform-origin: top center;
+  margin: 40px auto;
+  transition: transform 0.2s ease;
+}
+
+/* ===== 1) Extra Large Desktop — 1920px+ (4K, մեծ մոնիտորներ) =====
+   Էկրանն ա մեծ, հեռախոսը մի քիչ մեծացնենք, որ «կորցրած» չլինի */
+@media (min-width: 1920px) {
+  .phone {
+    transform: scale(1.10);   /* ~10% ավելի մեծ */
+  }
+
+  .card {
+    font-size: 14px;
+  }
+}
+
+/* ===== 2) Large Desktop — 1440px–1919px =====
+   Քո սքրինշոթների նման էկրանի համար՝ «իդեալական» չափը */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .phone {
+    transform: scale(1.00);   /* բնական չափը */
+  }
+
+  .card {
+    font-size: 13px;
+  }
+}
+
+/* ===== 3) Desktop / Laptop — 1200px–1439px =====
+   Էկրանն ավելի նեղ է, հեռախոսն ու input-ները մի քիչ փոքրացնենք */
+@media (min-width: 1200px) and (max-width: 1439px) {
+  .phone {
+    transform: scale(0.94);
+  }
+
+  .card {
+    font-size: 12.5px;
+  }
+
+  /* մի քիչ նաև padding-ները փոքրացնենք */
+  .card .row {
+    gap: 6px;
+  }
+}
+
+/* ===== 4) Tablet (landscape & portrait) — 768px–1199px =====
+   Laptop փոքր, կամ tablet. Հեռախոսը էլի միաչափ սեղմվում է */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .phone {
+    transform: scale(0.88);
+  }
+
+  .card {
+    font-size: 12px;
+  }
+
+  .card .row {
+    gap: 4px;
+  }
+}
