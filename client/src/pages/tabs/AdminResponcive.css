@@ -203,6 +203,7 @@ body {
     transform: scale(1);
     margin: 32px auto;
   }
+
 }
 
 /* 3) 1200–1439px (փոքր լեփթոփներ) */
@@ -211,6 +212,9 @@ body {
     transform-origin: top center;
     transform: scale(0.92);
     margin: 20px auto;
+  }
+  .phone * {
+    transform: scale(0.92);
   }
 }
 
@@ -221,6 +225,9 @@ body {
     transform: scale(0.86);
     margin: 16px auto;
   }
+  .phone * {
+    transform: scale(0.86);
+  }
 }
 
 /* ===== ԲԱՐՁՐՈՒԹՅԱՆ ֆիքս — փոքր հողի էկրաններ (1366x768 և նմանները) ===== */
@@ -229,6 +236,9 @@ body {
     transform-origin: top center;
     transform: scale(0.9);   /* էլի մի քիչ փոքր */
     margin: 12px auto;       /* քիչ վերև/ներքև բաց թողնել */
+  }
+  .phone * {
+    transform: scale(0.9);
   }
 
   /* եթե body-ն grid է, թող կարողանա scroll անել */
