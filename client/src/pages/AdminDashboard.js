@@ -994,7 +994,7 @@ export default function AdminDashboard({
             className: "row",
             style: {
               alignItems: "center",
-              justifyContent: "spaceBetween",
+              justifyContent: "space-between",
               marginBottom: title ? 8 : 0,
             },
           },
