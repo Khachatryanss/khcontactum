@@ -216,9 +216,7 @@
 
 /* ========== 1280px – 1365px (laptop) ========== */
 @media (min-width: 1280px) and (max-width: 1365px) {
-  .admin-login-root {
-    align-items: center;              /* PhoneShell-ի մեջ մոդալն կենտրոնանա vertical */
-  }
+
 
   .admin-login-panel {
     max-width: 400px;
@@ -243,9 +241,7 @@
 
 /* ========== 1366px – 1439px (HD laptop) ========== */
 @media (min-width: 1366px) and (max-width: 1439px) {
-  .admin-login-root {
-    align-items: center;
-  }
+
 
   .admin-login-panel {
     max-width: 410px;
