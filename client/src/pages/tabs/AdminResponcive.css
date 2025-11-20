@@ -157,6 +157,37 @@ body {
 
 /* Base – ոչ մի բան չենք փոխում (մոբայլ / default) */
 
+/* ===============================
+   ADMIN HEADER (title + lang + ⋮)
+   =============================== */
+
+/* Բոլոր էկրանի չափերի համար ընդհանուր կանոններ */
+.phone .card > .row:first-child {
+  flex-wrap: nowrap;              /* չթողնենք, որ տեքստը ընկնի նոր տողի */
+  align-items: center;
+}
+
+/* Base – փոքր էկրաններ (< 768px) */
+.phone .card > .row:first-child h2 {
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.phone .card > .row:first-child .admin-login-lang-select {
+  font-size: 11px;
+  padding: 3px 6px;
+  min-width: 66px;
+  height: 26px;
+}
+
+.phone .card > .row:first-child .btn-ghost {
+  font-size: 15px;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+}
+
+
 /* 4K / մեծ desktop (1920px+) */
 @media (min-width: 1920px) {
   .phone .card > .row:first-child h2 {
@@ -168,6 +199,7 @@ body {
     font-size: 14px;
     padding: 6px 10px;
     min-width: 82px;
+    height: 34px;
   }
 
   .phone .card > .row:first-child .btn-ghost {
@@ -188,6 +220,7 @@ body {
     font-size: 13px;
     padding: 5px 9px;
     min-width: 78px;
+    height: 32px;
   }
 
   .phone .card > .row:first-child .btn-ghost {
@@ -208,6 +241,7 @@ body {
     font-size: 12px;
     padding: 4px 8px;
     min-width: 74px;
+    height: 30px;
   }
 
   .phone .card > .row:first-child .btn-ghost {
@@ -228,6 +262,7 @@ body {
     font-size: 11px;
     padding: 4px 7px;
     min-width: 70px;
+    height: 28px;
   }
 
   .phone .card > .row:first-child .btn-ghost {
