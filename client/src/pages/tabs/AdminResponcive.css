@@ -51,6 +51,9 @@ body {
     padding: 14px 18px;
     font-size: 14px;
   }
+    #uploadImage input {
+    width: 80px;
+  }
 }
 
 /* ====== 1366px – 1439px (շատ laptop-ներ) ====== */
@@ -62,6 +65,9 @@ body {
   .card {
     padding: 12px 16px;
     font-size: 14px;
+  }
+    #uploadImage input {
+    width: 80px;
   }
 }
 
@@ -82,6 +88,60 @@ body {
     max-width: 100%;
     word-break: break-word;
   }
+    #uploadImage input {
+    width: 80px;
+  }
 }
 
 
+
+/* ====== 1920px և ավել (Full HD, 2K) ====== */
+@media (min-width: 1920px) {
+  .public-scroll-layer {
+    padding: 20px 24px;
+  }
+
+  .hero-title {
+    font-size: 38px;
+  }
+}
+
+/* ====== 1440px – 1919px ====== */
+@media (min-width: 1440px) and (max-width: 1919.98px) {
+  .public-scroll-layer {
+    padding: 18px 20px;
+  }
+
+  .hero-title {
+    font-size: 34px;
+  }
+}
+
+/* ====== 1366px – 1439px ====== */
+@media (min-width: 1366px) and (max-width: 1439.98px) {
+  .public-scroll-layer {
+    padding: 16px 18px;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+}
+
+/* ====== 1280px – 1365px ====== */
+@media (min-width: 1280px) and (max-width: 1365.98px) {
+  .public-scroll-layer {
+    padding: 14px 16px;
+  }
+
+  .hero-title {
+    font-size: 30px;
+  }
+
+  /* երկար տեքստերը՝ ապահով, որ չհանեն layout-ը */
+  .hero-desc {
+    max-width: 90%;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+}
