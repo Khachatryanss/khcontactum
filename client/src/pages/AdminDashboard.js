@@ -674,6 +674,7 @@ export default function AdminDashboard({
         Object.assign(
           {
             className: "input",
+            id: "nkarInput",
             value: value || "",
             onChange: (e) => onChange(e.target.value),
           },
