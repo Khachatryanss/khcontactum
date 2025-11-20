@@ -1,7 +1,7 @@
 // client/src/pages/tabs/ShareTab.js
 import React from "react";
 import { adminSaveInfo } from "../../api.js";
-
+import "../tabs/AdminResponcive.css";
 const h = React.createElement;
 
 /* ---------- CONSTANTS ---------- */

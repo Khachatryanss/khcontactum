@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import PhoneShell from "../PhoneShell.js";
 import { adminMe, adminGetInfo, adminSaveInfo, uploadFile } from "../api.js";
 import { fileUrl } from "../utils/fileUrl.js";
-
+import "./tabs/AdminResponcive.css";
 import IconsTab from "./tabs/IconsTab.js";
 import BrandsTab from "./tabs/BrandsTab.js";
 import PasswordTab from "./tabs/PasswordTab.js";

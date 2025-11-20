@@ -2,6 +2,7 @@
 import React from "react";
 import { RgbaColorPicker } from "react-colorful";
 import { adminGetInfo, adminSaveInfo } from "../../api.js";
+import "../tabs/AdminResponcive.css";
 import "../icons.layout.css";
 const h = React.createElement;
 
