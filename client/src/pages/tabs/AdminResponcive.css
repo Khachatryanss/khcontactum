@@ -150,3 +150,89 @@ body {
     overflow-wrap: break-word;
   }
 }
+
+/* -------------------------
+   Admin header (Home + EN + ⋮)
+   -------------------------- */
+
+/* Base – ոչ մի բան չենք փոխում (մոբայլ / default) */
+
+/* 4K / մեծ desktop (1920px+) */
+@media (min-width: 1920px) {
+  .phone .card > .row:first-child h2 {
+    font-size: 24px;
+    line-height: 1.2;
+  }
+
+  .phone .card > .row:first-child .admin-login-lang-select {
+    font-size: 14px;
+    padding: 6px 10px;
+    min-width: 82px;
+  }
+
+  .phone .card > .row:first-child .btn-ghost {
+    font-size: 18px;
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* Մեծ desktop (1440px – 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .phone .card > .row:first-child h2 {
+    font-size: 22px;
+    line-height: 1.2;
+  }
+
+  .phone .card > .row:first-child .admin-login-lang-select {
+    font-size: 13px;
+    padding: 5px 9px;
+    min-width: 78px;
+  }
+
+  .phone .card > .row:first-child .btn-ghost {
+    font-size: 17px;
+    width: 32px;
+    height: 32px;
+  }
+}
+
+/* Սովորական laptop / desktop (1200px – 1439px) */
+@media (min-width: 1200px) and (max-width: 1439px) {
+  .phone .card > .row:first-child h2 {
+    font-size: 20px;
+    line-height: 1.2;
+  }
+
+  .phone .card > .row:first-child .admin-login-lang-select {
+    font-size: 12px;
+    padding: 4px 8px;
+    min-width: 74px;
+  }
+
+  .phone .card > .row:first-child .btn-ghost {
+    font-size: 16px;
+    width: 30px;
+    height: 30px;
+  }
+}
+
+/* Փոքր laptop / մեծ tablet (768px – 1199px) */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .phone .card > .row:first-child h2 {
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .phone .card > .row:first-child .admin-login-lang-select {
+    font-size: 11px;
+    padding: 4px 7px;
+    min-width: 70px;
+  }
+
+  .phone .card > .row:first-child .btn-ghost {
+    font-size: 15px;
+    width: 28px;
+    height: 28px;
+  }
+}
