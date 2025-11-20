@@ -172,3 +172,7 @@ body {
 #nkariBajin, #nkariBajin .text-sm {
   width: 110px;
 }
+
+#nkariBajin .btn {
+  width: 120px;
+}
