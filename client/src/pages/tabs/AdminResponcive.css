@@ -158,6 +158,63 @@ body {
   }
 }
 
-#nkariInput {
-  width: 80px;
+/* Բազային */
+.admin-dashboard-root {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.admin-card {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* Մեծ էկրաններ 1920+ */
+@media (min-width: 1920px) {
+  .admin-card {
+    max-width: 520px;
+  }
+
+  .admin-section-langs .admin-langs-row {
+    gap: 12px;
+  }
+}
+
+/* 1440 */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .admin-card {
+    max-width: 480px;
+  }
+}
+
+/* 1366 */
+@media (min-width: 1366px) and (max-width: 1439px) {
+  .admin-card {
+    max-width: 460px;
+  }
+}
+
+/* 1280 */
+@media (min-width: 1280px) and (max-width: 1365px) {
+  .admin-card {
+    max-width: 440px;
+  }
+}
+
+/* 1024 */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .admin-card {
+    max-width: 420px;
+  }
+}
+
+@media (min-width: 1920px) {
+  .admin-section-avatar .admin-avatar-row {
+    gap: 16px;
+  }
+
+  .admin-section-company .admin-input {
+    font-size: 15px;
+  }
 }
