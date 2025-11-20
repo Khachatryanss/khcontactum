@@ -993,7 +993,7 @@ export default function AdminDashboard({
           {
             className: "row",
             style: {
-              width: "200px",
+              display: "flex",
               alignItems: "center",
               justifyContent: "space_between",
               marginBottom: title ? 8 : 0,
