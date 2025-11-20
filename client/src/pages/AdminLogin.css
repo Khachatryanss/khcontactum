@@ -224,6 +224,15 @@
     max-width: 380px;
     font-size: 12px;
   }
+    .admin-login-logo-img {
+    width: 180px;
+    height: 180px;
+  }
+
+  .admin-login-logo-img1 {
+    width: 130px;
+    height: 130px;
+  }
 }
 
 /* ========== 1366px – 1439px (HD laptop) ========== */
