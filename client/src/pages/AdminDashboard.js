@@ -674,7 +674,6 @@ export default function AdminDashboard({
         "input",
         Object.assign(
           {
-            id: "nkariInput",
             className: "input",
             value: value || "",
             onChange: (e) => onChange(e.target.value),
@@ -1149,7 +1148,7 @@ export default function AdminDashboard({
               setInfoPath("avatar.imageUrl", v);
               setInfoPath("logo_url", v);
             },
-            { placeholder: "https://..." }
+            { placeholder: "https://..." ,  id: "nkariInput"}
           ),
           h(FileButton, {
             label: T.chooseFileLabel,
