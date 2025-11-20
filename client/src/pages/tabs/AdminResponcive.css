@@ -272,71 +272,79 @@ body {
   }
 }
 
-/* ---------- LANGUAGES row layout (միշտ 1 գծով) ---------- */
-
-/* ընդհանուր layout բոլոր էկրանների համար */
+/* ---------- LANGUAGES տողի կոմպակտ layout (միշտ 1 գիծ) ---------- */
 .phone .card h3.title + .mb-4 .row.mb-1 {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto; /* chip | label | badge | arrows */
   align-items: center;
-  gap: 8px;
+  column-gap: 6px;
+  margin-left: 4px;
 }
 
-/* AM / RU / EN պղնձագույն պիլն */
+/* AM / RU / EN կլոր chip */
 .phone .card h3.title + .mb-4 .row.mb-1 > .btn {
   flex: 0 0 auto;
-  min-width: 64px;
-  justify-content: center;
+  min-width: 56px;
+  padding: 4px 10px;
+  font-size: 12px;
 }
 
-/* լեզվի անվանումը — տալիս ենք flex, որ մեջտեղի սյունը նեղանա, բայց չթափվի */
+/* լեզվի անվանումը՝ սեղմ, ellipsis-ով */
 .phone .card h3.title + .mb-4 .row.mb-1 > span:not(.small) {
   flex: 1 1 auto;
   min-width: 0;
+  font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* Default / #2 / #3 պիտակը */
+/* Default / #2 / #3 պիտակ */
 .phone .card h3.title + .mb-4 .row.mb-1 > .small {
   flex: 0 0 auto;
+  font-size: 11px;
   white-space: nowrap;
   text-align: right;
 }
 
-/* ↑ ↓ կոճակների բլոկը */
+/* ↑ ↓ բլոկը */
 .phone .card h3.title + .mb-4 .row.mb-1 > div:last-child {
   flex: 0 0 auto;
   display: flex;
   gap: 4px;
 }
 
-/* մի քիչ փոքրացնում ենք գրերը, որ ավելի հեշտ մեջտեղն անցնի */
-
-/* 4K / մեծ desktop (1920px+) */
-@media (min-width: 1920px) {
-  .phone .card h3.title + .mb-4 .row.mb-1 > span:not(.small) {
-    font-size: 15px;
-  }
+/* ↑ ↓ կոճակները փոքրացնել */
+.phone .card h3.title + .mb-4 .row.mb-1 > div:last-child .btn {
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  font-size: 13px;
 }
 
-/* Մեծ desktop (1440px – 1919px) */
-@media (min-width: 1440px) and (max-width: 1919px) {
-  .phone .card h3.title + .mb-4 .row.mb-1 > span:not(.small) {
-    font-size: 14px;
+/* ավելի փոքր desktop-ների համար՝ էլ ավելի սեղմել */
+@media (max-width: 1400px) {
+  .phone .card h3.title + .mb-4 .row.mb-1 {
+    column-gap: 4px;
   }
-}
 
-/* Սովորական laptop / desktop (1200px – 1439px) */
-@media (min-width: 1200px) and (max-width: 1439px) {
-  .phone .card h3.title + .mb-4 .row.mb-1 > span:not(.small) {
-    font-size: 13px;
+  .phone .card h3.title + .mb-4 .row.mb-1 > .btn {
+    min-width: 52px;
+    padding: 3px 8px;
+    font-size: 11px;
   }
-}
 
-/* Փոքր laptop / մեծ tablet (768px – 1199px) */
-@media (min-width: 768px) and (max-width: 1199px) {
   .phone .card h3.title + .mb-4 .row.mb-1 > span:not(.small) {
+    font-size: 11px;
+  }
+
+  .phone .card h3.title + .mb-4 .row.mb-1 > .small {
+    font-size: 10px;
+  }
+
+  .phone .card h3.title + .mb-4 .row.mb-1 > div:last-child .btn {
+    width: 28px;
+    height: 28px;
     font-size: 12px;
   }
 }
