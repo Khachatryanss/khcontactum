@@ -59,9 +59,6 @@ function ensureAbsoluteUrl(u) {
 /* ===== i18n text (7 լեզու) ===== */
 const TEXT = {
   am: {
-    qrTitle: "Share / QR",
-    qrDesc: "QR կոդով և share հղումով կարող եք կիսվել ձեր քարտով։",
-
     scanBtn: "Սկանավորել QR կոդը",
     shareTitle: "Կիսվել իմ քարտով",
     addBtn: "ԱՎԵԼԱՑՐԵՔ ԻՆՁ ԿՈՆՏԱԿՏՆԵՐԻ ՑԱՆԿՈՒՄ",
@@ -75,10 +72,6 @@ const TEXT = {
     confirmNo: "Ոչ",
   },
   ru: {
-    qrTitle: "Share / QR",
-    qrDesc:
-      "Вы можете делиться своей карточкой через QR-код и ссылку для шаринга.",
-
     scanBtn: "СКАНИРОВАТЬ QR-КОД",
     shareTitle: "ПОДЕЛИТЬСЯ МОЕЙ ВИЗИТКОЙ",
     addBtn: "ДОБАВИТЬ В КОНТАКТЫ",
@@ -92,9 +85,6 @@ const TEXT = {
     confirmNo: "Нет",
   },
   en: {
-    qrTitle: "Share / QR",
-    qrDesc: "You can share your card via QR code and a share link.",
-
     scanBtn: "SCAN QR CODE",
     shareTitle: "SHARE MY CARD",
     addBtn: "ADD ME TO THE CONTACT LIST",
@@ -108,9 +98,6 @@ const TEXT = {
     confirmNo: "No",
   },
   ar: {
-    qrTitle: "Share / QR",
-    qrDesc: "يمكنك مشاركة بطاقتك عبر رمز QR ورابط المشاركة.",
-
     scanBtn: "مسح رمز QR",
     shareTitle: "مشاركة بطاقتي",
     addBtn: "إضافتي إلى قائمة جهات الاتصال",
@@ -124,10 +111,6 @@ const TEXT = {
     confirmNo: "لا",
   },
   fr: {
-    qrTitle: "Share / QR",
-    qrDesc:
-      "Vous pouvez partager votre carte via un code QR et un lien de partage.",
-
     scanBtn: "SCANNER LE QR CODE",
     shareTitle: "PARTAGER MA CARTE",
     addBtn: "M’AJOUTER À LA LISTE DE CONTACTS",
@@ -141,10 +124,6 @@ const TEXT = {
     confirmNo: "Non",
   },
   kz: {
-    qrTitle: "Share / QR",
-    qrDesc:
-      "Визиткаңызды QR-код және сілтеме арқылы бөлісуге болады.",
-
     scanBtn: "QR-КОДТЫ СКАНЕРЛЕУ",
     shareTitle: "МЕНІҢ КАРТАМДЫ БӨЛІСУ",
     addBtn: "МЕНІ БАЙЛАНЫС ТІЗІМІНЕ ҚОСУ",
@@ -158,9 +137,6 @@ const TEXT = {
     confirmNo: "Жоқ",
   },
   chn: {
-    qrTitle: "分享 / QR",
-    qrDesc: "你可以通过二维码和分享链接发送你的名片。",
-
     scanBtn: "扫描二维码",
     shareTitle: "分享我的名片",
     addBtn: "添加到通讯录",
