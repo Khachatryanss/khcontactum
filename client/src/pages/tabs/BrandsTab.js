@@ -1,7 +1,7 @@
 // client/src/pages/tabs/BrandsTab.js
 import React from "react";
 import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
-import "../tabs/AdminResponcive.css";
+
 
 const h = React.createElement;
 // 👇 ավելացրեցինք kz, chn

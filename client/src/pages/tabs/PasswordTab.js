@@ -1,7 +1,6 @@
 // client/src/pages/tabs/PasswordTab.js
 import React, { useMemo, useState } from "react";
 import { adminChangePassword } from "../../api.js";
-import "../tabs/AdminResponcive.css";
 const h = React.createElement;
 
 /* ---------- UI TEXT BY LANGUAGE ---------- */
