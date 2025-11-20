@@ -158,3 +158,6 @@ body {
   }
 }
 
+.mb-3 input {
+  width: 100px;
+}
