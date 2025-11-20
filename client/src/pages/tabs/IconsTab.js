@@ -353,6 +353,33 @@ function rgbToHex({ r, g, b }) {
   return "#" + to(r) + to(g) + to(b);
 }
 
+// 🔹 parse "rgba(...)", "rgb(...)" կամ "#hex" → {r,g,b,a}
+function parseCssRgba(str) {
+  if (!str) return null;
+  let s = String(str).trim();
+
+  // hex ձև
+  if (s.startsWith("#")) {
+    const { r, g, b } = hexToRgb(s);
+    return { r, g, b, a: 1 };
+  }
+
+  // rgba / rgb
+  const m = s.match(
+    /^rgba?\s*\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+)\s*)?\)$/i
+  );
+  if (!m) return null;
+
+  const r = clamp255(parseFloat(m[1]));
+  const g = clamp255(parseFloat(m[2]));
+  const b = clamp255(parseFloat(m[3]));
+  let a = m[4] != null ? parseFloat(m[4]) : 1;
+  if (!Number.isFinite(a)) a = 1;
+  a = Math.max(0, Math.min(1, a));
+
+  return { r, g, b, a };
+}
+
 /* ---- derive FA class from field (no images allowed) ---- */
 function faClass(raw) {
   const s = String(raw || "").trim();
@@ -692,6 +719,22 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     [style.rowCardRGBA]
   );
 
+  // 🔹 editable text for Icon background
+  const [chipText, setChipText] = React.useState("");
+  React.useEffect(() => {
+    setChipText(chipCss);
+  }, [chipCss]);
+
+  const handleChipTextBlur = () => {
+    const parsed = parseCssRgba(chipText);
+    if (parsed) {
+      setStyle((s) => ({ ...s, chipRGBA: parsed }));
+    } else {
+      // եթե սխալ է, հետ ենք բերում computed արժեքին
+      setChipText(chipCss);
+    }
+  };
+
   React.useEffect(() => {
     (async () => {
       try {
@@ -988,13 +1031,15 @@ export default function IconsTab({ langs, uiLang = "en" }) {
           ref: chipBtnRef,
           onClick: () => setShowChipPicker((v) => !v),
           style: { ...sq(chipCss), cursor: "pointer" },
-          title: "Choose RGBA",
+          title: "Choose color",
         }),
         h("input", {
           className: "input",
-          value: chipCss,
-          readOnly: true,
-          style: { opacity: 0.75 },
+          value: chipText,
+          onChange: (e) => setChipText(e.target.value),
+          onBlur: handleChipTextBlur,
+          placeholder: "rgba(0, 0, 0, 1) կամ #000000",
+          style: { opacity: 0.9 },
         }),
         showChipPicker &&
           h(
