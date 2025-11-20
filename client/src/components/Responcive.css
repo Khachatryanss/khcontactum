@@ -1,5 +1,3 @@
-
-
 /* որ բոլոր էլեմենտները ժառանգեն body-ի ֆոնտը */
 * {
   font-family: "Roboto", "Noto Sans Armenian", sans-serif;
@@ -52,7 +50,7 @@
   }
 }
 
-/* ====== 320px և ներքև – փոքր էկրաններ (iPhone SE, այլն) ====== */
+/* ====== 320px și ներքև – փոքր էկրաններ (iPhone SE, այլն) ====== */
 @media (max-width: 320px) {
   .public-scroll-layer {
     padding: 6px;
@@ -72,7 +70,7 @@
   }
 }
 
-/* ====== 280px և ներքև – Galaxy Fold ui շատ նեղ էկրան ====== */
+/* ====== 280px și ներքև – Galaxy Fold ui շատ նեղ էկրան ====== */
 @media (max-width: 280px) {
   .public-scroll-layer {
     padding: 4px;
@@ -1296,3 +1294,56 @@
 }
 
 
+/* ===== Small-height laptops (Lenovo ThinkPad, 1366x768 և նման) ===== */
+@media screen and (min-width: 1024px) and (max-width: 1920px) and (max-height: 900px) {
+  /* phone-ի ընդհանուր սքեյլը փոքրացնենք */
+  .phone {
+    transform: scale(0.88);
+    transform-origin: top center;
+  }
+
+  /* ներսի padding-ը էլի մի քիչ կրճատենք */
+  .public-scroll-layer {
+    padding: 12px;
+  }
+
+  .public-home .card {
+    padding: 14px 16px 18px;
+    border-radius: 14px;
+  }
+
+  /* գլխավոր վերնագիր / տեքստ */
+  .public-home .hero-title {
+    font-size: 30px !important;
+    line-height: 1.2;
+  }
+
+  .public-home .hero-desc {
+    font-size: 15px !important;
+    line-height: 1.55 !important;
+  }
+
+  /* icons – երկու կողմից էլ մի քիչ փոքրացնենք */
+  :root {
+    --icon-size: 52px;
+    --icon-gap: 14px;
+    --label-size: 13px;
+  }
+
+  /* brands grid */
+  :root {
+    --brand-circle: 84px;
+    --brand-name: 13px;
+    --brand-row-circle: 56px;
+    --brand-row-font: 14px;
+  }
+
+  /* BrandInfo worker card */
+  :root {
+    --bi-avatar: 92px;
+    --bi-name: 17px;
+    --bi-desc: 13px;
+    --bi-slide-h: 180px;
+    --bi-slide-w: 320px;
+  }
+}
