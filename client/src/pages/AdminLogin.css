@@ -1,7 +1,6 @@
 /* ------------- Admin Login special styles ------------- */
 
 .admin-login-root {
-  min-height: 100vh;                 /* լիքը viewport-ի բարձրությունը */
   padding: 13px 14px 13px;
   display: flex;
   justify-content: center;
