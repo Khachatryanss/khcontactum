@@ -169,6 +169,6 @@ body {
   width: 100%;
 }
 
-#nkariBajin {
+#nkariBajin, #nkariBajin .text-sm {
   width: 110px;
 }
