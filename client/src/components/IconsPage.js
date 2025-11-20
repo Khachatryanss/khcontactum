@@ -5,44 +5,26 @@ const h = React.createElement;
 
 /* ---------- only Font Awesome mapping (optional helpers) ---------- */
 const ICON_MAP = {
-  phone: "fa-solid fa-phone",
-  sms: "fa-solid fa-comment-dots",
-  whatsapp: "fa-brands fa-whatsapp",
-  telegram: "fa-brands fa-telegram",
-  viber: "fa-brands fa-viber",
-  instagram: "fa-brands fa-instagram",
-  facebook: "fa-brands fa-facebook-f",
-  messenger: "fa-brands fa-facebook-messenger",
-  email: "fa-solid fa-envelope",
-  linkedin: "fa-brands fa-linkedin-in",
-  globe: "fa-solid fa-globe",
-  location: "fa-solid fa-location-dot",
-  tiktok: "fa-brands fa-tiktok",
-  skype: "fa-brands fa-skype",
-  twitter: "fa-brands fa-twitter",
-  x: "fa-brands fa-x-twitter",
-  youtube: "fa-brands fa-youtube",
-  snapchat: "fa-brands fa-snapchat",
-  pinterest: "fa-brands fa-pinterest",
-  reddit: "fa-brands fa-reddit-alien",
-  discord: "fa-brands fa-discord",
-  github: "fa-brands fa-github",
-  spotify: "fa-brands fa-spotify",
-  behance: "fa-brands fa-behance",
-  dribbble: "fa-brands fa-dribbble",
-  medium: "fa-brands fa-medium",
-  vimeo: "fa-brands fa-vimeo-v",
-  vk: "fa-brands fa-vk",
-  ok: "fa-brands fa-odnoklassniki",
-  wechat: "fa-brands fa-weixin",
-  line: "fa-brands fa-line",
-  signal: "fa-brands fa-signal-messenger",
-  zoom: "fa-solid fa-video",
-  wikipedia: "fa-brands fa-wikipedia-w",
-  threads: "fa-brands fa-threads",
+  phone:"fa-solid fa-phone", sms:"fa-solid fa-comment-dots",
+  whatsapp:"fa-brands fa-whatsapp", telegram:"fa-brands fa-telegram",
+  viber:"fa-brands fa-viber", instagram:"fa-brands fa-instagram",
+  facebook:"fa-brands fa-facebook-f", messenger:"fa-brands fa-facebook-messenger",
+  email:"fa-solid fa-envelope", linkedin:"fa-brands fa-linkedin-in",
+  globe:"fa-solid fa-globe", location:"fa-solid fa-location-dot",
+  tiktok:"fa-brands fa-tiktok", skype:"fa-brands fa-skype",
+  twitter:"fa-brands fa-twitter", x:"fa-brands fa-x-twitter",
+  youtube:"fa-brands fa-youtube", snapchat:"fa-brands fa-snapchat",
+  pinterest:"fa-brands fa-pinterest", reddit:"fa-brands fa-reddit-alien",
+  discord:"fa-brands fa-discord", github:"fa-brands fa-github",
+  spotify:"fa-brands fa-spotify", behance:"fa-brands fa-behance",
+  dribbble:"fa-brands fa-dribbble", medium:"fa-brands fa-medium",
+  vimeo:"fa-brands fa-vimeo-v", vk:"fa-brands fa-vk", ok:"fa-brands fa-odnoklassniki",
+  wechat:"fa-brands fa-weixin", line:"fa-brands fa-line",
+  signal:"fa-brands fa-signal-messenger", zoom:"fa-solid fa-video",
+  wikipedia:"fa-brands fa-wikipedia-w", threads:"fa-brands fa-threads"
 };
 
-function faClassFrom(item) {
+function faClassFrom(item){
   const raw = (item?.fa || item?.icon || "").trim();
   if (!raw) return "fa-solid fa-link";
   if (/\bfa-(solid|regular|brands)\b|\bfa-[a-z0-9-]+/i.test(raw)) return raw;
@@ -51,8 +33,10 @@ function faClassFrom(item) {
 }
 
 /* ---------- multi-lang label picker (7 լեզու) ---------- */
-function pickLabel(label, lang = "hy") {
+function pickLabel(label, lang = "hy"){
   if (label && typeof label === "object") {
+    // lang այստեղ գալիս է HomePage-ից՝ htmlLang:
+    // hy, ru, en, ar, fr, kz, chn
     const primaryKeys = [];
     switch (lang) {
       case "hy":
@@ -70,13 +54,7 @@ function pickLabel(label, lang = "hy") {
 
     const fallbackOrder = [
       ...primaryKeys,
-      "am",
-      "en",
-      "ru",
-      "ar",
-      "fr",
-      "kz",
-      "chn",
+      "am", "en", "ru", "ar", "fr", "kz", "chn"
     ];
 
     for (const k of fallbackOrder) {
@@ -100,10 +78,10 @@ export default function IconsPage({
   glowEnabled = false,
   glowColor,
   // lang = htmlLang → hy, ru, en, ar, fr, kz, chn
-  lang = "hy",
+  lang = "hy"
 }) {
   /* ===== dzev4 — ձեռքով պտտվող շրջան (ոչ ավտոմատ) ===== */
-  const [orbitAngle, setOrbitAngle] = React.useState(0); // градусներով
+  const [orbitAngle, setOrbitAngle] = React.useState(0); // градусовով
   const draggingRef = React.useRef(false);
   const lastXRef = React.useRef(0);
 
@@ -123,22 +101,15 @@ export default function IconsPage({
     const x = getClientX(e);
     const dx = x - lastXRef.current;
     lastXRef.current = x;
-
-    setOrbitAngle((a) => {
-      // dx * 0.6 – սենսիթիվություն
-      let next = a + dx * 0.6;
-      // նորմալացնում ենք [0,360) միջակայքի մեջ, որ շրջանը լինի մաքուր 360°
-      next = ((next % 360) + 360) % 360;
-      return next;
-    });
+    setOrbitAngle((a) => a + dx * 0.6);
   };
 
   const endDrag = () => {
     draggingRef.current = false;
   };
 
-  const labelDir = lang === "ar" ? "rtl" : "ltr";
-  const labelAlign = lang === "ar" ? "right" : "left";
+  const labelDir   = (lang === "ar" ? "rtl" : "ltr");
+  const labelAlign = (lang === "ar" ? "right" : "left");
 
   /* ===== ONE-COLUMN MODE – նույն հայլու էֆեկտը, ինչ BrandsPage–ում ===== */
   const isOneColumnRow = layoutStyle !== "dzev4" && Number(cols) === 1;
@@ -150,12 +121,12 @@ export default function IconsPage({
       "section",
       {
         className: "icons-public-1col",
-        style: { padding: "10px 12px" },
+        style: { padding: "10px 12px" }
       },
 
       ...links.map((l = {}, i) => {
         const label = pickLabel(l.label, lang);
-        const href = l.href || "#";
+        const href  = l.href || "#";
         const faCls = faClassFrom(l);
         const isExternal = /^https?:\/\/|^mailto:/i.test(href);
 
@@ -165,9 +136,9 @@ export default function IconsPage({
             key: i,
             href,
             target: isExternal ? "_blank" : undefined,
-            rel: isExternal ? "noreferrer" : undefined,
+            rel:    isExternal ? "noreferrer" : undefined,
             className: "icon-row-card",
-            "aria-label": label,
+            "aria-label": label
           },
           h(
             "div",
@@ -179,7 +150,7 @@ export default function IconsPage({
             {
               className: "icon-row-label",
               dir: labelDir,
-              style: { color: textColor, textAlign: labelAlign },
+              style: { color: textColor, textAlign: labelAlign }
             },
             label
           )
@@ -237,25 +208,21 @@ export default function IconsPage({
 
   /* ===== container class/style (մնացած layout-ների համար) ===== */
   let containerClass =
-    layoutStyle === "dzev2"
-      ? "icons-dzev2"
-      : layoutStyle === "dzev3"
-      ? "icons-dzev3"
-      : layoutStyle === "dzev4"
-      ? "icons-dzev4"
-      : "grid";
+    layoutStyle === "dzev2" ? "icons-dzev2" :
+    layoutStyle === "dzev3" ? "icons-dzev3" :
+    layoutStyle === "dzev4" ? "icons-dzev4" :
+                              "grid";
 
   containerClass += " icons-nowrap";
-  if (layoutStyle !== "dzev4" && Number(cols) === 1)
-    containerClass += " icons-cols-1";
+  if (layoutStyle !== "dzev4" && Number(cols) === 1) containerClass += " icons-cols-1";
   if (glowEnabled) containerClass += " icons-glow-on";
 
   const containerStyle = {};
   if (layoutStyle !== "dzev4") {
     containerStyle["--icons-cols"] = String(cols);
   }
-  if (glowColor) containerStyle["--icons-glow-color"] = glowColor;
-  if (chipColor) containerStyle["--icons-chip-bg"] = chipColor;
+  if (glowColor)  containerStyle["--icons-glow-color"]  = glowColor;
+  if (chipColor)  containerStyle["--icons-chip-bg"]     = chipColor;
   if (labelColor) containerStyle["--icons-label-color"] = labelColor;
 
   if (layoutStyle !== "dzev4" && Number(cols) === 1) {
@@ -274,17 +241,17 @@ export default function IconsPage({
 
   const sectionProps = {
     className: containerClass,
-    style: containerStyle,
+    style: containerStyle
   };
 
   if (layoutStyle === "dzev4") {
-    sectionProps.onMouseDown = startDrag;
-    sectionProps.onMouseMove = moveDrag;
-    sectionProps.onMouseUp = endDrag;
+    sectionProps.onMouseDown  = startDrag;
+    sectionProps.onMouseMove  = moveDrag;
+    sectionProps.onMouseUp    = endDrag;
     sectionProps.onMouseLeave = endDrag;
     sectionProps.onTouchStart = startDrag;
-    sectionProps.onTouchMove = moveDrag;
-    sectionProps.onTouchEnd = endDrag;
+    sectionProps.onTouchMove  = moveDrag;
+    sectionProps.onTouchEnd   = endDrag;
   }
 
   return h(
@@ -292,7 +259,7 @@ export default function IconsPage({
     sectionProps,
     ...links.map((l = {}, i) => {
       const label = pickLabel(l.label, lang);
-      const href = l.href || "#";
+      const href  = l.href || "#";
       const faCls = faClassFrom(l);
       const isExternal = /^https?:\/\/|^mailto:/i.test(href);
 
@@ -306,28 +273,23 @@ export default function IconsPage({
         href,
         "aria-label": label,
         target: isExternal ? "_blank" : undefined,
-        rel: isExternal ? "noreferrer" : undefined,
+        rel:    isExternal ? "noreferrer" : undefined
       };
 
       if (layoutStyle === "dzev4") {
-        // ամբողջ շրջան՝ 360° / total՝ հավասար բաշխված, + orbitAngle drag-ից
-        const base = (360 / total) * i;
-        const angle = orbitAngle + base;
+        const base   = (360 / total) * i;
+        const angle  = orbitAngle + base;
         aProps.style = { "--angle": `${angle}deg` };
       }
 
       const inner =
         layoutStyle === "dzev3"
           ? [
-              h("span", { key: "diamond", className: "diamond" }),
-              h("span", { key: "tint", className: "tint" }),
-              h("span", { key: "tintMul", className: "tint-multiply" }),
-              h("span", { key: "shine", className: "shine" }),
-              h("i", {
-                key: "icon",
-                className: faCls,
-                "aria-hidden": "true",
-              }),
+              h("span", { key: "diamond",   className: "diamond" }),
+              h("span", { key: "tint",      className: "tint" }),
+              h("span", { key: "tintMul",   className: "tint-multiply" }),
+              h("span", { key: "shine",     className: "shine" }),
+              h("i",    { key: "icon",      className: faCls, "aria-hidden": "true" })
             ]
           : h("i", { className: faCls, "aria-hidden": "true" });
 
@@ -341,7 +303,7 @@ export default function IconsPage({
             {
               className: "label",
               dir: labelDir,
-              style: { textAlign: labelAlign },
+              style: { textAlign: labelAlign }
             },
             label
           )
