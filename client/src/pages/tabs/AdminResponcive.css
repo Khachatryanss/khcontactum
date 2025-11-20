@@ -12,13 +12,6 @@ body {
   box-sizing: border-box;
 }
 
-.mb-1 .input {
-    width: 80px;
-}
-
-.mb-4 .input {
-    width: 100px;
-}
 
 .small {
     font-size: 10px;
@@ -157,93 +150,3 @@ body {
     overflow-wrap: break-word;
   }
 }
-
-#nkarInput:nth-child(1) {
-  width: 100px;
-}
-
-#nkariMecBajin {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  width: 100%;
-}
-
-#nkariBajin, #nkariBajin .text-sm {
-  width: 110px;
-}
-
-#nkariMecbajin ~ .btn {
-  width: 120px;
-}
-
-/* ----- Base (ամեն պարագայում) ----- */
-.phone {
-  /* որ scale անելիս հեռախոսը տեղից չփախչի */
-  transform-origin: top center;
-  margin: 40px auto;
-  transition: transform 0.2s ease;
-}
-
-/* ===== Desktop լայնության breakpoints ===== */
-
-/* 1) 1920px+ */
-@media (min-width: 1920px) {
-  .phone {
-    transform-origin: top center;
-    transform: scale(1.05);
-    margin: 32px auto;
-  }
-}
-
-/* 2) 1440–1919px (քեզ մոտ «իդեալն» է) */
-@media (min-width: 1440px) and (max-width: 1919px) {
-  .phone {
-    transform-origin: top center;
-    transform: scale(1);
-    margin: 32px auto;
-  }
-
-}
-
-/* 3) 1200–1439px (փոքր լեփթոփներ) */
-@media (min-width: 1200px) and (max-width: 1439px) {
-  .phone {
-    transform-origin: top center;
-    transform: scale(0.92);
-    margin: 20px auto;
-  }
-  .phone * {
-    transform: scale(0.92);
-  }
-}
-
-/* 4) 768–1199px (tablet / շատ փոքր desktop) */
-@media (min-width: 768px) and (max-width: 1199px) {
-  .phone {
-    transform-origin: top center;
-    transform: scale(0.86);
-    margin: 16px auto;
-  }
-  .phone * {
-    transform: scale(0.86);
-  }
-}
-
-/* ===== ԲԱՐՁՐՈՒԹՅԱՆ ֆիքս — փոքր հողի էկրաններ (1366x768 և նմանները) ===== */
-@media (max-height: 800px) {
-  .phone {
-    transform-origin: top center;
-    transform: scale(0.9);   /* էլի մի քիչ փոքր */
-    margin: 12px auto;       /* քիչ վերև/ներքև բաց թողնել */
-  }
-  .phone * {
-    transform: scale(0.9);
-  }
-
-  /* եթե body-ն grid է, թող կարողանա scroll անել */
-  body {
-    overflow-y: auto;
-  }
-}
-
