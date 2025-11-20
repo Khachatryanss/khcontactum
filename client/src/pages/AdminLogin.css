@@ -8,9 +8,9 @@
   align-items: flex-start;
   box-sizing: border-box;
 
-  overflow-y: auto;                  /* scroll միայն էս բլոկում */
-  overscroll-behavior-y: contain;    /* որ չքաշի նաև parent scroll-ը */
-  -webkit-overflow-scrolling: touch; /* iOS / mobile smooth scroll */
+  overflow-y: auto;                  
+  overscroll-behavior-y: contain;    
+  -webkit-overflow-scrolling: touch; 
 }
 
 /* panel-ը այլևս քարտ չէ, ֆոն ու սահմանի չենք տալիս,

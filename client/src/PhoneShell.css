@@ -56,10 +56,9 @@ body{
   position: relative; /* popup-երի, absolute bg-ի համար */
   color: var(--text);
 
-  /* scroll հեռախոսի ներսում */
-  overflow-y: auto;
-  scrollbar-width: none;        /* Firefox */
-  -ms-overflow-style: none;     /* IE/Edge */
+    overflow-y: auto;                  
+    overscroll-behavior-y: contain;    
+    -webkit-overflow-scrolling: touch;
 
   background:radial-gradient(
     90% 80% at 50% 20%,
