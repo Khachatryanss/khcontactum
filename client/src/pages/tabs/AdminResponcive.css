@@ -271,3 +271,73 @@ body {
     height: 28px;
   }
 }
+
+/* ---------- LANGUAGES row layout (միշտ 1 գծով) ---------- */
+
+/* ընդհանուր layout բոլոր էկրանների համար */
+.phone .card h3.title + .mb-4 .row.mb-1 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* AM / RU / EN պղնձագույն պիլն */
+.phone .card h3.title + .mb-4 .row.mb-1 > .btn {
+  flex: 0 0 auto;
+  min-width: 64px;
+  justify-content: center;
+}
+
+/* լեզվի անվանումը — տալիս ենք flex, որ մեջտեղի սյունը նեղանա, բայց չթափվի */
+.phone .card h3.title + .mb-4 .row.mb-1 > span:not(.small) {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Default / #2 / #3 պիտակը */
+.phone .card h3.title + .mb-4 .row.mb-1 > .small {
+  flex: 0 0 auto;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* ↑ ↓ կոճակների բլոկը */
+.phone .card h3.title + .mb-4 .row.mb-1 > div:last-child {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 4px;
+}
+
+/* մի քիչ փոքրացնում ենք գրերը, որ ավելի հեշտ մեջտեղն անցնի */
+
+/* 4K / մեծ desktop (1920px+) */
+@media (min-width: 1920px) {
+  .phone .card h3.title + .mb-4 .row.mb-1 > span:not(.small) {
+    font-size: 15px;
+  }
+}
+
+/* Մեծ desktop (1440px – 1919px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .phone .card h3.title + .mb-4 .row.mb-1 > span:not(.small) {
+    font-size: 14px;
+  }
+}
+
+/* Սովորական laptop / desktop (1200px – 1439px) */
+@media (min-width: 1200px) and (max-width: 1439px) {
+  .phone .card h3.title + .mb-4 .row.mb-1 > span:not(.small) {
+    font-size: 13px;
+  }
+}
+
+/* Փոքր laptop / մեծ tablet (768px – 1199px) */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .phone .card h3.title + .mb-4 .row.mb-1 > span:not(.small) {
+    font-size: 12px;
+  }
+}
+
