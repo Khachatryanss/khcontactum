@@ -338,6 +338,7 @@
 /* ========== <= 480px (մինչև 480px, օրինակ՝ մեծ սմարթֆոններ) ========== */
 @media (max-width: 480px) and (min-width: 401px) {
   .admin-login-root {
+    overflow: hidden;
     align-items: flex-start;
     padding: 10px 10px 14px;
   }
