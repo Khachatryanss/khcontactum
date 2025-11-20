@@ -1152,6 +1152,7 @@ export default function AdminDashboard({
             { placeholder: "https://..."}
           ),
           h(FileButton, {
+            id: "chooseFileBtn",
             label: T.chooseFileLabel,
             accept:
               "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
