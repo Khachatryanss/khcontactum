@@ -158,6 +158,6 @@ body {
   }
 }
 
-#nkarInput {
+#nkarInput:nth-child(1) {
   width: 100px;
 }
