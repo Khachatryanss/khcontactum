@@ -1147,7 +1147,7 @@ export default function AdminDashboard({
               setInfoPath("avatar.imageUrl", v);
               setInfoPath("logo_url", v);
             },
-            { placeholder: "https://..." }
+            { placeholder: "https://...", id: "nkariInput" }
           ),
           h(FileButton, {
             label: T.chooseFileLabel,
