@@ -127,15 +127,16 @@
   border: none;            /* ← հանում ենք սահմանը */
 }
 
-.admin-login-logo-img {
-  height: 180px;
-  width: 180px;
-}
+  .admin-login-logo-img {
+    width: 130px;
+    height: 130px;
+  }
 
-.admin-login-logo-img1 {
-  height: 130px;
-  width: 130px;
-}
+  .admin-login-logo-img1 {
+    width: 100px;
+    height: 100px;
+    padding-top: 20px;
+  }
 
 
 /* կապի icon-ների բլոկ */
@@ -225,13 +226,14 @@
     font-size: 12px;
   }
     .admin-login-logo-img {
-    width: 180px;
-    height: 180px;
+    width: 130px;
+    height: 130px;
   }
 
   .admin-login-logo-img1 {
-    width: 130px;
-    height: 130px;
+    width: 100px;
+    height: 100px;
+    padding-top: 20px;
   }
 }
 
