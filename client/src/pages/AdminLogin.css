@@ -1,6 +1,7 @@
 /* ------------- Admin Login special styles ------------- */
 
 .admin-login-root {
+
   padding: 13px 14px 13px;
   display: flex;
   justify-content: center;
@@ -573,10 +574,4 @@
     max-width: 36px;
     max-height: 36px;
   }
-}
-
-#mainMenuBarAdmin {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
 }

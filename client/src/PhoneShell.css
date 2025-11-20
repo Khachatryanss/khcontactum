@@ -434,13 +434,7 @@ div section{
   font-weight:500;
   color:inherit;
 }
-.mb-3{
-  height: 80px;
-  margin-bottom: 30px;
-}
-.mb-4{
-  margin-top: 20px;
-}
+
 
 #uploadImg {
   display: flex;
