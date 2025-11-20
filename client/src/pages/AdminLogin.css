@@ -305,9 +305,6 @@
 
 /* ========== 1920px+ (Full HD և ավելի) ========== */
 @media (min-width: 1920px) {
-  .admin-login-root {
-    align-items: center;
-  }
 
   .admin-login-panel {
     max-width: 430px;
