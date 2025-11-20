@@ -353,7 +353,7 @@ function rgbToHex({ r, g, b }) {
   return "#" + to(r) + to(g) + to(b);
 }
 
-// 🔹 parse "rgba(...)", "rgb(...)" կամ "#hex" → {r,g,b,a}
+// parse "rgba(...)", "rgb(...)" կամ "#hex" → {r,g,b,a}
 function parseCssRgba(str) {
   if (!str) return null;
   let s = String(str).trim();
@@ -393,8 +393,8 @@ function faClass(raw) {
 function PresetSelect({
   presets,
   onPick,
-  buttonWidth = 170,
-  menuWidth = 185,
+  buttonWidth = "100%",
+  menuWidth = 220,
   maxHeight = 220,
   label = "Preset",
   searchPlaceholder = "Search…",
@@ -591,14 +591,13 @@ function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
           )
         ),
 
-        // href + FA class (custom Preset dropdown)
+        // href + FA class — 💡 ՀԻՄԱ ՎԵՐԱԴԱՍԱՎՈՐՎԱԾ՝ ՄԵԿ ՍՅՈՒՆԱԿՈՎ
         h(
           "div",
           {
             style: {
               display: "grid",
               gap: 8,
-              gridTemplateColumns: "1fr 1fr",
             },
           },
           h("input", {
@@ -607,23 +606,12 @@ function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
             placeholder: T.urlPlaceholder,
             onChange: (e) => onField(it.uid, { href: e.target.value }),
           }),
-          h(
-            "div",
-            {
-              style: {
-                display: "grid",
-                gridTemplateColumns: "1fr auto",
-                gap: 8,
-                position: "relative",
-              },
-            },
-            h(PresetSelect, {
-              presets: FA_PRESETS,
-              onPick: (v) => onField(it.uid, { icon: v }),
-              label: T.presetButton,
-              searchPlaceholder: T.presetSearchPlaceholder,
-            })
-          )
+          h(PresetSelect, {
+            presets: FA_PRESETS,
+            onPick: (v) => onField(it.uid, { icon: v }),
+            label: T.presetButton,
+            searchPlaceholder: T.presetSearchPlaceholder,
+          })
         ),
 
         h(
@@ -719,7 +707,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     [style.rowCardRGBA]
   );
 
-  // 🔹 editable text for Icon background
+  // editable text for Icon background
   const [chipText, setChipText] = React.useState("");
   React.useEffect(() => {
     setChipText(chipCss);
@@ -730,7 +718,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     if (parsed) {
       setStyle((s) => ({ ...s, chipRGBA: parsed }));
     } else {
-      // եթե սխալ է, հետ ենք բերում computed արժեքին
+      // սխալ սթրինգի դեպքում հետ ենք բերում computed արժեքին
       setChipText(chipCss);
     }
   };
@@ -807,7 +795,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     };
   };
 
-  // 🔽 ԱՎԵԼԱՑՆԵԼ՝ auto-scroll նոր icon-card-ի վրա
+  // ԱՎԵԼԱՑՆԵԼ՝ auto-scroll նոր icon-card-ի վրա
   const add = () =>
     setItems((list) => {
       const next = [
