@@ -16,6 +16,10 @@ body {
     width: 80px;
 }
 
+.small {
+    font-size: 10px;
+}
+
 /* row-երը փոքր էկրանների համար թող փաթեթվեն, որ չծավալվեն հորիզոնական */
 .card .row {
   display: flex;
