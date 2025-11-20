@@ -157,3 +157,7 @@ body {
     overflow-wrap: break-word;
   }
 }
+
+.mb-4 input {
+  width: 80px;
+}
