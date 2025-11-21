@@ -15,7 +15,7 @@ const rtlProps = (code) =>
 const ICONS_UI_TEXT = {
   am: {
     styleLabel: "Ոճ",
-    styleOption1: "Ձև մանկաբ 1",
+    styleOption1: "Ձև 1",
     styleOption2: "Ձև 2",
     styleOption3: "Ձև 3",
     styleOption4: "Ձև 4 (շրջան)",
@@ -23,6 +23,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "Սյունակներ",
     labelColor: "Իկոնների անունների գույնը",
     iconBg: "Իկոնների հետնաֆոնը",
+    iconColor: "Իկոնների գույնը", // ✅ NEW
     rowCardBg: "Տողային իկոնների հետնաֆոն (Սյունակ 1)",
     addButton: "Ավելացնել",
     deleteButton: "Ջնջել",
@@ -55,6 +56,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "Колонки",
     labelColor: "Цвет названий иконок",
     iconBg: "Фон иконок",
+    iconColor: "Цвет иконок", // ✅ NEW
     rowCardBg: "Фон строковых иконок (1 колонка)",
     addButton: "Добавить",
     deleteButton: "Удалить",
@@ -87,6 +89,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "Columns",
     labelColor: "Icon name color",
     iconBg: "Icon background",
+    iconColor: "Icon color", // ✅ NEW
     rowCardBg: "Row icons background (column 1)",
     addButton: "Add",
     deleteButton: "Delete",
@@ -119,6 +122,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "الأعمدة",
     labelColor: "لون أسماء الأيقونات",
     iconBg: "خلفية الأيقونات",
+    iconColor: "لون الأيقونات", // ✅ NEW
     rowCardBg: "خلفية الأيقونات في الصف (عمود واحد)",
     addButton: "إضافة",
     deleteButton: "حذف",
@@ -151,6 +155,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "Colonnes",
     labelColor: "Couleur des noms d’icônes",
     iconBg: "Arrière-plan des icônes",
+    iconColor: "Couleur des icônes", // ✅ NEW
     rowCardBg: "Arrière-plan des icônes en ligne (1 colonne)",
     addButton: "Ajouter",
     deleteButton: "Supprimer",
@@ -184,6 +189,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "Бағандар",
     labelColor: "Иконка атауларының түсі",
     iconBg: "Иконкалардың фоны",
+    iconColor: "Иконкалардың түсі", // ✅ NEW
     rowCardBg: "Жол иконкаларының фоны (1 баған)",
     addButton: "Қосу",
     deleteButton: "Жою",
@@ -200,7 +206,7 @@ const ICONS_UI_TEXT = {
       "Назар аударыңыз: қызылмен белгіленген жолдарды толтырыңыз",
     savedOk: "Сақталды ✅",
     loadFailed: "Жүктеу сәтсіз аяқталды",
-    saveFailed: "Сақтау сәтсіз ավարտталды",
+    saveFailed: "Сақтау сәтсіз аяқталды",
     title: "Иконка баптаулары",
 
     moveUp: "Жоғары",
@@ -218,6 +224,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "列数",
     labelColor: "图标名称颜色",
     iconBg: "图标背景",
+    iconColor: "图标颜色", // ✅ NEW
     rowCardBg: "行内图标背景（1 列）",
     addButton: "添加",
     deleteButton: "删除",
@@ -228,7 +235,7 @@ const ICONS_UI_TEXT = {
     presetButton: "选择",
     presetSearchPlaceholder: "搜索…",
     validateLabelsMissing: "请填写名称字段",
-    validateAmMissing: "請填写名称字段（AM）",
+    validateAmMissing: "请填写名称字段（AM）",
     validateHrefMissing: "请填写链接 (URL) 字段",
     rowsAttention: "注意：请填写标红的行",
     savedOk: "已保存 ✅",
@@ -373,6 +380,7 @@ function rgbToHex({ r, g, b }) {
   const to = (v) => clamp255(v).toString(16).padStart(2, "0");
   return "#" + to(r) + to(g) + to(b);
 }
+
 // parse "rgba(...)", "rgb(...)" կամ "#hex" → {r,g,b,a}
 function parseCssRgba(str) {
   if (!str) return null;
@@ -589,7 +597,7 @@ function IconRow({
         className: "icon-card",
         style: {
           display: "grid",
-          gridTemplateColumns: "64px 1fr", // ✅ ձախ սյունը լայնացրինք
+          gridTemplateColumns: "64px 1fr",
           gap: 12,
           alignItems: "start",
           padding: 12,
@@ -600,7 +608,7 @@ function IconRow({
         },
       },
 
-      // ✅ LEFT COLUMN: preview + move buttons
+      // ձախ կողմ — preview + up/down
       h(
         "div",
         {
@@ -614,13 +622,7 @@ function IconRow({
         preview,
         h(
           "div",
-          {
-            style: {
-              display: "grid",
-              gap: 6,
-              width: "100%",
-            },
-          },
+          { style: { display: "grid", gap: 6, width: "100%" } },
           h(
             "button",
             {
@@ -644,7 +646,7 @@ function IconRow({
         )
       ),
 
-      // RIGHT COLUMN: մնացած դաշտերը
+      // աջ կողմ — դաշտեր
       h(
         "div",
         { style: { display: "grid", gap: 10 } },
@@ -691,7 +693,6 @@ function IconRow({
           })
         ),
 
-        // Delete՝ ներքևում աջ
         h(
           "div",
           { style: { display: "flex", gap: 8, justifyContent: "flex-end" } },
@@ -728,6 +729,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   const [items, setItems] = React.useState([]);
   const [style, setStyle] = React.useState({
     labelHEX: "#d9caa0",
+    iconHEX: "#ffffff", // ✅ NEW
     chipRGBA: { r: 47, g: 47, b: 47, a: 1 },
     layoutStyle: "dzev1",
     cols: 4,
@@ -774,6 +776,17 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     () => `rgb(${labelRgbObj.r}, ${labelRgbObj.g}, ${labelRgbObj.b})`,
     [labelRgbObj]
   );
+
+  // ✅ NEW derived icon css
+  const iconRgbObj = React.useMemo(
+    () => hexToRgb(style.iconHEX),
+    [style.iconHEX]
+  );
+  const iconCss = React.useMemo(
+    () => `rgb(${iconRgbObj.r}, ${iconRgbObj.g}, ${iconRgbObj.b})`,
+    [iconRgbObj]
+  );
+
   const chipCss = React.useMemo(
     () =>
       `rgba(${style.chipRGBA.r}, ${style.chipRGBA.g}, ${style.chipRGBA.b}, ${style.chipRGBA.a})`,
@@ -816,6 +829,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
         setStyle({
           labelHEX: icons.styles?.labelHEX || "#d9caa0",
+          iconHEX: icons.styles?.iconHEX || "#ffffff", // ✅ NEW load
           chipRGBA: icons.styles?.chipRGBA || {
             r: 47,
             g: 47,
@@ -846,14 +860,9 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   const validate = (it) => {
     const href = (it.href || "").trim();
 
-    // label object կա՞
     if (!it.label || typeof it.label !== "object") {
       return { ok: false, msg: T.validateLabelsMissing };
     }
-
-    // ⚠️ AM-ի պարտադիր ստուգումը թողնում ենք comment-ում
-    // const nameAM = (it.label.am || "").trim();
-    // if (!nameAM) return { ok: false, msg: T.validateAmMissing };
 
     if (!href) return { ok: false, msg: T.validateHrefMissing };
 
@@ -861,7 +870,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     return {
       ok: true,
       payload: {
-        // պահում ենք ամբողջ LANGS-ը DB-ում, ներառյալ kz/chn
         label: LANGS.reduce(
           (o, k) => ((o[k] = (it.label[k] || "").trim()), o),
           {}
@@ -933,13 +941,8 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     setItems((list) => list.filter((x) => x.uid !== uidKey));
   };
 
-  /* ------ MOVE UP/DOWN (Option B) ------ */
+  // ✅ reorder (B տարբերակ)
   const onMoveUp = (uidKey) => {
-    setErrors((e) => {
-      const cp = { ...e };
-      delete cp[uidKey];
-      return cp;
-    });
     setItems((list) => {
       const idx = list.findIndex((x) => x.uid === uidKey);
       if (idx <= 0) return list;
@@ -950,11 +953,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   };
 
   const onMoveDown = (uidKey) => {
-    setErrors((e) => {
-      const cp = { ...e };
-      delete cp[uidKey];
-      return cp;
-    });
     setItems((list) => {
       const idx = list.findIndex((x) => x.uid === uidKey);
       if (idx < 0 || idx >= list.length - 1) return list;
@@ -990,15 +988,17 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
       const info = { ...(baseInfo || {}) };
       info.icons = {
-        links, // ✅ արդեն նոր հերթով է գնում
+        links,
         styles: {
           labelHEX: style.labelHEX,
+          iconHEX: style.iconHEX, // ✅ NEW save
           chipRGBA: style.chipRGBA,
           layoutStyle: style.layoutStyle,
           cols: Number(style.cols || 4),
           glowEnabled: !!style.glowEnabled,
           glowColor: style.glowColor,
           labelCss,
+          iconCss, // ✅ NEW computed
           chipCss,
           rowCardRGBA: style.rowCardRGBA,
           rowCardCss,
@@ -1085,6 +1085,8 @@ export default function IconsTab({ langs, uiLang = "en" }) {
           h("option", { value: "4" }, "4")
         )
       ),
+
+      // label color
       h(
         "div",
         {
@@ -1111,6 +1113,36 @@ export default function IconsTab({ langs, uiLang = "en" }) {
           style: { maxWidth: 120, marginLeft: 20 },
         })
       ),
+
+      // ✅ NEW icon color section (ոչինչ չի փոխվել, միայն ավելացել)
+      h(
+        "div",
+        {
+          style: {
+            display: "grid",
+            gridTemplateColumns: "auto 36px 140px",
+            gap: 10,
+            alignItems: "center",
+          },
+        },
+        h("label", { style: { fontWeight: 700 } }, T.iconColor),
+        h("input", {
+          type: "color",
+          value: rgbToHex(iconRgbObj),
+          onChange: (e) =>
+            setStyle((s) => ({ ...s, iconHEX: e.target.value })),
+        }),
+        h("input", {
+          className: "input",
+          value: style.iconHEX,
+          onChange: (e) =>
+            setStyle((s) => ({ ...s, iconHEX: e.target.value })),
+          placeholder: "#ffffff",
+          style: { maxWidth: 120, marginLeft: 20 },
+        })
+      ),
+
+      // icon bg
       h(
         "div",
         {
@@ -1223,7 +1255,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       msg && h("div", { className: "small" }, msg)
     ),
 
-    /* local CSS for big language inputs + move buttons */
+    /* local CSS for big language inputs */
     h(
       "style",
       null,
@@ -1239,25 +1271,12 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       }
       .input.big{ padding:14px 14px; font-size:15px; border-radius:14px; }
       .btn-danger{ background:#b91c1c; color:#fff; border:1px solid #b91c1c; }
-
       .btn-move-small{
-        background:#111;
-        color:#fff;
-        border:1px solid #111;
-        height:28px;
-        width:100%;
-        border-radius:8px;
-        font-weight:800;
-        display:grid;
-        place-items:center;
-        cursor:pointer;
-        padding:0;
-        line-height:1;
+        background:#111;color:#fff;border:1px solid #111;height:28px;width:100%;
+        border-radius:8px;font-weight:800;display:grid;place-items:center;cursor:pointer;
+        padding:0;line-height:1;
       }
-      .btn-move-small:disabled{
-        opacity:.35;
-        cursor:not-allowed;
-      }
+      .btn-move-small:disabled{opacity:.35;cursor:not-allowed;}
     `
     )
   );
