@@ -1,6 +1,6 @@
 @media  (min-width:1280px) and (max-width:1365.98px) {
   .phone, .screen {
-    width: 330px;
+    width: 345px;
   }
   #root {
     width: 416px;
@@ -44,7 +44,7 @@
 
 @media (min-width:1366px) and (max-width:1439.98px) {
     .phone, .screen {
-      width: 330px;
+      width: 345px;
   }
   #root {
     width: 416px;
@@ -93,7 +93,7 @@
 
 @media (min-width:1440px) and (max-width:1919.98px){
       .phone, .screen {
-          width: 330px;
+          width: 345px;
   }
   #root {
     width: 416px;
