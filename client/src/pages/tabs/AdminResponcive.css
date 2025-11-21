@@ -22,6 +22,54 @@
   }
 
 
+    .grid .icon-btn i,
+    .grid .icon-btn img,
+    .icons-dzev2 .icon-btn i,
+    .icons-dzev2 .icon-btn img,
+    .icons-dzev3 .icon-btn i,
+    .icons-dzev3 .icon-btn img,
+    .icons-dzev4 .icon-btn i,
+    .icons-dzev4 .icon-btn img {
+      font-size: 25px;
+      width: 25px;
+      height: 25px;
+      max-width: 25px;
+      max-height: 25px;
+      object-fit: contain;
+      display: flex;
+    align-items: center;
+    justify-content: center;
+    }
+}
+
+@media (min-width:1366px) and (max-width:1439.98px) {
+    .phone, .screen {
+      width: 355px;
+  }
+  #root {
+    width: 416px;
+  }
+
+  /* ===================== GLOBAL FIX: universal 70×70 size ===================== */
+
+/* icon-btn — always 70×70 in all layouts */
+  .grid .icon-btn,
+  .icons-dzev2 .icon-btn,
+  .icons-dzev3 .icon-btn,
+  .icons-dzev4 .icon-btn {
+    width: 70px;
+    height: 70px;
+    min-width: 70px;
+    min-height: 70px;
+    max-width: 70px;
+    max-height: 70px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* inner icons (i / img / emoji) — always 25px and centered */
   .grid .icon-btn i,
   .grid .icon-btn img,
   .icons-dzev2 .icon-btn i,
@@ -37,70 +85,9 @@
     max-height: 25px;
     object-fit: contain;
     display: flex;
-  align-items: center;
-  justify-content: center;
+    align-items: center;
+    justify-content: center;
   }
-  #nkariMecBajin * {
-    width: 100px;
-  }
-  #nkariMecBajin  {
-    width: 110px;
-  }
-}
-
-@media (min-width:1366px) and (max-width:1439.98px) {
-    .phone, .screen {
-      width: 355px;
-  }
-  #root {
-    width: 416px;
-  }
-
-  /* ===================== GLOBAL FIX: universal 70×70 size ===================== */
-
-/* icon-btn — always 70×70 in all layouts */
-.grid .icon-btn,
-.icons-dzev2 .icon-btn,
-.icons-dzev3 .icon-btn,
-.icons-dzev4 .icon-btn {
-  width: 70px;
-  height: 70px;
-  min-width: 70px;
-  min-height: 70px;
-  max-width: 70px;
-  max-height: 70px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* inner icons (i / img / emoji) — always 25px and centered */
-.grid .icon-btn i,
-.grid .icon-btn img,
-.icons-dzev2 .icon-btn i,
-.icons-dzev2 .icon-btn img,
-.icons-dzev3 .icon-btn i,
-.icons-dzev3 .icon-btn img,
-.icons-dzev4 .icon-btn i,
-.icons-dzev4 .icon-btn img {
-  font-size: 25px;
-  width: 25px;
-  height: 25px;
-  max-width: 25px;
-  max-height: 25px;
-  object-fit: contain;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-    #nkariMecBajin * {
-    width: 100px;
-  }
-  #nkariMecBajin  {
-    width: 110px;
-  }
-
 }
 
 @media (min-width:1440px) and (max-width:1919.98px){

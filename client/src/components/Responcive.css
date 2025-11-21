@@ -1166,7 +1166,7 @@
     --bi-dot:8px;
     --bi-btn-fs:13px;
   }
-   #nkariMecbajin * {
+   #nkariMecbajin input:nth-child(1) {
     width: 100px;
   }
   #nkariMecbajin  {
@@ -1187,7 +1187,7 @@
     --bi-dot:9px;
     --bi-btn-fs:13.5px;
   }
-   #nkariMecbajin * {
+   #nkariMecbajin input:nth-child(1) {
     width: 100px;
   }
   #nkariMecbajin  {
@@ -1208,7 +1208,7 @@
     --bi-dot:9px;
     --bi-btn-fs:14px;
   }
-   #nkariMecbajin * {
+   #nkariMecbajin input:nth-child(1) {
     width: 100px;
   }
   #nkariMecbajin  {
