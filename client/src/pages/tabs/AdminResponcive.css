@@ -237,7 +237,7 @@
   /* վերցնում ենք միայն այն Flex row-ը, որի մեջ կա img կամ video preview */
   .mb-4[style*="display: flex"][style*="gap"] {
     align-items: center;
-    width: 305px;
+    width: 325px;
   }
 
   .mb-4[style*="display: flex"] label {
