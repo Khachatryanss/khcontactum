@@ -492,7 +492,7 @@
   border: none;
 }
 
-.icons-dzev4 .icon-btn i{
+.icons-dzev4 .icon-btn i {
   font-size: calc(22px * var(--icons-scale, 1));
   line-height: 1;
   color: #fff;

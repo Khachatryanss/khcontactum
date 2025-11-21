@@ -5,6 +5,37 @@
   #root {
     width: 416px;
   }
+  /* ===================== GLOBAL FIX: one universal size ===================== */
+
+  /* icon-btn — always 70×70 for dzev1/2/3/4 */
+  .grid .icon-btn,
+  .icons-dzev2 .icon-btn,
+  .icons-dzev3 .icon-btn,
+  .icons-dzev4 .icon-btn {
+    width: 70px !important;
+    height: 70px !important;
+    min-width: 70px !important;
+    min-height: 70px !important;
+    max-width: 70px !important;
+    max-height: 70px !important;
+  }
+
+  /* inner icons — always 25px */
+  .grid .icon-btn i,
+  .grid .icon-btn img,
+  .icons-dzev2 .icon-btn i,
+  .icons-dzev2 .icon-btn img,
+  .icons-dzev3 .icon-btn i,
+  .icons-dzev3 .icon-btn img,
+  .icons-dzev4 .icon-btn i,
+  .icons-dzev4 .icon-btn img {
+    font-size: 25px !important;
+    width: 25px !important;
+    height: 25px !important;
+    max-width: 25px !important;
+    max-height: 25px !important;
+  }
+
 }
 
 @media (min-width:1366px) and (max-width:1439.98px) {
@@ -14,6 +45,37 @@
   #root {
     width: 416px;
   }
+  /* ===================== GLOBAL FIX: one universal size ===================== */
+
+  /* icon-btn — always 70×70 for dzev1/2/3/4 */
+  .grid .icon-btn,
+  .icons-dzev2 .icon-btn,
+  .icons-dzev3 .icon-btn,
+  .icons-dzev4 .icon-btn {
+    width: 70px !important;
+    height: 70px !important;
+    min-width: 70px !important;
+    min-height: 70px !important;
+    max-width: 70px !important;
+    max-height: 70px !important;
+  }
+
+  /* inner icons — always 25px */
+  .grid .icon-btn i,
+  .grid .icon-btn img,
+  .icons-dzev2 .icon-btn i,
+  .icons-dzev2 .icon-btn img,
+  .icons-dzev3 .icon-btn i,
+  .icons-dzev3 .icon-btn img,
+  .icons-dzev4 .icon-btn i,
+  .icons-dzev4 .icon-btn img {
+    font-size: 25px !important;
+    width: 25px !important;
+    height: 25px !important;
+    max-width: 25px !important;
+    max-height: 25px !important;
+  }
+
 }
 
 @media (min-width:1440px) and (max-width:1919.98px){
@@ -22,5 +84,35 @@
   }
   #root {
     width: 416px;
+  }
+  /* ===================== GLOBAL FIX: one universal size ===================== */
+
+  /* icon-btn — always 70×70 for dzev1/2/3/4 */
+  .grid .icon-btn,
+  .icons-dzev2 .icon-btn,
+  .icons-dzev3 .icon-btn,
+  .icons-dzev4 .icon-btn {
+    width: 70px !important;
+    height: 70px !important;
+    min-width: 70px !important;
+    min-height: 70px !important;
+    max-width: 70px !important;
+    max-height: 70px !important;
+  }
+
+  /* inner icons — always 25px */
+  .grid .icon-btn i,
+  .grid .icon-btn img,
+  .icons-dzev2 .icon-btn i,
+  .icons-dzev2 .icon-btn img,
+  .icons-dzev3 .icon-btn i,
+  .icons-dzev3 .icon-btn img,
+  .icons-dzev4 .icon-btn i,
+  .icons-dzev4 .icon-btn img {
+    font-size: 25px !important;
+    width: 25px !important;
+    height: 25px !important;
+    max-width: 25px !important;
+    max-height: 25px !important;
   }
 }
