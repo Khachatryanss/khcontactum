@@ -519,6 +519,10 @@ export default function HomePage({ cardId = "101" }) {
     const labelColor   = styles.labelCss || styles.labelHEX || "";
     const chipColor    = styles.chipCss || rgbaToCss(styles.chipRGBA) || "";
     const rowCardColor = styles.rowCardCss || rgbaToCss(styles.rowCardRGBA) || "";
+    const iconColor =
+  info?.icons?.styles?.iconHEX ||
+  info?.icons?.styles?.iconCss ||
+  "#ffffff";
     const layoutStyle  = styles.layoutStyle || "dzev1";
     const cols         = Number(styles.cols || 4);
     const glowEnabled  = !!styles.glowEnabled;
