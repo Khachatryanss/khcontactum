@@ -23,9 +23,8 @@ const ICONS_UI_TEXT = {
     colsLabel: "Սյունակներ",
     labelColor: "Իկոնների անունների գույնը",
     iconBg: "Իկոնների հետնաֆոնը",
+    iconColor: "Իկոնների գույնը", // ✅ NEW
     rowCardBg: "Տողային իկոնների հետնաֆոն (Սյունակ 1)",
-    iconColor: "Իկոնների ներսի գույնը", // ✅ NEW
-
     addButton: "Ավելացնել",
     deleteButton: "Ջնջել",
     saveButton: "Պահպանել",
@@ -42,6 +41,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "Ներբեռնելը ձախողվեց",
     saveFailed: "Պահպանելը ձախողվեց",
     title: "Իկոնների կարգավորումներ",
+
+    moveUp: "Վերև",
+    moveDown: "Ներքև",
   },
 
   ru: {
@@ -54,9 +56,8 @@ const ICONS_UI_TEXT = {
     colsLabel: "Колонки",
     labelColor: "Цвет названий иконок",
     iconBg: "Фон иконок",
+    iconColor: "Цвет иконок", // ✅ NEW
     rowCardBg: "Фон строковых иконок (1 колонка)",
-    iconColor: "Цвет иконок внутри", // ✅ NEW
-
     addButton: "Добавить",
     deleteButton: "Удалить",
     saveButton: "Сохранить",
@@ -73,6 +74,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "Не удалось загрузить",
     saveFailed: "Не удалось сохранить",
     title: "Настройки иконок",
+
+    moveUp: "Вверх",
+    moveDown: "Вниз",
   },
 
   en: {
@@ -85,9 +89,8 @@ const ICONS_UI_TEXT = {
     colsLabel: "Columns",
     labelColor: "Icon name color",
     iconBg: "Icon background",
+    iconColor: "Icon color", // ✅ NEW
     rowCardBg: "Row icons background (column 1)",
-    iconColor: "Inner icon color", // ✅ NEW
-
     addButton: "Add",
     deleteButton: "Delete",
     saveButton: "Save",
@@ -104,6 +107,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "Loading failed",
     saveFailed: "Saving failed",
     title: "Icons settings",
+
+    moveUp: "Up",
+    moveDown: "Down",
   },
 
   ar: {
@@ -116,9 +122,8 @@ const ICONS_UI_TEXT = {
     colsLabel: "الأعمدة",
     labelColor: "لون أسماء الأيقونات",
     iconBg: "خلفية الأيقونات",
+    iconColor: "لون الأيقونات", // ✅ NEW
     rowCardBg: "خلفية الأيقونات في الصف (عمود واحد)",
-    iconColor: "لون الأيقونات الداخلي", // ✅ NEW
-
     addButton: "إضافة",
     deleteButton: "حذف",
     saveButton: "حفظ",
@@ -135,6 +140,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "فشل في التحميل",
     saveFailed: "فشل في الحفظ",
     title: "إعدادات الأيقونات",
+
+    moveUp: "أعلى",
+    moveDown: "أسفل",
   },
 
   fr: {
@@ -147,9 +155,8 @@ const ICONS_UI_TEXT = {
     colsLabel: "Colonnes",
     labelColor: "Couleur des noms d’icônes",
     iconBg: "Arrière-plan des icônes",
+    iconColor: "Couleur des icônes", // ✅ NEW
     rowCardBg: "Arrière-plan des icônes en ligne (1 colonne)",
-    iconColor: "Couleur interne des icônes", // ✅ NEW
-
     addButton: "Ajouter",
     deleteButton: "Supprimer",
     saveButton: "Enregistrer",
@@ -166,8 +173,12 @@ const ICONS_UI_TEXT = {
     loadFailed: "Échec du chargement",
     saveFailed: "Échec de l’enregistrement",
     title: "Paramètres des icônes",
+
+    moveUp: "Monter",
+    moveDown: "Descendre",
   },
 
+  // 🇰🇿 Kazakh (KZ)
   kz: {
     styleLabel: "Стиль",
     styleOption1: "Стиль 1",
@@ -178,9 +189,8 @@ const ICONS_UI_TEXT = {
     colsLabel: "Бағандар",
     labelColor: "Иконка атауларының түсі",
     iconBg: "Иконкалардың фоны",
+    iconColor: "Иконкалардың түсі", // ✅ NEW
     rowCardBg: "Жол иконкаларының фоны (1 баған)",
-    iconColor: "Ішкі иконка түсі", // ✅ NEW
-
     addButton: "Қосу",
     deleteButton: "Жою",
     saveButton: "Сақтау",
@@ -193,13 +203,17 @@ const ICONS_UI_TEXT = {
     validateAmMissing: "AM атауы өрісін толтырыңыз",
     validateHrefMissing: "Сілтеме (URL) өрісін толтырыңыз",
     rowsAttention:
-      "Նазар аударыңыз: қызылмен белгіленген жолдарды толтырыңыз",
+      "Назар аударыңыз: қызылмен белгіленген жолдарды толтырыңыз",
     savedOk: "Сақталды ✅",
     loadFailed: "Жүктеу сәтсіз аяқталды",
     saveFailed: "Сақтау сәтсіз аяқталды",
     title: "Иконка баптаулары",
+
+    moveUp: "Жоғары",
+    moveDown: "Төмен",
   },
 
+  // 🇨🇳 Chinese (CHN)
   chn: {
     styleLabel: "样式",
     styleOption1: "样式 1",
@@ -210,9 +224,8 @@ const ICONS_UI_TEXT = {
     colsLabel: "列数",
     labelColor: "图标名称颜色",
     iconBg: "图标背景",
+    iconColor: "图标颜色", // ✅ NEW
     rowCardBg: "行内图标背景（1 列）",
-    iconColor: "图标内部颜色", // ✅ NEW
-
     addButton: "添加",
     deleteButton: "删除",
     saveButton: "保存",
@@ -229,6 +242,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "加载失败",
     saveFailed: "保存失败",
     title: "图标设置",
+
+    moveUp: "上移",
+    moveDown: "下移",
   },
 };
 
@@ -320,6 +336,7 @@ function withUid(x) {
 }
 
 function normLabels(label) {
+  // պահում ենք բոլոր 7 լեզուները, անկախ active langs-ից
   if (label && typeof label === "object") {
     const out = {
       am: "",
@@ -369,11 +386,13 @@ function parseCssRgba(str) {
   if (!str) return null;
   let s = String(str).trim();
 
+  // hex ձև
   if (s.startsWith("#")) {
     const { r, g, b } = hexToRgb(s);
     return { r, g, b, a: 1 };
   }
 
+  // rgba / rgb
   const m = s.match(
     /^rgba?\s*\(\s*([\d.]+)\s*,\s*([\d.]+)\s*,\s*([\d.]+)(?:\s*,\s*([\d.]+)\s*)?\)$/i
   );
@@ -393,7 +412,7 @@ function parseCssRgba(str) {
 function faClass(raw) {
   const s = String(raw || "").trim();
   if (!s) return "";
-  if (/\bfa-(solid|regular|brands)\b|\bfa-[a-z0-9-]+/i.test(s)) return s;
+  if (/\bfa-(solid|regular|brands)\b|\bfa-[a-z0-9-]+/i.test(s)) return s; // already class
   const m = ICON_MAP[s.toLowerCase()];
   return m || "";
 }
@@ -418,6 +437,7 @@ function PresetSelect({
     return presets.filter((p) => p.toLowerCase().includes(s));
   }, [q, presets]);
 
+  // close on outside click / Esc
   React.useEffect(() => {
     const onDown = (e) => {
       const el = containerRef.current;
@@ -514,7 +534,20 @@ function PresetSelect({
 }
 
 /* ---------------- one row ---------------- */
-function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
+function IconRow({
+  it,
+  onField,
+  onLabel,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  canUp,
+  canDown,
+  error,
+  langs,
+  T,
+  iconColor, // ✅ NEW (live preview)
+}) {
   const usedLangs = Array.isArray(langs) && langs.length ? langs : LANGS;
 
   const err = error
@@ -552,7 +585,7 @@ function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
     },
     h("i", {
       className: faClass(it.icon) || "fa-solid fa-link",
-      style: { fontSize: 20 },
+      style: { fontSize: 20, color: iconColor || "#111" }, // ✅ LIVE PREVIEW
     })
   );
 
@@ -565,7 +598,7 @@ function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
         className: "icon-card",
         style: {
           display: "grid",
-          gridTemplateColumns: "48px 1fr",
+          gridTemplateColumns: "64px 1fr",
           gap: 12,
           alignItems: "start",
           padding: 12,
@@ -575,11 +608,51 @@ function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
           boxShadow: "0 6px 18px rgba(0,0,0,.06)",
         },
       },
-      preview,
+
+      // ձախ կողմ — preview + up/down
+      h(
+        "div",
+        {
+          style: {
+            display: "grid",
+            gap: 6,
+            justifyItems: "center",
+            alignContent: "start",
+          },
+        },
+        preview,
+        h(
+          "div",
+          { style: { display: "grid", gap: 6, width: "100%" } },
+          h(
+            "button",
+            {
+              className: "btn btn-move-small",
+              onClick: onMoveUp,
+              disabled: !canUp,
+              title: T.moveUp,
+            },
+            "↑"
+          ),
+          h(
+            "button",
+            {
+              className: "btn btn-move-small",
+              onClick: onMoveDown,
+              disabled: !canDown,
+              title: T.moveDown,
+            },
+            "↓"
+          )
+        )
+      ),
+
+      // աջ կողմ — դաշտեր
       h(
         "div",
         { style: { display: "grid", gap: 10 } },
 
+        // labels
         h(
           "div",
           { className: "lang-stack" },
@@ -598,9 +671,15 @@ function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
           )
         ),
 
+        // href + preset
         h(
           "div",
-          { style: { display: "grid", gap: 8 } },
+          {
+            style: {
+              display: "grid",
+              gap: 8,
+            },
+          },
           h("input", {
             className: "input",
             value: it.href || "",
@@ -647,17 +726,17 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
   const [baseInfo, setBaseInfo] = React.useState(null);
 
+  // items: { uid, id?, label:{am,ru,en,ar,fr,kz,chn}, href, icon }
   const [items, setItems] = React.useState([]);
   const [style, setStyle] = React.useState({
     labelHEX: "#d9caa0",
+    iconHEX: "#ffffff", // ✅ NEW
     chipRGBA: { r: 47, g: 47, b: 47, a: 1 },
     layoutStyle: "dzev1",
     cols: 4,
     glowEnabled: false,
     glowColor: "#7dd3fc",
     rowCardRGBA: { r: 255, g: 255, b: 255, a: 1 },
-
-    iconHEX: "#ffffff", // ✅ NEW (inner icon color)
   });
 
   const [errors, setErrors] = React.useState({});
@@ -665,6 +744,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   const [saving, setSaving] = React.useState(false);
   const [msg, setMsg] = React.useState("");
 
+  // pickers
   const chipBtnRef = React.useRef(null);
   const [showChipPicker, setShowChipPicker] = React.useState(false);
 
@@ -697,6 +777,17 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     () => `rgb(${labelRgbObj.r}, ${labelRgbObj.g}, ${labelRgbObj.b})`,
     [labelRgbObj]
   );
+
+  // ✅ NEW derived icon css
+  const iconRgbObj = React.useMemo(
+    () => hexToRgb(style.iconHEX),
+    [style.iconHEX]
+  );
+  const iconCss = React.useMemo(
+    () => `rgb(${iconRgbObj.r}, ${iconRgbObj.g}, ${iconRgbObj.b})`,
+    [iconRgbObj]
+  );
+
   const chipCss = React.useMemo(
     () =>
       `rgba(${style.chipRGBA.r}, ${style.chipRGBA.g}, ${style.chipRGBA.b}, ${style.chipRGBA.a})`,
@@ -708,16 +799,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     [style.rowCardRGBA]
   );
 
-  // ✅ inner icon color css
-  const iconRgbObj = React.useMemo(
-    () => hexToRgb(style.iconHEX),
-    [style.iconHEX]
-  );
-  const iconCss = React.useMemo(
-    () => `rgb(${iconRgbObj.r}, ${iconRgbObj.g}, ${iconRgbObj.b})`,
-    [iconRgbObj]
-  );
-
+  // editable text for Icon background
   const [chipText, setChipText] = React.useState("");
   React.useEffect(() => {
     setChipText(chipCss);
@@ -748,6 +830,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
         setStyle({
           labelHEX: icons.styles?.labelHEX || "#d9caa0",
+          iconHEX: icons.styles?.iconHEX || "#ffffff", // ✅ NEW load
           chipRGBA: icons.styles?.chipRGBA || {
             r: 47,
             g: 47,
@@ -765,8 +848,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
               b: 255,
               a: 1,
             },
-
-          iconHEX: icons.styles?.iconHEX || "#ffffff", // ✅ NEW load
         });
       } catch (e) {
         setMsg(e.message || T.loadFailed);
@@ -800,6 +881,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     };
   };
 
+  // ԱՎԵԼԱՑՆԵԼ՝ auto-scroll նոր icon-card-ի վրա
   const add = () =>
     setItems((list) => {
       const next = [
@@ -860,6 +942,27 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     setItems((list) => list.filter((x) => x.uid !== uidKey));
   };
 
+  // ✅ reorder (B տարբերակ)
+  const onMoveUp = (uidKey) => {
+    setItems((list) => {
+      const idx = list.findIndex((x) => x.uid === uidKey);
+      if (idx <= 0) return list;
+      const next = [...list];
+      [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
+      return next;
+    });
+  };
+
+  const onMoveDown = (uidKey) => {
+    setItems((list) => {
+      const idx = list.findIndex((x) => x.uid === uidKey);
+      if (idx < 0 || idx >= list.length - 1) return list;
+      const next = [...list];
+      [next[idx], next[idx + 1]] = [next[idx + 1], next[idx]];
+      return next;
+    });
+  };
+
   /* ------ SAVE to DB ------ */
   const save = async () => {
     setMsg("");
@@ -889,18 +992,16 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         links,
         styles: {
           labelHEX: style.labelHEX,
+          iconHEX: style.iconHEX, // ✅ NEW save
           chipRGBA: style.chipRGBA,
           layoutStyle: style.layoutStyle,
           cols: Number(style.cols || 4),
           glowEnabled: !!style.glowEnabled,
           glowColor: style.glowColor,
-          rowCardRGBA: style.rowCardRGBA,
-
-          iconHEX: style.iconHEX, // ✅ NEW save
-          iconCss,               // ✅ NEW save (for convenience)
-
           labelCss,
+          iconCss, // ✅ NEW computed
           chipCss,
+          rowCardRGBA: style.rowCardRGBA,
           rowCardCss,
         },
       };
@@ -986,7 +1087,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         )
       ),
 
-      /* label color */
+      // label color
       h(
         "div",
         {
@@ -1014,7 +1115,35 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         })
       ),
 
-      /* icon background */
+      // ✅ NEW icon color section
+      h(
+        "div",
+        {
+          style: {
+            display: "grid",
+            gridTemplateColumns: "auto 36px 140px",
+            gap: 10,
+            alignItems: "center",
+          },
+        },
+        h("label", { style: { fontWeight: 700 } }, T.iconColor),
+        h("input", {
+          type: "color",
+          value: rgbToHex(iconRgbObj),
+          onChange: (e) =>
+            setStyle((s) => ({ ...s, iconHEX: e.target.value })),
+        }),
+        h("input", {
+          className: "input",
+          value: style.iconHEX,
+          onChange: (e) =>
+            setStyle((s) => ({ ...s, iconHEX: e.target.value })),
+          placeholder: "#ffffff",
+          style: { maxWidth: 120, marginLeft: 20 },
+        })
+      ),
+
+      // icon bg
       h(
         "div",
         {
@@ -1064,50 +1193,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
                 setStyle((s) => ({ ...s, chipRGBA: c })),
             })
           )
-      ),
-
-      /* row bg */
-      h(
-        "div",
-        {
-          style: {
-            display: "grid",
-            gridTemplateColumns: "auto 36px 1fr",
-            gap: 10,
-            alignItems: "center",
-          },
-        },
-        h("label", { style: { fontWeight: 700 } }, T.rowCardBg),
-        h("div", { style: sq(rowCardCss) }),
-        h("div", { className: "small", style: { opacity: 0.7 } }, rowCardCss)
-      ),
-
-      /* ✅ NEW: inner icon color picker */
-      h(
-        "div",
-        {
-          style: {
-            display: "grid",
-            gridTemplateColumns: "auto 36px 140px",
-            gap: 10,
-            alignItems: "center",
-          },
-        },
-        h("label", { style: { fontWeight: 700 } }, T.iconColor),
-        h("input", {
-          type: "color",
-          value: rgbToHex(iconRgbObj),
-          onChange: (e) =>
-            setStyle((s) => ({ ...s, iconHEX: e.target.value })),
-        }),
-        h("input", {
-          className: "input",
-          value: style.iconHEX,
-          onChange: (e) =>
-            setStyle((s) => ({ ...s, iconHEX: e.target.value })),
-          placeholder: "#ffffff",
-          style: { maxWidth: 120, marginLeft: 20 },
-        })
       )
     ),
 
@@ -1115,16 +1200,21 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     h(
       "div",
       { style: { display: "grid", gap: 10, marginTop: 12 } },
-      ...items.map((it) =>
+      ...items.map((it, idx) =>
         h(IconRow, {
           key: it.uid,
           it,
           onField,
           onLabel,
           onDelete,
+          onMoveUp: () => onMoveUp(it.uid),
+          onMoveDown: () => onMoveDown(it.uid),
+          canUp: idx > 0,
+          canDown: idx < items.length - 1,
           error: errors[it.uid],
           langs: activeLangs,
           T,
+          iconColor: style.iconHEX, // ✅ LIVE PREVIEW pass
         })
       )
     ),
@@ -1183,6 +1273,12 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       }
       .input.big{ padding:14px 14px; font-size:15px; border-radius:14px; }
       .btn-danger{ background:#b91c1c; color:#fff; border:1px solid #b91c1c; }
+      .btn-move-small{
+        background:#111;color:#fff;border:1px solid #111;height:28px;width:100%;
+        border-radius:8px;font-weight:800;display:grid;place-items:center;cursor:pointer;
+        padding:0;line-height:1;
+      }
+      .btn-move-small:disabled{opacity:.35;cursor:not-allowed;}
     `
     )
   );
