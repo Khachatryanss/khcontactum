@@ -1,3 +1,5 @@
+
+
 /* որ բոլոր էլեմենտները ժառանգեն body-ի ֆոնտը */
 * {
   font-family: "Roboto", "Noto Sans Armenian", sans-serif;
@@ -103,6 +105,7 @@
     padding: 8px 10px !important;
   }
 
+  
   .brands-public .company-title {
     font-size: 22px !important;
     margin: 12px 0 20px !important;
@@ -126,6 +129,7 @@
   /* բազմասյուն grid (2/3 cols) */
   .brands-grid {
     gap: 14px !important;
+    /* էստեղ դեռ px-երով գրված է JS-ից, ok է մեծ mobile-ներին */
   }
 
   .brand-card > div:first-child {
@@ -165,17 +169,18 @@
 
   .brands-grid {
     gap: 12px !important;
+    /* ⚠️ պահում ենք ՄԻՇՏ 3 սյուն narrow–ին էլ */
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
   .brand-card > div:first-child {
-    width: 72px !important;
+    width: 72px !important;   /* մի քիչ փոքր, որ 3-ը տեղավորվի */
     height: 72px !important;
   }
 
   .brand-card span {
     font-size: 11.5px !important;
-    max-width: 100px !important;
+    max-width: 100px !important;  /* քիչ ավելի նեղ, որ չքաշի լայնությունը */
   }
 }
 
@@ -205,6 +210,7 @@
 
   .brands-grid {
     gap: 8px !important;
+    /* 🟢 3 սյուն even here */
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
@@ -215,7 +221,7 @@
 
   .brand-card span {
     font-size: 10.5px !important;
-    max-width: 88px !important;
+    max-width: 88px !important;  /* քիչ նեղ, որ չբացվի սյունը */
   }
 }
 
@@ -246,6 +252,7 @@
 
   .brands-grid {
     gap: 6px !important;
+    /* 🟢 Galaxy Fold–ին էլ 3 սյուն ենք պահում */
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 
@@ -310,6 +317,7 @@
     font-size: 13px !important;
   }
 
+  /* avatar շրջան */
   .worker-card-public > div:first-child {
     width: 90px !important;
     height: 90px !important;
@@ -319,12 +327,14 @@
     font-size: 16px !important;
   }
 
+  /* desc բլոկը (3-րդ div) */
   .worker-card-public > div:nth-child(3) {
     font-size: 13px !important;
     max-width: 280px !important;
     padding: 8px 10px !important;
   }
 
+  /* slide box-ի բարձրությունը */
   .worker-card-public > div:nth-child(4) > div:first-child {
     height: 180px !important;
   }
@@ -369,18 +379,20 @@
     height: 165px !important;
   }
 
+  /* սլայդերի < և > կոճակները */
   .worker-card-public > div:nth-child(4) button {
     width: 26px !important;
     height: 26px !important;
   }
 
+  /* like / dislike կոճակներ */
   .worker-card-public button {
     font-size: 12px !important;
     padding: 5px 10px !important;
   }
 }
 
-/* ===== 280px և ներքև – Galaxy Fold ultra narrow ===== */
+/* ===== 280px și ներքև – Galaxy Fold ultra narrow ===== */
 @media (max-width: 280px) {
   .brandinfo-public {
     padding: 4px 4px !important;
@@ -435,6 +447,7 @@
 
 /* ===== 480px և ներքև – ընդհանուր mobile ===== */
 @media (max-width: 480px) {
+  /* share բաժնի section-ը HomePage-ի մեջ միշտ վերջինն է */
   .public-scroll-layer section:last-of-type {
     margin-top: 45px;
     margin-bottom: 35px;
@@ -453,16 +466,19 @@
     font-size: 13px;
   }
 
+  /* մեծ սև/գունավոր կոճակները */
   .public-scroll-layer section:last-of-type .btn {
     font-size: 14px;
     padding: 10px 14px;
   }
 
+  /* share icon-ների png-ները մի քիչ փոքր */
   .share-icon-btn img {
     width: 32px !important;
     height: 32px !important;
   }
 
+  /* QR overlay card */
   div[style*="position: fixed"] .card {
     max-width: 340px !important;
     width: 88% !important;
@@ -619,24 +635,30 @@
 
 /* ===== Share icons — 4 վերև, 3 ներքև կենտրոնում ===== */
 
+/* icon container-ը (էդ inline style-ով div-ն) կարգավորում ենք flex-ով */
 .public-scroll-layer section:last-of-type div[style*="justify-content: center"] {
   display: flex !important;
   flex-wrap: wrap;
+
   max-width: 360px;
   margin: 0 auto 20px auto;
   gap: 14px;
 }
 
+/* ամեն icon button */
 .public-scroll-layer section:last-of-type .share-icon-btn {
-  flex: 0 0 20%;
+  flex: 0 0 20%;             /* 4 icon մի տողի վրա */
   display: flex;
   justify-content: center;
 }
 
+/* 🔹 երկրորդ տողի 1-ին icon — ընդհանուր 5-րդը
+   տալիս ենք կես սյունքի չափ margin-left, որ 3 հատը գան մեջտեղ */
 .public-scroll-layer section:last-of-type .share-icon-btn:nth-child(5) {
-  margin-left: 40px;
+  margin-left: 40px;        /* 25% / 2 = կես սյուն */
 }
 
+/* ===== փոքր էկրանների հարմարեցում ===== */
 @media (max-width: 360px) {
   .public-scroll-layer section:last-of-type div[style*="justify-content: center"] {
     gap: 10px;
@@ -648,7 +670,7 @@
   }
 
   .public-scroll-layer section:last-of-type .share-icon-btn:nth-child(5) {
-    margin-left: 15%;
+    margin-left: 15%;        /* մի քիչ պակաս, որ շատ ներս չգա */
   }
 }
 
@@ -691,18 +713,23 @@
 .hero-title { font-weight: 800; letter-spacing: 0.2px; }
 
 .hero-desc {
+  /* native hyphenation — աշխատում է, եթե էլեմենտն ունի lang="hy" */
   hyphens: auto;
   -webkit-hyphens: auto;
   -ms-hyphens: auto;
+
+  /* որ չփշրի բառերը «ամեն տեղ» */
   overflow-wrap: break-word;
   word-break: break-word;
+
   text-wrap: pretty;
   line-height: 1.6;
+
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* ======= Responsive typography (մոբայլ) ======= */
+/* ======= Responsive typography ======= */
 @media (max-width: 480px) {
   .public-scroll-layer { padding: 10px; }
   .hero-title { font-size: 30px !important; margin: 12px 0 6px !important; }
@@ -721,7 +748,7 @@
   .hero-desc  { font-size: 13.5px !important; line-height: 1.45 !important; }
 }
 
-/* icons labels – փոքր mobile */
+/* icons labels – ինչպես քննարկված էր */
 @media (max-width: 560px) {
   .grid .label,
   .icons-dzev2 .label,
@@ -730,4 +757,543 @@
     line-height: 1.2;
   }
 }
+
+
+/* ===========================
+   Desktop-only (1280 / 1366 / 1440 / 1920)
+   =========================== */
+
+/* Base desktop fallback */
+.public-scroll-layer { padding: 16px; }
+.public-home .card { padding: 18px 20px 22px; border-radius: 16px; }
+.public-home .hero-title { font-size: 34px; line-height: 1.15; margin: 14px 0 6px; }
+.public-home .hero-desc  { font-size: 16px; line-height: 1.6; max-width: 72ch; }
+
+/* ===== 1280–1365 ===== */
+@media (min-width: 1280px) and (max-width: 1365.98px) {
+  .public-scroll-layer { padding: 18px; }
+  .public-home .card { padding: 18px 20px 22px; }
+  .public-home .hero-title { font-size: 34px; }
+  .public-home .hero-desc  { font-size: 16px; max-width: 70ch; }
+}
+
+/* ===== 1366–1439 ===== */
+@media (min-width: 1366px) and (max-width: 1439.98px) {
+  .public-scroll-layer { padding: 20px; }
+  .public-home .card { padding: 20px 22px 24px; }
+  .public-home .hero-title { font-size: 36px; }
+  .public-home .hero-desc  { font-size: 17px; max-width: 72ch; }
+}
+
+/* ===== 1440–1919 ===== */
+@media (min-width: 1440px) and (max-width: 1919.98px) {
+  .public-scroll-layer { padding: 22px; }
+  .public-home .card { padding: 22px 24px 26px; }
+  .public-home .hero-title { font-size: 40px; }
+  .public-home .hero-desc  { font-size: 18px; max-width: 76ch; }
+}
+
+/* ===== ≥1920 ===== */
+@media (min-width: 1920px) {
+  .public-scroll-layer {
+    padding: 24px;
+    /* content-ը մի քիչ նեղ՝ գեղագիտական միջնամաս */
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+  .public-home .card { padding: 24px 26px 28px; }
+  .public-home .hero-title { font-size: 44px; }
+  .public-home .hero-desc  { font-size: 19px; max-width: 80ch; }
+}
+
+/* —— օժանդակ մանր կարգավորումներ մեծ էկրանների համար —— */
+@media (min-width: 1440px) {
+  /* եթե toolbar/գլխամաս ունես */
+  .toolbar { gap: 12px; }
+}
+
+/* ցանկության դեպքում՝ cards-ին փոքր ստվեր desktop-ում */
+@media (min-width: 1280px) {
+  .public-home .card { box-shadow: 0 8px 28px rgba(0,0,0,.08); }
+}
+
+/* ========= Desktop-only for IconsPage (1280 / 1366 / 1440 / 1920) ========= */
+
+/* Base desktop fallback */
+:root {
+  --icons-cols: 4;
+  --icon-size: 56px;
+  --icon-gap: 14px;
+  --label-size: 14px;
+  --orbit-radius: 180px;
+}
+
+/* ընդհանուր կառուցվածք */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(var(--icons-cols, 4), minmax(0, 1fr));
+  gap: var(--icon-gap, 14px);
+}
+.icons-nowrap { align-items: start; }
+
+.icon-btn {
+  width: var(--icon-size, 56px);
+  height: var(--icon-size, 56px);
+  border-radius: 9999px;
+  display: grid;
+  place-items: center;
+}
+
+.label {
+  font-size: var(--label-size, 14px);
+  line-height: 1.25;
+}
+
+/* ===== 1280–1365 ===== */
+@media (min-width: 1280px) and (max-width: 1365.98px) {
+  :root {
+    --icons-cols: 4;
+    --icon-size: 58px;
+    --icon-gap: 14px;
+    --label-size: 14px;
+    --orbit-radius: 190px;
+  }
+}
+
+/* ===== 1366–1439 ===== */
+@media (min-width: 1366px) and (max-width: 1439.98px) {
+  :root {
+    --icons-cols: 5;
+    --icon-size: 60px;
+    --icon-gap: 16px;
+    --label-size: 15px;
+    --orbit-radius: 200px;
+  }
+}
+
+/* ===== 1440–1919 ===== */
+@media (min-width: 1440px) and (max-width: 1919.98px) {
+  :root {
+    --icons-cols: 6;
+    --icon-size: 64px;
+    --icon-gap: 18px;
+    --label-size: 16px;
+    --orbit-radius: 220px;
+  }
+  .icons-dzev3 .icon-btn .diamond { transform: scale(1.06); }
+}
+
+/* ===== ≥1920 ===== */
+@media (min-width: 1920px) {
+  :root {
+    --icons-cols: 7;
+    --icon-size: 68px;
+    --icon-gap: 20px;
+    --label-size: 17px;
+    --orbit-radius: 240px;
+  }
+  .icons-dzev3 .icon-btn .diamond { transform: scale(1.1); }
+}
+
+/* ===== dzev1 icon-ների փոքրացում 1366-ից սկսած եթե 4 հատ է ===== */
+@media (min-width: 1366px) {
+  .icons-dzev1.grid[style*="--icons-cols:4"],
+  .icons-dzev1.icons-cols-4 {
+    --icon-size: 52px;
+    --label-size: 13px;
+    --icon-gap: 14px;
+  }
+}
+@media (min-width: 1440px) {
+  .icons-dzev1.grid[style*="--icons-cols:4"],
+  .icons-dzev1.icons-cols-4 {
+    --icon-size: 55px;
+    --label-size: 14px;
+  }
+}
+
+/* row-card look երբ cols === 1 */
+.icons-cols-1 .grid-item,
+.icons-cols-1 .icon-wrap {
+  background: var(--icons-card-bg, #fff);
+  border: 1px solid var(--icons-card-border, rgba(0,0,0,.06));
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* ========= BrandsPage — Desktop-only (1280 / 1366 / 1440 / 1920) ========= */
+
+/* Base desktop fallback */
+:root {
+  --brands-title-size: 26px;
+  --brands-title-mt: 16px;
+  --brands-title-mb: 28px;
+
+  --brands-gap: 16px;
+  --brand-circle: 90px;     /* logo-ի շրջանը grid-ում */
+  --brand-name: 13px;
+
+  --brand-row-circle: 60px; /* 1 սյուն (list/row) ռեժիմի շրջանը */
+  --brand-row-font: 15px;
+}
+
+/* ============ COMMON SELECTORS (override inline with !important) ============ */
+.brands-public .company-title {
+  font-size: var(--brands-title-size) !important;
+  margin: var(--brands-title-mt) 0 var(--brands-title-mb) !important;
+  line-height: 1.15;
+}
+
+/* Multi-column grid */
+.brands-public .brands-grid {
+  gap: var(--brands-gap) !important;
+  justify-content: center !important;
+}
+
+/* Grid card circle */
+.brands-public .brand-card > div:first-child {
+  width: var(--brand-circle) !important;
+  height: var(--brand-circle) !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: #111 !important;
+  display: grid !important;
+  place-items: center !important;
+}
+
+/* Grid name */
+.brands-public .brand-card > span {
+  margin-top: 8px !important;
+  font-size: var(--brand-name) !important;
+  line-height: 1.25 !important;
+  max-width: 160px !important;
+  text-align: center !important;
+}
+
+/* One-column/list mode */
+.brands-public .brand-item {
+  gap: 14px !important;
+  padding: 10px 12px !important;
+  border-radius: 14px !important;
+}
+
+.brands-public .brand-item > div:first-child {
+  width: var(--brand-row-circle) !important;
+  height: var(--brand-row-circle) !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  display: grid !important;
+  place-items: center !important;
+  background: #111 !important;
+}
+
+.brands-public .brand-item > span {
+  font-size: var(--brand-row-font) !important;
+  font-weight: 700 !important;
+}
+
+/* ========================= 1280–1365 ========================= */
+@media (min-width: 1280px) and (max-width: 1365.98px) {
+  :root {
+    --brands-title-size: 26px;
+    --brands-title-mt: 14px;
+    --brands-title-mb: 26px;
+
+    --brands-gap: 16px;
+    --brand-circle: 92px;
+    --brand-name: 13px;
+
+    --brand-row-circle: 60px;
+    --brand-row-font: 15px;
+  }
+}
+
+/* ========================= 1366–1439 ========================= */
+@media (min-width: 1366px) and (max-width: 1439.98px) {
+  :root {
+    --brands-title-size: 28px;
+    --brands-title-mt: 18px;
+    --brands-title-mb: 32px;
+
+    --brands-gap: 18px;
+    --brand-circle: 96px;
+    --brand-name: 14px;
+
+    --brand-row-circle: 62px;
+    --brand-row-font: 15px;
+  }
+}
+
+/* ========================= 1440–1919 ========================= */
+@media (min-width: 1440px) and (max-width: 1919.98px) {
+  :root {
+    --brands-title-size: 30px;
+    --brands-title-mt: 20px;
+    --brands-title-mb: 36px;
+
+    --brands-gap: 20px;
+    --brand-circle: 104px;
+    --brand-name: 15px;
+
+    --brand-row-circle: 64px;
+    --brand-row-font: 16px;
+  }
+}
+
+/* ========================= ≥1920 ========================= */
+@media (min-width: 1920px) {
+  :root {
+    --brands-title-size: 32px;
+    --brands-title-mt: 22px;
+    --brands-title-mb: 40px;
+
+    --brands-gap: 22px;
+    --brand-circle: 112px;
+    --brand-name: 16px;
+
+    --brand-row-circle: 68px;
+    --brand-row-font: 16px;
+  }
+
+  /* Կենտրոնացնել լայն էկրաններին */
+  .brands-public {
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+}
+
+/* Թեթև hover-ը */
+.brands-public .brand-card:hover { transform: translateY(-2px); }
+.brands-public .brand-item:hover { transform: translateY(-1px); }
+
+
+/* ========= BrandInfoPage — Desktop-only (1280 / 1366 / 1440 / 1920) ========= */
+
+/* Base desktop fallback */
+:root{
+  --bi-pad:16px;
+  --bi-avatar:100px;
+  --bi-name:18px;
+  --bi-desc:14px;
+  --bi-desc-max:320px;
+  --bi-slide-h:190px;
+  --bi-slide-w:340px;
+  --bi-dot:8px;
+  --bi-btn-fs:13px;
+}
+
+/* ========= Common selectors (override inline with !important) ========= */
+.brandinfo-public{ padding:10px 12px !important; }
+
+.worker-card-public{ 
+  padding: var(--bi-pad) !important;
+  text-align:center !important;
+}
+
+.worker-card-public > div:first-child{
+  /* avatar wrap */
+  width: var(--bi-avatar) !important;
+  height: var(--bi-avatar) !important;
+  margin: 0 auto 10px !important;
+  border-radius:50% !important;
+  overflow:hidden !important;
+  display:grid !important;
+  place-items:center !important;
+}
+
+.worker-card-public h3{
+  margin: 4px 0 8px !important;
+  font-size: var(--bi-name) !important;
+  font-weight: 700 !important;
+}
+
+
+/* թիրախավորում ենք նկարագրության բլոկը՝ maxWidth/pad/fz override անելու համար */
+.worker-card-public > div[style*="maxWidth"]{
+  margin: 0 auto 14px !important;
+  max-width: var(--bi-desc-max) !important;
+  padding: 10px 12px !important;
+  border-radius:14px !important;
+  background:#fafafa !important;
+  font-size: var(--bi-desc) !important;
+  line-height:1.5 !important;
+  text-align:left !important;
+}
+
+/* slider container width */
+.worker-card-public > div[style*="maxWidth:340px"]{
+  margin:0 auto 12px !important;
+  max-width: var(--bi-slide-w) !important;
+}
+
+/* slide box height */
+.worker-card-public div[style*="borderRadius:18px"][style*="position:relative"]{
+  height: var(--bi-slide-h) !important;
+}
+
+/* dots size */
+.worker-card-public span[style*="borderRadius:50%"][style*="height:8px"]{
+  width: var(--bi-dot) !important;
+  height: var(--bi-dot) !important;
+}
+
+/* rating buttons font-size */
+.worker-card-public button[style*="borderRadius:999"]{
+  font-size: var(--bi-btn-fs) !important;
+}
+
+/* back header */
+.brandinfo-public .company-title{
+  font-size: 20px !important;
+  margin: 0 !important;
+}
+
+/* ========================= 1280–1365 ========================= */
+@media (min-width:1280px) and (max-width:1365.98px){
+  :root{
+    --bi-pad:16px;
+    --bi-avatar:104px;
+    --bi-name:18px;
+    --bi-desc:14px;
+    --bi-desc-max:360px;
+    --bi-slide-h:200px;
+    --bi-slide-w:360px;
+    --bi-dot:8px;
+    --bi-btn-fs:13px;
+  }
+}
+
+/* ========================= 1366–1439 ========================= */
+@media (min-width:1366px) and (max-width:1439.98px){
+  :root{
+    --bi-pad:18px;
+    --bi-avatar:110px;
+    --bi-name:19px;
+    --bi-desc:14px;
+    --bi-desc-max:380px;
+    --bi-slide-h:210px;
+    --bi-slide-w:380px;
+    --bi-dot:9px;
+    --bi-btn-fs:13.5px;
+  }
+}
+
+/* ========================= 1440–1919 ========================= */
+@media (min-width:1440px) and (max-width:1919.98px){
+  :root{
+    --bi-pad:20px;
+    --bi-avatar:116px;
+    --bi-name:20px;
+    --bi-desc:15px;
+    --bi-desc-max:400px;
+    --bi-slide-h:220px;
+    --bi-slide-w:400px;
+    --bi-dot:9px;
+    --bi-btn-fs:14px;
+  }
+}
+
+/* ========================= ≥1920 ========================= */
+@media (min-width:1920px){
+  :root{
+    --bi-pad:22px;
+    --bi-avatar:124px;
+    --bi-name:21px;
+    --bi-desc:15px;
+    --bi-desc-max:420px;
+    --bi-slide-h:230px;
+    --bi-slide-w:420px;
+    --bi-dot:10px;
+    --bi-btn-fs:14px;
+  }
+
+  /* content-ը կենտրոնացնել լայն էկրաններին */
+  .brandinfo-public{
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+}
+
+
+
+/****************************************************************/
+
+/* ===== CONTACTUM ADD-TO-CONTACTS POPUP ===== */
+
+.contactum-popup-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.55);     /* ամբողջ էջը մթնում է */
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* ՄԻԱՅՆ փոքր բլոկը է background ունի */
+.contactum-popup {
+  width: 90%;
+  max-width: 420px;
+  background: rgba(8, 8, 12, 0.9);     /* մուգ, թեթև glass */
+  color: #ffffff;
+  border-radius: 24px;
+  padding: 22px 20px 20px;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: center;
+  animation: contactumPopupUp 0.28s ease-out;
+}
+
+@keyframes contactumPopupUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.contactum-popup-title {
+  font-size: 17px;
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 18px;
+  color: #ffffff;                     /* սպիտակ տեքստ */
+}
+
+.contactum-popup-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.contactum-btn {
+  flex: 1;
+  border-radius: 14px;
+  padding: 11px 0;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+
+.contactum-btn-yes {
+  background: #ffffff;                /* սպիտակ կոճակ */
+  color: #000000;
+}
+
+.contactum-btn-no {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+
 
