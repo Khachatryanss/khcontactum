@@ -76,6 +76,7 @@ export default function IconsPage({
   cols = 4,
   glowEnabled = false,
   glowColor,
+  // lang = htmlLang → hy, ru, en, ar, fr, kz, chn
   lang = "hy"
 }) {
   /* ===== dzev4 — ձեռքով պտտվող շրջան (ոչ ավտոմատ) ===== */
@@ -109,7 +110,7 @@ export default function IconsPage({
   const labelDir   = (lang === "ar" ? "rtl" : "ltr");
   const labelAlign = (lang === "ar" ? "right" : "left");
 
-  /* ===== ONE-COLUMN MODE ===== */
+  /* ===== ONE-COLUMN MODE – նույն հայլու էֆեկտը, ինչ BrandsPage–ում ===== */
   const isOneColumnRow = layoutStyle !== "dzev4" && Number(cols) === 1;
 
   if (isOneColumnRow) {
@@ -160,6 +161,7 @@ export default function IconsPage({
         "style",
         null,
         `
+        /* լիովին copy-paste бренդների քարտի էֆեկտը */
         .icon-row-card{
           display:flex;
           align-items:center;

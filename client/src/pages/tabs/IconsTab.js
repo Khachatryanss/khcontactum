@@ -546,6 +546,7 @@ function IconRow({
   error,
   langs,
   T,
+  iconColor, // ✅ NEW (live preview)
 }) {
   const usedLangs = Array.isArray(langs) && langs.length ? langs : LANGS;
 
@@ -584,7 +585,7 @@ function IconRow({
     },
     h("i", {
       className: faClass(it.icon) || "fa-solid fa-link",
-      style: { fontSize: 20 },
+      style: { fontSize: 20, color: iconColor || "#111" }, // ✅ LIVE PREVIEW
     })
   );
 
@@ -1114,7 +1115,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         })
       ),
 
-      // ✅ NEW icon color section (ոչինչ չի փոխվել, միայն ավելացել)
+      // ✅ NEW icon color section
       h(
         "div",
         {
@@ -1213,6 +1214,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
           error: errors[it.uid],
           langs: activeLangs,
           T,
+          iconColor: style.iconHEX, // ✅ LIVE PREVIEW pass
         })
       )
     ),
