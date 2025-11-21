@@ -40,6 +40,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "Ներբեռնելը ձախողվեց",
     saveFailed: "Պահպանելը ձախողվեց",
     title: "Իկոնների կարգավորումներ",
+
+    moveUp: "Վերև",
+    moveDown: "Ներքև",
   },
 
   ru: {
@@ -69,6 +72,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "Не удалось загрузить",
     saveFailed: "Не удалось сохранить",
     title: "Настройки иконок",
+
+    moveUp: "Вверх",
+    moveDown: "Вниз",
   },
 
   en: {
@@ -98,6 +104,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "Loading failed",
     saveFailed: "Saving failed",
     title: "Icons settings",
+
+    moveUp: "Up",
+    moveDown: "Down",
   },
 
   ar: {
@@ -127,6 +136,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "فشل في التحميل",
     saveFailed: "فشل في الحفظ",
     title: "إعدادات الأيقونات",
+
+    moveUp: "أعلى",
+    moveDown: "أسفل",
   },
 
   fr: {
@@ -156,6 +168,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "Échec du chargement",
     saveFailed: "Échec de l’enregistrement",
     title: "Paramètres des icônes",
+
+    moveUp: "Monter",
+    moveDown: "Descendre",
   },
 
   // 🇰🇿 Kazakh (KZ)
@@ -187,6 +202,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "Жүктеу сәтсіз аяқталды",
     saveFailed: "Сақтау сәтсіз аяқталды",
     title: "Иконка баптаулары",
+
+    moveUp: "Жоғары",
+    moveDown: "Төмен",
   },
 
   // 🇨🇳 Chinese (CHN)
@@ -217,6 +235,9 @@ const ICONS_UI_TEXT = {
     loadFailed: "加载失败",
     saveFailed: "保存失败",
     title: "图标设置",
+
+    moveUp: "上移",
+    moveDown: "下移",
   },
 };
 
@@ -506,7 +527,19 @@ function PresetSelect({
 }
 
 /* ---------------- one row ---------------- */
-function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
+function IconRow({
+  it,
+  onField,
+  onLabel,
+  onDelete,
+  onMoveUp,
+  onMoveDown,
+  canUp,
+  canDown,
+  error,
+  langs,
+  T
+}) {
   const usedLangs = Array.isArray(langs) && langs.length ? langs : LANGS;
 
   const err = error
@@ -591,7 +624,7 @@ function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
           )
         ),
 
-        // href + FA class — 💡 ՀԻՄԱ ՎԵՐԱԴԱՍԱՎՈՐՎԱԾ՝ ՄԵԿ ՍՅՈՒՆԱԿՈՎ
+        // href + FA class
         h(
           "div",
           {
@@ -614,9 +647,37 @@ function IconRow({ it, onField, onLabel, onDelete, error, langs, T }) {
           })
         ),
 
+        // գործողություններ
         h(
           "div",
-          { style: { display: "flex", gap: 8, justifyContent: "flex-end" } },
+          {
+            style: {
+              display: "flex",
+              gap: 8,
+              justifyContent: "flex-end",
+              flexWrap: "wrap"
+            }
+          },
+          h(
+            "button",
+            {
+              className: "btn btn-move",
+              onClick: onMoveUp,
+              disabled: !canUp,
+              title: T.moveUp
+            },
+            "↑"
+          ),
+          h(
+            "button",
+            {
+              className: "btn btn-move",
+              onClick: onMoveDown,
+              disabled: !canDown,
+              title: T.moveDown
+            },
+            "↓"
+          ),
           h(
             "button",
             {
@@ -718,7 +779,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     if (parsed) {
       setStyle((s) => ({ ...s, chipRGBA: parsed }));
     } else {
-      // սխալ սթրինգի դեպքում հետ ենք բերում computed արժեքին
       setChipText(chipCss);
     }
   };
@@ -769,12 +829,10 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   const validate = (it) => {
     const href = (it.href || "").trim();
 
-    // label object կա՞
     if (!it.label || typeof it.label !== "object") {
       return { ok: false, msg: T.validateLabelsMissing };
     }
 
-    // ⚠️ AM-ի պարտադիր ստուգումը թողնում ենք comment-ում
     // const nameAM = (it.label.am || "").trim();
     // if (!nameAM) return { ok: false, msg: T.validateAmMissing };
 
@@ -784,7 +842,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     return {
       ok: true,
       payload: {
-        // պահում ենք ամբողջ LANGS-ը DB-ում, ներառյալ kz/chn
         label: LANGS.reduce(
           (o, k) => ((o[k] = (it.label[k] || "").trim()), o),
           {}
@@ -795,7 +852,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     };
   };
 
-  // ԱՎԵԼԱՑՆԵԼ՝ auto-scroll նոր icon-card-ի վրա
+  // ԱՎԵԼԱՑՆԵԼ
   const add = () =>
     setItems((list) => {
       const next = [
@@ -856,6 +913,55 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     setItems((list) => list.filter((x) => x.uid !== uidKey));
   };
 
+  /* ------ MOVE UP/DOWN (Option B) ------ */
+  const moveItem = (fromIdx, toIdx) => {
+    setItems((list) => {
+      if (
+        fromIdx < 0 ||
+        toIdx < 0 ||
+        fromIdx >= list.length ||
+        toIdx >= list.length ||
+        fromIdx === toIdx
+      ) return list;
+
+      const next = [...list];
+      const tmp = next[fromIdx];
+      next[fromIdx] = next[toIdx];
+      next[toIdx] = tmp;
+      return next;
+    });
+  };
+
+  const onMoveUp = (uidKey) => {
+    setErrors((e) => {
+      const cp = { ...e };
+      delete cp[uidKey];
+      return cp;
+    });
+    setItems((list) => {
+      const idx = list.findIndex((x) => x.uid === uidKey);
+      if (idx <= 0) return list;
+      const next = [...list];
+      [next[idx - 1], next[idx]] = [next[idx], next[idx - 1]];
+      return next;
+    });
+  };
+
+  const onMoveDown = (uidKey) => {
+    setErrors((e) => {
+      const cp = { ...e };
+      delete cp[uidKey];
+      return cp;
+    });
+    setItems((list) => {
+      const idx = list.findIndex((x) => x.uid === uidKey);
+      if (idx < 0 || idx >= list.length - 1) return list;
+      const next = [...list];
+      [next[idx], next[idx + 1]] = [next[idx + 1], next[idx]];
+      return next;
+    });
+  };
+
   /* ------ SAVE to DB ------ */
   const save = async () => {
     setMsg("");
@@ -882,7 +988,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
       const info = { ...(baseInfo || {}) };
       info.icons = {
-        links,
+        links, // ✅ արդեն նոր հերթով է գնում
         styles: {
           labelHEX: style.labelHEX,
           chipRGBA: style.chipRGBA,
@@ -969,7 +1075,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
                 cols: parseInt(e.target.value, 10) || 4,
               })),
             style: { padding: "6px 10px", borderRadius: 8 },
-            disabled: style.layoutStyle === "dzev4", // շրջան_LAYOUT-ի մոտ cols-ը դեր չունի
+            disabled: style.layoutStyle === "dzev4",
           },
           h("option", { value: "1" }, "1"),
           h("option", { value: "2" }, "2"),
@@ -1059,13 +1165,17 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     h(
       "div",
       { style: { display: "grid", gap: 10, marginTop: 12 } },
-      ...items.map((it) =>
+      ...items.map((it, idx) =>
         h(IconRow, {
           key: it.uid,
           it,
           onField,
           onLabel,
           onDelete,
+          onMoveUp: () => onMoveUp(it.uid),
+          onMoveDown: () => onMoveDown(it.uid),
+          canUp: idx > 0,
+          canDown: idx < items.length - 1,
           error: errors[it.uid],
           langs: activeLangs,
           T,
@@ -1111,7 +1221,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       msg && h("div", { className: "small" }, msg)
     ),
 
-    /* local CSS for big language inputs */
+    /* local CSS for big language inputs + move buttons */
     h(
       "style",
       null,
@@ -1127,6 +1237,21 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       }
       .input.big{ padding:14px 14px; font-size:15px; border-radius:14px; }
       .btn-danger{ background:#b91c1c; color:#fff; border:1px solid #b91c1c; }
+
+      .btn-move{
+        background:#111;
+        color:#fff;
+        border:1px solid #111;
+        padding:6px 10px;
+        border-radius:10px;
+        min-width:40px;
+        font-weight:800;
+        cursor:pointer;
+      }
+      .btn-move:disabled{
+        opacity:.35;
+        cursor:not-allowed;
+      }
     `
     )
   );
