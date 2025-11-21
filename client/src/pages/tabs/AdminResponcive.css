@@ -265,9 +265,9 @@
   .mb-4[style*="display: flex"] > .btn {
     height: 38px;
     padding: 0 12px;
-    font-size: 11px;
+    font-size: 12px;
     border-radius: 8px;
-    width: 55px;
+    width: 65px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -275,13 +275,13 @@
 
  /* միայն Avatar hint-ի համար */
   .mb-4:has(#nkariMecbajin) .small {
-      font-size: 8px;
-  line-height: 1.2;
-  opacity: 0.75;
-  display: flex;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-  width: 50px;
+      font-size: 10px;
+      line-height: 1.2;
+      opacity: 0.75;
+      display: flex;
+      justify-content: space-evenly;
+      flex-wrap: wrap;
+      width: 55px;
   }
 
   .mb-4 {
