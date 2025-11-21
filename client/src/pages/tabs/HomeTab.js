@@ -2,6 +2,7 @@
 import React from "react";
 import { getPublicInfoByCardId, API } from "../api.js";
 import "./Responcive.css";
+import "./tabs/AdminResponcive.css"
 import IconsPage from "./IconsPage.js";
 import BrandsPage from "./BrandsPage.js";
 import BrandInfoPage from "./BrandInfoPage.js";
