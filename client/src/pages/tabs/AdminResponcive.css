@@ -68,11 +68,14 @@
 
   /* ---- "Choose File" Button-ի փոփոխություն (միայն Avatar-ում) ---- */
   .mb-4[style*="display: flex"] > .btn {
-    height: 38px !important;
-    padding: 0 12px !important;
-    font-size: 12px !important;
-    border-radius: 8px !important;
+    height: 38px;
+    padding: 0 12px;
+    font-size: 11px;
+    border-radius: 8px;
     width: 55px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   /* hint text PNG/JPG փոքր */
@@ -161,9 +164,12 @@
   .mb-4[style*="display: flex"] > .btn {
     height: 38px;
     padding: 0 12px;
-    font-size: 12px;
+    font-size: 11px;
     border-radius: 8px;
     width: 55px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   /* hint text PNG/JPG փոքր */
@@ -257,9 +263,12 @@
   .mb-4[style*="display: flex"] > .btn {
     height: 38px;
     padding: 0 12px;
-    font-size: 12px;
+    font-size: 11px;
     border-radius: 8px;
     width: 55px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 
   /* hint text PNG/JPG փոքր */
