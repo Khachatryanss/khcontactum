@@ -1166,6 +1166,12 @@
     --bi-dot:8px;
     --bi-btn-fs:13px;
   }
+   #nkariMecBajin * {
+    width: 100px;
+  }
+  #nkariMecBajin  {
+    width: 110px;
+  }
 }
 
 /* ========================= 1366–1439 ========================= */
@@ -1181,6 +1187,12 @@
     --bi-dot:9px;
     --bi-btn-fs:13.5px;
   }
+   #nkariMecBajin * {
+    width: 100px;
+  }
+  #nkariMecBajin  {
+    width: 110px;
+  }
 }
 
 /* ========================= 1440–1919 ========================= */
@@ -1195,6 +1207,12 @@
     --bi-slide-w:400px;
     --bi-dot:9px;
     --bi-btn-fs:14px;
+  }
+   #nkariMecBajin * {
+    width: 100px;
+  }
+  #nkariMecBajin  {
+    width: 110px;
   }
 }
 
