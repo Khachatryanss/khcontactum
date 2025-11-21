@@ -36,8 +36,9 @@
     max-width: 25px;
     max-height: 25px;
     object-fit: contain;
-    margin: 0 auto;
-    display: block;
+    display: flex;
+  align-items: center;
+  justify-content: center;
   }
 
 }
@@ -84,8 +85,9 @@
   max-width: 25px;
   max-height: 25px;
   object-fit: contain;
-  margin: 0 auto;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 
@@ -132,8 +134,10 @@
   max-width: 25px;
   max-height: 25px;
   object-fit: contain;
-  margin: 0 auto;
-  display: block;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 }
