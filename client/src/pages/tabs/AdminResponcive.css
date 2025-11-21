@@ -97,6 +97,9 @@
   flex-wrap: wrap;
   width: 50px;
 }
+    .mb-4 {
+    align-items: center;
+  }
 }
 
 @media (min-width:1366px) and (max-width:1439.98px) {
@@ -194,6 +197,9 @@
   flex-wrap: wrap;
   width: 50px;
 }
+  .mb-4 {
+    align-items: center;
+  }
 
 }
 
@@ -293,6 +299,10 @@
   justify-content: space-evenly;
   flex-wrap: wrap;
   width: 50px;
+  }
+
+  .mb-4 {
+    align-items: center;
   }
 
 }
