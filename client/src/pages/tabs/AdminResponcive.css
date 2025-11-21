@@ -100,7 +100,7 @@
   /* Միայն "Անվան գույնը" (company name color) row-ի համար */
 #companyNameColor {
   align-items: center;
-  gap: 10px;
+  gap: 20px;
 }
 
 /* HEX code input-ը բարձրացնենք */
@@ -115,7 +115,7 @@
 /* Color picker-ը նույն չափով քառակուսի */
 #companyNameColor input[type="color"] {
   width: 44px;
-  height: 44px;
+  height: 24px;
   padding: 0;
   border-radius: 8px;
   border: 1px solid rgba(0,0,0,.2);
