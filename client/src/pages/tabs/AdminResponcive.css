@@ -2,16 +2,25 @@
   .phone, .screen {
     width: 380px;
   }
+  #root {
+    width: 416px;
+  }
 }
 
 @media (min-width:1366px) and (max-width:1439.98px) {
     .phone, .screen {
       width: 380px;
   }
+  #root {
+    width: 416px;
+  }
 }
 
 @media (min-width:1440px) and (max-width:1919.98px){
       .phone, .screen {
           width: 380px;
+  }
+  #root {
+    width: 416px;
   }
 }
