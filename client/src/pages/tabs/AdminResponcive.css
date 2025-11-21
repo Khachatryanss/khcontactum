@@ -46,6 +46,7 @@
   /* վերցնում ենք միայն այն Flex row-ը, որի մեջ կա img կամ video preview */
   .mb-4[style*="display: flex"][style*="gap"] {
     align-items: center;
+    width: 110px;
   }
 
   /* ---- INPUT-ի փոփոխություն Avatar-row-ում ---- */
@@ -134,6 +135,7 @@
   /* վերցնում ենք միայն այն Flex row-ը, որի մեջ կա img կամ video preview */
   .mb-4[style*="display: flex"][style*="gap"] {
     align-items: center;
+    width: 110px;
   }
 
   /* ---- INPUT-ի փոփոխություն Avatar-row-ում ---- */
@@ -222,6 +224,7 @@
   /* վերցնում ենք միայն այն Flex row-ը, որի մեջ կա img կամ video preview */
   .mb-4[style*="display: flex"][style*="gap"] {
     align-items: center;
+    width: 110px;
   }
 
   /* ---- INPUT-ի փոփոխություն Avatar-row-ում ---- */
