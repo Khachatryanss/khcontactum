@@ -2,7 +2,6 @@
 import React from "react";
 import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
 
-
 const h = React.createElement;
 // 👇 ավելացրեցինք kz, chn
 const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn"];
@@ -213,7 +212,7 @@ const BRANDS_UI_TEXT = {
     uploadFailed: "Жүктеу сәтсіз аяқталды",
     loadFailed: "Жүктеу сәтсіз аяқталды",
     savedOk: "Сақталды ✅",
-    saveFailed: "Сақтау сәтсіз аяқталды",
+    saveFailed: "Сақтау сәтсіз ավարտалды",
   },
 
   // 🇨🇳 Chinese
@@ -519,6 +518,19 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
   const delBrand = (id) =>
     setBrands((list) => list.filter((b) => b.id !== id));
 
+  // ✅ NEW: reorder helper (վերև/ներքև սլաքներ)
+  const moveBrand = (index, dir) => {
+    setBrands((list) => {
+      const next = [...list];
+      const j = index + dir;
+      if (j < 0 || j >= next.length) return list;
+      const tmp = next[index];
+      next[index] = next[j];
+      next[j] = tmp;
+      return next;
+    });
+  };
+
   const uploadBrandLogo =
     (id, file) =>
     async () => {
@@ -571,7 +583,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       }));
 
       const next = { ...(baseInfo || {}) };
-      next.brands = cleanBrands;
+      next.brands = cleanBrands; // ✅ order-ով պահվումա
       next.brandsTitleColor = titleColor || "#000000";
       next.brandsNameColor = nameColor || "#000000";
       next.brandsTitleText = trimI18nObj(titleTextI18n);
@@ -698,10 +710,41 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
     h(
       "div",
       { className: "admin-brands" },
-      ...brands.map((b) =>
+      ...brands.map((b, index) =>
         h(
           "div",
           { key: b.id, className: "brand-row card" },
+
+          // ✅ NEW: order arrows column
+          h(
+            "div",
+            { className: "brand-order-col" },
+            h(
+              "button",
+              {
+                type: "button",
+                className: "order-btn",
+                onClick: () => moveBrand(index, -1),
+                disabled: index === 0,
+                "aria-label": "Move up",
+                title: "Up",
+              },
+              "▲"
+            ),
+            h(
+              "button",
+              {
+                type: "button",
+                className: "order-btn",
+                onClick: () => moveBrand(index, +1),
+                disabled: index === brands.length - 1,
+                "aria-label": "Move down",
+                title: "Down",
+              },
+              "▼"
+            )
+          ),
+
           h(
             "div",
             { className: "brand-logo" },
@@ -930,7 +973,39 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         border:1px solid #ececec;
         border-radius:16px;
         padding:12px;
+        position:relative;
       }
+
+      /* ✅ NEW: order arrows style */
+      .brand-order-col{
+        position:absolute;
+        top:10px;
+        right:10px;
+        display:flex;
+        flex-direction:column;
+        gap:6px;
+        z-index:2;
+      }
+      .order-btn{
+        width:32px;
+        height:28px;
+        border-radius:8px;
+        border:1px solid #e6e6e6;
+        background:#fff;
+        font-size:14px;
+        font-weight:800;
+        line-height:1;
+        cursor:pointer;
+        box-shadow:0 2px 6px rgba(0,0,0,.06);
+      }
+      .order-btn:hover{ transform:translateY(-1px); }
+      .order-btn:disabled{
+        opacity:.35;
+        cursor:default;
+        transform:none;
+        box-shadow:none;
+      }
+
       .brand-row{
         display:grid;
         grid-template-columns:84px 1fr;
