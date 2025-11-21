@@ -92,7 +92,9 @@
   font-size: 10px;
   line-height: 1.2;
   opacity: 0.75;
-  white-space: nowrap;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
 }
 }
 
@@ -193,7 +195,9 @@
   font-size: 10px;
   line-height: 1.2;
   opacity: 0.75;
-  white-space: nowrap;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
 }
 
 }
@@ -290,7 +294,9 @@
   font-size: 10px;
   line-height: 1.2;
   opacity: 0.75;
-  white-space: nowrap;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
 }
 
 }
