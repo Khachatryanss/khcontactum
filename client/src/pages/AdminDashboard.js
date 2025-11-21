@@ -35,7 +35,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Նկար",
     avatarTypeVideo: "Վիդեո",
     avatarImageUrlLabel: "Avatar նկարի հղում",
-    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarImageHint: "(PNG/JPG/JPEG/WEBP/GIF)",
     avatarVideoUrlLabel: "Avatar վիդեոյի հղում",
     avatarVideoHint: "Մաքս. 20 MB (mp4, webm, ogg)",
 
@@ -89,7 +89,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Изображение",
     avatarTypeVideo: "Видео",
     avatarImageUrlLabel: "Ссылка на аватар",
-    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarImageHint: "(PNG/JPG/JPEG/WEBP/GIF)",
     avatarVideoUrlLabel: "Ссылка на видео-аватар",
     avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
 
@@ -143,7 +143,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Image",
     avatarTypeVideo: "Video",
     avatarImageUrlLabel: "Avatar Image URL",
-    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarImageHint: "(PNG/JPG/JPEG/WEBP/GIF)",
     avatarVideoUrlLabel: "Avatar Video URL",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
 
@@ -197,7 +197,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "صورة",
     avatarTypeVideo: "فيديو",
     avatarImageUrlLabel: "رابط صورة الـ Avatar",
-    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarImageHint: "(PNG/JPG/JPEG/WEBP/GIF)",
     avatarVideoUrlLabel: "رابط Видео الـ Avatar",
     avatarVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
 
@@ -251,7 +251,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Image",
     avatarTypeVideo: "Vidéo",
     avatarImageUrlLabel: "URL de l’image avatar",
-    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarImageHint: "(PNG/JPG/JPEG/WEBP/GIF)",
     avatarVideoUrlLabel: "URL de la видео avatar",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
 
@@ -306,7 +306,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "Сурет",
     avatarTypeVideo: "Видео",
     avatarImageUrlLabel: "Avatar суретінің сілтемесі",
-    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarImageHint: "(PNG/JPG/JPEG/WEBP/GIF)",
     avatarVideoUrlLabel: "Avatar видеосының сілтемесі",
     avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
 
@@ -361,7 +361,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeImage: "图片",
     avatarTypeVideo: "视频",
     avatarImageUrlLabel: "头像图片链接",
-    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarImageHint: "(PNG/JPG/JPEG/WEBP/GIF)",
     avatarVideoUrlLabel: "头像视频链接",
     avatarVideoHint: "最大 20 MB (mp4, webm, ogg)",
 
