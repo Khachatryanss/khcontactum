@@ -15,7 +15,7 @@ const rtlProps = (code) =>
 const ICONS_UI_TEXT = {
   am: {
     styleLabel: "Ոճ",
-    styleOption1: "Ձև 1",
+    styleOption1: "Ձև մանկաբ 1",
     styleOption2: "Ձև 2",
     styleOption3: "Ձև 3",
     styleOption4: "Ձև 4 (շրջան)",
@@ -200,7 +200,7 @@ const ICONS_UI_TEXT = {
       "Назар аударыңыз: қызылмен белгіленген жолдарды толтырыңыз",
     savedOk: "Сақталды ✅",
     loadFailed: "Жүктеу сәтсіз аяқталды",
-    saveFailed: "Сақтау сәтсіз аяқталды",
+    saveFailed: "Сақтау сәтсіз ավարտталды",
     title: "Иконка баптаулары",
 
     moveUp: "Жоғары",
@@ -228,7 +228,7 @@ const ICONS_UI_TEXT = {
     presetButton: "选择",
     presetSearchPlaceholder: "搜索…",
     validateLabelsMissing: "请填写名称字段",
-    validateAmMissing: "请填写名称字段（AM）",
+    validateAmMissing: "請填写名称字段（AM）",
     validateHrefMissing: "请填写链接 (URL) 字段",
     rowsAttention: "注意：请填写标红的行",
     savedOk: "已保存 ✅",
@@ -373,7 +373,6 @@ function rgbToHex({ r, g, b }) {
   const to = (v) => clamp255(v).toString(16).padStart(2, "0");
   return "#" + to(r) + to(g) + to(b);
 }
-
 // parse "rgba(...)", "rgb(...)" կամ "#hex" → {r,g,b,a}
 function parseCssRgba(str) {
   if (!str) return null;
@@ -538,7 +537,7 @@ function IconRow({
   canDown,
   error,
   langs,
-  T
+  T,
 }) {
   const usedLangs = Array.isArray(langs) && langs.length ? langs : LANGS;
 
@@ -590,7 +589,7 @@ function IconRow({
         className: "icon-card",
         style: {
           display: "grid",
-          gridTemplateColumns: "48px 1fr",
+          gridTemplateColumns: "64px 1fr", // ✅ ձախ սյունը լայնացրինք
           gap: 12,
           alignItems: "start",
           padding: 12,
@@ -600,7 +599,52 @@ function IconRow({
           boxShadow: "0 6px 18px rgba(0,0,0,.06)",
         },
       },
-      preview,
+
+      // ✅ LEFT COLUMN: preview + move buttons
+      h(
+        "div",
+        {
+          style: {
+            display: "grid",
+            gap: 6,
+            justifyItems: "center",
+            alignContent: "start",
+          },
+        },
+        preview,
+        h(
+          "div",
+          {
+            style: {
+              display: "grid",
+              gap: 6,
+              width: "100%",
+            },
+          },
+          h(
+            "button",
+            {
+              className: "btn btn-move-small",
+              onClick: onMoveUp,
+              disabled: !canUp,
+              title: T.moveUp,
+            },
+            "↑"
+          ),
+          h(
+            "button",
+            {
+              className: "btn btn-move-small",
+              onClick: onMoveDown,
+              disabled: !canDown,
+              title: T.moveDown,
+            },
+            "↓"
+          )
+        )
+      ),
+
+      // RIGHT COLUMN: մնացած դաշտերը
       h(
         "div",
         { style: { display: "grid", gap: 10 } },
@@ -624,7 +668,7 @@ function IconRow({
           )
         ),
 
-        // href + FA class
+        // href + preset
         h(
           "div",
           {
@@ -647,37 +691,10 @@ function IconRow({
           })
         ),
 
-        // գործողություններ
+        // Delete՝ ներքևում աջ
         h(
           "div",
-          {
-            style: {
-              display: "flex",
-              gap: 8,
-              justifyContent: "flex-end",
-              flexWrap: "wrap"
-            }
-          },
-          h(
-            "button",
-            {
-              className: "btn btn-move",
-              onClick: onMoveUp,
-              disabled: !canUp,
-              title: T.moveUp
-            },
-            "↑"
-          ),
-          h(
-            "button",
-            {
-              className: "btn btn-move",
-              onClick: onMoveDown,
-              disabled: !canDown,
-              title: T.moveDown
-            },
-            "↓"
-          ),
+          { style: { display: "flex", gap: 8, justifyContent: "flex-end" } },
           h(
             "button",
             {
@@ -829,10 +846,12 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   const validate = (it) => {
     const href = (it.href || "").trim();
 
+    // label object կա՞
     if (!it.label || typeof it.label !== "object") {
       return { ok: false, msg: T.validateLabelsMissing };
     }
 
+    // ⚠️ AM-ի պարտադիր ստուգումը թողնում ենք comment-ում
     // const nameAM = (it.label.am || "").trim();
     // if (!nameAM) return { ok: false, msg: T.validateAmMissing };
 
@@ -842,6 +861,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     return {
       ok: true,
       payload: {
+        // պահում ենք ամբողջ LANGS-ը DB-ում, ներառյալ kz/chn
         label: LANGS.reduce(
           (o, k) => ((o[k] = (it.label[k] || "").trim()), o),
           {}
@@ -852,7 +872,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     };
   };
 
-  // ԱՎԵԼԱՑՆԵԼ
+  // ԱՎԵԼԱՑՆԵԼ՝ auto-scroll նոր icon-card-ի վրա
   const add = () =>
     setItems((list) => {
       const next = [
@@ -914,24 +934,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   };
 
   /* ------ MOVE UP/DOWN (Option B) ------ */
-  const moveItem = (fromIdx, toIdx) => {
-    setItems((list) => {
-      if (
-        fromIdx < 0 ||
-        toIdx < 0 ||
-        fromIdx >= list.length ||
-        toIdx >= list.length ||
-        fromIdx === toIdx
-      ) return list;
-
-      const next = [...list];
-      const tmp = next[fromIdx];
-      next[fromIdx] = next[toIdx];
-      next[toIdx] = tmp;
-      return next;
-    });
-  };
-
   const onMoveUp = (uidKey) => {
     setErrors((e) => {
       const cp = { ...e };
@@ -1238,17 +1240,21 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       .input.big{ padding:14px 14px; font-size:15px; border-radius:14px; }
       .btn-danger{ background:#b91c1c; color:#fff; border:1px solid #b91c1c; }
 
-      .btn-move{
+      .btn-move-small{
         background:#111;
         color:#fff;
         border:1px solid #111;
-        padding:6px 10px;
-        border-radius:10px;
-        min-width:40px;
+        height:28px;
+        width:100%;
+        border-radius:8px;
         font-weight:800;
+        display:grid;
+        place-items:center;
         cursor:pointer;
+        padding:0;
+        line-height:1;
       }
-      .btn-move:disabled{
+      .btn-move-small:disabled{
         opacity:.35;
         cursor:not-allowed;
       }
