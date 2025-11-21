@@ -237,7 +237,7 @@
   /* վերցնում ենք միայն այն Flex row-ը, որի մեջ կա img կամ video preview */
   .mb-4[style*="display: flex"][style*="gap"] {
     align-items: center;
-    width: 325px;
+    width: 360px;
   }
 
   .mb-4[style*="display: flex"] label {
@@ -246,8 +246,8 @@
 
   /* ---- INPUT-ի փոփոխություն Avatar-row-ում ---- */
   .mb-4[style*="display: flex"] label input {
-    width: 110px;
-    max-width: 110px;
+    width: 130px;
+    max-width: 130px;
     height: 38px;
     font-size: 13px;
     padding: 0 8px;
@@ -257,7 +257,7 @@
   /* Label-ի տեքստը փոքր */
   .mb-4[style*="display: flex"] label div {
     font-size: 12px;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     opacity: 0.85;
   }
 
