@@ -71,16 +71,15 @@ export default function IconsPage({
   labelColor,
   chipColor,
   rowCardColor,
-  iconColor,  // ✅ գալիս է DB-ից icons.styles.iconHEX
+  iconColor, // ✅ NEW: inner icon color
   layoutStyle = "dzev1",
   cols = 4,
   glowEnabled = false,
   glowColor,
-  // lang = htmlLang → hy, ru, en, ar, fr, kz, chn
   lang = "hy"
 }) {
   /* ===== dzev4 — ձեռքով պտտվող շրջան (ոչ ավտոմատ) ===== */
-  const [orbitAngle, setOrbitAngle] = React.useState(0); // градусовով
+  const [orbitAngle, setOrbitAngle] = React.useState(0);
   const draggingRef = React.useRef(false);
   const lastXRef = React.useRef(0);
 
@@ -110,18 +109,21 @@ export default function IconsPage({
   const labelDir   = (lang === "ar" ? "rtl" : "ltr");
   const labelAlign = (lang === "ar" ? "right" : "left");
 
-  /* ===== ONE-COLUMN MODE – նույն հայլու էֆեկտը, ինչ BrandsPage–ում ===== */
   const isOneColumnRow = layoutStyle !== "dzev4" && Number(cols) === 1;
+
+  /* ✅ FORCE inside style once */
+  const forcedIconStyle = iconColor
+    ? { color: iconColor }
+    : { color: "var(--icons-icon-color, #fff)" };
 
   if (isOneColumnRow) {
     const textColor = labelColor || "#ffffff";
-    const icColor   = iconColor || "#ffffff"; // ✅ inside icon color
 
     return h(
       "section",
       {
         className: "icons-public-1col",
-        style: { padding: "10px 12px" }
+        style: { padding: "10px 12px", "--icons-icon-color": iconColor }
       },
 
       ...links.map((l = {}, i) => {
@@ -146,7 +148,7 @@ export default function IconsPage({
             h("i", {
               className: faCls,
               "aria-hidden": "true",
-              style: { color: icColor } // ✅ FORCE inside FA color
+              style: forcedIconStyle
             })
           ),
           h(
@@ -165,7 +167,6 @@ export default function IconsPage({
         "style",
         null,
         `
-        /* լիովին copy-paste бренդների քարտի էֆեկտը */
         .icon-row-card{
           display:flex;
           align-items:center;
@@ -209,7 +210,6 @@ export default function IconsPage({
     );
   }
 
-  /* ===== container class/style (մնացած layout-ների համար) ===== */
   let containerClass =
     layoutStyle === "dzev2" ? "icons-dzev2" :
     layoutStyle === "dzev3" ? "icons-dzev3" :
@@ -227,8 +227,6 @@ export default function IconsPage({
   if (glowColor)  containerStyle["--icons-glow-color"]  = glowColor;
   if (chipColor)  containerStyle["--icons-chip-bg"]     = chipColor;
   if (labelColor) containerStyle["--icons-label-color"] = labelColor;
-
-  // ✅ պահում ենք նաև CSS var, բայց հիմնականը ներքևում inline style-ով է
   if (iconColor)  containerStyle["--icons-icon-color"]  = iconColor;
 
   if (layoutStyle !== "dzev4" && Number(cols) === 1) {
@@ -288,11 +286,6 @@ export default function IconsPage({
         aProps.style = { "--angle": `${angle}deg` };
       }
 
-      // ✅ FORCE inside icon color (բոլոր layout-ների համար)
-      const forcedIconStyle = iconColor
-        ? { color: iconColor }
-        : { color: "var(--icons-icon-color, #fff)" };
-
       const inner =
         layoutStyle === "dzev3"
           ? [
@@ -304,13 +297,13 @@ export default function IconsPage({
                 key: "icon",
                 className: faCls,
                 "aria-hidden": "true",
-                style: forcedIconStyle // ✅ HERE
+                style: forcedIconStyle
               })
             ]
           : h("i", {
               className: faCls,
               "aria-hidden": "true",
-              style: forcedIconStyle // ✅ HERE
+              style: forcedIconStyle
             });
 
       return h(

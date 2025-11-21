@@ -650,6 +650,7 @@ export default function HomePage({ cardId = "101" }) {
                     labelColor,
                     chipColor,
                     rowCardColor,
+                    iconColor,
                     layoutStyle,
                     cols,
                     glowEnabled,
