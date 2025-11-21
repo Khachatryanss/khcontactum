@@ -95,6 +95,7 @@
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
+  width: 35px;
 }
 }
 
@@ -198,6 +199,7 @@
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
+  width: 35px;
 }
 
 }
@@ -292,11 +294,12 @@
  /* միայն Avatar hint-ի համար */
 .mb-4:has(#nkariMecbajin) .small {
   font-size: 10px;
-  line-height: 1.2;
+  line-height: 1;
   opacity: 0.75;
   display: flex;
   justify-content: space-evenly;
   flex-wrap: wrap;
+  width: 35px;
 }
 
 }
