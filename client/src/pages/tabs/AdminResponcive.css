@@ -195,9 +195,6 @@
 }
 
 @media (min-width:1440px) and (max-width:1919.98px){
-      .phone, .screen {
-          width: 355px;
-  }
 
 .grid .icon-btn,
 .icons-dzev2 .icon-btn,
@@ -234,61 +231,5 @@
   display: flex;
   align-items: center;
   justify-content: center;
-}
-  /* ===== Avatar Image URL Row Only ===== */
-
-  /* վերցնում ենք միայն այն Flex row-ը, որի մեջ կա img կամ video preview */
-  .mb-4[style*="display: flex"][style*="gap"] {
-    align-items: center;
-    width: 305px;
   }
-
-  .mb-4[style*="display: flex"] label {
-    width: 110px;
-  }
-
-  /* ---- INPUT-ի փոփոխություն Avatar-row-ում ---- */
-  .mb-4[style*="display: flex"] label input {
-    width: 110px;
-    max-width: 110px;
-    height: 38px;
-    font-size: 13px;
-    padding: 0 8px;
-    border-radius: 8px;
-  }
-
-  /* Label-ի տեքստը փոքր */
-  .mb-4[style*="display: flex"] label div {
-    font-size: 12px;
-    margin-bottom: 4px;
-    opacity: 0.85;
-  }
-
-  /* ---- "Choose File" Button-ի փոփոխություն (միայն Avatar-ում) ---- */
-  .mb-4[style*="display: flex"] > .btn {
-    height: 38px;
-    padding: 0 12px;
-    font-size: 11px;
-    border-radius: 8px;
-    width: 55px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
- /* միայն Avatar hint-ի համար */
-  .mb-4:has(#nkariMecbajin) .small {
-      font-size: 8px;
-  line-height: 1.2;
-  opacity: 0.75;
-  display: flex;
-  justify-content: space-evenly;
-  flex-wrap: wrap;
-  width: 50px;
-  }
-
-  .mb-4 {
-    align-items: center;
-  }
-
 }
