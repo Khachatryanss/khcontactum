@@ -97,6 +97,33 @@
     .mb-4 {
     align-items: center;
   }
+  /* Միայն "Անվան գույնը" (company name color) row-ի համար */
+#companyNameColor {
+  align-items: center;
+  gap: 10px;
+}
+
+/* HEX code input-ը բարձրացնենք */
+#companyNameColor #nkarInput.input {
+  height: 44px;
+  padding: 0 12px;
+  font-size: 15px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+/* Color picker-ը նույն չափով քառակուսի */
+#companyNameColor input[type="color"] {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,.2);
+  background: transparent;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
 }
 
 @media (min-width:1366px) and (max-width:1439.98px) {
@@ -191,6 +218,33 @@
   .mb-4 {
     align-items: center;
   }
+  /* Միայն "Անվան գույնը" (company name color) row-ի համար */
+#companyNameColor {
+  align-items: center;
+  gap: 10px;
+}
+
+/* HEX code input-ը բարձրացնենք */
+#companyNameColor #nkarInput.input {
+  height: 44px;
+  padding: 0 12px;
+  font-size: 15px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+/* Color picker-ը նույն չափով քառակուսի */
+#companyNameColor input[type="color"] {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,.2);
+  background: transparent;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
 
 }
 
@@ -288,5 +342,31 @@
   .mb-4 {
     align-items: center;
   }
+  /* Միայն "Անվան գույնը" (company name color) row-ի համար */
+#companyNameColor {
+  align-items: center;
+  gap: 10px;
+}
+
+/* HEX code input-ը բարձրացնենք */
+#companyNameColor #nkarInput.input {
+  height: 44px;
+  padding: 0 12px;
+  font-size: 15px;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+/* Color picker-ը նույն չափով քառակուսի */
+#companyNameColor input[type="color"] {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,.2);
+  background: transparent;
+  box-sizing: border-box;
+  cursor: pointer;
+}
 
 }
