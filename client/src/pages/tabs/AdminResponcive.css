@@ -2,9 +2,6 @@
   .phone, .screen {
     width: 355px;
   }
-  #root {
-    width: 416px;
-  }
   .grid .icon-btn,
   .icons-dzev2 .icon-btn,
   .icons-dzev3 .icon-btn,
@@ -106,13 +103,7 @@
     .phone, .screen {
       width: 355px;
   }
-  #root {
-    width: 416px;
-  }
 
-  /* ===================== GLOBAL FIX: universal 70×70 size ===================== */
-
-/* icon-btn — always 70×70 in all layouts */
   .grid .icon-btn,
   .icons-dzev2 .icon-btn,
   .icons-dzev3 .icon-btn,
@@ -207,12 +198,7 @@
       .phone, .screen {
           width: 355px;
   }
-  #root {
-    width: 416px;
-  }
-  /* ===================== GLOBAL FIX: universal 70×70 size ===================== */
 
-/* icon-btn — always 70×70 in all layouts */
 .grid .icon-btn,
 .icons-dzev2 .icon-btn,
 .icons-dzev3 .icon-btn,
