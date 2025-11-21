@@ -530,16 +530,3 @@
     line-height: 1.2;
   }
 }
-
-
-/* =================== ADMIN ICON COLOR OVERRIDE (ADD ONLY) =================== */
-:root{
-  --icons-icon-color: #ffffff;
-}
-
-.grid .icon-btn i,
-.icons-dzev2 .icon-btn i,
-.icons-dzev3 .icon-btn i,
-.icons-dzev4 .icon-btn i{
-  color: var(--icons-icon-color, #fff) !important;
-}

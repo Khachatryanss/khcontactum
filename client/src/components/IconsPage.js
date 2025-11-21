@@ -35,6 +35,8 @@ function faClassFrom(item){
 /* ---------- multi-lang label picker (7 լեզու) ---------- */
 function pickLabel(label, lang = "hy"){
   if (label && typeof label === "object") {
+    // lang այստեղ գալիս է HomePage-ից՝ htmlLang:
+    // hy, ru, en, ar, fr, kz, chn
     const primaryKeys = [];
     switch (lang) {
       case "hy":
@@ -71,15 +73,15 @@ export default function IconsPage({
   labelColor,
   chipColor,
   rowCardColor,
-  iconColor, // ✅ NEW: inner icon color
   layoutStyle = "dzev1",
   cols = 4,
   glowEnabled = false,
   glowColor,
+  // lang = htmlLang → hy, ru, en, ar, fr, kz, chn
   lang = "hy"
 }) {
   /* ===== dzev4 — ձեռքով պտտվող շրջան (ոչ ավտոմատ) ===== */
-  const [orbitAngle, setOrbitAngle] = React.useState(0);
+  const [orbitAngle, setOrbitAngle] = React.useState(0); // градусовով
   const draggingRef = React.useRef(false);
   const lastXRef = React.useRef(0);
 
@@ -109,12 +111,8 @@ export default function IconsPage({
   const labelDir   = (lang === "ar" ? "rtl" : "ltr");
   const labelAlign = (lang === "ar" ? "right" : "left");
 
+  /* ===== ONE-COLUMN MODE – նույն հայլու էֆեկտը, ինչ BrandsPage–ում ===== */
   const isOneColumnRow = layoutStyle !== "dzev4" && Number(cols) === 1;
-
-  /* ✅ FORCE inside style once */
-  const forcedIconStyle = iconColor
-    ? { color: iconColor }
-    : { color: "var(--icons-icon-color, #fff)" };
 
   if (isOneColumnRow) {
     const textColor = labelColor || "#ffffff";
@@ -123,7 +121,7 @@ export default function IconsPage({
       "section",
       {
         className: "icons-public-1col",
-        style: { padding: "10px 12px", "--icons-icon-color": iconColor }
+        style: { padding: "10px 12px" }
       },
 
       ...links.map((l = {}, i) => {
@@ -145,11 +143,7 @@ export default function IconsPage({
           h(
             "div",
             { className: "icon-row-circle" },
-            h("i", {
-              className: faCls,
-              "aria-hidden": "true",
-              style: forcedIconStyle
-            })
+            h("i", { className: faCls, "aria-hidden": "true" })
           ),
           h(
             "span",
@@ -167,6 +161,7 @@ export default function IconsPage({
         "style",
         null,
         `
+        /* լիովին copy-paste бренդների քարտի էֆեկտը */
         .icon-row-card{
           display:flex;
           align-items:center;
@@ -196,6 +191,7 @@ export default function IconsPage({
           place-items:center;
           flex-shrink:0;
           background:#111;
+          color:#fff;
         }
         .icon-row-circle i{
           font-size:22px;
@@ -210,6 +206,7 @@ export default function IconsPage({
     );
   }
 
+  /* ===== container class/style (մնացած layout-ների համար) ===== */
   let containerClass =
     layoutStyle === "dzev2" ? "icons-dzev2" :
     layoutStyle === "dzev3" ? "icons-dzev3" :
@@ -227,7 +224,6 @@ export default function IconsPage({
   if (glowColor)  containerStyle["--icons-glow-color"]  = glowColor;
   if (chipColor)  containerStyle["--icons-chip-bg"]     = chipColor;
   if (labelColor) containerStyle["--icons-label-color"] = labelColor;
-  if (iconColor)  containerStyle["--icons-icon-color"]  = iconColor;
 
   if (layoutStyle !== "dzev4" && Number(cols) === 1) {
     const cardBg = rowCardColor || chipColor;
@@ -293,18 +289,9 @@ export default function IconsPage({
               h("span", { key: "tint",      className: "tint" }),
               h("span", { key: "tintMul",   className: "tint-multiply" }),
               h("span", { key: "shine",     className: "shine" }),
-              h("i",    {
-                key: "icon",
-                className: faCls,
-                "aria-hidden": "true",
-                style: forcedIconStyle
-              })
+              h("i",    { key: "icon",      className: faCls, "aria-hidden": "true" })
             ]
-          : h("i", {
-              className: faCls,
-              "aria-hidden": "true",
-              style: forcedIconStyle
-            });
+          : h("i", { className: faCls, "aria-hidden": "true" });
 
       return h(
         "a",
