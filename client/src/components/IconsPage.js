@@ -35,8 +35,6 @@ function faClassFrom(item){
 /* ---------- multi-lang label picker (7 լեզու) ---------- */
 function pickLabel(label, lang = "hy"){
   if (label && typeof label === "object") {
-    // lang այստեղ գալիս է HomePage-ից՝ htmlLang:
-    // hy, ru, en, ar, fr, kz, chn
     const primaryKeys = [];
     switch (lang) {
       case "hy":
@@ -73,11 +71,11 @@ export default function IconsPage({
   labelColor,
   chipColor,
   rowCardColor,
+  iconColor, // ✅ NEW
   layoutStyle = "dzev1",
   cols = 4,
   glowEnabled = false,
   glowColor,
-  // lang = htmlLang → hy, ru, en, ar, fr, kz, chn
   lang = "hy"
 }) {
   /* ===== dzev4 — ձեռքով պտտվող շրջան (ոչ ավտոմատ) ===== */
@@ -111,11 +109,12 @@ export default function IconsPage({
   const labelDir   = (lang === "ar" ? "rtl" : "ltr");
   const labelAlign = (lang === "ar" ? "right" : "left");
 
-  /* ===== ONE-COLUMN MODE – նույն հայլու էֆեկտը, ինչ BrandsPage–ում ===== */
+  /* ===== ONE-COLUMN MODE ===== */
   const isOneColumnRow = layoutStyle !== "dzev4" && Number(cols) === 1;
 
   if (isOneColumnRow) {
     const textColor = labelColor || "#ffffff";
+    const icColor   = iconColor || "#ffffff"; // ✅ NEW
 
     return h(
       "section",
@@ -142,7 +141,7 @@ export default function IconsPage({
           },
           h(
             "div",
-            { className: "icon-row-circle" },
+            { className: "icon-row-circle", style:{ color: icColor } }, // ✅ NEW apply
             h("i", { className: faCls, "aria-hidden": "true" })
           ),
           h(
@@ -161,7 +160,6 @@ export default function IconsPage({
         "style",
         null,
         `
-        /* լիովին copy-paste бренդների քարտի էֆեկտը */
         .icon-row-card{
           display:flex;
           align-items:center;
@@ -191,7 +189,6 @@ export default function IconsPage({
           place-items:center;
           flex-shrink:0;
           background:#111;
-          color:#fff;
         }
         .icon-row-circle i{
           font-size:22px;
@@ -224,6 +221,7 @@ export default function IconsPage({
   if (glowColor)  containerStyle["--icons-glow-color"]  = glowColor;
   if (chipColor)  containerStyle["--icons-chip-bg"]     = chipColor;
   if (labelColor) containerStyle["--icons-label-color"] = labelColor;
+  if (iconColor)  containerStyle["--icons-icon-color"]  = iconColor; // ✅ NEW
 
   if (layoutStyle !== "dzev4" && Number(cols) === 1) {
     const cardBg = rowCardColor || chipColor;
@@ -308,6 +306,17 @@ export default function IconsPage({
             label
           )
       );
-    })
+    }),
+
+    // ✅ NEW — icon color apply (բոլոր layout-ների համար)
+    h(
+      "style",
+      null,
+      `
+      .icon-btn i{
+        color: var(--icons-icon-color, #fff);
+      }
+      `
+    )
   );
 }
