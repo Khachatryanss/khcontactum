@@ -87,6 +87,13 @@
   .mb-4[style*="display: flex"] label {
     width: 110px;
   }
+   /* միայն Avatar hint-ի համար */
+.mb-4:has(#nkariMecbajin) .small {
+  font-size: 10px;
+  line-height: 1.2;
+  opacity: 0.75;
+  white-space: nowrap;
+}
 }
 
 @media (min-width:1366px) and (max-width:1439.98px) {
@@ -181,6 +188,13 @@
   .mb-4[style*="display: flex"] label {
     width: 110px;
   }
+   /* միայն Avatar hint-ի համար */
+.mb-4:has(#nkariMecbajin) .small {
+  font-size: 10px;
+  line-height: 1.2;
+  opacity: 0.75;
+  white-space: nowrap;
+}
 
 }
 
@@ -271,11 +285,12 @@
     align-items: center;
   }
 
-  /* hint text PNG/JPG փոքր */
-  .mb-4[style*="display: flex"] > .small {
-    font-size: 9px;
-    opacity: 0.75;
-    width: 35px;
-  }
+ /* միայն Avatar hint-ի համար */
+.mb-4:has(#nkariMecbajin) .small {
+  font-size: 10px;
+  line-height: 1.2;
+  opacity: 0.75;
+  white-space: nowrap;
+}
 
 }
