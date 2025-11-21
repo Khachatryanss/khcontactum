@@ -81,7 +81,9 @@
     font-size: 11px !important;
     opacity: 0.75;
   }
-
+  .mb-4[style*="display: flex"] label {
+    width: 115px;
+  }
 }
 
 @media (min-width:1366px) and (max-width:1439.98px) {
@@ -170,6 +172,9 @@
     font-size: 11px !important;
     opacity: 0.75;
   }
+  .mb-4[style*="display: flex"] label {
+    width: 115px;
+  }
 
 }
 
@@ -225,6 +230,10 @@
   .mb-4[style*="display: flex"][style*="gap"] {
     align-items: center;
     width: 110px;
+  }
+
+  .mb-4[style*="display: flex"] label {
+    width: 115px;
   }
 
   /* ---- INPUT-ի փոփոխություն Avatar-row-ում ---- */
