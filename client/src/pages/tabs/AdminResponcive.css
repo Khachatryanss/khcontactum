@@ -40,7 +40,12 @@
   align-items: center;
   justify-content: center;
   }
-
+  #nkariMecBajin * {
+    width: 100px;
+  }
+  #nkariMecBajin  {
+    width: 110px;
+  }
 }
 
 @media (min-width:1366px) and (max-width:1439.98px) {
@@ -89,7 +94,12 @@
   align-items: center;
   justify-content: center;
 }
-
+    #nkariMecBajin * {
+    width: 100px;
+  }
+  #nkariMecBajin  {
+    width: 110px;
+  }
 
 }
 
@@ -139,5 +149,10 @@
   align-items: center;
   justify-content: center;
 }
-
+    #nkariMecBajin * {
+    width: 100px;
+  }
+  #nkariMecBajin  {
+    width: 110px;
+  }
 }
