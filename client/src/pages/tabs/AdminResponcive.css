@@ -78,11 +78,11 @@
 
   /* hint text PNG/JPG փոքր */
   .mb-4[style*="display: flex"] > .small {
-    font-size: 11px !important;
+    font-size: 9px !important;
     opacity: 0.75;
   }
   .mb-4[style*="display: flex"] label {
-    width: 115px;
+    width: 110px;
   }
 }
 
@@ -169,11 +169,11 @@
 
   /* hint text PNG/JPG փոքր */
   .mb-4[style*="display: flex"] > .small {
-    font-size: 11px !important;
+    font-size: 9px !important;
     opacity: 0.75;
   }
   .mb-4[style*="display: flex"] label {
-    width: 115px;
+    width: 110px;
   }
 
 }
@@ -233,7 +233,7 @@
   }
 
   .mb-4[style*="display: flex"] label {
-    width: 115px;
+    width: 110px;
   }
 
   /* ---- INPUT-ի փոփոխություն Avatar-row-ում ---- */
@@ -265,7 +265,7 @@
 
   /* hint text PNG/JPG փոքր */
   .mb-4[style*="display: flex"] > .small {
-    font-size: 11px !important;
+    font-size: 9px !important;
     opacity: 0.75;
   }
 
