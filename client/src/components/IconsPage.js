@@ -71,7 +71,7 @@ export default function IconsPage({
   labelColor,
   chipColor,
   rowCardColor,
-  iconColor, // ✅ NEW
+  iconColor,  // ✅ գալիս է DB-ից icons.styles.iconHEX
   layoutStyle = "dzev1",
   cols = 4,
   glowEnabled = false,
@@ -115,7 +115,7 @@ export default function IconsPage({
 
   if (isOneColumnRow) {
     const textColor = labelColor || "#ffffff";
-    const icColor   = iconColor || "#ffffff"; // ✅ NEW
+    const icColor   = iconColor || "#ffffff"; // ✅ inside icon color
 
     return h(
       "section",
@@ -142,8 +142,12 @@ export default function IconsPage({
           },
           h(
             "div",
-            { className: "icon-row-circle", style:{ color: icColor } }, // ✅ NEW apply
-            h("i", { className: faCls, "aria-hidden": "true" })
+            { className: "icon-row-circle" },
+            h("i", {
+              className: faCls,
+              "aria-hidden": "true",
+              style: { color: icColor } // ✅ FORCE inside FA color
+            })
           ),
           h(
             "span",
@@ -223,7 +227,9 @@ export default function IconsPage({
   if (glowColor)  containerStyle["--icons-glow-color"]  = glowColor;
   if (chipColor)  containerStyle["--icons-chip-bg"]     = chipColor;
   if (labelColor) containerStyle["--icons-label-color"] = labelColor;
-  if (iconColor)  containerStyle["--icons-icon-color"]  = iconColor; // ✅ NEW
+
+  // ✅ պահում ենք նաև CSS var, բայց հիմնականը ներքևում inline style-ով է
+  if (iconColor)  containerStyle["--icons-icon-color"]  = iconColor;
 
   if (layoutStyle !== "dzev4" && Number(cols) === 1) {
     const cardBg = rowCardColor || chipColor;
@@ -282,6 +288,11 @@ export default function IconsPage({
         aProps.style = { "--angle": `${angle}deg` };
       }
 
+      // ✅ FORCE inside icon color (բոլոր layout-ների համար)
+      const forcedIconStyle = iconColor
+        ? { color: iconColor }
+        : { color: "var(--icons-icon-color, #fff)" };
+
       const inner =
         layoutStyle === "dzev3"
           ? [
@@ -289,9 +300,18 @@ export default function IconsPage({
               h("span", { key: "tint",      className: "tint" }),
               h("span", { key: "tintMul",   className: "tint-multiply" }),
               h("span", { key: "shine",     className: "shine" }),
-              h("i",    { key: "icon",      className: faCls, "aria-hidden": "true" })
+              h("i",    {
+                key: "icon",
+                className: faCls,
+                "aria-hidden": "true",
+                style: forcedIconStyle // ✅ HERE
+              })
             ]
-          : h("i", { className: faCls, "aria-hidden": "true" });
+          : h("i", {
+              className: faCls,
+              "aria-hidden": "true",
+              style: forcedIconStyle // ✅ HERE
+            });
 
       return h(
         "a",
@@ -308,17 +328,6 @@ export default function IconsPage({
             label
           )
       );
-    }),
-
-    // ✅ NEW — icon color apply (բոլոր layout-ների համար)
-    h(
-      "style",
-      null,
-      `
-      .icon-btn i{
-        color: var(--icons-icon-color, #fff);
-      }
-      `
-    )
+    })
   );
 }
