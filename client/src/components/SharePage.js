@@ -63,10 +63,7 @@ function ensureAbsoluteUrl(u) {
 /* ===== i18n text (11 լեզու) ===== */
 const TEXT = {
   am: {
-    qrTitle: "QR կոդ",
-    qrDesc: "Սկանավորեք՝ քարտը բացելու կամ պահպանելու համար։",
     scanBtn: "Սկանավորել QR կոդը",
-    shareTitle: "Կիսվել իմ քարտով",
     addBtn: "ԱՎԵԼԱՑՐԵՔ ԻՆՁ ԿՈՆՏԱԿՏՆԵՐԻ ՑԱՆԿՈՒՄ",
     qrOnline: "ONLINE QR-CODE",
     qrOffline: "OFFLINE QR-CODE",
@@ -78,10 +75,7 @@ const TEXT = {
     confirmNo: "Ոչ",
   },
   ru: {
-    qrTitle: "QR-код",
-    qrDesc: "Сканируйте, чтобы открыть или сохранить визитку.",
     scanBtn: "СКАНИРОВАТЬ QR-КОД",
-    shareTitle: "ПОДЕЛИТЬСЯ МОЕЙ ВИЗИТКОЙ",
     addBtn: "ДОБАВИТЬ В КОНТАКТЫ",
     qrOnline: "ОНЛАЙН QR-КОД",
     qrOffline: "ОФЛАЙН QR-КОД",
@@ -93,10 +87,7 @@ const TEXT = {
     confirmNo: "Нет",
   },
   en: {
-    qrTitle: "QR Code",
-    qrDesc: "Scan to open or save this card.",
     scanBtn: "SCAN QR CODE",
-    shareTitle: "SHARE MY CARD",
     addBtn: "ADD ME TO THE CONTACT LIST",
     qrOnline: "ONLINE QR-CODE",
     qrOffline: "OFFLINE QR-CODE",
@@ -108,10 +99,7 @@ const TEXT = {
     confirmNo: "No",
   },
   ar: {
-    qrTitle: "رمز QR",
-    qrDesc: "امسح لفتح البطاقة أو حفظها.",
     scanBtn: "مسح رمز QR",
-    shareTitle: "مشاركة بطاقتي",
     addBtn: "إضافتي إلى قائمة جهات الاتصال",
     qrOnline: "رمز QR أونلاين · الرابط",
     qrOffline: "رمز QR أوفلاين",
@@ -123,10 +111,7 @@ const TEXT = {
     confirmNo: "لا",
   },
   fr: {
-    qrTitle: "QR Code",
-    qrDesc: "Scannez pour ouvrir ou enregistrer la carte.",
     scanBtn: "SCANNER LE QR CODE",
-    shareTitle: "PARTAGER MA CARTE",
     addBtn: "M’AJOUTER À LA LISTE DE CONTACTS",
     qrOnline: "QR-CODE EN LIGNE",
     qrOffline: "QR-CODE HORS LIGNE",
@@ -138,10 +123,7 @@ const TEXT = {
     confirmNo: "Non",
   },
   kz: {
-    qrTitle: "QR-код",
-    qrDesc: "Картаны ашу немесе сақтау үшін сканерлеңіз.",
     scanBtn: "QR-КОДТЫ СКАНЕРЛЕУ",
-    shareTitle: "МЕНІҢ КАРТАМДЫ БӨЛІСУ",
     addBtn: "МЕНІ БАЙЛАНЫС ТІЗІМІНЕ ҚОСУ",
     qrOnline: "ОНЛАЙՆ QR-КОД",
     qrOffline: "ОФФЛАЙН QR-КОД",
@@ -153,10 +135,7 @@ const TEXT = {
     confirmNo: "Жоқ",
   },
   chn: {
-    qrTitle: "二维码",
-    qrDesc: "扫描以打开或保存名片。",
     scanBtn: "扫描二维码",
-    shareTitle: "分享我的名片",
     addBtn: "添加到通讯录",
     qrOnline: "在线二维码",
     qrOffline: "离线二维码",
@@ -171,10 +150,7 @@ const TEXT = {
   /* ---------- NEW LANGUAGES ---------- */
 
   de: {
-    qrTitle: "QR-Code",
-    qrDesc: "Scanne, um die Karte zu öffnen oder zu speichern.",
     scanBtn: "QR-CODE SCANNEN",
-    shareTitle: "MEINE KARTE TEILEN",
     addBtn: "ZU KONTAKTEN HINZUFÜGEN",
     qrOnline: "ONLINE QR-CODE",
     qrOffline: "OFFLINE QR-CODE",
@@ -186,10 +162,7 @@ const TEXT = {
     confirmNo: "Nein",
   },
   es: {
-    qrTitle: "Código QR",
-    qrDesc: "Escanea para abrir o guardar esta tarjeta.",
     scanBtn: "ESCANEAR CÓDIGO QR",
-    shareTitle: "COMPARTIR MI TARJETA",
     addBtn: "AÑADIR A CONTACTOS",
     qrOnline: "QR EN LÍNEA",
     qrOffline: "QR SIN CONEXIÓN",
@@ -201,10 +174,7 @@ const TEXT = {
     confirmNo: "No",
   },
   it: {
-    qrTitle: "Codice QR",
-    qrDesc: "Scansiona per aprire o salvare la carta.",
     scanBtn: "SCANSIONA QR",
-    shareTitle: "CONDIVIDI LA MIA CARD",
     addBtn: "AGGIUNGIMI AI CONTATTI",
     qrOnline: "QR-CODE ONLINE",
     qrOffline: "QR-CODE OFFLINE",
@@ -216,10 +186,7 @@ const TEXT = {
     confirmNo: "No",
   },
   fa: {
-    qrTitle: "کد QR",
-    qrDesc: "برای باز کردن یا ذخیره کارت اسکن کنید.",
     scanBtn: "اسکن کد QR",
-    shareTitle: "اشتراک‌گذاری کارت من",
     addBtn: "افزودن به مخاطبین",
     qrOnline: "کد QR آنلاین",
     qrOffline: "کد QR آفلاین",
