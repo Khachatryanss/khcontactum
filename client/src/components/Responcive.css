@@ -1372,6 +1372,7 @@
   font-size: calc(14px + 2px);
   color: #111;            /* մուգ */
   font-weight: 500;
+  width: 140px;
 }
 
 #companyNameColor label {
@@ -1389,6 +1390,7 @@
   font-size: calc(14px + 2px);
   color: #111;
   font-weight: 500;
+  width: 140px;
 }
 
 #descriptionColor label {
@@ -1406,6 +1408,7 @@
   font-size: calc(14px + 2px);
   color: #111;
   font-weight: 500;
+  width: 140px;
 }
 
 #selectOurBackground label {
