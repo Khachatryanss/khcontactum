@@ -343,3 +343,22 @@
   position: static;
   bottom: auto;
 }
+
+/* ===============================
+   BRAND INFO TAB — worker-row padding off
+   =============================== */
+
+/* 1) remove padding միայն worker-row.card-ի համար */
+.phone .admin-scroll-root .admin-workers .worker-row.card{
+  padding: 0;
+}
+
+/* 2) եթե padding-ը հանելուց հետո content-ը շատ կպչի եզրերին,
+      padding-ը տեղափոխում ենք ներսի սյունակներին */
+.phone .admin-scroll-root .admin-workers .worker-row.card .worker-left{
+  padding: 12px 0 12px 12px;
+}
+
+.phone .admin-scroll-root .admin-workers .worker-row.card .worker-main{
+  padding: 12px 12px 12px 0;
+}
