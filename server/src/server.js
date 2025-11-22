@@ -16,6 +16,9 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { pool } from "./db.js";
 
+import manifestRouter from "./routes/manifest.js";
+
+
 const app = express();
 const PORT = process.env.PORT || 5050;
 
@@ -78,6 +81,9 @@ app.use(
     contentSecurityPolicy: false, // dev-ում անջատված; production-ում կարող ես խստացնել
   })
 );
+
+app.use(manifestRouter);
+
 
 /* ================== CORS ================== */
 
