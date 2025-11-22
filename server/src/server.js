@@ -17,6 +17,7 @@ import { fileURLToPath } from "url";
 import { pool } from "./db.js";
 
 import manifestRouter from "./routes/manifest.js";
+import avatarIconRouter from "./routes/avatarIcon.js";
 
 
 const app = express();
@@ -83,6 +84,8 @@ app.use(
 );
 
 app.use(manifestRouter);
+app.use(avatarIconRouter);
+
 
 
 /* ================== CORS ================== */
