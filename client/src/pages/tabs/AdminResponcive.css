@@ -319,3 +319,27 @@
   border: 1px solid #d0d0d0 !important;
   color: #111 !important;
 }
+
+
+/* ===============================
+   BRANDS TAB — REMOVE ALL STICKY
+   =============================== */
+
+/* 1) Remove sticky for rows inside BrandsTab card blocks */
+.phone .admin-brands .card > .row,
+.phone .admin-brands .brand-row.card > .row,
+.phone .panel.controls.card > .row {
+  position: relative;
+  top: 0;
+  z-index: 1;
+  background: transparent;
+  padding: 0;
+  border-bottom: none;
+  box-shadow: none;
+}
+
+/* 2) Disable sticky footer only inside BrandsTab */
+.phone .admin-scroll-root .footer-actions-fixed {
+  position: static;
+  bottom: auto;
+}
