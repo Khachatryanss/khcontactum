@@ -319,8 +319,3 @@
   border: 1px solid #d0d0d0 !important;
   color: #111 !important;
 }
-
-/* BODY CONTENT MARGIN TOP */
-.phone .card > *:not(.row):first-of-type {
-  margin-top: 50px !important;
-}
