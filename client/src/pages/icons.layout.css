@@ -40,7 +40,8 @@
 
 /* ===================== Dzev-1 (OLD GRID LOOK) — supports 1..4 cols ===================== */
 .grid {
-  --size: calc(70px * var(--icons-scale, 1));
+  /* ✅ updated: base size ~65px */
+  --size: calc(65px * var(--icons-scale, 1));
   display: grid;
   grid-template-columns: repeat(var(--icons-cols, 4), minmax(0, 1fr));
   justify-items: center;
@@ -60,30 +61,39 @@
   gap: 8px;
 }
 
-/* dzev1 icon chip — background-ը գալիս է var(--icons-chip-bg) */
+/* ✅ UPDATED dzev1 icon chip — like dzev4 soft rounded square */
 .grid .icon-btn {
   position: relative;
   overflow: hidden;
-  transition: transform 0.4s ease;
+  transition: transform 0.15s ease;
   width: var(--size);
   height: var(--size);
-  border-radius: 20px;
-  background: var(--icons-chip-bg, #372e21);
+  border-radius: 18px;
+
+  background:
+    radial-gradient(120% 120% at 30% 15%, rgba(255,255,255,.30), transparent 55%),
+    var(--icons-chip-bg, #2f2f2f);
+
   color: #fff;
-  display: grid;
-  place-items: center;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow:
+    inset 0 2px 6px rgba(255,255,255,.45),
+    0 10px 20px rgba(0,0,0,.4);
+
   border: none;
   cursor: pointer;
 }
 
 .grid .icon-btn i {
   color: #fff;
-  font-size: calc(30px * var(--icons-scale, 1));
+  font-size: calc(26px * var(--icons-scale, 1));
   line-height: 1;
 }
 .grid .icon-emoji {
-  font-size: calc(30px * var(--icons-scale, 1));
+  font-size: calc(26px * var(--icons-scale, 1));
   line-height: 1;
 }
 
@@ -95,11 +105,11 @@
   word-break: break-word;
 }
 
-.grid .icon-btn:hover { transform: scale(1.05); }
-.grid .icon-btn:hover i { opacity: .9; }
+.grid .icon-btn:hover { transform: scale(1.06); }
+.grid .icon-btn:hover i { opacity: .95; }
 
 @media (max-width: 560px) {
-  .grid { --size: calc(60px * var(--icons-scale, 1)); gap: 14px 10px; }
+  .grid { --size: calc(58px * var(--icons-scale, 1)); gap: 14px 10px; }
 }
 
 /* ================ Dzev-2 — circular neumorphic (columns supported) ================ */
@@ -246,10 +256,10 @@
 /* Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .grid .icon-btn,
-  .icons-dzev2 .icon-btn { transition: none !important; }
+  .icons-dzev2 .icon-btn { transition: none; }
   .grid .icon-btn:hover,
   .icons-dzev2 .icon-btn:hover,
-  .icons-dzev2 .icon-btn:active { transform: none !important; }
+  .icons-dzev2 .icon-btn:active { transform: none; }
 }
 
 /* Responsive (icons’ own tweaks) */
@@ -267,60 +277,48 @@
 
 /* ===================== SIZE AUTO-SCALE BY COLUMN COUNT ===================== */
 /* 4 cols – default */
-.grid[style*="--icons-cols: 4"] .icon-btn,
+.grid[style*="--icons-cols: 4"] .icon-btn { --btn-size: calc(65px * var(--icons-scale, 1)); }
 .icons-dzev2[style*="--icons-cols: 4"] .icon-btn,
-.icons-dzev3[style*="--icons-cols: 4"] .icon-btn {
-  --btn-size: calc(70px * var(--icons-scale, 1));
-}
+.icons-dzev3[style*="--icons-cols: 4"] .icon-btn { --btn-size: calc(70px * var(--icons-scale, 1)); }
+
 .grid[style*="--icons-cols: 4"] .label,
 .icons-dzev2[style*="--icons-cols: 4"] .label,
-.icons-dzev3[style*="--icons-cols: 4"] .label {
-  --label-size: calc(12px * var(--icons-scale, 1));
-}
+.icons-dzev3[style*="--icons-cols: 4"] .label { --label-size: calc(12px * var(--icons-scale, 1)); }
 
 /* 3 cols – մի փոքր ավելի մեծ */
-.grid[style*="--icons-cols: 3"] .icon-btn,
+.grid[style*="--icons-cols: 3"] .icon-btn { --btn-size: calc(73px * var(--icons-scale, 1)); }
 .icons-dzev2[style*="--icons-cols: 3"] .icon-btn,
-.icons-dzev3[style*="--icons-cols: 3"] .icon-btn {
-  --btn-size: calc(78px * var(--icons-scale, 1));
-}
+.icons-dzev3[style*="--icons-cols: 3"] .icon-btn { --btn-size: calc(78px * var(--icons-scale, 1)); }
+
 .grid[style*="--icons-cols: 3"] .label,
 .icons-dzev2[style*="--icons-cols: 3"] .label,
-.icons-dzev3[style*="--icons-cols: 3"] .label {
-  --label-size: calc(13px * var(--icons-scale, 1));
-}
+.icons-dzev3[style*="--icons-cols: 3"] .label { --label-size: calc(13px * var(--icons-scale, 1)); }
 
 /* 2 cols – էլի մեծացնենք */
-.grid[style*="--icons-cols: 2"] .icon-btn,
+.grid[style*="--icons-cols: 2"] .icon-btn { --btn-size: calc(85px * var(--icons-scale, 1)); }
 .icons-dzev2[style*="--icons-cols: 2"] .icon-btn,
-.icons-dzev3[style*="--icons-cols: 2"] .icon-btn {
-  --btn-size: calc(90px * var(--icons-scale, 1));
-}
+.icons-dzev3[style*="--icons-cols: 2"] .icon-btn { --btn-size: calc(90px * var(--icons-scale, 1)); }
+
 .grid[style*="--icons-cols: 2"] .label,
 .icons-dzev2[style*="--icons-cols: 2"] .label,
-.icons-dzev3[style*="--icons-cols: 2"] .label {
-  --label-size: calc(14px * var(--icons-scale, 1));
-}
+.icons-dzev3[style*="--icons-cols: 2"] .label { --label-size: calc(14px * var(--icons-scale, 1)); }
 
 /* 1 col – row layout + ամենամեծ չափերը */
 .grid[style*="--icons-cols: 1"],
 .icons-dzev2[style*="--icons-cols: 1"],
 .icons-dzev3[style*="--icons-cols: 1"] {
-  display: flex !important;
+  display: flex;
   flex-direction: column;
   gap: 14px;
   padding: 10px 8px 16px;
 }
 .grid[style*="--icons-cols: 1"] .icon-btn,
 .icons-dzev2[style*="--icons-cols: 1"] .icon-btn,
-.icons-dzev3[style*="--icons-cols: 1"] .icon-btn {
-  --btn-size: calc(58px * var(--icons-scale, 1));
-}
+.icons-dzev3[style*="--icons-cols: 1"] .icon-btn { --btn-size: calc(58px * var(--icons-scale, 1)); }
+
 .grid[style*="--icons-cols: 1"] .label,
 .icons-dzev2[style*="--icons-cols: 1"] .label,
-.icons-dzev3[style*="--icons-cols: 1"] .label {
-  --label-size: calc(16px * var(--icons-scale, 1));
-}
+.icons-dzev3[style*="--icons-cols: 1"] .label { --label-size: calc(16px * var(--icons-scale, 1)); }
 
 /* = base sizes fallbacks = */
 .grid .icon-btn,
@@ -331,9 +329,7 @@
 }
 .grid .label,
 .icons-dzev2 .label,
-.icons-dzev3 .label {
-  font-size: var(--label-size, calc(12px * var(--icons-scale, 1)));
-}
+.icons-dzev3 .label { font-size: var(--label-size, calc(12px * var(--icons-scale, 1))); }
 
 /* ===================== SINGLE-COLUMN ROW CARD LOOK ===================== */
 .grid[style*="--icons-cols: 1"] a,
@@ -367,7 +363,7 @@
   transform: none;
 }
 .icons-dzev3[style*="--icons-cols: 1"] .icon-btn > * {
-  transform: none !important;
+  transform: none;
 }
 
 /* hover card feedback */
@@ -396,15 +392,9 @@
 }
 
 /* 🔽 Global responsive scale dzev1/2/3 համար 🔽 */
-@media (max-width: 360px) {
-  :root { --icons-scale: 0.9; }
-}
-@media (max-width: 320px) {
-  :root { --icons-scale: 0.8; }
-}
-@media (max-width: 280px) {
-  :root { --icons-scale: 0.7; }
-}
+@media (max-width: 360px) { :root { --icons-scale: 0.9; } }
+@media (max-width: 320px) { :root { --icons-scale: 0.8; } }
+@media (max-width: 280px) { :root { --icons-scale: 0.7; } }
 
 /* ============== Dzev-4 — 2D circular orbit, always centered ============== */
 .icons-dzev4 {
@@ -463,22 +453,16 @@
 }
 
 /* orbit layout-ում label-ները չենք ցուցադրում */
-.icons-dzev4 .label{
-  display: none;
-}
+.icons-dzev4 .label{ display: none; }
 
 /* smaller screens */
 @media (max-width: 480px){
-  .icons-дzev4{
-    max-width: 300px;
-  }
+  .icons-dzev4{ max-width: 300px; }
 }
 
 /* Extra small phones (<= 360px) */
 @media (max-width: 360px) {
-  .icons-dzev4{
-    max-width: 260px;
-  }
+  .icons-dzev4{ max-width: 260px; }
 }
 
 /* ========================== NEW: responsive labels 11.5px ========================== */
@@ -486,11 +470,10 @@
   .grid .label,
   .icons-dzev2 .label,
   .icons-dzev3 .label {
-    font-size: 11.5px !important;
+    font-size: 11.5px;
     line-height: 1.2;
   }
 }
-
 
 /* =================== ADMIN ICON COLOR OVERRIDE (ADD ONLY) =================== */
 :root{
@@ -501,5 +484,5 @@
 .icons-dzev2 .icon-btn i,
 .icons-dzev3 .icon-btn i,
 .icons-dzev4 .icon-btn i{
-  color: var(--icons-icon-color, #fff) !important;
+  color: var(--icons-icon-color, #fff);
 }
