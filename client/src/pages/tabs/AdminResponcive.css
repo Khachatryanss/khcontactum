@@ -287,6 +287,40 @@
   .mb-4 {
     align-items: center;
   }
-  
+}
 
+/* ==== FIXED ADMIN HEADER ONLY INSIDE PHONE SHELL ==== */
+.phone .card > .row {
+  position: sticky;       /* fixed-անման, բայց PhoneShell-ի մեջ ճիշտ է աշխատում */
+  top: 0;
+  z-index: 999;
+  background: #ffffff;    /* սպիտակ ֆոն */
+  padding: 12px 4px;
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+/* վերնագրի տեքստ slightly darker + bigger */
+.phone .card > .row h2 {
+  color: #111;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* լեզվի selector + menu icon area */
+.phone .card > .row select {
+  background: #fff;
+  border: 1px solid #d0d0d0;
+  color: #111;
+}
+
+.phone .card > .row .btn-ghost {
+  background: #fff !important;
+  border: 1px solid #d0d0d0 !important;
+  color: #111 !important;
+}
+
+/* BODY CONTENT MARGIN TOP */
+.phone .card > *:not(.row):first-of-type {
+  margin-top: 50px !important;
 }
