@@ -408,3 +408,13 @@
 .password-tab-root #passwordText {
   margin-bottom: 4px;
 }
+
+#passwordText {
+  font-size: 12px;
+  line-height: 1.1;
+  padding: 0;
+  margin: 0 0 4px 0 !important;
+  height: 14px;    /* 👈 սա է height-ը փոքրացնող մասը */
+  display: flex;
+  align-items: center;
+}
