@@ -415,22 +415,25 @@ export default function HomePage({ cardId = "101" }) {
         "Add to Home Screen" պահին
   ----------------------------------------- */
   try {
-    const sizes = [180, 167, 152]; // iPhone/iPad icon sizes
+  const iosIcons = [
+    { size: 180, href: "/icon-180.png" },
+    { size: 167, href: "/icon-180.png" },
+    { size: 152, href: "/icon-180.png" },
+  ];
 
-    sizes.forEach((sz) => {
-      let l = document.querySelector(
-        `link[rel="apple-touch-icon"][sizes="${sz}x${sz}"]`
-      );
-      if (!l) {
-        l = document.createElement("link");
-        l.setAttribute("rel", "apple-touch-icon");
-        l.setAttribute("sizes", `${sz}x${sz}`);
-        document.head.appendChild(l);
-      }
-      // avatar → PNG → dynamic icon
-      l.setAttribute("href", `/avatar-icon/${cardId}/${sz}`);
-    });
-  } catch {}
+  iosIcons.forEach(({ size, href }) => {
+    let l = document.querySelector(
+      `link[rel="apple-touch-icon"][sizes="${size}x${size}"]`
+    );
+    if (!l) {
+      l = document.createElement("link");
+      l.setAttribute("rel", "apple-touch-icon");
+      l.setAttribute("sizes", `${size}x${size}`);
+      document.head.appendChild(l);
+    }
+    l.setAttribute("href", href);
+  });
+}catch {}
 
 }, [info, htmlLang, cardId]);
 
