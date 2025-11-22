@@ -64,6 +64,7 @@ function ensureAbsoluteUrl(u) {
 const TEXT = {
   am: {
     scanBtn: "Սկանավորել QR կոդը",
+    shareTitle: "Կիսվել իմ քարտով",
     addBtn: "ԱՎԵԼԱՑՐԵՔ ԻՆՁ ԿՈՆՏԱԿՏՆԵՐԻ ՑԱՆԿՈՒՄ",
     qrOnline: "ONLINE QR-CODE",
     qrOffline: "OFFLINE QR-CODE",
@@ -76,6 +77,7 @@ const TEXT = {
   },
   ru: {
     scanBtn: "СКАНИРОВАТЬ QR-КОД",
+    shareTitle: "ПОДЕЛИТЬСЯ МОЕЙ ВИЗИТКОЙ",
     addBtn: "ДОБАВИТЬ В КОНТАКТЫ",
     qrOnline: "ОНЛАЙН QR-КОД",
     qrOffline: "ОФЛАЙН QR-КОД",
@@ -88,6 +90,7 @@ const TEXT = {
   },
   en: {
     scanBtn: "SCAN QR CODE",
+    shareTitle: "SHARE MY CARD",
     addBtn: "ADD ME TO THE CONTACT LIST",
     qrOnline: "ONLINE QR-CODE",
     qrOffline: "OFFLINE QR-CODE",
@@ -100,6 +103,7 @@ const TEXT = {
   },
   ar: {
     scanBtn: "مسح رمز QR",
+    shareTitle: "مشاركة بطاقتي",
     addBtn: "إضافتي إلى قائمة جهات الاتصال",
     qrOnline: "رمز QR أونلاين · الرابط",
     qrOffline: "رمز QR أوفلاين",
@@ -112,6 +116,7 @@ const TEXT = {
   },
   fr: {
     scanBtn: "SCANNER LE QR CODE",
+    shareTitle: "PARTAGER MA CARTE",
     addBtn: "M’AJOUTER À LA LISTE DE CONTACTS",
     qrOnline: "QR-CODE EN LIGNE",
     qrOffline: "QR-CODE HORS LIGNE",
@@ -124,6 +129,7 @@ const TEXT = {
   },
   kz: {
     scanBtn: "QR-КОДТЫ СКАНЕРЛЕУ",
+    shareTitle: "МЕНІҢ КАРТАМДЫ БӨЛІСУ",
     addBtn: "МЕНІ БАЙЛАНЫС ТІЗІМІНЕ ҚОСУ",
     qrOnline: "ОНЛАЙՆ QR-КОД",
     qrOffline: "ОФФЛАЙН QR-КОД",
@@ -136,6 +142,7 @@ const TEXT = {
   },
   chn: {
     scanBtn: "扫描二维码",
+    shareTitle: "分享我的名片",
     addBtn: "添加到通讯录",
     qrOnline: "在线二维码",
     qrOffline: "离线二维码",
@@ -151,6 +158,7 @@ const TEXT = {
 
   de: {
     scanBtn: "QR-CODE SCANNEN",
+    shareTitle: "MEINE KARTE TEILEN",
     addBtn: "ZU KONTAKTEN HINZUFÜGEN",
     qrOnline: "ONLINE QR-CODE",
     qrOffline: "OFFLINE QR-CODE",
@@ -163,6 +171,7 @@ const TEXT = {
   },
   es: {
     scanBtn: "ESCANEAR CÓDIGO QR",
+    shareTitle: "COMPARTIR MI TARJETA",
     addBtn: "AÑADIR A CONTACTOS",
     qrOnline: "QR EN LÍNEA",
     qrOffline: "QR SIN CONEXIÓN",
@@ -175,6 +184,7 @@ const TEXT = {
   },
   it: {
     scanBtn: "SCANSIONA QR",
+    shareTitle: "CONDIVIDI LA MIA CARD",
     addBtn: "AGGIUNGIMI AI CONTATTI",
     qrOnline: "QR-CODE ONLINE",
     qrOffline: "QR-CODE OFFLINE",
@@ -187,6 +197,7 @@ const TEXT = {
   },
   fa: {
     scanBtn: "اسکن کد QR",
+    shareTitle: "اشتراک‌گذاری کارت من",
     addBtn: "افزودن به مخاطبین",
     qrOnline: "کد QR آنلاین",
     qrOffline: "کد QR آفلاین",
