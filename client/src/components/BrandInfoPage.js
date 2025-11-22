@@ -238,20 +238,21 @@ function WorkerCard({ item, lang }) {
     }, name || "—"),
 
     /* նկարագրություն */
-    desc && h("div", {
-      style:{
-        margin:"0 auto 14px",
-        maxWidth:320,
-        padding:"10px 12px",
-        borderRadius:14,
-        background: bioBgColor,
-        color: bioColor,
-        fontSize:14,
-        lineHeight:1.5,
-        textAlign:"left",
-        whiteSpace:"pre-line" // line breaks still ok
-      }
-    }, descNodes),
+   desc && h("div", {
+  style:{
+    margin:"0 auto 14px",
+    maxWidth:320,
+    padding:"10px 12px",
+    borderRadius:14,
+    background: bioBgColor,
+    color: bioColor,
+    fontSize:14,
+    lineHeight:1.5,
+    textAlign:"left",
+    whiteSpace:"pre-wrap",   // ✅ պահում է բոլոր probelner@ (spaces)
+    wordBreak:"break-word"
+  }
+}, descNodes),
 
     /* slider */
     hasSlides && h("div", {
