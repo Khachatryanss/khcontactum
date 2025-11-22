@@ -1355,6 +1355,7 @@
 #selectOurBackground ~ .block .color-hex-input{
   flex:1;
   min-width:0;
+  width: 120px;
 }
 
 .public-home #selectOurBackground + .block .color-picker,
@@ -1421,5 +1422,4 @@
 #selectOurBackground .input {
   font-size: calc(14px + 2px);
   color: #111;
-  width: 120px;
 }
