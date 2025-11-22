@@ -212,7 +212,7 @@ const BRANDS_UI_TEXT = {
     uploadFailed: "Жүктеу сәтсіз аяқталды",
     loadFailed: "Жүктеу сәтсіз аяқталды",
     savedOk: "Сақталды ✅",
-    saveFailed: "Сақтау сәтсіз ավարտалды",
+    saveFailed: "Сақтау сәтсіз аяқталды",
   },
 
   // 🇨🇳 Chinese
@@ -384,6 +384,19 @@ function I18nRow({ brandId, label, value, onChange, langs }) {
   );
 }
 
+/* ---------- move helper (reorder) ---------- */
+function moveById(list, id, dir) {
+  const i = list.findIndex((x) => x.id === id);
+  if (i < 0) return list;
+  const j = i + dir;
+  if (j < 0 || j >= list.length) return list;
+  const next = list.slice();
+  const tmp = next[i];
+  next[i] = next[j];
+  next[j] = tmp;
+  return next;
+}
+
 /* ---------- component ---------- */
 export default function BrandsTab({ langs, uiLang = "am" }) {
   const token =
@@ -518,17 +531,9 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
   const delBrand = (id) =>
     setBrands((list) => list.filter((b) => b.id !== id));
 
-  // ✅ NEW: reorder helper (վերև/ներքև սլաքներ)
-  const moveBrand = (index, dir) => {
-    setBrands((list) => {
-      const next = [...list];
-      const j = index + dir;
-      if (j < 0 || j >= next.length) return list;
-      const tmp = next[index];
-      next[index] = next[j];
-      next[j] = tmp;
-      return next;
-    });
+  // ✅ REORDER buttons handler
+  const moveBrand = (id, dir) => {
+    setBrands((list) => moveById(list, id, dir));
   };
 
   const uploadBrandLogo =
@@ -583,7 +588,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       }));
 
       const next = { ...(baseInfo || {}) };
-      next.brands = cleanBrands; // ✅ order-ով պահվումա
+      next.brands = cleanBrands;
       next.brandsTitleColor = titleColor || "#000000";
       next.brandsNameColor = nameColor || "#000000";
       next.brandsTitleText = trimI18nObj(titleTextI18n);
@@ -715,52 +720,54 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           "div",
           { key: b.id, className: "brand-row card" },
 
-          // ✅ NEW: order arrows column
+          // ✅ LEFT side: logo + reorder buttons (as in screenshot)
           h(
             "div",
-            { className: "brand-order-col" },
+            { className: "brand-left" },
             h(
-              "button",
-              {
-                type: "button",
-                className: "order-btn",
-                onClick: () => moveBrand(index, -1),
-                disabled: index === 0,
-                "aria-label": "Move up",
-                title: "Up",
-              },
-              "▲"
+              "div",
+              { className: "brand-logo" },
+              b.logo
+                ? h("img", {
+                    src: absPreview(b.logo),
+                    alt: b.name?.am || "logo",
+                  })
+                : h(
+                    "span",
+                    { className: "brand-initials" },
+                    (b.name?.am || "?")
+                      .slice(0, 2)
+                      .toUpperCase()
+                  )
             ),
             h(
-              "button",
-              {
-                type: "button",
-                className: "order-btn",
-                onClick: () => moveBrand(index, +1),
-                disabled: index === brands.length - 1,
-                "aria-label": "Move down",
-                title: "Down",
-              },
-              "▼"
+              "div",
+              { className: "order-controls" },
+              h(
+                "button",
+                {
+                  type: "button",
+                  className: "order-btn up",
+                  onClick: () => moveBrand(b.id, -1),
+                  disabled: index === 0,
+                  title: "Move up",
+                },
+                "↑"
+              ),
+              h(
+                "button",
+                {
+                  type: "button",
+                  className: "order-btn down",
+                  onClick: () => moveBrand(b.id, +1),
+                  disabled: index === brands.length - 1,
+                  title: "Move down",
+                },
+                "↓"
+              )
             )
           ),
 
-          h(
-            "div",
-            { className: "brand-logo" },
-            b.logo
-              ? h("img", {
-                  src: absPreview(b.logo),
-                  alt: b.name?.am || "logo",
-                })
-              : h(
-                  "span",
-                  { className: "brand-initials" },
-                  (b.name?.am || "?")
-                    .slice(0, 2)
-                    .toUpperCase()
-                )
-          ),
           h(
             "div",
             { className: "brand-main" },
@@ -973,47 +980,26 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         border:1px solid #ececec;
         border-radius:16px;
         padding:12px;
-        position:relative;
       }
 
-      /* ✅ NEW: order arrows style */
-      .brand-order-col{
-        position:absolute;
-        top:10px;
-        right:10px;
-        display:flex;
-        flex-direction:column;
-        gap:6px;
-        z-index:2;
-      }
-      .order-btn{
-        width:32px;
-        height:28px;
-        border-radius:8px;
-        border:1px solid #e6e6e6;
-        background:#fff;
-        font-size:14px;
-        font-weight:800;
-        line-height:1;
-        cursor:pointer;
-        box-shadow:0 2px 6px rgba(0,0,0,.06);
-      }
-      .order-btn:hover{ transform:translateY(-1px); }
-      .order-btn:disabled{
-        opacity:.35;
-        cursor:default;
-        transform:none;
-        box-shadow:none;
-      }
-
+      /* ✅ NEW LEFT COLUMN (logo + order buttons) */
       .brand-row{
         display:grid;
-        grid-template-columns:84px 1fr;
+        grid-template-columns:110px 1fr;
         gap:12px;
+        align-items:start;
       }
       @media (max-width:520px){
-        .brand-row{ grid-template-columns:64px 1fr; }
+        .brand-row{ grid-template-columns:92px 1fr; }
       }
+
+      .brand-left{
+        display:grid;
+        gap:8px;
+        align-content:start;
+        justify-items:start;
+      }
+
       .brand-logo{
         width:84px;
         height:84px;
@@ -1023,6 +1009,10 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         display:grid;
         place-items:center;
       }
+      @media (max-width:520px){
+        .brand-logo{ width:72px; height:72px; }
+      }
+
       .brand-logo img{
         width:100%;
         height:100%;
@@ -1032,6 +1022,37 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         color:#777;
         font-weight:700;
       }
+
+      /* ✅ Order controls like in your screenshot */
+      .order-controls{
+        display:grid;
+        gap:8px;
+        margin-left:4px;
+      }
+      .order-btn{
+        width:64px;
+        height:32px;
+        border-radius:10px;
+        border:none;
+        cursor:pointer;
+        font-weight:800;
+        color:#111;
+        background:#d9d9d9;
+        box-shadow:0 6px 14px rgba(0,0,0,.10);
+        transition:transform .12s ease, opacity .12s ease;
+      }
+      .order-btn.down{
+        background:#111;
+        color:#fff;
+        box-shadow:0 8px 18px rgba(0,0,0,.18);
+      }
+      .order-btn:active{ transform:scale(.98); }
+      .order-btn:disabled{
+        opacity:.35;
+        cursor:not-allowed;
+        transform:none;
+      }
+
       .brand-main{
         display:grid;
         gap:8px;
