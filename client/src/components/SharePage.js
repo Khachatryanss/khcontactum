@@ -151,7 +151,7 @@ const TEXT = {
   },
 };
 
-/* ✅ ՆՈՐ — Confirmed share context (7 լեզու) */
+/* ✅ Քո տված կոնտեքստը (7 լեզու) */
 const SHARE_CONTEXT = {
   am:  "Իմ թվային բիզնես քարտը՝ ստեղծված KHContactum.com հարթակում։",
   ru:  "Моя цифровая визитка, созданная на платформе KHContactum.com.",
@@ -476,6 +476,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
     [info, offlinePhone, activeLangRaw, onlineUrl]
   );
 
+  // === Քո/սերվերից եկած հիմնական shareText ===
   const baseShareText = (() => {
     const raw = share.shareText;
     if (raw && typeof raw === "object") {
@@ -488,20 +489,22 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
     return t.shareDefault;
   })();
 
-  // ✅ ՆՈՐ — վերջնական shareText՝ context + link + baseText
+  // ✅ Քո կոնտեքստը ըստ լեզվի
   const contextLine =
     SHARE_CONTEXT[textLangKey] || SHARE_CONTEXT.am;
 
-  const shareText =
-    [baseShareText, onlineUrl, contextLine]
-      .filter(Boolean)
-      .join("\n");
+  // ✅ Վերջնական message — ՍԱ Է ԳՆՈՒՄ ԲՈԼՈՐ SHARE-ԵՐԻ ՄԵՋ
+  const finalShareMessage = [
+    baseShareText,
+    onlineUrl,
+    contextLine
+  ].filter(Boolean).join("\n");
 
   const btnTextColor    = share.styles.btnTextColor    || "#ffffff";
   const btnBgColor      = share.styles.btnBgColor      || "#000000";
   const shareTitleColor = share.styles.shareTitleColor || "#000000";
 
-  // ✅ ՆՈՐ ընդհանուր share handler – navigator.share → fallback
+  // ✅ Universal share handler – բացում է համակարգային share sheet-ը
   function onShareUniversal() {
     const url =
       onlineUrl ||
@@ -514,7 +517,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
 
     const payload = {
       title,
-      text: shareText,   // ✅ հիմա արդեն կոնտեքստով
+      text: finalShareMessage, // ✅ կոնտեքստ + link + base text
       url,
     };
 
@@ -523,14 +526,14 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
       return;
     }
 
-    // fallback copy — հիմա copy անում ենք ամբողջ տեքստը
+    // fallback copy — copy ենք անում ամբողջ message-ը
     if (
       typeof navigator !== "undefined" &&
       navigator.clipboard &&
       typeof window !== "undefined" &&
       window.isSecureContext
     ) {
-      navigator.clipboard.writeText(shareText).catch(() => {});
+      navigator.clipboard.writeText(finalShareMessage).catch(() => {});
       return;
     }
 
