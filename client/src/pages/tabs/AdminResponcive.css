@@ -362,3 +362,49 @@
 .phone .admin-scroll-root .admin-workers .worker-row.card .worker-main{
   padding: 12px 12px 12px 0;
 }
+
+
+/* ==========================
+   PASSWORD TAB — UNIC STYLING
+   ========================== */
+
+.password-tab-root {
+  width: 100%;
+  display: grid;
+  gap: 14px;
+
+  /* 🔥 remove inherited card styles */
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* input row ֆիքս */
+.password-tab-root label {
+  display: block;
+  margin-bottom: 14px;
+}
+
+/* titles */
+.password-tab-root h2.company-title {
+  margin-top: 0 !important;
+}
+
+/* eye button spacing */
+.password-tab-root .btn-ghost {
+  margin-left: 6px !important;
+}
+
+/* input container row */
+.password-tab-root input.input {
+  flex: 1;
+}
+
+/* requirements list */
+.password-tab-root #passwordText {
+  margin-bottom: 4px;
+}

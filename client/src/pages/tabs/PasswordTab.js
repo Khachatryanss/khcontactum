@@ -203,13 +203,13 @@ const PW_UI_TEXT = {
     savingButton: "Сақталуда...",
 
     hint:
-      "Ескерту: Сервер ескі құпиясөзді тексереді және жаңа құпиясөз басқа админде қолданылып жатса, оны қабылдамайды.",
+      "Ескерту: Сервер ескі құпиясөзді тексереді және жаңа құпияսөз басқа админде қолданылып жатса, оны қабылдамайды.",
 
     toastNoToken: "Token жоқ",
-    toastSuccess: "Құпиясөз сәтті өзгертілді ✅",
-    toastWrongOld: "Ескі құпиясөз қате енгізілді",
-    toastInUse: "Бұл құпиясөз басқа админде қолданылып жатыр",
-    toastRoute404: "Սерверде құпиясөзді өзгерту маршруты табылмады",
+    toastSuccess: "Құпияսөз сәтті өзгертілді ✅",
+    toastWrongOld: "Ескі құпияսөз қате енгізілді",
+    toastInUse: "Бұл құпияսөз басқа админде қолданылып жатыр",
+    toastRoute404: "Սерверде құպияսөзը փոխելու маршруты табիլմադի",
   },
 
   // 🇨🇳 Chinese (Simplified)
@@ -250,15 +250,12 @@ const PW_UI_TEXT = {
   // ✅ NEW langs — EN fallback until translations are added
   de: {
     title: "Change password",
-
     oldLabel: "Current password",
     newLabel: "New password",
     repeatLabel: "Repeat new password",
-
     oldPlaceholder: "Current password",
     newPlaceholder: "New password",
     repeatPlaceholder: "Repeat new password",
-
     reqTitle: "Requirements:",
     reqLen: "At least 8 characters",
     reqLow: "Lowercase letter",
@@ -266,15 +263,11 @@ const PW_UI_TEXT = {
     reqNum: "Number",
     reqSym: "Symbol (., !, @, # …)",
     reqDiffOld: "Do not repeat the old password",
-
     mismatch: "Passwords do not match",
-
     saveButton: "Save",
     savingButton: "Saving...",
-
     hint:
       "Hint: The server checks your current password and will reject the new one if it is already used by another admin.",
-
     toastNoToken: "No token",
     toastSuccess: "Password changed ✅",
     toastWrongOld: "The current password is incorrect",
@@ -284,15 +277,12 @@ const PW_UI_TEXT = {
 
   es: {
     title: "Change password",
-
     oldLabel: "Current password",
     newLabel: "New password",
     repeatLabel: "Repeat new password",
-
     oldPlaceholder: "Current password",
     newPlaceholder: "New password",
     repeatPlaceholder: "Repeat new password",
-
     reqTitle: "Requirements:",
     reqLen: "At least 8 characters",
     reqLow: "Lowercase letter",
@@ -300,15 +290,11 @@ const PW_UI_TEXT = {
     reqNum: "Number",
     reqSym: "Symbol (., !, @, # …)",
     reqDiffOld: "Do not repeat the old password",
-
     mismatch: "Passwords do not match",
-
     saveButton: "Save",
     savingButton: "Saving...",
-
     hint:
       "Hint: The server checks your current password and will reject the new one if it is already used by another admin.",
-
     toastNoToken: "No token",
     toastSuccess: "Password changed ✅",
     toastWrongOld: "The current password is incorrect",
@@ -318,15 +304,12 @@ const PW_UI_TEXT = {
 
   it: {
     title: "Change password",
-
     oldLabel: "Current password",
     newLabel: "New password",
     repeatLabel: "Repeat new password",
-
     oldPlaceholder: "Current password",
     newPlaceholder: "New password",
     repeatPlaceholder: "Repeat new password",
-
     reqTitle: "Requirements:",
     reqLen: "At least 8 characters",
     reqLow: "Lowercase letter",
@@ -334,15 +317,11 @@ const PW_UI_TEXT = {
     reqNum: "Number",
     reqSym: "Symbol (., !, @, # …)",
     reqDiffOld: "Do not repeat the old password",
-
     mismatch: "Passwords do not match",
-
     saveButton: "Save",
     savingButton: "Saving...",
-
     hint:
       "Hint: The server checks your current password and will reject the new one if it is already used by another admin.",
-
     toastNoToken: "No token",
     toastSuccess: "Password changed ✅",
     toastWrongOld: "The current password is incorrect",
@@ -352,15 +331,12 @@ const PW_UI_TEXT = {
 
   fa: {
     title: "Change password",
-
     oldLabel: "Current password",
     newLabel: "New password",
     repeatLabel: "Repeat new password",
-
     oldPlaceholder: "Current password",
     newPlaceholder: "New password",
     repeatPlaceholder: "Repeat new password",
-
     reqTitle: "Requirements:",
     reqLen: "At least 8 characters",
     reqLow: "Lowercase letter",
@@ -368,15 +344,11 @@ const PW_UI_TEXT = {
     reqNum: "Number",
     reqSym: "Symbol (., !, @, # …)",
     reqDiffOld: "Do not repeat the old password",
-
     mismatch: "Passwords do not match",
-
     saveButton: "Save",
     savingButton: "Saving...",
-
     hint:
       "Hint: The server checks your current password and will reject the new one if it is already used by another admin.",
-
     toastNoToken: "No token",
     toastSuccess: "Password changed ✅",
     toastWrongOld: "The current password is incorrect",
@@ -384,7 +356,6 @@ const PW_UI_TEXT = {
     toastRoute404: "Password change route not found on the server",
   },
 };
-
 
 /* ---------- COMPONENT ---------- */
 export default function PasswordTab({ token: propToken, uiLang = "en" }) {
@@ -504,11 +475,14 @@ export default function PasswordTab({ token: propToken, uiLang = "en" }) {
 
   return h(
     "div",
-    { className: "card", style: { display: "grid", gap: 10 }, id: "p" },
+    {
+      className: "password-tab-root", // ✅ UNIC root (card class removed)
+      id: "p",
+    },
 
     h(
       "h2",
-      { className: "company-title", style: { marginTop: 8 } },
+      { className: "company-title", style: { marginTop: 0 } },
       T.title
     ),
 
@@ -596,11 +570,11 @@ export default function PasswordTab({ token: propToken, uiLang = "en" }) {
         vals.p2.length > 0 &&
         h(
           "div",
-            {
-              className: "small",
-              style: { color: "#a00000", marginTop: 4 },
-            },
-            T.mismatch
+          {
+            className: "small",
+            style: { color: "#a00000", marginTop: 4 },
+          },
+          T.mismatch
         )
     ),
 
