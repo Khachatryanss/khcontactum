@@ -1384,6 +1384,7 @@
 #companyNameColor .input {
   font-size: calc(14px + 2px);
   color: #111;
+  width: 120px;
 }
 
 #descriptionColor .text-sm {
@@ -1402,6 +1403,7 @@
 #descriptionColor .input {
   font-size: calc(14px + 2px);
   color: #111;
+  width: 120px;
 }
 
 #selectOurBackground .text-sm {
@@ -1419,4 +1421,5 @@
 #selectOurBackground .input {
   font-size: calc(14px + 2px);
   color: #111;
+  width: 120px;
 }
