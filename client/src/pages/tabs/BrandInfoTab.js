@@ -26,6 +26,7 @@ const BRANDINFO_TEXT = {
     savingButton: "Պահպանում…",
     loading: "Բեռնվում է…",
     avatarLabel: "Վերբեռնել",
+    avatarDeleteLabel: "Ջնջել լոգոն",          // ✅ NEW
     fileTypeError: "Ընդունվում է միայն նկար",
     uploadAvatarOk: "Avatar-ը վերբեռնվեց ✔",
     uploadImageOk: "Նկարը վերբեռնվեց ✔",
@@ -53,6 +54,7 @@ const BRANDINFO_TEXT = {
     savingButton: "Сохранение…",
     loading: "Загрузка…",
     avatarLabel: "Загрузить",
+    avatarDeleteLabel: "Удалить логотип",     // ✅ NEW
     fileTypeError: "Допускается только изображение",
     uploadAvatarOk: "Аватар загружен ✔",
     uploadImageOk: "Изображение загружено ✔",
@@ -80,6 +82,7 @@ const BRANDINFO_TEXT = {
     savingButton: "Saving…",
     loading: "Loading…",
     avatarLabel: "Upload",
+    avatarDeleteLabel: "Delete logo",         // ✅ NEW
     fileTypeError: "Only image files are allowed",
     uploadAvatarOk: "Avatar uploaded ✔",
     uploadImageOk: "Image uploaded ✔",
@@ -107,6 +110,7 @@ const BRANDINFO_TEXT = {
     savingButton: "جاري الحفظ…",
     loading: "جاري التحميل…",
     avatarLabel: "رفع",
+    avatarDeleteLabel: "حذف الشعار",          // ✅ NEW
     fileTypeError: "يُسمح بالصور فقط",
     uploadAvatarOk: "تم رفع الـ Avatar ✔",
     uploadImageOk: "تم رفع الصورة ✔",
@@ -135,6 +139,7 @@ const BRANDINFO_TEXT = {
     savingButton: "Enregistrement…",
     loading: "Chargement…",
     avatarLabel: "Téléverser",
+    avatarDeleteLabel: "Supprimer le logo",   // ✅ NEW
     fileTypeError: "Seule une image est acceptée",
     uploadAvatarOk: "Avatar téléversé ✔",
     uploadImageOk: "Image téléversée ✔",
@@ -164,6 +169,7 @@ const BRANDINFO_TEXT = {
     savingButton: "Сақталуда…",
     loading: "Жүктелуде…",
     avatarLabel: "Жүктеу",
+    avatarDeleteLabel: "Логотипті өшіру",     // ✅ NEW
     fileTypeError: "Тек сурет файлдарына рұқсат етіледі",
     uploadAvatarOk: "Аватар жүктелді ✔",
     uploadImageOk: "Сурет жүктелді ✔",
@@ -192,6 +198,7 @@ const BRANDINFO_TEXT = {
     savingButton: "正在保存…",
     loading: "正在加载…",
     avatarLabel: "上传",
+    avatarDeleteLabel: "删除 Logo",           // ✅ NEW
     fileTypeError: "仅允许上传图片文件",
     uploadAvatarOk: "头像已上传 ✔",
     uploadImageOk: "图片已上传 ✔",
@@ -413,6 +420,28 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
     setWorkers((list) => list.filter((w) => w.id !== id));
   }
 
+  // ✅ NEW: delete avatar/logo
+  function deleteWorkerAvatar(id) {
+    setWorkers((list) =>
+      list.map((w) => (w.id === id ? { ...w, avatar: "" } : w))
+    );
+  }
+
+  // ✅ NEW: reorder like BrandsTab (swap)
+  function moveWorker(id, dir) {
+    setWorkers((list) => {
+      const idx = list.findIndex((x) => x.id === id);
+      if (idx < 0) return list;
+      const j = idx + dir;
+      if (j < 0 || j >= list.length) return list;
+      const out = list.slice();
+      const tmp = out[idx];
+      out[idx] = out[j];
+      out[j] = tmp;
+      return out;
+    });
+  }
+
   /* ------ upload helpers ------ */
   function uploadWorkerAvatar(id, file) {
     return (async () => {
@@ -559,15 +588,16 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
     h(
       "div",
       { className: "admin-workers" },
-      workers.map((w) =>
+      workers.map((w, wi) =>
         h(
           "div",
           { key: w.id, className: "worker-row card" },
 
-          // avatar + upload overlay
+          // avatar + upload + delete + reorder
           h(
             "div",
             { className: "worker-avatar", id: "avatarUpload" },
+
             w.avatar
               ? h("img", { src: absPreview(w.avatar), alt: "worker" })
               : h(
@@ -577,23 +607,67 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
                     .slice(0, 2)
                     .toUpperCase()
                 ),
+
+            // ✅ NEW: reorder column (left side)
             h(
-              "label",
-              {
-                className: "btn pill btn-small avatar-upload",
-                id: "text",
-              },
-              T.avatarLabel,
-              h("input", {
-                type: "file",
-                accept: "image/*",
-                style: { display: "none" },
-                onChange: (e) => {
-                  const f = e.target.files && e.target.files[0];
-                  if (f) uploadWorkerAvatar(w.id, f);
-                  e.target.value = "";
+              "div",
+              { className: "reorder-col" },
+              h(
+                "button",
+                {
+                  type: "button",
+                  className: "reorder-btn up",
+                  disabled: wi === 0,
+                  onClick: () => moveWorker(w.id, -1),
                 },
-              })
+                "↑"
+              ),
+              h(
+                "button",
+                {
+                  type: "button",
+                  className: "reorder-btn down",
+                  disabled: wi === workers.length - 1,
+                  onClick: () => moveWorker(w.id, +1),
+                },
+                "↓"
+              )
+            ),
+
+            // ✅ NEW: bottom buttons (upload + delete)
+            h(
+              "div",
+              { className: "avatar-buttons" },
+
+              h(
+                "label",
+                {
+                  className: "btn pill btn-small avatar-upload",
+                  id: "text",
+                },
+                T.avatarLabel,
+                h("input", {
+                  type: "file",
+                  accept: "image/*",
+                  style: { display: "none" },
+                  onChange: (e) => {
+                    const f = e.target.files && e.target.files[0];
+                    if (f) uploadWorkerAvatar(w.id, f);
+                    e.target.value = "";
+                  },
+                })
+              ),
+
+              w.avatar &&
+                h(
+                  "button",
+                  {
+                    type: "button",
+                    className: "btn pill danger btn-small avatar-delete",
+                    onClick: () => deleteWorkerAvatar(w.id),
+                  },
+                  T.avatarDeleteLabel
+                )
             )
           ),
 
@@ -835,10 +909,24 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         ".admin-workers{display:flex;flex-direction:column;gap:12px;}",
         ".worker-row{display:grid;grid-template-columns:96px 1fr;gap:12px;}",
         "@media(max-width:520px){.worker-row{grid-template-columns:80px 1fr;}}",
+
+        // ✅ updated avatar layout
         ".worker-avatar{width:96px;height:96px;border-radius:16px;overflow:hidden;background:#f2f2f2;display:grid;place-items:center;position:relative;}",
         ".worker-avatar img{width:100%;height:100%;object-fit:cover;}",
         ".worker-avatar-initials{font-weight:700;color:#777;}",
-        ".avatar-upload{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);padding:6px 12px;font-size:11px;opacity:.95;cursor:pointer;}",
+
+        // ✅ NEW: bottom buttons container
+        ".avatar-buttons{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:6px;flex-wrap:wrap;justify-content:center;z-index:3;}",
+        ".avatar-upload{position:static;transform:none;padding:6px 10px;font-size:11px;opacity:.95;cursor:pointer;}",
+        ".avatar-delete{padding:6px 10px;font-size:11px;}",
+
+        // ✅ NEW: reorder column like BrandsTab
+        ".reorder-col{position:absolute;left:6px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:3;}",
+        ".reorder-btn{width:44px;height:28px;border-radius:10px;border:none;font-weight:800;cursor:pointer;}",
+        ".reorder-btn.up{background:#bdbdbd;color:#111;}",
+        ".reorder-btn.down{background:#111;color:#fff;}",
+        ".reorder-btn:disabled{opacity:.45;cursor:not-allowed;}",
+
         ".worker-main{display:grid;gap:8px;align-content:start;}",
         ".worker-gallery-row{display:flex;gap:8px;flex-wrap:wrap;}",
         ".gallery-slot{width:90px;height:54px;border-radius:10px;overflow:hidden;background:#f4f4f4;position:relative;display:grid;place-items:center;cursor:pointer;border:1px dashed #ccc;}",
