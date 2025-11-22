@@ -1367,3 +1367,53 @@
   background:transparent;
   cursor:pointer;
 }
+
+#companyNameColor .text-sm {
+  font-size: calc(14px + 2px);
+  color: #111;            /* մուգ */
+  font-weight: 500;
+}
+
+#companyNameColor label {
+  color: #111;            /* մուգ */
+  font-size: calc(14px + 2px);
+}
+
+#companyNameColor input[type="text"],
+#companyNameColor .input {
+  font-size: calc(14px + 2px);
+  color: #111;
+}
+
+#descriptionColor .text-sm {
+  font-size: calc(14px + 2px);
+  color: #111;
+  font-weight: 500;
+}
+
+#descriptionColor label {
+  font-size: calc(14px + 2px);
+  color: #111;
+}
+
+#descriptionColor input[type="text"],
+#descriptionColor .input {
+  font-size: calc(14px + 2px);
+  color: #111;
+}
+
+#selectOurBackground .text-sm {
+  font-size: calc(14px + 2px);
+  color: #111;
+  font-weight: 500;
+}
+
+#selectOurBackground label {
+  font-size: calc(14px + 2px);
+  color: #111;
+}
+
+#selectOurBackground .input {
+  font-size: calc(14px + 2px);
+  color: #111;
+}
