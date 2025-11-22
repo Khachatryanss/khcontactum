@@ -1297,3 +1297,73 @@
 
 
 
+/* ===== Company name color block ===== */
+#companyNameColor .color-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+#companyNameColor .color-hex-input{
+  flex:1;
+  min-width:0;
+}
+
+#companyNameColor .color-picker{
+  width:38px;
+  height:28px;
+  padding:0;
+  border:1px solid rgba(0,0,0,0.25);
+  border-radius:6px;
+  background:transparent;
+  cursor:pointer;
+}
+
+
+/* ===== Description color block ===== */
+#descriptionColor .color-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+#descriptionColor .color-hex-input{
+  flex:1;
+  min-width:0;
+}
+
+#descriptionColor .color-picker{
+  width:38px;
+  height:28px;
+  padding:0;
+  border:1px solid rgba(0,0,0,0.25);
+  border-radius:6px;
+  background:transparent;
+  cursor:pointer;
+}
+
+
+/* ===== Background color block (type=color) ===== */
+.public-home #selectOurBackground + .block .color-row,
+#selectOurBackground ~ .block .color-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.public-home #selectOurBackground + .block .color-hex-input,
+#selectOurBackground ~ .block .color-hex-input{
+  flex:1;
+  min-width:0;
+}
+
+.public-home #selectOurBackground + .block .color-picker,
+#selectOurBackground ~ .block .color-picker{
+  width:38px;
+  height:28px;
+  padding:0;
+  border:1px solid rgba(0,0,0,0.25);
+  border-radius:6px;
+  background:transparent;
+  cursor:pointer;
+}
