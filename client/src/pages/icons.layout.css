@@ -184,8 +184,7 @@
 }
 
 
-/* ======================= Dzev-3 — diamond stays, soft glossy like dzev4 ======================= */
-
+/* ================ Dzev-3 — diamond + optional glow ================ */
 .icons-dzev3{
   --size: calc(72px * var(--icons-scale, 1));
   display: grid;
@@ -198,67 +197,78 @@
 }
 .icons-dzev3 a{ width: var(--size); }
 
-/* ✅ diamond shape stays */
 .icons-dzev3 .icon-btn{
   position: relative;
-  width: var(--btn-size, calc(70px * var(--icons-scale, 1)));
-  height: var(--btn-size, calc(70px * var(--icons-scale, 1)));
+  width: var(--size);
+  height: var(--size);
   display: grid;
   place-items: center;
-
-  /* diamond */
   clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0 50%);
-
-  /* ✅ soft glossy surface like dzev4 */
-  background:
-    radial-gradient(120% 120% at 30% 15%, rgba(255,255,255,.35), transparent 55%),
-    var(--icons-chip-bg, #2f2f2f);
-
-  box-shadow:
-    inset 0 2px 6px rgba(255,255,255,.45),
-    0 12px 24px rgba(0,0,0,.35);
-
-  border: none;
-  cursor: pointer;
-  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+  border: 1px solid rgba(0,0,0,.06);
   overflow: visible;
   isolation: isolate;
 }
-
-/* glossy highlight (inherits diamond) */
-.icons-dzev3 .icon-btn::after{
-  content:"";
+.icons-dzev3 .diamond{
   position:absolute;
   inset:0;
-  pointer-events:none;
-  clip-path: inherit;
+  z-index: 1;
   background:
-    radial-gradient(80% 80% at 35% 25%, rgba(255,255,255,.16), transparent 60%);
+    linear-gradient(150deg, rgba(0,0,0,.10), transparent 35%) border-box,
+    conic-gradient(from 35deg,
+      rgba(255,255,255,.85) 0deg, rgba(255,255,255,0) 16deg,
+      rgba(0,0,0,.08) 40deg,  rgba(255,255,255,0) 62deg,
+      rgba(0,0,0,.08) 95deg,  rgba(255,255,255,0) 132deg,
+      rgba(0,0,0,.10) 190deg, rgba(255,255,255,0) 228deg,
+      rgba(255,255,255,.78) 270deg, rgba(255,255,255,0) 320deg),
+    radial-gradient(92% 90% at 50% 40%, #fbfbfb 0%, #ececec 62%, #dddddd 100%);
+  box-shadow:
+    0 12px 26px rgba(0,0,0,.18),
+    inset 0 10px 18px rgba(255,255,255,.65),
+    inset 0 -14px 22px rgba(0,0,0,.12);
 }
-
-/* icon itself */
+.icons-dzev3 .tint{
+  position:absolute;
+  inset:0;
+  z-index: 2;
+  background: var(--icons-chip-bg, #2f2f2f);
+  mix-blend-mode: color;
+  opacity: 1;
+}
+.icons-dzev3 .tint-multiply{
+  position:absolute;
+  inset:0;
+  z-index: 3;
+  background: var(--icons-chip-bg, #2f2f2f);
+  mix-blend-mode: multiply;
+}
+.icons-dzev3 .shine{
+  position:absolute;
+  inset:-2px;
+  z-index: 4;
+  pointer-events:none;
+  mix-blend-mode: screen;
+  opacity:.9;
+  background: conic-gradient(from 0deg,
+      rgba(255,255,255,0) 0deg,
+      rgba(255,255,255,.45) 22deg,
+      rgba(255,255,255,0) 42deg,
+      rgba(0,0,0,.05) 100deg,
+      rgba(255,255,255,0) 150deg,
+      rgba(255,255,255,.40) 200deg,
+      rgba(255,255,255,0) 260deg,
+      rgba(255,255,255,.50) 310deg,
+      rgba(255,255,255,0) 360deg);
+}
 .icons-dzev3 .icon-btn i,
 .icons-dzev3 .icon-btn img{
   position: relative;
-  z-index: 2;
-  font-size: calc(22px * var(--icons-scale, 1));
+  z-index: 5;
+  font-size: calc(20px * var(--icons-scale, 1));
+  color:#1e2329;
   max-width: 60%;
   max-height: 60%;
   object-fit: contain;
-  line-height: 1;
-  filter: drop-shadow(0 1px 0 rgba(255,255,255,.6));
-}
-
-/* hover — soft pop like dzev4 */
-.icons-dzev3 .icon-btn:hover{
-  transform: scale(1.07);
-  box-shadow:
-    inset 0 2px 7px rgba(255,255,255,.55),
-    0 16px 30px rgba(0,0,0,.42);
-  filter: saturate(1.06) contrast(1.04);
-}
-.icons-dzev3 .icon-btn:active{
-  transform: scale(1.02);
+  filter: drop-shadow(0 1px 0 #fff);
 }
 
 /* optional glow */
