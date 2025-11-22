@@ -1,4 +1,3 @@
-// server/src/routes/avatarIcon.js
 import express from "express";
 import sharp from "sharp";
 import { pool } from "../db.js";
@@ -6,8 +5,6 @@ import path from "path";
 import fs from "fs";
 
 const router = express.Router();
-
-// cache folder
 const ICON_DIR = path.resolve("server/public/cardIcons");
 
 // fallback եթե avatar չունի
@@ -73,7 +70,7 @@ router.get("/avatar-icon/:cardId/:size", async (req, res) => {
       return res.sendFile(iconPath);
     }
 
-    // public info բերում ենք
+    // բերում ենք public info
     const q = `SELECT information FROM public_info WHERE cardid = $1`;
     const r = await pool.query(q, [cardId]);
     const info = r.rows?.[0]?.information || {};
@@ -85,7 +82,7 @@ router.get("/avatar-icon/:cardId/:size", async (req, res) => {
       return res.sendFile(FALLBACK_ICON);
     }
 
-    // download real avatar
+    // ներբեռնում ենք real avatar-ը
     const resp = await fetch(imgUrl);
     if (!resp.ok) throw new Error("failed to fetch avatar");
 
@@ -98,6 +95,7 @@ router.get("/avatar-icon/:cardId/:size", async (req, res) => {
       .toFile(iconPath);
 
     return res.sendFile(iconPath);
+
   } catch (e) {
     console.log("avatar icon error:", e);
     return res.sendFile(FALLBACK_ICON);
