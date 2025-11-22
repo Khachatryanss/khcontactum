@@ -358,51 +358,68 @@ export default function HomePage({ cardId = "101" }) {
   }, [cardId]);
 
   // ✅ NEW: dynamic manifest + iOS title based on current card info
-  React.useEffect(() => {
-    if (!info) return;
+  // ✅ NEW: dynamic manifest + iOS title + iOS icon tags
+React.useEffect(() => {
+  if (!info) return;
 
-    // pick the same name that you show under avatar
-    const nameByLang = {
-      hy:  info?.company?.name?.am  || "",
-      ru:  info?.company?.name?.ru  || "",
-      en:  info?.company?.name?.en  || "",
-      ar:  info?.company?.name?.ar  || "",
-      fr:  info?.company?.name?.fr  || "",
-      kz:  info?.company?.name?.kz  || "",
-      chn: info?.company?.name?.chn || "",
-    };
+  const nameByLang = {
+    hy:  info?.company?.name?.am  || "",
+    ru:  info?.company?.name?.ru  || "",
+    en:  info?.company?.name?.en  || "",
+    ar:  info?.company?.name?.ar  || "",
+    fr:  info?.company?.name?.fr  || "",
+    kz:  info?.company?.name?.kz  || "",
+    chn: info?.company?.name?.chn || "",
+  };
 
-    const displayName =
-      nameByLang[htmlLang] ||
-      nameByLang.hy ||
-      nameByLang.en ||
-      "KHContactum";
+  const displayName =
+    nameByLang[htmlLang] ||
+    nameByLang.hy ||
+    nameByLang.en ||
+    "KHContactum";
 
-    // 1) page title
-    try { document.title = displayName; } catch {}
+  // 1) page title
+  try { document.title = displayName; } catch {}
 
-    // 2) apple mobile web app title meta (iOS)
-    try {
-      let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
-      if (!meta) {
-        meta = document.createElement("meta");
-        meta.setAttribute("name", "apple-mobile-web-app-title");
-        document.head.appendChild(meta);
+  // 2) apple mobile web app title meta (iOS)
+  try {
+    let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "apple-mobile-web-app-title");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute("content", displayName);
+  } catch {}
+
+  // 3) dynamic manifest
+  try {
+    let link = document.querySelector('link[rel="manifest"]');
+    if (!link) {
+      link = document.createElement("link");
+      link.setAttribute("rel", "manifest");
+      document.head.appendChild(link);
+    }
+    link.setAttribute("href", `/manifest/${cardId}`);
+  } catch {}
+
+  // 4) ✅ iOS icon tags (Սա է պատճառը, որ icon-ը մինչ հիմա blank էր)
+  try {
+    const sizes = [180, 167, 152]; // iPhone/iPad standard
+    sizes.forEach((sz) => {
+      let l = document.querySelector(`link[rel="apple-touch-icon"][sizes="${sz}x${sz}"]`);
+      if (!l) {
+        l = document.createElement("link");
+        l.setAttribute("rel", "apple-touch-icon");
+        l.setAttribute("sizes", `${sz}x${sz}`);
+        document.head.appendChild(l);
       }
-      meta.setAttribute("content", displayName);
-    } catch {}
+      l.setAttribute("href", `/avatar-icon/${cardId}/${sz}`);
+    });
+  } catch {}
 
-    // 3) dynamic manifest (Android 100%, iOS partly)
-    try {
-      let link = document.querySelector('link[rel="manifest"]');
-      if (!link) {
-        link = document.createElement("link");
-        link.setAttribute("rel", "manifest");
-        document.head.appendChild(link);
-      }
-      link.setAttribute("href", `/manifest/${cardId}`);
-    } catch {}
-  }, [info, htmlLang, cardId]);
+}, [info, htmlLang, cardId]);
+
 
   // ✅ splash + loading ավարտվելուց հետո auto-open միայն մեկ անգամ
   React.useEffect(() => {
