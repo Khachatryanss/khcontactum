@@ -377,6 +377,28 @@ export default function BrandInfoPage({
     hasKeyword(item.keyword, keyword)
   );
 
+  // ✅ ՓՈՓՈԽՎԱԾ ՄԻԱՅՆ ՍԱ ՀԱՏՎԱԾԸ
+  function handleBack() {
+    const saved = sessionStorage.getItem("publicScrollPos");
+
+    // վերադարձ parent view
+    onBack && onBack();
+
+    // վերականգնել scroll-ը
+    if (saved) {
+      setTimeout(() => {
+        const container = document.querySelector(".public-scroll-layer");
+        const y = parseInt(saved, 10);
+
+        if (container && typeof container.scrollTo === "function") {
+          container.scrollTo({ top: y, left: 0, behavior: "auto" });
+        } else if (typeof window !== "undefined" && window.scrollTo) {
+          window.scrollTo(0, y);
+        }
+      }, 0);
+    }
+  }
+
   return h(
     "section",
     { className: "brandinfo-public", style: { padding: "10px 12px" } },
@@ -397,7 +419,7 @@ export default function BrandInfoPage({
           type: "button",
           className: "btn",
           style: { padding: "6px 10px", borderRadius: 999 },
-          onClick: () => onBack && onBack()
+          onClick: handleBack
         },
         "←",
         " ",

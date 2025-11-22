@@ -744,17 +744,27 @@ export default function HomePage({ cardId = "101" }) {
                   })
                 : null,
               brandsArray.length
-                ? h(BrandsPage, {
-                    brands: brandsArray,
-                    brandsTitleColor,
-                    brandsTitleText,
-                    brandsCols,
-                    brandsBgColor,
-                    brandsNameColor,
-                    lang: htmlLang,
-                    onKeywordClick: (kw) => setActiveBrandKeyword(kw),
-                  })
-                : null,
+  ? h(BrandsPage, {
+      brands: brandsArray,
+      brandsTitleColor,
+      brandsTitleText,
+      brandsCols,
+      brandsBgColor,
+      brandsNameColor,
+      lang: htmlLang,
+
+      onKeywordClick: (kw) => {
+        // ✅ պահում ենք scroll-ը հենց public-scroll-layer-ից
+        const container = document.querySelector(".public-scroll-layer");
+        const scrollY = container ? container.scrollTop : 0;
+        sessionStorage.setItem("publicScrollPos", String(scrollY));
+
+        // հետո նոր բացում ենք 2-րդ էջը
+        setActiveBrandKeyword(kw);
+      },
+    })
+  : null,
+
               h(SharePage, {
                 cardId,
                 info,
