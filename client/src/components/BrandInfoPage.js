@@ -8,59 +8,48 @@ const h = React.createElement;
 /* ---------- i18n text for Brand Info ---------- */
 const BI_TEXT = {
   hy: {
-    title: "Ինֆորմացիա",
     empty: "Տվյալ keyword-ով աշխատակից դեռ չկա։",
     back: "Վերադառնալ",
   },
   ru: {
-    title: "Информация",
     empty: "Пока нет сотрудника с таким ключевым словом.",
     back: "Назад",
   },
   en: {
-    title: "Information",
     empty: "There is no employee with this keyword yet.",
     back: "Back",
   },
   ar: {
-    title: "معلومات",
     empty: "لا يوجد موظف بهذا الكلمة المفتاحية حتى الآن.",
     back: "رجوع",
   },
   fr: {
-    title: "Informations",
     empty: "Il n’y a pas encore d’employé avec ce mot-clé.",
     back: "Retour",
   },
   kz: {
-    title: "Ақпарат",
     empty: "Бұл кілт сөзі бар қызметкер әлі жоқ.",
     back: "Артқа",
   },
   chn: {
-    title: "信息",
     empty: "当前关键词还没有员工。",
     back: "返回",
   },
 
   // ✅ NEW languages
   de: {
-    title: "Informationen",
     empty: "Es gibt noch keinen Mitarbeiter mit diesem Keyword.",
     back: "Zurück",
   },
   es: {
-    title: "Información",
     empty: "Aún no hay un empleado con esta palabra clave.",
     back: "Volver",
   },
   it: {
-    title: "Informazioni",
     empty: "Non c’è ancora un dipendente con questa parola chiave.",
     back: "Indietro",
   },
   fa: {
-    title: "اطلاعات",
     empty: "هنوز کارمندی با این کلمه کلیدی وجود ندارد.",
     back: "بازگشت",
   },
