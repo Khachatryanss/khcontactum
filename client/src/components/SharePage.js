@@ -154,8 +154,6 @@ const TEXT = {
     confirmNo: "否",
   },
 
-  /* ---------- NEW LANGUAGES ---------- */
-
   de: {
     scanBtn: "QR-CODE SCANNEN",
     shareTitle: "MEINE KARTE TEILEN",
@@ -220,8 +218,6 @@ const SHARE_CONTEXT = {
   fr:  "Ma carte de visite numérique créée sur la plateforme KHContactum.com.",
   kz:  "KHContactum.com платформасында жасалған менің цифрлық визиткам.",
   chn: "我的数字名片，创建于 KHContactum.com 平台。",
-
-  /* ---------- NEW LANGUAGES ---------- */
   de:  "Meine digitale Visitenkarte, erstellt auf der Plattform KHContactum.com.",
   es:  "Mi tarjeta de presentación digital creada en la plataforma KHContactum.com.",
   it:  "Il mio biglietto da visita digitale creato sulla piattaforma KHContactum.com.",
@@ -661,12 +657,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
         t.scanBtn
       ),
 
-      // ======== «Կիսվել իմ քարտով» button =========
-      h(
-        "h3",
-        { style: { margin: "0 0 10px", fontSize: 16, color: shareTitleColor } },
-        t.shareTitle
-      ),
+      // ======== «Կիսվել իմ քարտով» button (վերևի h3-ը հանված է) =========
       h(
         "button",
         {
