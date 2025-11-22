@@ -151,6 +151,17 @@ const TEXT = {
   },
 };
 
+/* ✅ ՆՈՐ — Confirmed share context (7 լեզու) */
+const SHARE_CONTEXT = {
+  am:  "Իմ թվային բիզնես քարտը՝ ստեղծված KHContactum.com հարթակում։",
+  ru:  "Моя цифровая визитка, созданная на платформе KHContactum.com.",
+  en:  "My digital business card created on the KHContactum.com platform.",
+  ar:  "بطاقتي الرقمية للأعمال، تم إنشاؤها على منصة KHContactum.com.",
+  fr:  "Ma carte de visite numérique créée sur la plateforme KHContactum.com.",
+  kz:  "KHContactum.com платформасында жасалған менің цифрлық визиткам.",
+  chn: "我的数字名片，创建于 KHContactum.com 平台。",
+};
+
 /* quick flags դեռ պահում ենք struct-ի մեջ (admin panel-ի համար) */
 const DEFAULT_QUICK = {
   fb: true,
@@ -465,7 +476,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
     [info, offlinePhone, activeLangRaw, onlineUrl]
   );
 
-  const shareText = (() => {
+  const baseShareText = (() => {
     const raw = share.shareText;
     if (raw && typeof raw === "object") {
       const s = pickLang(raw, activeLangRaw);
@@ -476,6 +487,15 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
     }
     return t.shareDefault;
   })();
+
+  // ✅ ՆՈՐ — վերջնական shareText՝ context + link + baseText
+  const contextLine =
+    SHARE_CONTEXT[textLangKey] || SHARE_CONTEXT.am;
+
+  const shareText =
+    [baseShareText, onlineUrl, contextLine]
+      .filter(Boolean)
+      .join("\n");
 
   const btnTextColor    = share.styles.btnTextColor    || "#ffffff";
   const btnBgColor      = share.styles.btnBgColor      || "#000000";
@@ -494,7 +514,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
 
     const payload = {
       title,
-      text: shareText,
+      text: shareText,   // ✅ հիմա արդեն կոնտեքստով
       url,
     };
 
@@ -503,13 +523,14 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
       return;
     }
 
+    // fallback copy — հիմա copy անում ենք ամբողջ տեքստը
     if (
       typeof navigator !== "undefined" &&
       navigator.clipboard &&
       typeof window !== "undefined" &&
       window.isSecureContext
     ) {
-      navigator.clipboard.writeText(url).catch(() => {});
+      navigator.clipboard.writeText(shareText).catch(() => {});
       return;
     }
 
