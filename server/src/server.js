@@ -17,7 +17,6 @@ import { fileURLToPath } from "url";
 import { pool } from "./db.js";
 
 import manifestRouter from "./routes/manifest.js";
-import avatarIconRouter from "./routes/avatarIcon.js";
 
 
 const app = express();
@@ -114,7 +113,6 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(manifestRouter);
-app.use(avatarIconRouter);
 
 /* ================== MINI LOGGER ================== */
 

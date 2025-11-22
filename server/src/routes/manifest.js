@@ -3,7 +3,7 @@ import { pool } from "../db.js";
 
 const router = express.Router();
 
-// /manifest/101 → տվյալ card-ի manifest.json
+// /manifest/101
 router.get("/manifest/:cardId", async (req, res) => {
   try {
     const { cardId } = req.params;
@@ -13,38 +13,46 @@ router.get("/manifest/:cardId", async (req, res) => {
       FROM public_info
       WHERE cardid = $1
     `;
-
     const result = await pool.query(q, [cardId]);
-    const info = result.rows?.[0]?.information || {};
 
-    // նույն անունը՝ ինչ avatar-ի տակ Home-ում
-    const displayName =
-      info.company?.name?.am ||
-      info.company?.name?.en ||
-      info.company?.name?.ru ||
-      info.companyTitle ||
-      "KHContactum";
+    let displayName = "KHContactum";
 
-    const cleanName = displayName.toString().trim();
+    if (result.rows?.length) {
+      const info = result.rows[0].information || {};
+      displayName =
+        info.company?.name?.am ||
+        info.company?.name?.en ||
+        info.company?.name?.ru ||
+        "KHContactum";
+    }
+
+    displayName = displayName.toString().trim();
 
     res.json({
-      name: cleanName,
-      short_name: cleanName.slice(0, 14),
-      start_url: `/${cardId}`,          // ✅ հենց card-ի էջը բացի
+      name: displayName,
+      short_name: displayName.slice(0, 14),
+      start_url: `/${cardId}`,
       display: "standalone",
       background_color: "#000000",
       theme_color: "#000000",
       icons: [
-        { src: `/avatar-icon/${cardId}/192`, sizes: "192x192", type: "image/png" },
-        { src: `/avatar-icon/${cardId}/512`, sizes: "512x512", type: "image/png" },
-        { src: `/avatar-icon/${cardId}/1024`, sizes: "1024x1024", type: "image/png" }
+        { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { src: "/icon-512.png", sizes: "512x512", type: "image/png" }
       ]
     });
   } catch (e) {
     console.log("Manifest error:", e);
     res.json({
       name: "KHContactum",
-      short_name: "KHContactum"
+      short_name: "KHContactum",
+      start_url: "/",
+      display: "standalone",
+      background_color: "#000000",
+      theme_color: "#000000",
+      icons: [
+        { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { src: "/icon-512.png", sizes: "512x512", type: "image/png" }
+      ]
     });
   }
 });
