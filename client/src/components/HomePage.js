@@ -358,10 +358,10 @@ export default function HomePage({ cardId = "101" }) {
   }, [cardId]);
 
   // ✅ NEW: dynamic manifest + iOS title based on current card info
-  // ✅ NEW: dynamic manifest + iOS title + iOS icon tags
-React.useEffect(() => {
+  React.useEffect(() => {
   if (!info) return;
 
+  // ընտրում ենք անունը՝ ըստ լեզվի
   const nameByLang = {
     hy:  info?.company?.name?.am  || "",
     ru:  info?.company?.name?.ru  || "",
@@ -378,10 +378,14 @@ React.useEffect(() => {
     nameByLang.en ||
     "KHContactum";
 
-  // 1) page title
+  /* -----------------------------------------
+     1) PAGE TITLE (web + PWA title)
+  ----------------------------------------- */
   try { document.title = displayName; } catch {}
 
-  // 2) apple mobile web app title meta (iOS)
+  /* -----------------------------------------
+     2) iOS Meta Title
+  ----------------------------------------- */
   try {
     let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
     if (!meta) {
@@ -392,7 +396,9 @@ React.useEffect(() => {
     meta.setAttribute("content", displayName);
   } catch {}
 
-  // 3) dynamic manifest
+  /* -----------------------------------------
+     3) Android & Chrome manifest.json (dynamic)
+  ----------------------------------------- */
   try {
     let link = document.querySelector('link[rel="manifest"]');
     if (!link) {
@@ -403,17 +409,25 @@ React.useEffect(() => {
     link.setAttribute("href", `/manifest/${cardId}`);
   } catch {}
 
-  // 4) ✅ iOS icon tags (Սա է պատճառը, որ icon-ը մինչ հիմա blank էր)
+  /* -----------------------------------------
+     4) iOS Home Screen ICONS (VERY IMPORTANT)
+        ‼️ Սա է ուղիղ icon-ը, որը iOS-ը օգտագործում է
+        "Add to Home Screen" պահին
+  ----------------------------------------- */
   try {
-    const sizes = [180, 167, 152]; // iPhone/iPad standard
+    const sizes = [180, 167, 152]; // iPhone/iPad icon sizes
+
     sizes.forEach((sz) => {
-      let l = document.querySelector(`link[rel="apple-touch-icon"][sizes="${sz}x${sz}"]`);
+      let l = document.querySelector(
+        `link[rel="apple-touch-icon"][sizes="${sz}x${sz}"]`
+      );
       if (!l) {
         l = document.createElement("link");
         l.setAttribute("rel", "apple-touch-icon");
         l.setAttribute("sizes", `${sz}x${sz}`);
         document.head.appendChild(l);
       }
+      // avatar → PNG → dynamic icon
       l.setAttribute("href", `/avatar-icon/${cardId}/${sz}`);
     });
   } catch {}
