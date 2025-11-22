@@ -1,3 +1,4 @@
+// server/src/routes/manifest.js
 import express from "express";
 import { pool } from "../db.js";
 
@@ -8,22 +9,17 @@ router.get("/manifest/:cardId", async (req, res) => {
   try {
     const { cardId } = req.params;
 
-    // ⚠️ եթե քո table/column անունը ուրիշ է՝ այստեղ փոխիր
     const q = `
       SELECT information
       FROM public_info
       WHERE cardid = $1
     `;
-
     const result = await pool.query(q, [cardId]);
-    const rows = result.rows || [];
 
     let displayName = "KHContactum";
 
-    if (rows.length) {
-      const info = rows[0].information || {};
-
-      // նույնը ինչ public Home-ում avatar-ի տակ ցույց ես տալիս
+    if (result.rows?.length) {
+      const info = result.rows[0].information || {};
       displayName =
         info.company?.name?.am ||
         info.company?.name?.en ||
@@ -42,16 +38,21 @@ router.get("/manifest/:cardId", async (req, res) => {
       background_color: "#000000",
       theme_color: "#000000",
       icons: [
-  { src: `/avatar-icon/${cardId}/192`, sizes: "192x192", type: "image/png" },
-  { src: `/avatar-icon/${cardId}/512`, sizes: "512x512", type: "image/png" }
-]
-
+        { src: `/avatar-icon/${cardId}/192`,  sizes: "192x192",  type: "image/png" },
+        { src: `/avatar-icon/${cardId}/512`,  sizes: "512x512",  type: "image/png" },
+        { src: `/avatar-icon/${cardId}/1024`, sizes: "1024x1024", type: "image/png" }
+      ]
     });
+
   } catch (e) {
     console.log("Manifest error:", e);
     res.json({
       name: "KHContactum",
-      short_name: "KHContactum"
+      short_name: "KHContactum",
+      icons: [
+        { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { src: "/icon-512.png", sizes: "512x512", type: "image/png" }
+      ]
     });
   }
 });

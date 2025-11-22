@@ -83,8 +83,7 @@ app.use(
   })
 );
 
-app.use(manifestRouter);
-app.use(avatarIconRouter);
+
 
 
 
@@ -113,6 +112,9 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(manifestRouter);
+app.use(avatarIconRouter);
 
 /* ================== MINI LOGGER ================== */
 
