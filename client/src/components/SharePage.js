@@ -126,8 +126,8 @@ const TEXT = {
   kz: {
     scanBtn: "QR-КОДТЫ СКАНЕРЛЕУ",
     shareTitle: "МЕНІҢ КАРТАМДЫ БӨЛІСУ",
-    addBtn: "МЕНІ БАЙЛАНЫС ТІЗІМІНЕ ҚОСУ",
-    qrOnline: "ОНЛАЙН QR-КОД",
+    addBtn: "МЕНІ БАЙЛԱՆЫС ТІЗІМІНЕ ҚОСУ",
+    qrOnline: "ОНЛАЙՆ QR-КОД",
     qrOffline: "ОФФЛАЙН QR-КОД",
     offlineNote: "Сканерлегеннен кейін контактілеріңізге сақтай аласыз.",
     shareDefault: "Менің KHContactum.com цифрлық визиткамды қараңыз.",
@@ -151,9 +151,10 @@ const TEXT = {
   },
 };
 
-/* ✅ Քո տված կոնտեքստը (7 լեզու) */
+/* ✅ Քո ֆիքսված կոնտեքստը (եթե later ուզես թարգմանել՝ կավելացնես) */
 const SHARE_CONTEXT = {
   am:  "Իմ թվային բիզնես քարտը՝ ստեղծված KHContactum.com հարթակում։",
+  hy:  "Իմ թվային բիզնես քարտը՝ ստեղծված KHContactum.com հարթակում։",
   ru:  "Моя цифровая визитка, созданная на платформе KHContactum.com.",
   en:  "My digital business card created on the KHContactum.com platform.",
   ar:  "بطاقتي الرقمية للأعمال، تم إنشاؤها على منصة KHContactum.com.",
@@ -476,49 +477,34 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
     [info, offlinePhone, activeLangRaw, onlineUrl]
   );
 
-  // === Քո/սերվերից եկած հիմնական shareText ===
-  const baseShareText = (() => {
-    const raw = share.shareText;
-    if (raw && typeof raw === "object") {
-      const s = pickLang(raw, activeLangRaw);
-      if (s) return s;
-    } else {
-      const s = String(raw || "").trim();
-      if (s) return s;
-    }
-    return t.shareDefault;
-  })();
-
-  // ✅ Քո կոնտեքստը ըստ լեզվի
+  // ✅ Քո ֆիքսված կոնտեքստը ըստ լեզվի
   const contextLine =
-    SHARE_CONTEXT[textLangKey] || SHARE_CONTEXT.am;
+    SHARE_CONTEXT[activeLangRaw] ||
+    SHARE_CONTEXT[textLangKey] ||
+    SHARE_CONTEXT.am;
 
-  // ✅ Վերջնական message — ՍԱ Է ԳՆՈՒՄ ԲՈԼՈՐ SHARE-ԵՐԻ ՄԵՋ
+  // ✅ Վերջնական share message — ՄԻՇՏ ՆՈՒՅՆԸ ԲՈԼՈՐ APP-ԵՐԻ ՀԱՄԱՐ
   const finalShareMessage = [
-    baseShareText,
     onlineUrl,
+    "", // empty line
     contextLine
-  ].filter(Boolean).join("\n");
+  ].join("\n");
 
   const btnTextColor    = share.styles.btnTextColor    || "#ffffff";
   const btnBgColor      = share.styles.btnBgColor      || "#000000";
   const shareTitleColor = share.styles.shareTitleColor || "#000000";
 
-  // ✅ Universal share handler – բացում է համակարգային share sheet-ը
+  // ✅ Universal share handler – հիմա text-ով է տալիս ամեն ինչ
+  // ⚠️ url field deliberately removed to stop Telegram/Messenger dropping text
   function onShareUniversal() {
-    const url =
-      onlineUrl ||
-      (typeof window !== "undefined"
-        ? ensureAbsoluteUrl(window.location.href)
-        : "");
-    if (!url) return;
+    if (!finalShareMessage) return;
 
     const title = offlineName || companyName || "KHContactum";
 
     const payload = {
       title,
-      text: finalShareMessage, // ✅ կոնտեքստ + link + base text
-      url,
+      text: finalShareMessage, // ✅ link + կոնտեքստ միասին
+      // url: onlineUrl  <-- intentionally removed
     };
 
     if (typeof navigator !== "undefined" && navigator.share) {
@@ -537,8 +523,8 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
       return;
     }
 
-    if (typeof window !== "undefined") {
-      window.open(url, "_blank", "noopener,noreferrer");
+    if (typeof window !== "undefined" && onlineUrl) {
+      window.open(onlineUrl, "_blank", "noopener,noreferrer");
     }
   }
 
@@ -611,7 +597,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
       ),
 
       // ======== «Կիսվել իմ քարտով» button =========
-      h(
+       h(
         "h3",
         { style: { margin: "0 0 10px", fontSize: 16, color: shareTitleColor } },
         t.shareTitle
