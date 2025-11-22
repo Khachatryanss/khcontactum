@@ -23,6 +23,7 @@ const BRANDS_UI_TEXT = {
     brandNameLabel: "Բրենդի անուն:",
     uploadButton: "Վերբեռնել",
     deleteButton: "Ջնջել",
+    removeLogoButton: "Ջնջել լոգոն",
     linkTypeLabel: "Լինքի տիպը:",
     linkTypeKeyword: "Keyword",
     linkTypeUrl: "URL",
@@ -57,6 +58,7 @@ const BRANDS_UI_TEXT = {
     brandNameLabel: "Brand name:",
     uploadButton: "Upload",
     deleteButton: "Delete",
+    removeLogoButton: "Remove logo",
     linkTypeLabel: "Link type:",
     linkTypeKeyword: "Keyword",
     linkTypeUrl: "URL",
@@ -91,6 +93,7 @@ const BRANDS_UI_TEXT = {
     brandNameLabel: "Название бренда:",
     uploadButton: "Загрузить",
     deleteButton: "Удалить",
+    removeLogoButton: "Удалить логотип",
     linkTypeLabel: "Тип ссылки:",
     linkTypeKeyword: "Ключевое слово",
     linkTypeUrl: "URL",
@@ -125,6 +128,7 @@ const BRANDS_UI_TEXT = {
     brandNameLabel: "اسم العلامة التجارية:",
     uploadButton: "رفع",
     deleteButton: "حذف",
+    removeLogoButton: "حذف الشعار",
     linkTypeLabel: "نوع الرابط:",
     linkTypeKeyword: "كلمة مفتاحية",
     linkTypeUrl: "رابط URL",
@@ -159,6 +163,7 @@ const BRANDS_UI_TEXT = {
     brandNameLabel: "Nom de la marque :",
     uploadButton: "Téléverser",
     deleteButton: "Supprimer",
+    removeLogoButton: "Supprimer le logo",
     linkTypeLabel: "Type de lien :",
     linkTypeKeyword: "Mot-clé",
     linkTypeUrl: "URL",
@@ -195,6 +200,7 @@ const BRANDS_UI_TEXT = {
     brandNameLabel: "Бренд атауы:",
     uploadButton: "Жүктеу",
     deleteButton: "Жою",
+    removeLogoButton: "Логотипті жою",
     linkTypeLabel: "Сілтеме түрі:",
     linkTypeKeyword: "Кілт сөз",
     linkTypeUrl: "URL",
@@ -210,9 +216,9 @@ const BRANDS_UI_TEXT = {
       "Тек сурет немесе видео файлдар қабылданады",
     uploadOk: "Логотип жүктелді ✔",
     uploadFailed: "Жүктеу сәтсіз аяқталды",
-    loadFailed: "Жүктеу сәтсіз аяқталды",
+    loadFailed: "Жүктеу սәтсіз аяқталды",
     savedOk: "Сақталды ✅",
-    saveFailed: "Сақтау сәтсіз аяқталды",
+    saveFailed: "Սақтау սәтсіз ավարտталды",
   },
 
   // 🇨🇳 Chinese
@@ -231,6 +237,7 @@ const BRANDS_UI_TEXT = {
     brandNameLabel: "品牌名称：",
     uploadButton: "上传",
     deleteButton: "删除",
+    removeLogoButton: "删除 Logo",
     linkTypeLabel: "链接类型：",
     linkTypeKeyword: "关键字",
     linkTypeUrl: "URL",
@@ -384,19 +391,6 @@ function I18nRow({ brandId, label, value, onChange, langs }) {
   );
 }
 
-/* ---------- move helper (reorder) ---------- */
-function moveById(list, id, dir) {
-  const i = list.findIndex((x) => x.id === id);
-  if (i < 0) return list;
-  const j = i + dir;
-  if (j < 0 || j >= list.length) return list;
-  const next = list.slice();
-  const tmp = next[i];
-  next[i] = next[j];
-  next[j] = tmp;
-  return next;
-}
-
 /* ---------- component ---------- */
 export default function BrandsTab({ langs, uiLang = "am" }) {
   const token =
@@ -524,16 +518,38 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         logo: "",
       },
     ]);
-    // հաջորդ render–ին scroll անի ներքև
     setScrollToBottomFlag(true);
   };
 
   const delBrand = (id) =>
     setBrands((list) => list.filter((b) => b.id !== id));
 
-  // ✅ REORDER buttons handler
+  // ✅ NEW: clear logo (delete uploaded image)
+  const clearLogo = (id) =>
+    setBrands((list) =>
+      list.map((b) => {
+        if (b.id !== id) return b;
+        try {
+          if (b._blob && b.logo?.startsWith?.("blob:")) {
+            URL.revokeObjectURL(b.logo);
+          }
+        } catch {}
+        return { ...b, logo: "", _blob: false };
+      })
+    );
+
+  // ✅ NEW: reorder brands (up/down)
   const moveBrand = (id, dir) => {
-    setBrands((list) => moveById(list, id, dir));
+    setBrands((list) => {
+      const i = list.findIndex((b) => b.id === id);
+      if (i < 0) return list;
+      const j = i + dir;
+      if (j < 0 || j >= list.length) return list;
+      const next = list.slice();
+      const [picked] = next.splice(i, 1);
+      next.splice(j, 0, picked);
+      return next;
+    });
   };
 
   const uploadBrandLogo =
@@ -715,15 +731,15 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
     h(
       "div",
       { className: "admin-brands" },
-      ...brands.map((b, index) =>
+      ...brands.map((b, i) =>
         h(
           "div",
           { key: b.id, className: "brand-row card" },
 
-          // ✅ LEFT side: logo + reorder buttons (as in screenshot)
+          // ✅ LEFT SIDE: logo + remove logo + order arrows
           h(
             "div",
-            { className: "brand-left" },
+            { className: "brand-side" },
             h(
               "div",
               { className: "brand-logo" },
@@ -740,34 +756,50 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
                       .toUpperCase()
                   )
             ),
+
+            // ✅ NEW: remove uploaded logo button
+            h(
+              "button",
+              {
+                className: "btn pill ghost",
+                type: "button",
+                onClick: () => clearLogo(b.id),
+                disabled: !b.logo,
+                title: "Remove uploaded logo",
+              },
+              T.removeLogoButton
+            ),
+
+            // ✅ NEW: up/down ordering controls
             h(
               "div",
               { className: "order-controls" },
               h(
                 "button",
                 {
-                  type: "button",
                   className: "order-btn up",
+                  type: "button",
+                  disabled: i === 0,
                   onClick: () => moveBrand(b.id, -1),
-                  disabled: index === 0,
-                  title: "Move up",
+                  "aria-label": "Move up",
                 },
                 "↑"
               ),
               h(
                 "button",
                 {
-                  type: "button",
                   className: "order-btn down",
-                  onClick: () => moveBrand(b.id, +1),
-                  disabled: index === brands.length - 1,
-                  title: "Move down",
+                  type: "button",
+                  disabled: i === brands.length - 1,
+                  onClick: () => moveBrand(b.id, 1),
+                  "aria-label": "Move down",
                 },
                 "↓"
               )
             )
           ),
 
+          // RIGHT SIDE (unchanged)
           h(
             "div",
             { className: "brand-main" },
@@ -982,7 +1014,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         padding:12px;
       }
 
-      /* ✅ NEW LEFT COLUMN (logo + order buttons) */
+      /* ✅ UPDATED: left column like screenshot */
       .brand-row{
         display:grid;
         grid-template-columns:110px 1fr;
@@ -990,14 +1022,14 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         align-items:start;
       }
       @media (max-width:520px){
-        .brand-row{ grid-template-columns:92px 1fr; }
+        .brand-row{ grid-template-columns:96px 1fr; }
       }
 
-      .brand-left{
+      .brand-side{
         display:grid;
         gap:8px;
         align-content:start;
-        justify-items:start;
+        justify-items:center;
       }
 
       .brand-logo{
@@ -1009,10 +1041,6 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         display:grid;
         place-items:center;
       }
-      @media (max-width:520px){
-        .brand-logo{ width:72px; height:72px; }
-      }
-
       .brand-logo img{
         width:100%;
         height:100%;
@@ -1023,34 +1051,27 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         font-weight:700;
       }
 
-      /* ✅ Order controls like in your screenshot */
+      /* ✅ NEW: order arrows */
       .order-controls{
+        width:100%;
         display:grid;
         gap:8px;
-        margin-left:4px;
       }
       .order-btn{
-        width:64px;
-        height:32px;
-        border-radius:10px;
+        width:100%;
+        height:38px;
         border:none;
+        border-radius:10px;
+        font-weight:900;
         cursor:pointer;
-        font-weight:800;
-        color:#111;
-        background:#d9d9d9;
-        box-shadow:0 6px 14px rgba(0,0,0,.10);
-        transition:transform .12s ease, opacity .12s ease;
+        box-shadow:0 6px 14px rgba(0,0,0,.08);
       }
-      .order-btn.down{
-        background:#111;
-        color:#fff;
-        box-shadow:0 8px 18px rgba(0,0,0,.18);
-      }
-      .order-btn:active{ transform:scale(.98); }
+      .order-btn.up{ background:#e5e7eb; color:#111; }
+      .order-btn.down{ background:#111; color:#fff; }
       .order-btn:disabled{
-        opacity:.35;
+        opacity:.45;
         cursor:not-allowed;
-        transform:none;
+        box-shadow:none;
       }
 
       .brand-main{
@@ -1062,7 +1083,9 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         display:flex;
         gap:8px;
         justify-content:flex-start;
+        flex-wrap:wrap;
       }
+
       .btn{
         padding:10px 14px;
         border:none;
@@ -1074,6 +1097,17 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       .btn.pill{ border-radius:999px; }
       .btn.danger{ background:#e8554d; }
       .btn.strong{ font-weight:700; }
+
+      /* ✅ NEW: ghost button for remove logo */
+      .btn.ghost{
+        background:#f3f4f6;
+        color:#111;
+        border:1px solid #e5e7eb;
+      }
+      .btn.ghost:disabled{
+        opacity:.45; cursor:not-allowed;
+      }
+
       .input{
         width:100%;
         padding:10px 12px;
