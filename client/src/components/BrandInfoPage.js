@@ -10,43 +10,36 @@ const BI_TEXT = {
   hy: {
     title: "Ինֆորմացիա",
     empty: "Տվյալ keyword-ով աշխատակից դեռ չկա։",
-    rate: "Գնահատեք աշխատակցին։",
     back: "Վերադառնալ",
   },
   ru: {
     title: "Информация",
     empty: "Пока нет сотрудника с таким ключевым словом.",
-    rate: "Оцените сотрудника.",
     back: "Назад",
   },
   en: {
     title: "Information",
     empty: "There is no employee with this keyword yet.",
-    rate: "Rate this employee.",
     back: "Back",
   },
   ar: {
     title: "معلومات",
     empty: "لا يوجد موظف بهذا الكلمة المفتاحية حتى الآن.",
-    rate: "قيّم هذا الموظف.",
     back: "رجوع",
   },
   fr: {
     title: "Informations",
     empty: "Il n’y a pas encore d’employé avec ce mot-clé.",
-    rate: "Évaluez cet employé.",
     back: "Retour",
   },
   kz: {
     title: "Ақпарат",
     empty: "Бұл кілт сөзі бар қызметкер әлі жоқ.",
-    rate: "Қызметкерді бағалаңыз.",
     back: "Артқа",
   },
   chn: {
     title: "信息",
     empty: "当前关键词还没有员工。",
-    rate: "请评价该员工。",
     back: "返回",
   },
 };
@@ -93,28 +86,6 @@ function hasKeyword(itemKeyword, activeKeyword) {
     .includes(kw);
 }
 
-/* ---------- rating helpers (localStorage) ---------- */
-
-const RATING_STORAGE_KEY = "brand-worker-rating-v1";
-
-function readRatingMap() {
-  if (typeof window === "undefined") return {};
-  try {
-    const raw = window.localStorage.getItem(RATING_STORAGE_KEY);
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    if (parsed && typeof parsed === "object") return parsed;
-  } catch {}
-  return {};
-}
-
-function writeRatingMap(map) {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(RATING_STORAGE_KEY, JSON.stringify(map));
-  } catch {}
-}
-
 /* ---------- avatar placeholder text per language ---------- */
 function noPhotoLabel(lang) {
   const k = (lang || "").toLowerCase();
@@ -122,15 +93,13 @@ function noPhotoLabel(lang) {
   if (k === "ru") return "фото";
   if (k === "ar") return "صورة";
   if (k === "fr") return "photo";
-  if (k === "kz") return "фото";      // кең тараված нұсակ
+  if (k === "kz") return "фото";
   if (k === "chn") return "照片";
-  return "photo"; // default EN
+  return "photo";
 }
 
 /* մեկ աշխատակցի քարտ */
 function WorkerCard({ item, lang }) {
-  const T = BI_TEXT[lang] || BI_TEXT.hy;
-
   const name = pickLang(item.name, lang);
 
   const descSource = item.description || item.bio || "";
@@ -173,93 +142,6 @@ function WorkerCard({ item, lang }) {
   const nameColor   = (item.nameColor   || "#ffffff").toString();
   const bioColor    = (item.bioColor    || "#ffffff").toString();
   const bioBgColor  = (item.bioBgColor  || "rgba(0,0,0,0.55)").toString();
-
-  /* ---------- rating state ---------- */
-
-  const ratingAllowed = item.ratingEnabled !== false; // default true
-
-  const workerKey =
-    (item.id && String(item.id)) ||
-    (item.keyword && String(item.keyword)) ||
-    ("worker-" + (name || "?"));
-
-  const [vote, setVote] = React.useState(() => ({
-    likes: Number(item.likes ?? 0) || 0,
-    dislikes: Number(item.dislikes ?? 0) || 0,
-    status: "none"
-  }));
-
-  React.useEffect(() => {
-    const map = readRatingMap();
-    const saved = map[workerKey];
-    if (saved && typeof saved === "object") {
-      setVote({
-        likes: Number(saved.likes ?? item.likes ?? 0) || 0,
-        dislikes: Number(saved.dislikes ?? item.dislikes ?? 0) || 0,
-        status:
-          saved.status === "like" || saved.status === "dislike"
-            ? saved.status
-            : "none"
-      });
-    } else {
-      setVote({
-        likes: Number(item.likes ?? 0) || 0,
-        dislikes: Number(item.dislikes ?? 0) || 0,
-        status: "none"
-      });
-    }
-  }, [workerKey, item.likes, item.dislikes]);
-
-  function persist(next) {
-    const map = readRatingMap();
-    map[workerKey] = {
-      likes: next.likes,
-      dislikes: next.dislikes,
-      status: next.status
-    };
-    writeRatingMap(map);
-  }
-
-  function handleLike() {
-    setVote(prev => {
-      let next = { ...prev };
-      if (prev.status === "like") {
-        next.likes = Math.max(0, prev.likes - 1);
-        next.status = "none";
-      } else if (prev.status === "dislike") {
-        next.dislikes = Math.max(0, prev.dislikes - 1);
-        next.likes = prev.likes + 1;
-        next.status = "like";
-      } else {
-        next.likes = prev.likes + 1;
-        next.status = "like";
-      }
-      persist(next);
-      return next;
-    });
-  }
-
-  function handleDislike() {
-    setVote(prev => {
-      let next = { ...prev };
-      if (prev.status === "dislike") {
-        next.dislikes = Math.max(0, prev.dislikes - 1);
-        next.status = "none";
-      } else if (prev.status === "like") {
-        next.likes = Math.max(0, prev.likes - 1);
-        next.dislikes = prev.dislikes + 1;
-        next.status = "dislike";
-      } else {
-        next.dislikes = prev.dislikes + 1;
-        next.status = "dislike";
-      }
-      persist(next);
-      return next;
-    });
-  }
-
-  const likeActive = vote.status === "like";
-  const dislikeActive = vote.status === "dislike";
 
   return h(
     "div",
@@ -419,80 +301,13 @@ function WorkerCard({ item, lang }) {
           })
         )
       )
-    ),
-
-    /* rating block – միայն եթե admin–ը միացրել է */
-    ratingAllowed && h(React.Fragment, null,
-      h("div", {
-        style:{
-          marginTop: 10,
-          fontSize: 13,
-          color: "#555",
-          textAlign: "center"
-        }
-      }, T.rate),
-
-      h("div", {
-        style:{
-          marginTop: 6,
-          display:"flex",
-          justifyContent:"center",
-          gap:12
-        }
-      },
-        h("button", {
-          type:"button",
-          onClick: handleLike,
-          style:{
-            display:"flex",
-            alignItems:"center",
-            gap:6,
-            padding:"6px 14px",
-            borderRadius:999,
-            border:"none",
-            cursor:"pointer",
-            fontSize:13,
-            fontWeight:600,
-            background: likeActive ? "#16a34a" : "#e5f7ea",
-            color: likeActive ? "#fff" : "#166534",
-            minWidth:70,
-            justifyContent:"center"
-          }
-        },
-          h("span", null, "👍"),
-          h("span", null, String(vote.likes ?? 0))
-        ),
-
-        h("button", {
-          type:"button",
-          onClick: handleDislike,
-          style:{
-            display:"flex",
-            alignItems:"center",
-            gap:6,
-            padding:"6px 14px",
-            borderRadius:999,
-            border:"none",
-            cursor:"pointer",
-            fontSize:13,
-            fontWeight:600,
-            background: dislikeActive ? "#f97316" : "#fff7ed",
-            color: dislikeActive ? "#fff" : "#9a3412",
-            minWidth:70,
-            justifyContent:"center"
-          }
-        },
-          h("span", null, "👎"),
-          h("span", null, String(vote.dislikes ?? 0))
-        )
-      )
     )
   );
 }
 
 /**
  * Props:
- * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], ratingEnabled, nameColor, bioColor, bioBgColor }]
+ * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], nameColor, bioColor, bioBgColor }]
  * - keyword
  * - lang (htmlLang → "hy","ru","en","ar","fr","kz","chn")
  * - onBack()

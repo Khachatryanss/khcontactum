@@ -13,7 +13,6 @@ const BRANDINFO_TEXT = {
 
     keywordHint: "Այս հատվածը կապվում է բրենդների հետ keyword դաշտի միջոցով։",
     keywordLabel: "Keyword",
-    ratingLabel: "Like / Dislike",
     nameLabel: "Անուն:",
     bioLabel: "Նկարագրություն:",
     nameColorLabel: "Անվան գույնը",
@@ -41,7 +40,6 @@ const BRANDINFO_TEXT = {
 
     keywordHint: "Этот блок связывается с брендами через поле keyword.",
     keywordLabel: "Keyword",
-    ratingLabel: "Like / Dislike",
     nameLabel: "Имя :",
     bioLabel: "Описание :",
     nameColorLabel: "Цвет имени",
@@ -69,7 +67,6 @@ const BRANDINFO_TEXT = {
 
     keywordHint: "This section is linked to brands via the keyword field.",
     keywordLabel: "Keyword",
-    ratingLabel: "Like / Dislike",
     nameLabel: "Name:",
     bioLabel: "Description:",
     nameColorLabel: "Name color",
@@ -97,7 +94,6 @@ const BRANDINFO_TEXT = {
 
     keywordHint: "يتم ربط هذا القسم بالعلامات التجارية عبر حقل الـ keyword.",
     keywordLabel: "الكلمة المفتاحية",
-    ratingLabel: "Like / Dislike",
     nameLabel: "الاسم:",
     bioLabel: "الوصف:",
     nameColorLabel: "لون الاسم",
@@ -126,7 +122,6 @@ const BRANDINFO_TEXT = {
     keywordHint:
       "Cette section est reliée aux marques via le champ keyword.",
     keywordLabel: "Mot-clé",
-    ratingLabel: "Like / Dislike",
     nameLabel: "Nom :",
     bioLabel: "Description :",
     nameColorLabel: "Couleur du nom",
@@ -156,7 +151,6 @@ const BRANDINFO_TEXT = {
     keywordHint:
       "Бұл бөлім брендтермен keyword өрісі арқылы байланысады.",
     keywordLabel: "Keyword",
-    ratingLabel: "Like / Dislike",
     nameLabel: "Аты:",
     bioLabel: "Сипаттама:",
     nameColorLabel: "Атау түсі",
@@ -185,7 +179,6 @@ const BRANDINFO_TEXT = {
 
     keywordHint: "本区域通过 keyword 字段与品牌数据关联。",
     keywordLabel: "Keyword",
-    ratingLabel: "Like / Dislike",
     nameLabel: "姓名：",
     bioLabel: "描述：",
     nameColorLabel: "姓名颜色",
@@ -316,7 +309,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
 
   const [baseInfo, setBaseInfo] = React.useState(null);
 
-  // workers: [{ id, keyword, name:{}, bio:{}, avatar, gallery[], ratingEnabled, nameColor, bioColor, bioBgColor }]
+  // workers: [{ id, keyword, name:{}, bio:{}, avatar, gallery[], nameColor, bioColor, bioBgColor }]
   const [workers, setWorkers] = React.useState([]);
 
   const [loading, setLoading] = React.useState(false);
@@ -344,7 +337,6 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
           bio: toI18nObj(x.bio || x.description || ""),
           avatar: (x.avatar || "").toString().trim(),
           gallery: cleanGallery(x.gallery),
-          ratingEnabled: x.ratingEnabled !== false, // default TRUE
           nameColor: (x.nameColor || "#ffffff").toString(),
           bioColor: (x.bioColor || "#ffffff").toString(),
           bioBgColor: (x.bioBgColor || "#000000").toString(),
@@ -392,7 +384,6 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
           bio: toI18nObj(""),
           avatar: "",
           gallery: [],
-          ratingEnabled: true,
           nameColor: "#ffffff",
           bioColor: "#ffffff",
           bioBgColor: "#000000",
@@ -418,7 +409,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
     setWorkers((list) => list.filter((w) => w.id !== id));
   }
 
-  // ✅ NEW: reorder workers (up/down like BrandsTab)
+  // reorder workers (up/down)
   function moveWorker(id, dir) {
     setWorkers((list) => {
       const i = list.findIndex((x) => x.id === id);
@@ -433,14 +424,14 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
     });
   }
 
-  // ✅ NEW: delete avatar locally
+  // delete avatar locally
   function deleteWorkerAvatar(id) {
     setWorkers((list) =>
       list.map((w) => (w.id === id ? { ...w, avatar: "" } : w))
     );
   }
 
-  // ✅ NEW: delete gallery image
+  // delete gallery image
   function deleteGalleryImg(id, idx) {
     setWorkers((list) =>
       list.map((w) => {
@@ -523,7 +514,6 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         bio: trimI18nObj(w.bio),
         avatar: (w.avatar || "").toString().trim(),
         gallery: cleanGallery(w.gallery),
-        ratingEnabled: !!w.ratingEnabled,
         nameColor: (w.nameColor || "#ffffff").toString(),
         bioColor: (w.bioColor || "#ffffff").toString(),
         bioBgColor: (w.bioBgColor || "#000000").toString(),
@@ -552,7 +542,6 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         bio: toI18nObj(x.bio || x.description || ""),
         avatar: (x.avatar || "").toString().trim(),
         gallery: cleanGallery(x.gallery),
-        ratingEnabled: x.ratingEnabled !== false,
         nameColor: (x.nameColor || "#ffffff").toString(),
         bioColor: (x.bioColor || "#ffffff").toString(),
         bioBgColor: (x.bioBgColor || "#000000").toString(),
@@ -601,7 +590,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
           "div",
           { key: w.id, className: "worker-row card" },
 
-          // ✅ NEW LEFT COL: avatar + upload + delete + up/down
+          // LEFT COL: avatar + upload + delete + up/down
           h(
             "div",
             { className: "worker-left" },
@@ -655,7 +644,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
                 : null
             ),
 
-            // up/down reorder (like BrandsTab)
+            // up/down reorder
             h(
               "div",
               { className: "reorder-col" },
@@ -702,23 +691,6 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
                 spellCheck: false,
                 onChange: (e) =>
                   onWorkerField(w.id, "keyword", e.target.value),
-              })
-            ),
-
-            // Like / Dislike toggle
-            h(
-              "div",
-              { className: "row", style: { marginTop: 4 } },
-              h("label", { className: "lbl" }, T.ratingLabel),
-              h("input", {
-                type: "checkbox",
-                checked: !!w.ratingEnabled,
-                onChange: (e) =>
-                  onWorkerField(
-                    w.id,
-                    "ratingEnabled",
-                    e.target.checked
-                  ),
               })
             ),
 
@@ -855,7 +827,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
                           "+"
                         ),
 
-                    // ✅ NEW hover delete for gallery image
+                    // hover delete for gallery image
                     src
                       ? h(
                           "button",
@@ -940,42 +912,33 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         ".admin-scroll-root{overscroll-behavior:contain;}",
         ".admin-workers{display:flex;flex-direction:column;gap:12px;}",
 
-        // ✅ left column + main column grid
         ".worker-row{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:start;}",
         "@media(max-width:520px){.worker-row{grid-template-columns:90px 1fr;}}",
 
-        // left col
         ".worker-left{display:flex;flex-direction:column;gap:8px;align-items:center;}",
 
-        // avatar
         ".worker-avatar{width:96px;height:96px;border-radius:16px;overflow:hidden;background:#f2f2f2;display:grid;place-items:center;}",
         ".worker-avatar img{width:100%;height:100%;object-fit:cover;}",
         ".worker-avatar-initials{font-weight:700;color:#777;}",
 
-        // upload/delete actions under avatar
         ".avatar-actions{display:flex;flex-direction:column;gap:6px;width:100%;align-items:center;}",
 
-        // reorder buttons
         ".reorder-col{display:flex;flex-direction:column;gap:6px;width:100%;align-items:center;}",
         ".order-btn{width:54px;height:32px;border:none;border-radius:10px;font-weight:700;cursor:pointer;}",
         ".order-btn.up{background:#d9d9d9;color:#111;}",
         ".order-btn.down{background:#111;color:#fff;}",
         ".order-btn:disabled{opacity:.5;cursor:not-allowed;}",
 
-        // main col
         ".worker-main{display:grid;gap:8px;align-content:start;}",
 
-        // gallery
         ".worker-gallery-row{display:flex;gap:8px;flex-wrap:wrap;}",
         ".gallery-slot{width:90px;height:54px;border-radius:10px;overflow:hidden;background:#f4f4f4;position:relative;display:grid;place-items:center;cursor:pointer;border:1px dashed #ccc;}",
         ".gallery-slot img{width:100%;height:100%;object-fit:cover;}",
         ".gallery-plus{font-size:22px;color:#777;}",
 
-        // ✅ hover delete for gallery images
         ".gallery-del{position:absolute;top:4px;right:4px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,.65);color:#fff;font-size:14px;line-height:20px;display:none;align-items:center;justify-content:center;cursor:pointer;}",
         ".gallery-slot:hover .gallery-del{display:flex;}",
 
-        // common ui
         ".btn-small{padding:6px 10px;font-size:12px;}",
         ".card{background:#fff;border:1px solid:#ececec;border-radius:16px;padding:12px;box-shadow:0 1px 4px rgba(0,0,0,.04);}",
         ".lbl{font-weight:600;min-width:max-content;}",
