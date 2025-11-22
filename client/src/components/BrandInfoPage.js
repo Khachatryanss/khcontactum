@@ -42,14 +42,40 @@ const BI_TEXT = {
     empty: "当前关键词还没有员工。",
     back: "返回",
   },
+
+  // ✅ NEW languages
+  de: {
+    title: "Informationen",
+    empty: "Es gibt noch keinen Mitarbeiter mit diesem Keyword.",
+    back: "Zurück",
+  },
+  es: {
+    title: "Información",
+    empty: "Aún no hay un empleado con esta palabra clave.",
+    back: "Volver",
+  },
+  it: {
+    title: "Informazioni",
+    empty: "Non c’è ancora un dipendente con questa parola chiave.",
+    back: "Indietro",
+  },
+  fa: {
+    title: "اطلاعات",
+    empty: "هنوز کارمندی با این کلمه کلیدی وجود ندارد.",
+    back: "بازگشت",
+  },
 };
 
-/* ---------- pickLang upgraded for 7 langs ---------- */
+/* ---------- pickLang upgraded for more langs ---------- */
 /**
- * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn})
- * lang – htmlLang → "hy","ru","en","ar","fr","kz","chn"
+ * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn, de, es, it, fa})
+ * lang – htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa"
  */
-function pickLang(v, lang = "hy", fallbacks = ["am","en","ru","ar","fr","kz","chn"]) {
+function pickLang(
+  v,
+  lang = "hy",
+  fallbacks = ["am","en","ru","ar","fr","kz","chn","de","es","it","fa"]
+) {
   if (!v) return "";
   if (typeof v === "string") return v;
 
@@ -95,6 +121,10 @@ function noPhotoLabel(lang) {
   if (k === "fr") return "photo";
   if (k === "kz") return "фото";
   if (k === "chn") return "照片";
+  if (k === "de") return "foto";
+  if (k === "es") return "foto";
+  if (k === "it") return "foto";
+  if (k === "fa") return "عکس";
   return "photo";
 }
 
@@ -110,7 +140,6 @@ function normalizeUrl(u) {
 function linkify(text) {
   if (!text) return null;
 
-  // գտնում ենք URL-երը
   const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
   const parts = String(text).split(urlRegex);
 
@@ -237,22 +266,22 @@ function WorkerCard({ item, lang }) {
       }
     }, name || "—"),
 
-    /* նկարագրություն */
-   desc && h("div", {
-  style:{
-    margin:"0 auto 14px",
-    maxWidth:320,
-    padding:"10px 12px",
-    borderRadius:14,
-    background: bioBgColor,
-    color: bioColor,
-    fontSize:14,
-    lineHeight:1.5,
-    textAlign:"left",
-    whiteSpace:"pre-wrap",   // ✅ պահում է բոլոր probelner@ (spaces)
-    wordBreak:"break-word"
-  }
-}, descNodes),
+    /* նկարագրություն՝ probelner@ պահում ենք + linkify */
+    desc && h("div", {
+      style:{
+        margin:"0 auto 14px",
+        maxWidth:320,
+        padding:"10px 12px",
+        borderRadius:14,
+        background: bioBgColor,
+        color: bioColor,
+        fontSize:14,
+        lineHeight:1.5,
+        textAlign:"left",
+        whiteSpace:"pre-wrap",   // ✅ պահում է բոլոր probelner@ (spaces)
+        wordBreak:"break-word"
+      }
+    }, descNodes),
 
     /* slider */
     hasSlides && h("div", {
@@ -353,7 +382,7 @@ function WorkerCard({ item, lang }) {
  * Props:
  * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], nameColor, bioColor, bioBgColor }]
  * - keyword
- * - lang (htmlLang → "hy","ru","en","ar","fr","kz","chn")
+ * - lang (htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa")
  * - onBack()
  */
 export default function BrandInfoPage({
@@ -377,14 +406,11 @@ export default function BrandInfoPage({
     hasKeyword(item.keyword, keyword)
   );
 
-  // ✅ ՓՈՓՈԽՎԱԾ ՄԻԱՅՆ ՍԱ ՀԱՏՎԱԾԸ
   function handleBack() {
     const saved = sessionStorage.getItem("publicScrollPos");
 
-    // վերադարձ parent view
     onBack && onBack();
 
-    // վերականգնել scroll-ը
     if (saved) {
       setTimeout(() => {
         const container = document.querySelector(".public-scroll-layer");

@@ -209,7 +209,7 @@ const PW_UI_TEXT = {
     toastSuccess: "Құпиясөз сәтті өзгертілді ✅",
     toastWrongOld: "Ескі құпиясөз қате енгізілді",
     toastInUse: "Бұл құпиясөз басқа админде қолданылып жатыр",
-    toastRoute404: "Серверде құпиясөзді өзгерту маршруты табылмады",
+    toastRoute404: "Սерверде құпиясөзді өзгерту маршруты табылмады",
   },
 
   // 🇨🇳 Chinese (Simplified)
@@ -245,6 +245,143 @@ const PW_UI_TEXT = {
     toastWrongOld: "当前密码不正确",
     toastInUse: "该密码已被其他管理员使用",
     toastRoute404: "服务器上找不到修改密码的接口",
+  },
+
+  // ✅ NEW langs — EN fallback until translations are added
+  de: {
+    title: "Change password",
+
+    oldLabel: "Current password",
+    newLabel: "New password",
+    repeatLabel: "Repeat new password",
+
+    oldPlaceholder: "Current password",
+    newPlaceholder: "New password",
+    repeatPlaceholder: "Repeat new password",
+
+    reqTitle: "Requirements:",
+    reqLen: "At least 8 characters",
+    reqLow: "Lowercase letter",
+    reqUp: "Uppercase letter",
+    reqNum: "Number",
+    reqSym: "Symbol (., !, @, # …)",
+    reqDiffOld: "Do not repeat the old password",
+
+    mismatch: "Passwords do not match",
+
+    saveButton: "Save",
+    savingButton: "Saving...",
+
+    hint:
+      "Hint: The server checks your current password and will reject the new one if it is already used by another admin.",
+
+    toastNoToken: "No token",
+    toastSuccess: "Password changed ✅",
+    toastWrongOld: "The current password is incorrect",
+    toastInUse: "This password is already used by another admin",
+    toastRoute404: "Password change route not found on the server",
+  },
+
+  es: {
+    title: "Change password",
+
+    oldLabel: "Current password",
+    newLabel: "New password",
+    repeatLabel: "Repeat new password",
+
+    oldPlaceholder: "Current password",
+    newPlaceholder: "New password",
+    repeatPlaceholder: "Repeat new password",
+
+    reqTitle: "Requirements:",
+    reqLen: "At least 8 characters",
+    reqLow: "Lowercase letter",
+    reqUp: "Uppercase letter",
+    reqNum: "Number",
+    reqSym: "Symbol (., !, @, # …)",
+    reqDiffOld: "Do not repeat the old password",
+
+    mismatch: "Passwords do not match",
+
+    saveButton: "Save",
+    savingButton: "Saving...",
+
+    hint:
+      "Hint: The server checks your current password and will reject the new one if it is already used by another admin.",
+
+    toastNoToken: "No token",
+    toastSuccess: "Password changed ✅",
+    toastWrongOld: "The current password is incorrect",
+    toastInUse: "This password is already used by another admin",
+    toastRoute404: "Password change route not found on the server",
+  },
+
+  it: {
+    title: "Change password",
+
+    oldLabel: "Current password",
+    newLabel: "New password",
+    repeatLabel: "Repeat new password",
+
+    oldPlaceholder: "Current password",
+    newPlaceholder: "New password",
+    repeatPlaceholder: "Repeat new password",
+
+    reqTitle: "Requirements:",
+    reqLen: "At least 8 characters",
+    reqLow: "Lowercase letter",
+    reqUp: "Uppercase letter",
+    reqNum: "Number",
+    reqSym: "Symbol (., !, @, # …)",
+    reqDiffOld: "Do not repeat the old password",
+
+    mismatch: "Passwords do not match",
+
+    saveButton: "Save",
+    savingButton: "Saving...",
+
+    hint:
+      "Hint: The server checks your current password and will reject the new one if it is already used by another admin.",
+
+    toastNoToken: "No token",
+    toastSuccess: "Password changed ✅",
+    toastWrongOld: "The current password is incorrect",
+    toastInUse: "This password is already used by another admin",
+    toastRoute404: "Password change route not found on the server",
+  },
+
+  fa: {
+    title: "Change password",
+
+    oldLabel: "Current password",
+    newLabel: "New password",
+    repeatLabel: "Repeat new password",
+
+    oldPlaceholder: "Current password",
+    newPlaceholder: "New password",
+    repeatPlaceholder: "Repeat new password",
+
+    reqTitle: "Requirements:",
+    reqLen: "At least 8 characters",
+    reqLow: "Lowercase letter",
+    reqUp: "Uppercase letter",
+    reqNum: "Number",
+    reqSym: "Symbol (., !, @, # …)",
+    reqDiffOld: "Do not repeat the old password",
+
+    mismatch: "Passwords do not match",
+
+    saveButton: "Save",
+    savingButton: "Saving...",
+
+    hint:
+      "Hint: The server checks your current password and will reject the new one if it is already used by another admin.",
+
+    toastNoToken: "No token",
+    toastSuccess: "Password changed ✅",
+    toastWrongOld: "The current password is incorrect",
+    toastInUse: "This password is already used by another admin",
+    toastRoute404: "Password change route not found on the server",
   },
 };
 

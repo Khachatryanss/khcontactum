@@ -32,7 +32,7 @@ function faClassFrom(item){
   return ICON_MAP[key] || "fa-solid fa-link";
 }
 
-/* ---------- multi-lang label picker (7 լեզու) ---------- */
+/* ---------- multi-lang label picker (11 լեզու) ---------- */
 function pickLabel(label, lang = "hy"){
   if (label && typeof label === "object") {
     const primaryKeys = [];
@@ -46,13 +46,28 @@ function pickLabel(label, lang = "hy"){
       case "chn":
         primaryKeys.push("chn");
         break;
+
+      // ✅ NEW langs — direct key usage
+      case "de":
+        primaryKeys.push("de");
+        break;
+      case "es":
+        primaryKeys.push("es");
+        break;
+      case "it":
+        primaryKeys.push("it");
+        break;
+      case "fa":
+        primaryKeys.push("fa");
+        break;
+
       default:
         primaryKeys.push(lang);
     }
 
     const fallbackOrder = [
       ...primaryKeys,
-      "am", "en", "ru", "ar", "fr", "kz", "chn"
+      "am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"
     ];
 
     for (const k of fallbackOrder) {
@@ -106,8 +121,10 @@ export default function IconsPage({
     draggingRef.current = false;
   };
 
-  const labelDir   = (lang === "ar" ? "rtl" : "ltr");
-  const labelAlign = (lang === "ar" ? "right" : "left");
+  // ✅ rtl for ar + fa
+  const rtlLangs = new Set(["ar", "fa"]);
+  const labelDir   = rtlLangs.has(lang) ? "rtl" : "ltr";
+  const labelAlign = rtlLangs.has(lang) ? "right" : "left";
 
   /* ===== ONE-COLUMN MODE ===== */
   const isOneColumnRow = layoutStyle !== "dzev4" && Number(cols) === 1;

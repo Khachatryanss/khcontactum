@@ -3,8 +3,8 @@ import React from "react";
 import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
 
 const h = React.createElement;
-// 👇 ավելացրեցինք kz, chn
-const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn"];
+// 👇 ավելացրեցինք kz, chn, de, es, it, fa
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 
 /* ---------- UI TEXT ---------- */
 const BRANDS_UI_TEXT = {
@@ -216,7 +216,7 @@ const BRANDS_UI_TEXT = {
       "Тек сурет немесе видео файлдар қабылданады",
     uploadOk: "Логотип жүктелді ✔",
     uploadFailed: "Жүктеу сәтсіз аяқталды",
-    loadFailed: "Жүктеу սәтсіз аяқталды",
+    loadFailed: "Жүктеу սәтсіз ավարտталды",
     savedOk: "Сақталды ✅",
     saveFailed: "Սақтау սәтсіз ավարտталды",
   },
@@ -255,6 +255,147 @@ const BRANDS_UI_TEXT = {
     loadFailed: "加载失败",
     savedOk: "已保存 ✅",
     saveFailed: "保存失败",
+  },
+
+  // ✅ NEW langs — same UI text as EN (fallback until translations)
+  de: {
+    heading: "Brands",
+
+    titleColorLabel: "Title color:",
+    nameColorLabel: "Name color:",
+    titleTextLabel: "Title text:",
+    colsLabel: "Number of columns:",
+    colsOption3: "3",
+    colsOption2: "2",
+    colsOption1: "1 (single column)",
+    rowBgLabel: "Background for single-column cards (Column 1)",
+
+    brandNameLabel: "Brand name:",
+    uploadButton: "Upload",
+    deleteButton: "Delete",
+    removeLogoButton: "Remove logo",
+    linkTypeLabel: "Link type:",
+    linkTypeKeyword: "Keyword",
+    linkTypeUrl: "URL",
+    keywordPlaceholder: "e.g. goodrealty",
+    hrefPlaceholder: "https://example.com/...",
+
+    addButton: "Add",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+
+    fileTypeError: "Only image or video files are accepted",
+    uploadOk: "Logo uploaded ✔",
+    uploadFailed: "Upload failed",
+    loadFailed: "Loading failed",
+    savedOk: "Saved ✅",
+    saveFailed: "Save failed",
+  },
+
+  es: {
+    heading: "Brands",
+
+    titleColorLabel: "Title color:",
+    nameColorLabel: "Name color:",
+    titleTextLabel: "Title text:",
+    colsLabel: "Number of columns:",
+    colsOption3: "3",
+    colsOption2: "2",
+    colsOption1: "1 (single column)",
+    rowBgLabel: "Background for single-column cards (Column 1)",
+
+    brandNameLabel: "Brand name:",
+    uploadButton: "Upload",
+    deleteButton: "Delete",
+    removeLogoButton: "Remove logo",
+    linkTypeLabel: "Link type:",
+    linkTypeKeyword: "Keyword",
+    linkTypeUrl: "URL",
+    keywordPlaceholder: "e.g. goodrealty",
+    hrefPlaceholder: "https://example.com/...",
+
+    addButton: "Add",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+
+    fileTypeError: "Only image or video files are accepted",
+    uploadOk: "Logo uploaded ✔",
+    uploadFailed: "Upload failed",
+    loadFailed: "Loading failed",
+    savedOk: "Saved ✅",
+    saveFailed: "Save failed",
+  },
+
+  it: {
+    heading: "Brands",
+
+    titleColorLabel: "Title color:",
+    nameColorLabel: "Name color:",
+    titleTextLabel: "Title text:",
+    colsLabel: "Number of columns:",
+    colsOption3: "3",
+    colsOption2: "2",
+    colsOption1: "1 (single column)",
+    rowBgLabel: "Background for single-column cards (Column 1)",
+
+    brandNameLabel: "Brand name:",
+    uploadButton: "Upload",
+    deleteButton: "Delete",
+    removeLogoButton: "Remove logo",
+    linkTypeLabel: "Link type:",
+    linkTypeKeyword: "Keyword",
+    linkTypeUrl: "URL",
+    keywordPlaceholder: "e.g. goodrealty",
+    hrefPlaceholder: "https://example.com/...",
+
+    addButton: "Add",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+
+    fileTypeError: "Only image or video files are accepted",
+    uploadOk: "Logo uploaded ✔",
+    uploadFailed: "Upload failed",
+    loadFailed: "Loading failed",
+    savedOk: "Saved ✅",
+    saveFailed: "Save failed",
+  },
+
+  fa: {
+    heading: "Brands",
+
+    titleColorLabel: "Title color:",
+    nameColorLabel: "Name color:",
+    titleTextLabel: "Title text:",
+    colsLabel: "Number of columns:",
+    colsOption3: "3",
+    colsOption2: "2",
+    colsOption1: "1 (single column)",
+    rowBgLabel: "Background for single-column cards (Column 1)",
+
+    brandNameLabel: "Brand name:",
+    uploadButton: "Upload",
+    deleteButton: "Delete",
+    removeLogoButton: "Remove logo",
+    linkTypeLabel: "Link type:",
+    linkTypeKeyword: "Keyword",
+    linkTypeUrl: "URL",
+    keywordPlaceholder: "e.g. goodrealty",
+    hrefPlaceholder: "https://example.com/...",
+
+    addButton: "Add",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+
+    fileTypeError: "Only image or video files are accepted",
+    uploadOk: "Logo uploaded ✔",
+    uploadFailed: "Upload failed",
+    loadFailed: "Loading failed",
+    savedOk: "Saved ✅",
+    saveFailed: "Save failed",
   },
 };
 

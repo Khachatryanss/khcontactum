@@ -3,8 +3,8 @@ import React from "react";
 import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
 
 const h = React.createElement;
-// 👇 ավելացրինք kz, chn
-const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn"];
+// 👇 ավելացրինք kz, chn, de, es, it, fa
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 
 /* ---------- UI TEXT ---------- */
 const BRANDINFO_TEXT = {
@@ -199,6 +199,115 @@ const BRANDINFO_TEXT = {
     savedOk: "已保存 ✅",
     loadFailed: "加载失败",
     saveFailed: "保存失败",
+  },
+
+  // ✅ NEW langs — same UI text as EN (fallback until translations)
+  de: {
+    title: "Brand Info",
+
+    keywordHint: "This section is linked to brands via the keyword field.",
+    keywordLabel: "Keyword",
+    nameLabel: "Name:",
+    bioLabel: "Description:",
+    nameColorLabel: "Name color",
+    bioColorLabel: "Description color",
+    bioBgColorLabel: "Description background color",
+    sliderLabel: "Slider (up to 5 images, 6:9)",
+    deleteWorkerButton: "Delete",
+    addWorkerButton: "Add",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+    avatarLabel: "Upload",
+    deleteAvatarLabel: "Delete logo",
+    fileTypeError: "Only image files are allowed",
+    uploadAvatarOk: "Avatar uploaded ✔",
+    uploadImageOk: "Image uploaded ✔",
+    uploadFailed: "Upload failed",
+    savedOk: "Saved ✅",
+    loadFailed: "Load failed",
+    saveFailed: "Save failed",
+  },
+
+  es: {
+    title: "Brand Info",
+
+    keywordHint: "This section is linked to brands via the keyword field.",
+    keywordLabel: "Keyword",
+    nameLabel: "Name:",
+    bioLabel: "Description:",
+    nameColorLabel: "Name color",
+    bioColorLabel: "Description color",
+    bioBgColorLabel: "Description background color",
+    sliderLabel: "Slider (up to 5 images, 6:9)",
+    deleteWorkerButton: "Delete",
+    addWorkerButton: "Add",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+    avatarLabel: "Upload",
+    deleteAvatarLabel: "Delete logo",
+    fileTypeError: "Only image files are allowed",
+    uploadAvatarOk: "Avatar uploaded ✔",
+    uploadImageOk: "Image uploaded ✔",
+    uploadFailed: "Upload failed",
+    savedOk: "Saved ✅",
+    loadFailed: "Load failed",
+    saveFailed: "Save failed",
+  },
+
+  it: {
+    title: "Brand Info",
+
+    keywordHint: "This section is linked to brands via the keyword field.",
+    keywordLabel: "Keyword",
+    nameLabel: "Name:",
+    bioLabel: "Description:",
+    nameColorLabel: "Name color",
+    bioColorLabel: "Description color",
+    bioBgColorLabel: "Description background color",
+    sliderLabel: "Slider (up to 5 images, 6:9)",
+    deleteWorkerButton: "Delete",
+    addWorkerButton: "Add",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+    avatarLabel: "Upload",
+    deleteAvatarLabel: "Delete logo",
+    fileTypeError: "Only image files are allowed",
+    uploadAvatarOk: "Avatar uploaded ✔",
+    uploadImageOk: "Image uploaded ✔",
+    uploadFailed: "Upload failed",
+    savedOk: "Saved ✅",
+    loadFailed: "Load failed",
+    saveFailed: "Save failed",
+  },
+
+  fa: {
+    title: "Brand Info",
+
+    keywordHint: "This section is linked to brands via the keyword field.",
+    keywordLabel: "Keyword",
+    nameLabel: "Name:",
+    bioLabel: "Description:",
+    nameColorLabel: "Name color",
+    bioColorLabel: "Description color",
+    bioBgColorLabel: "Description background color",
+    sliderLabel: "Slider (up to 5 images, 6:9)",
+    deleteWorkerButton: "Delete",
+    addWorkerButton: "Add",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+    avatarLabel: "Upload",
+    deleteAvatarLabel: "Delete logo",
+    fileTypeError: "Only image files are allowed",
+    uploadAvatarOk: "Avatar uploaded ✔",
+    uploadImageOk: "Image uploaded ✔",
+    uploadFailed: "Upload failed",
+    savedOk: "Saved ✅",
+    loadFailed: "Load failed",
+    saveFailed: "Save failed",
   },
 };
 

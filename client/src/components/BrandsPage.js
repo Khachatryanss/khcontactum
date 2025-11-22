@@ -21,9 +21,13 @@ function absLogo(u = "") {
 
 /**
  * v – կարող է լինել string կամ i18n object
- * lang – գալիս է HomePage-ից որպես htmlLang: "hy","ru","en","ar","fr","kz","chn"
+ * lang – գալիս է HomePage-ից որպես htmlLang: "hy","ru","en","ar","fr","kz","chn","de","es","it","fa"
  */
-function pickLang(v, lang = "hy", fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn"]) {
+function pickLang(
+  v,
+  lang = "hy",
+  fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]
+) {
   if (!v) return "";
   if (typeof v === "string") return v;
 
@@ -57,10 +61,10 @@ const CROP_ZOOM = 1.1; // 1.08–1.12 միջակայքը OK է
  * Props:
  * - brands: [{ name, href, logo, linkType, keyword }]
  * - brandsTitleColor
- * - brandsTitleText (string կամ {am,ru,en,ar,fr,kz,chn})
+ * - brandsTitleText (string կամ {am,ru,en,ar,fr,kz,chn,de,es,it,fa})
  * - brandsNameColor
  * - brandsCols: 1 | 2 | 3
- * - lang: htmlLang → "hy","ru","en","ar","fr","kz","chn"
+ * - lang: htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa"
  * - onKeywordClick(keyword) – optional
  */
 export default function BrandsPage({
@@ -252,16 +256,16 @@ export default function BrandsPage({
       { style: { display: "flex", justifyContent: "center" } },
       h(
         "div",
-          {
-            className: "brands-grid",
-            style: {
-              display: "grid",
-              gap: 16,
-              justifyContent: "center",
-              gridTemplateColumns:
-                cols === 2 ? "repeat(2, 120px)" : "repeat(3, 110px)",
-            },
+        {
+          className: "brands-grid",
+          style: {
+            display: "grid",
+            gap: 16,
+            justifyContent: "center",
+            gridTemplateColumns:
+              cols === 2 ? "repeat(2, 120px)" : "repeat(3, 110px)",
           },
+        },
         ...brands.map((b, i) => {
           const name = pickLang(b?.name, lang);
           const href = (b?.href || "").trim();

@@ -117,6 +117,14 @@ function idealColsForLang(lang) {
       return [32, 38];
     case "chn":
       return [28, 34];
+    case "de":
+      return [36, 42];
+    case "es":
+      return [36, 42];
+    case "it":
+      return [36, 42];
+    case "fa":
+      return [30, 34];
     default:
       return [34, 40];
   }
@@ -126,7 +134,7 @@ function idealColsForLang(lang) {
 function LangDropdown({
   value,
   onChange,
-  langs = ["am", "ru", "en", "ar", "fr", "kz", "chn"],
+  langs = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"],
 }) {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
@@ -198,7 +206,11 @@ function rgbaToCss(obj) {
   })`;
 }
 
-function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn"]) {
+function pickLang(
+  v,
+  lang,
+  fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]
+) {
   if (!v) return "";
   if (typeof v === "string") return v;
   const order = [lang].concat(fallbacks.filter((x) => x !== lang));
@@ -455,8 +467,8 @@ export default function HomePage({ cardId = "101" }) {
     const serverLangs =
       Array.isArray(info?.available_langs) &&
       info.available_langs.length
-        ? info.available_langs.slice(0, 7)
-        : ["am", "ru", "en", "ar", "fr", "kz", "chn"];
+        ? info.available_langs.slice(0, 11)
+        : ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 
     const nameByLang = {
       hy: info?.company?.name?.am || "",
@@ -466,6 +478,10 @@ export default function HomePage({ cardId = "101" }) {
       fr: info?.company?.name?.fr || "",
       kz: info?.company?.name?.kz || "",
       chn: info?.company?.name?.chn || "",
+      de: info?.company?.name?.de || "",
+      es: info?.company?.name?.es || "",
+      it: info?.company?.name?.it || "",
+      fa: info?.company?.name?.fa || "",
     };
 
     const desc = info?.description || {};
@@ -478,6 +494,10 @@ export default function HomePage({ cardId = "101" }) {
       fr: (desc?.fr ?? about?.fr) || "",
       kz: (desc?.kz ?? about?.kz) || "",
       chn: (desc?.chn ?? about?.chn) || "",
+      de: (desc?.de ?? about?.de) || "",
+      es: (desc?.es ?? about?.es) || "",
+      it: (desc?.it ?? about?.it) || "",
+      fa: (desc?.fa ?? about?.fa) || "",
     };
 
     const nameColor =
@@ -727,7 +747,7 @@ export default function HomePage({ cardId = "101" }) {
                     className: "hero-desc",
                     style: descStyle,
                     lang: htmlLang,
-                    dir: htmlLang === "ar" ? "rtl" : "ltr",
+                    dir: (htmlLang === "ar" || htmlLang === "fa") ? "rtl" : "ltr",
                   },
                   description
                 )

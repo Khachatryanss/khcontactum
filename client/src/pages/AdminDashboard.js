@@ -393,6 +393,226 @@ const ADMIN_UI_TEXT = {
 
     chooseFileLabel: "选择文件",
   },
+
+  /* ---- German (DE) ---- */
+  de: {
+    tabs: {
+      home: "Startseite",
+      icons: "Symbole",
+      brands: "Marken",
+      brandinfo: "Markeninfo",
+      share: "Teilen / QR",
+      password: "Passwort ändern",
+    },
+    logout: "ABMELDEN",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "SPRACHEN",
+    langsDescription:
+      "Wähle aktive Sprachen aus und ändere die Reihenfolge; die erste ist die Standardsprache auf der öffentlichen Seite.",
+
+    avatarTitle: "AVATAR",
+    typeLabel: "Typ",
+    avatarTypeImage: "Bild",
+    avatarTypeVideo: "Video",
+    avatarImageUrlLabel: "Avatar-Bild-URL",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "Avatar-Video-URL",
+    avatarVideoHint: "Max. 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "FIRMENNAME",
+    nameColorLabel: "Farbe des Namens",
+
+    descriptionTitle: "BESCHREIBUNG",
+    descriptionColorLabel: "Farbe der Beschreibung",
+
+    backgroundTitle: "HINTERGRUND",
+    backgroundTypeColor: "Farbe",
+    backgroundTypeImage: "Bild",
+    backgroundTypeVideo: "Video",
+    backgroundColorLabel: "Hintergrundfarbe",
+    backgroundImageUrlLabel: "Hintergrundbild-URL",
+    backgroundVideoUrlLabel: "Hintergrundvideo-URL",
+    backgroundVideoHint: "Max. 20 MB (mp4, webm, ogg)",
+
+    saveButton: "Speichern",
+    savingButton: "Wird gespeichert...",
+    saveOk: "Gespeichert ✅",
+    saveError: "Fehler beim Speichern",
+
+    needLoginTitle: "Anmeldung erforderlich",
+    needLoginBody: "Bitte auf der / Seite anmelden.",
+    loading: "Lädt…",
+
+    defaultBadge: "Standard",
+
+    chooseFileLabel: "Datei wählen",
+  },
+
+  /* ---- Spanish (ES) ---- */
+  es: {
+    tabs: {
+      home: "Inicio",
+      icons: "Íconos",
+      brands: "Marcas",
+      brandinfo: "Info de marca",
+      share: "Compartir / QR",
+      password: "Cambiar contraseña",
+    },
+    logout: "SALIR",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "IDIOMAS",
+    langsDescription:
+      "Selecciona los idiomas activos y cambia el orden; el primero será el idioma predeterminado en la página pública.",
+
+    avatarTitle: "AVATAR",
+    typeLabel: "Tipo",
+    avatarTypeImage: "Imagen",
+    avatarTypeVideo: "Vídeo",
+    avatarImageUrlLabel: "URL de imagen del avatar",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "URL de vídeo del avatar",
+    avatarVideoHint: "Máx. 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "NOMBRE DE LA EMPRESA",
+    nameColorLabel: "Color del nombre",
+
+    descriptionTitle: "DESCRIPCIÓN",
+    descriptionColorLabel: "Color de la descripción",
+
+    backgroundTitle: "FONDO",
+    backgroundTypeColor: "Color",
+    backgroundTypeImage: "Imagen",
+    backgroundTypeVideo: "Vídeo",
+    backgroundColorLabel: "Color de fondo",
+    backgroundImageUrlLabel: "URL de imagen de fondo",
+    backgroundVideoUrlLabel: "URL de vídeo de fondo",
+    backgroundVideoHint: "Máx. 20 MB (mp4, webm, ogg)",
+
+    saveButton: "Guardar",
+    savingButton: "Guardando...",
+    saveOk: "Guardado ✅",
+    saveError: "Error al guardar",
+
+    needLoginTitle: "Se requiere inicio de sesión",
+    needLoginBody: "Por favor inicia sesión en la página /.",
+    loading: "Cargando…",
+
+    defaultBadge: "Predeterminado",
+
+    chooseFileLabel: "Elegir archivo",
+  },
+
+  /* ---- Italian (IT) ---- */
+  it: {
+    tabs: {
+      home: "Home",
+      icons: "Icone",
+      brands: "Brand",
+      brandinfo: "Info brand",
+      share: "Condividi / QR",
+      password: "Cambia password",
+    },
+    logout: "ESCI",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "LINGUE",
+    langsDescription:
+      "Seleziona le lingue attive e cambia l’ordine; la prima sarà la lingua predefinita nella pagina pubblica.",
+
+    avatarTitle: "AVATAR",
+    typeLabel: "Tipo",
+    avatarTypeImage: "Immagine",
+    avatarTypeVideo: "Video",
+    avatarImageUrlLabel: "URL immagine avatar",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "URL video avatar",
+    avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "NOME AZIENDA",
+    nameColorLabel: "Colore del nome",
+
+    descriptionTitle: "DESCRIZIONE",
+    descriptionColorLabel: "Colore della descrizione",
+
+    backgroundTitle: "SFONDO",
+    backgroundTypeColor: "Colore",
+    backgroundTypeImage: "Immagine",
+    backgroundTypeVideo: "Video",
+    backgroundColorLabel: "Colore di sfondo",
+    backgroundImageUrlLabel: "URL immagine di sfondo",
+    backgroundVideoUrlLabel: "URL video di sfondo",
+    backgroundVideoHint: "Max 20 MB (mp4, webm, ogg)",
+
+    saveButton: "Salva",
+    savingButton: "Salvataggio...",
+    saveOk: "Salvato ✅",
+    saveError: "Errore durante il salvataggio",
+
+    needLoginTitle: "Accesso richiesto",
+    needLoginBody: "Effettua l’accesso nella pagina /.",
+    loading: "Caricamento…",
+
+    defaultBadge: "Default",
+
+    chooseFileLabel: "Scegli file",
+  },
+
+  /* ---- Persian (FA) ---- */
+  fa: {
+    tabs: {
+      home: "صفحه اصلی",
+      icons: "آیکون‌ها",
+      brands: "برندها",
+      brandinfo: "اطلاعات برند",
+      share: "اشتراک‌گذاری / QR",
+      password: "تغییر رمز عبور",
+    },
+    logout: "خروج",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "زبان‌ها",
+    langsDescription:
+      "زبان‌های فعال را انتخاب کنید و ترتیب را تغییر دهید؛ اولین زبان، زبان پیش‌فرض صفحه عمومی خواهد بود.",
+
+    avatarTitle: "آواتار",
+    typeLabel: "نوع",
+    avatarTypeImage: "تصویر",
+    avatarTypeVideo: "ویدئو",
+    avatarImageUrlLabel: "لینک تصویر آواتار",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "لینک ویدئوی آواتار",
+    avatarVideoHint: "حداکثر ۲۰ مگابایت (mp4, webm, ogg)",
+
+    companyNameTitle: "نام شرکت",
+    nameColorLabel: "رنگ نام",
+
+    descriptionTitle: "توضیحات",
+    descriptionColorLabel: "رنگ توضیحات",
+
+    backgroundTitle: "پس‌زمینه",
+    backgroundTypeColor: "رنگ",
+    backgroundTypeImage: "تصویر",
+    backgroundTypeVideo: "ویدئو",
+    backgroundColorLabel: "رنگ پس‌زمینه",
+    backgroundImageUrlLabel: "لینک تصویر پس‌زمینه",
+    backgroundVideoUrlLabel: "لینک ویدئوی پس‌زمینه",
+    backgroundVideoHint: "حداکثر ۲۰ مگابایت (mp4, webm, ogg)",
+
+    saveButton: "ذخیره",
+    savingButton: "در حال ذخیره...",
+    saveOk: "ذخیره شد ✅",
+    saveError: "خطا هنگام ذخیره",
+
+    needLoginTitle: "ورود لازم است",
+    needLoginBody: "لطفاً در صفحه / وارد شوید.",
+    loading: "در حال بارگذاری…",
+
+    defaultBadge: "پیش‌فرض",
+
+    chooseFileLabel: "انتخاب فایل",
+  },
 };
 
 const DEFAULT_INFO = {
@@ -408,6 +628,10 @@ const DEFAULT_INFO = {
       fr: "",
       kz: "",
       chn: "",
+      de: "",
+      es: "",
+      it: "",
+      fa: "",
     },
     nameColor: "#000000",
   },
@@ -420,6 +644,10 @@ const DEFAULT_INFO = {
     fr: "",
     kz: "",
     chn: "",
+    de: "",
+    es: "",
+    it: "",
+    fa: "",
     color: "#000000",
   },
 
@@ -440,6 +668,10 @@ const ALL_LANGS = [
   { code: "fr", label: "Français (FR)" },
   { code: "kz", label: "Қазақша (KZ)" },
   { code: "chn", label: "中文 (CHN)" },
+  { code: "de", label: "Deutsch (DE)" },
+  { code: "es", label: "Español (ES)" },
+  { code: "it", label: "Italiano (IT)" },
+  { code: "fa", label: "فارسی (FA)" },
 ];
 const ALL_CODES = ALL_LANGS.map((x) => x.code);
 
@@ -465,6 +697,10 @@ function normalizeInfo(partial) {
         fr: i.company?.name?.fr || "",
         kz: i.company?.name?.kz || "",
         chn: i.company?.name?.chn || "",
+        de: i.company?.name?.de || "",
+        es: i.company?.name?.es || "",
+        it: i.company?.name?.it || "",
+        fa: i.company?.name?.fa || "",
       },
     },
 
@@ -476,6 +712,10 @@ function normalizeInfo(partial) {
       fr: i.description?.fr || "",
       kz: i.description?.kz || "",
       chn: i.description?.chn || "",
+      de: i.description?.de || "",
+      es: i.description?.es || "",
+      it: i.description?.it || "",
+      fa: i.description?.fa || "",
       color: i.description?.color || "#000000",
     },
 
@@ -531,7 +771,7 @@ export default function AdminDashboard({
   const T = ADMIN_UI_TEXT[uiLang] || ADMIN_UI_TEXT.en;
 
   // UI լեզուների selector-ի համար (նույն տրամաբանությունը, ինչ AdminLogin-ում)
-  const UI_LANGS = ["en", "am", "fr", "ar", "ru", "kz", "chn"];
+  const UI_LANGS = ["en", "am", "fr", "ar", "ru", "kz", "chn", "de", "es", "it", "fa"];
 
   function handleUiLangChange(next) {
     if (!next || next === uiLang) return;
@@ -1205,10 +1445,18 @@ export default function AdminDashboard({
             ? "Nom de l'entreprise (FR)"
             : code === "kz"
             ? "Компания атауы (KZ)"
-            : "公司名称 (CHN)";
+            : code === "chn"
+            ? "公司名称 (CHN)"
+            : code === "de"
+            ? "Firmenname (DE)"
+            : code === "es"
+            ? "Nombre de la empresa (ES)"
+            : code === "it"
+            ? "Nome dell'azienda (IT)"
+            : "نام شرکت (FA)";
 
         const extraProps =
-          code === "ar"
+          (code === "ar" || code === "fa")
             ? { dir: "rtl", placeholder }
             : { placeholder };
 
@@ -1259,10 +1507,18 @@ export default function AdminDashboard({
             ? "Description (FR)"
             : code === "kz"
             ? "Сипаттама (KZ)"
-            : "描述 (CHN)";
+            : code === "chn"
+            ? "描述 (CHN)"
+            : code === "de"
+            ? "Beschreibung (DE)"
+            : code === "es"
+            ? "Descripción (ES)"
+            : code === "it"
+            ? "Descrizione (IT)"
+            : "توضیحات (FA)";
 
         const extraProps =
-          code === "ar"
+          (code === "ar" || code === "fa")
             ? { dir: "rtl", placeholder }
             : { placeholder };
 

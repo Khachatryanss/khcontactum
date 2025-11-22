@@ -320,6 +320,183 @@ const SHARE_UI_TEXT = {
       ig: "Instagram",
     },
   },
+
+  // ✅ NEW langs — same UI text as EN (fallback until translations)
+  de: {
+    titleMain: "Share / QR",
+    intro: "You can share your card via QR code and a share link.",
+    onlineTitle: "Online QR · Link",
+    onlineLabel: "Public link of the card",
+    onlineHelp:
+      "Base is fixed. Enter only your card_id / path.",
+
+    offlineTitle: "Offline QR & Contacts",
+    offlineIntro:
+      "These details will be used for the offline QR code and the “Add me to the contact list” button.",
+
+    fullNameLabel: "Full name",
+    phoneLabel: "Phone",
+    phonePlaceholder: "+1...",
+
+    quickTitle: "Quick share options",
+    quickIntro: "Choose which icons will appear in the share section.",
+
+    colorsTitle: "Colors",
+    colorBtnText: "Button text color",
+    colorBtnBg: "Button background color",
+    colorShareTitle: "“Share my card” text color",
+
+    saveButton: "Save",
+    savingButton: "Saving...",
+    msgNoToken: "No token, please log in again",
+    msgSaveOk: "Saved ✅",
+    msgSaveError: "Error while saving",
+    pathReset: "Reset to card_id",
+    pathInvalid:
+      "Invalid path: letters/numbers/-/_ only, no spaces.",
+
+    channelLabels: {
+      fb: "Facebook",
+      tg: "Telegram",
+      ln: "LinkedIn",
+      wa: "WhatsApp",
+      mail: "Email",
+      viber: "Viber",
+      ig: "Instagram",
+    },
+  },
+
+  es: {
+    titleMain: "Share / QR",
+    intro: "You can share your card via QR code and a share link.",
+    onlineTitle: "Online QR · Link",
+    onlineLabel: "Public link of the card",
+    onlineHelp:
+      "Base is fixed. Enter only your card_id / path.",
+
+    offlineTitle: "Offline QR & Contacts",
+    offlineIntro:
+      "These details will be used for the offline QR code and the “Add me to the contact list” button.",
+
+    fullNameLabel: "Full name",
+    phoneLabel: "Phone",
+    phonePlaceholder: "+1...",
+
+    quickTitle: "Quick share options",
+    quickIntro: "Choose which icons will appear in the share section.",
+
+    colorsTitle: "Colors",
+    colorBtnText: "Button text color",
+    colorBtnBg: "Button background color",
+    colorShareTitle: "“Share my card” text color",
+
+    saveButton: "Save",
+    savingButton: "Saving...",
+    msgNoToken: "No token, please log in again",
+    msgSaveOk: "Saved ✅",
+    msgSaveError: "Error while saving",
+    pathReset: "Reset to card_id",
+    pathInvalid:
+      "Invalid path: letters/numbers/-/_ only, no spaces.",
+
+    channelLabels: {
+      fb: "Facebook",
+      tg: "Telegram",
+      ln: "LinkedIn",
+      wa: "WhatsApp",
+      mail: "Email",
+      viber: "Viber",
+      ig: "Instagram",
+    },
+  },
+
+  it: {
+    titleMain: "Share / QR",
+    intro: "You can share your card via QR code and a share link.",
+    onlineTitle: "Online QR · Link",
+    onlineLabel: "Public link of the card",
+    onlineHelp:
+      "Base is fixed. Enter only your card_id / path.",
+
+    offlineTitle: "Offline QR & Contacts",
+    offlineIntro:
+      "These details will be used for the offline QR code and the “Add me to the contact list” button.",
+
+    fullNameLabel: "Full name",
+    phoneLabel: "Phone",
+    phonePlaceholder: "+1...",
+
+    quickTitle: "Quick share options",
+    quickIntro: "Choose which icons will appear in the share section.",
+
+    colorsTitle: "Colors",
+    colorBtnText: "Button text color",
+    colorBtnBg: "Button background color",
+    colorShareTitle: "“Share my card” text color",
+
+    saveButton: "Save",
+    savingButton: "Saving...",
+    msgNoToken: "No token, please log in again",
+    msgSaveOk: "Saved ✅",
+    msgSaveError: "Error while saving",
+    pathReset: "Reset to card_id",
+    pathInvalid:
+      "Invalid path: letters/numbers/-/_ only, no spaces.",
+
+    channelLabels: {
+      fb: "Facebook",
+      tg: "Telegram",
+      ln: "LinkedIn",
+      wa: "WhatsApp",
+      mail: "Email",
+      viber: "Viber",
+      ig: "Instagram",
+    },
+  },
+
+  fa: {
+    titleMain: "Share / QR",
+    intro: "You can share your card via QR code and a share link.",
+    onlineTitle: "Online QR · Link",
+    onlineLabel: "Public link of the card",
+    onlineHelp:
+      "Base is fixed. Enter only your card_id / path.",
+
+    offlineTitle: "Offline QR & Contacts",
+    offlineIntro:
+      "These details will be used for the offline QR code and the “Add me to the contact list” button.",
+
+    fullNameLabel: "Full name",
+    phoneLabel: "Phone",
+    phonePlaceholder: "+1...",
+
+    quickTitle: "Quick share options",
+    quickIntro: "Choose which icons will appear in the share section.",
+
+    colorsTitle: "Colors",
+    colorBtnText: "Button text color",
+    colorBtnBg: "Button background color",
+    colorShareTitle: "“Share my card” text color",
+
+    saveButton: "Save",
+    savingButton: "Saving...",
+    msgNoToken: "No token, please log in again",
+    msgSaveOk: "Saved ✅",
+    msgSaveError: "Error while saving",
+    pathReset: "Reset to card_id",
+    pathInvalid:
+      "Invalid path: letters/numbers/-/_ only, no spaces.",
+
+    channelLabels: {
+      fb: "Facebook",
+      tg: "Telegram",
+      ln: "LinkedIn",
+      wa: "WhatsApp",
+      mail: "Email",
+      viber: "Viber",
+      ig: "Instagram",
+    },
+  },
 };
 
 /* ---------- defaults & helpers ---------- */

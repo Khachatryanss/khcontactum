@@ -91,12 +91,23 @@ function idealColsForLang(lang) {
     case "fr":  return [36, 42];
     case "kz":  return [34, 40];
     case "chn": return [28, 34];
+
+    // ✅ NEW langs (same sizing logic, no other changes)
+    case "de":  return [36, 42];
+    case "es":  return [36, 42];
+    case "it":  return [36, 42];
+    case "fa":  return [30, 34];
+
     default:    return [34, 40];
   }
 }
 
-// 👉 default-ում էլ արդեն 7 լեզուն է
-function LangDropdown({ value, onChange, langs = ["am", "ru", "en", "ar", "fr", "kz", "chn"] }) {
+// 👉 default-ում էլ արդեն 11 լեզուն է
+function LangDropdown({
+  value,
+  onChange,
+  langs = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"],
+}) {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
     const onDoc = (e) => { if (!e.target.closest?.(".lang-dd")) setOpen(false); };
@@ -154,8 +165,8 @@ function rgbaToCss(obj) {
   return `rgba(${(+r | 0)}, ${(+g | 0)}, ${(+b | 0)}, ${(isFinite(+a) ? +a : 1)})`;
 }
 
-// (այս պահին չի օգտագործվում, բայց թարմացրի 7 լեզվի համար)
-function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn"]) {
+// (այս պահին չի օգտագործվում, բայց թարմացրի 11 լեզվի համար)
+function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
   const order = [lang].concat(fallbacks.filter(x => x !== lang));
@@ -308,7 +319,7 @@ export default function HomePage({ cardId = "101" }) {
   // ✅ pop-up share-ի ավտոմատ բացում՝ միայն առաջին անգամ
   const [shareAutoOpened, setShareAutoOpened] = React.useState(false);
 
-  // 🔤 ներսում աշխատող լեզվի key՝ hy/ru/en/ar/fr/kz/chn
+  // 🔤 ներսում աշխատող լեզվի key՝ hy/ru/en/ar/fr/kz/chn/de/es/it/fa
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
@@ -359,83 +370,89 @@ export default function HomePage({ cardId = "101" }) {
 
   // ✅ NEW: dynamic manifest + iOS title based on current card info
   React.useEffect(() => {
-  if (!info) return;
+    if (!info) return;
 
-  // ընտրում ենք անունը՝ ըստ լեզվի
-  const nameByLang = {
-    hy:  info?.company?.name?.am  || "",
-    ru:  info?.company?.name?.ru  || "",
-    en:  info?.company?.name?.en  || "",
-    ar:  info?.company?.name?.ar  || "",
-    fr:  info?.company?.name?.fr  || "",
-    kz:  info?.company?.name?.kz  || "",
-    chn: info?.company?.name?.chn || "",
-  };
+    // ընտրում ենք անունը՝ ըստ լեզվի
+    const nameByLang = {
+      hy:  info?.company?.name?.am  || "",
+      ru:  info?.company?.name?.ru  || "",
+      en:  info?.company?.name?.en  || "",
+      ar:  info?.company?.name?.ar  || "",
+      fr:  info?.company?.name?.fr  || "",
+      kz:  info?.company?.name?.kz  || "",
+      chn: info?.company?.name?.chn || "",
 
-  const displayName =
-    nameByLang[htmlLang] ||
-    nameByLang.hy ||
-    nameByLang.en ||
-    "KHContactum";
+      // ✅ NEW langs
+      de:  info?.company?.name?.de  || "",
+      es:  info?.company?.name?.es  || "",
+      it:  info?.company?.name?.it  || "",
+      fa:  info?.company?.name?.fa  || "",
+    };
 
-  /* -----------------------------------------
-     1) PAGE TITLE (web + PWA title)
-  ----------------------------------------- */
-  try { document.title = displayName; } catch {}
+    const displayName =
+      nameByLang[htmlLang] ||
+      nameByLang.hy ||
+      nameByLang.en ||
+      "KHContactum";
 
-  /* -----------------------------------------
-     2) iOS Meta Title
-  ----------------------------------------- */
-  try {
-    let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
-    if (!meta) {
-      meta = document.createElement("meta");
-      meta.setAttribute("name", "apple-mobile-web-app-title");
-      document.head.appendChild(meta);
-    }
-    meta.setAttribute("content", displayName);
-  } catch {}
+    /* -----------------------------------------
+       1) PAGE TITLE (web + PWA title)
+    ----------------------------------------- */
+    try { document.title = displayName; } catch {}
 
-  /* -----------------------------------------
-     3) Android & Chrome manifest.json (dynamic)
-  ----------------------------------------- */
-  try {
-    let link = document.querySelector('link[rel="manifest"]');
-    if (!link) {
-      link = document.createElement("link");
-      link.setAttribute("rel", "manifest");
-      document.head.appendChild(link);
-    }
-    link.setAttribute("href", `/manifest/${cardId}`);
-  } catch {}
+    /* -----------------------------------------
+       2) iOS Meta Title
+    ----------------------------------------- */
+    try {
+      let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+      if (!meta) {
+        meta = document.createElement("meta");
+        meta.setAttribute("name", "apple-mobile-web-app-title");
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute("content", displayName);
+    } catch {}
 
-  /* -----------------------------------------
-     4) iOS Home Screen ICONS (VERY IMPORTANT)
-        ‼️ Սա է ուղիղ icon-ը, որը iOS-ը օգտագործում է
-        "Add to Home Screen" պահին
-  ----------------------------------------- */
-  try {
-  const iosIcons = [
-    { size: 180, href: "/icon-180.png" },
-    { size: 167, href: "/icon-180.png" },
-    { size: 152, href: "/icon-180.png" },
-  ];
+    /* -----------------------------------------
+       3) Android & Chrome manifest.json (dynamic)
+    ----------------------------------------- */
+    try {
+      let link = document.querySelector('link[rel="manifest"]');
+      if (!link) {
+        link = document.createElement("link");
+        link.setAttribute("rel", "manifest");
+        document.head.appendChild(link);
+      }
+      link.setAttribute("href", `/manifest/${cardId}`);
+    } catch {}
 
-  iosIcons.forEach(({ size, href }) => {
-    let l = document.querySelector(
-      `link[rel="apple-touch-icon"][sizes="${size}x${size}"]`
-    );
-    if (!l) {
-      l = document.createElement("link");
-      l.setAttribute("rel", "apple-touch-icon");
-      l.setAttribute("sizes", `${size}x${size}`);
-      document.head.appendChild(l);
-    }
-    l.setAttribute("href", href);
-  });
-}catch {}
+    /* -----------------------------------------
+       4) iOS Home Screen ICONS (VERY IMPORTANT)
+          ‼️ Սա է ուղիղ icon-ը, որը iOS-ը օգտագործում է
+          "Add to Home Screen" պահին
+    ----------------------------------------- */
+    try {
+      const iosIcons = [
+        { size: 180, href: "/icon-180.png" },
+        { size: 167, href: "/icon-180.png" },
+        { size: 152, href: "/icon-180.png" },
+      ];
 
-}, [info, htmlLang, cardId]);
+      iosIcons.forEach(({ size, href }) => {
+        let l = document.querySelector(
+          `link[rel="apple-touch-icon"][sizes="${size}x${size}"]`
+        );
+        if (!l) {
+          l = document.createElement("link");
+          l.setAttribute("rel", "apple-touch-icon");
+          l.setAttribute("sizes", `${size}x${size}`);
+          document.head.appendChild(l);
+        }
+        l.setAttribute("href", href);
+      });
+    } catch {}
+
+  }, [info, htmlLang, cardId]);
 
 
   // ✅ splash + loading ավարտվելուց հետո auto-open միայն մեկ անգամ
@@ -489,8 +506,8 @@ export default function HomePage({ cardId = "101" }) {
   try {
     const serverLangs =
       Array.isArray(info?.available_langs) && info.available_langs.length
-        ? info.available_langs.slice(0, 7) // 👉 մինչև 7 լեզու backend-ից
-        : ["am", "ru", "en", "ar", "fr", "kz", "chn"];
+        ? info.available_langs.slice(0, 11) // 👉 մինչև 11 լեզու backend-ից
+        : ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 
     const nameByLang = {
       hy:  info?.company?.name?.am  || "",
@@ -500,6 +517,12 @@ export default function HomePage({ cardId = "101" }) {
       fr:  info?.company?.name?.fr  || "",
       kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
+
+      // ✅ NEW langs
+      de:  info?.company?.name?.de  || "",
+      es:  info?.company?.name?.es  || "",
+      it:  info?.company?.name?.it  || "",
+      fa:  info?.company?.name?.fa  || "",
     };
 
     const desc = info?.description || {};
@@ -513,6 +536,12 @@ export default function HomePage({ cardId = "101" }) {
       fr:  (desc?.fr  ?? about?.fr)  || "",
       kz:  (desc?.kz  ?? about?.kz)  || "",
       chn: (desc?.chn ?? about?.chn) || "",
+
+      // ✅ NEW langs
+      de:  (desc?.de  ?? about?.de)  || "",
+      es:  (desc?.es  ?? about?.es)  || "",
+      it:  (desc?.it  ?? about?.it)  || "",
+      fa:  (desc?.fa  ?? about?.fa)  || "",
     };
 
     const nameColor = info?.company?.nameColor || "#111";
@@ -724,7 +753,7 @@ export default function HomePage({ cardId = "101" }) {
                     className: "hero-desc",
                     style: descStyle,
                     lang: htmlLang,
-                    dir: htmlLang === "ar" ? "rtl" : "ltr",
+                    dir: htmlLang === "ar" || htmlLang === "fa" ? "rtl" : "ltr",
                   },
                   description
                 )
@@ -744,26 +773,26 @@ export default function HomePage({ cardId = "101" }) {
                   })
                 : null,
               brandsArray.length
-  ? h(BrandsPage, {
-      brands: brandsArray,
-      brandsTitleColor,
-      brandsTitleText,
-      brandsCols,
-      brandsBgColor,
-      brandsNameColor,
-      lang: htmlLang,
+                ? h(BrandsPage, {
+                    brands: brandsArray,
+                    brandsTitleColor,
+                    brandsTitleText,
+                    brandsCols,
+                    brandsBgColor,
+                    brandsNameColor,
+                    lang: htmlLang,
 
-      onKeywordClick: (kw) => {
-        // ✅ պահում ենք scroll-ը հենց public-scroll-layer-ից
-        const container = document.querySelector(".public-scroll-layer");
-        const scrollY = container ? container.scrollTop : 0;
-        sessionStorage.setItem("publicScrollPos", String(scrollY));
+                    onKeywordClick: (kw) => {
+                      // ✅ պահում ենք scroll-ը հենց public-scroll-layer-ից
+                      const container = document.querySelector(".public-scroll-layer");
+                      const scrollY = container ? container.scrollTop : 0;
+                      sessionStorage.setItem("publicScrollPos", String(scrollY));
 
-        // հետո նոր բացում ենք 2-րդ էջը
-        setActiveBrandKeyword(kw);
-      },
-    })
-  : null,
+                      // հետո նոր բացում ենք 2-րդ էջը
+                      setActiveBrandKeyword(kw);
+                    },
+                  })
+                : null,
 
               h(SharePage, {
                 cardId,

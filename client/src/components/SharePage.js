@@ -18,10 +18,14 @@ const PUBLIC_BASE = "https://khcontactum.com/";
 
 /* ===== helpers ===== */
 /**
- * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn})
- * lang – "hy","ru","en","ar","fr","kz","chn" (HomePage-ից եկող htmlLang)
+ * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn, de, es, it, fa})
+ * lang – "hy","ru","en","ar","fr","kz","chn","de","es","it","fa" (HomePage-ից եկող htmlLang)
  */
-function pickLang(v, lang = "hy", fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn"]) {
+function pickLang(
+  v,
+  lang = "hy",
+  fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]
+) {
   if (!v) return "";
   if (typeof v === "string") return v;
 
@@ -56,9 +60,11 @@ function ensureAbsoluteUrl(u) {
   return PUBLIC_BASE + path;
 }
 
-/* ===== i18n text (7 լեզու) ===== */
+/* ===== i18n text (11 լեզու) ===== */
 const TEXT = {
   am: {
+    qrTitle: "QR կոդ",
+    qrDesc: "Սկանավորեք՝ քարտը բացելու կամ պահպանելու համար։",
     scanBtn: "Սկանավորել QR կոդը",
     shareTitle: "Կիսվել իմ քարտով",
     addBtn: "ԱՎԵԼԱՑՐԵՔ ԻՆՁ ԿՈՆՏԱԿՏՆԵՐԻ ՑԱՆԿՈՒՄ",
@@ -72,6 +78,8 @@ const TEXT = {
     confirmNo: "Ոչ",
   },
   ru: {
+    qrTitle: "QR-код",
+    qrDesc: "Сканируйте, чтобы открыть или сохранить визитку.",
     scanBtn: "СКАНИРОВАТЬ QR-КОД",
     shareTitle: "ПОДЕЛИТЬСЯ МОЕЙ ВИЗИТКОЙ",
     addBtn: "ДОБАВИТЬ В КОНТАКТЫ",
@@ -85,6 +93,8 @@ const TEXT = {
     confirmNo: "Нет",
   },
   en: {
+    qrTitle: "QR Code",
+    qrDesc: "Scan to open or save this card.",
     scanBtn: "SCAN QR CODE",
     shareTitle: "SHARE MY CARD",
     addBtn: "ADD ME TO THE CONTACT LIST",
@@ -98,6 +108,8 @@ const TEXT = {
     confirmNo: "No",
   },
   ar: {
+    qrTitle: "رمز QR",
+    qrDesc: "امسح لفتح البطاقة أو حفظها.",
     scanBtn: "مسح رمز QR",
     shareTitle: "مشاركة بطاقتي",
     addBtn: "إضافتي إلى قائمة جهات الاتصال",
@@ -111,6 +123,8 @@ const TEXT = {
     confirmNo: "لا",
   },
   fr: {
+    qrTitle: "QR Code",
+    qrDesc: "Scannez pour ouvrir ou enregistrer la carte.",
     scanBtn: "SCANNER LE QR CODE",
     shareTitle: "PARTAGER MA CARTE",
     addBtn: "M’AJOUTER À LA LISTE DE CONTACTS",
@@ -124,9 +138,11 @@ const TEXT = {
     confirmNo: "Non",
   },
   kz: {
+    qrTitle: "QR-код",
+    qrDesc: "Картаны ашу немесе сақтау үшін сканерлеңіз.",
     scanBtn: "QR-КОДТЫ СКАНЕРЛЕУ",
     shareTitle: "МЕНІҢ КАРТАМДЫ БӨЛІСУ",
-    addBtn: "МЕНІ БАЙЛԱՆЫС ТІЗІМІНЕ ҚОСУ",
+    addBtn: "МЕНІ БАЙЛАНЫС ТІЗІМІНЕ ҚОСУ",
     qrOnline: "ОНЛАЙՆ QR-КОД",
     qrOffline: "ОФФЛАЙН QR-КОД",
     offlineNote: "Сканерлегеннен кейін контактілеріңізге сақтай аласыз.",
@@ -137,6 +153,8 @@ const TEXT = {
     confirmNo: "Жоқ",
   },
   chn: {
+    qrTitle: "二维码",
+    qrDesc: "扫描以打开或保存名片。",
     scanBtn: "扫描二维码",
     shareTitle: "分享我的名片",
     addBtn: "添加到通讯录",
@@ -149,9 +167,72 @@ const TEXT = {
     confirmYes: "是",
     confirmNo: "否",
   },
+
+  /* ---------- NEW LANGUAGES ---------- */
+
+  de: {
+    qrTitle: "QR-Code",
+    qrDesc: "Scanne, um die Karte zu öffnen oder zu speichern.",
+    scanBtn: "QR-CODE SCANNEN",
+    shareTitle: "MEINE KARTE TEILEN",
+    addBtn: "ZU KONTAKTEN HINZUFÜGEN",
+    qrOnline: "ONLINE QR-CODE",
+    qrOffline: "OFFLINE QR-CODE",
+    offlineNote: "Nach dem Scannen kannst du den Kontakt speichern.",
+    shareDefault: "Schau dir meine digitale KHContactum.com-Karte an.",
+    mailSubject: "KHContactum digitale Karte",
+    confirmTitle: "{{name}} zu den Kontakten hinzufügen?",
+    confirmYes: "Ja",
+    confirmNo: "Nein",
+  },
+  es: {
+    qrTitle: "Código QR",
+    qrDesc: "Escanea para abrir o guardar esta tarjeta.",
+    scanBtn: "ESCANEAR CÓDIGO QR",
+    shareTitle: "COMPARTIR MI TARJETA",
+    addBtn: "AÑADIR A CONTACTOS",
+    qrOnline: "QR EN LÍNEA",
+    qrOffline: "QR SIN CONEXIÓN",
+    offlineNote: "Después de escanear puedes guardarlo en tus contactos.",
+    shareDefault: "Mira mi tarjeta digital de KHContactum.com.",
+    mailSubject: "Tarjeta digital KHContactum",
+    confirmTitle: "¿Agregar a {{name}} a tus contactos?",
+    confirmYes: "Sí",
+    confirmNo: "No",
+  },
+  it: {
+    qrTitle: "Codice QR",
+    qrDesc: "Scansiona per aprire o salvare la carta.",
+    scanBtn: "SCANSIONA QR",
+    shareTitle: "CONDIVIDI LA MIA CARD",
+    addBtn: "AGGIUNGIMI AI CONTATTI",
+    qrOnline: "QR-CODE ONLINE",
+    qrOffline: "QR-CODE OFFLINE",
+    offlineNote: "Dopo la scansione puoi salvarlo nei contatti.",
+    shareDefault: "Guarda la mia card digitale su KHContactum.com.",
+    mailSubject: "Card digitale KHContactum",
+    confirmTitle: "Aggiungere {{name}} ai contatti?",
+    confirmYes: "Sì",
+    confirmNo: "No",
+  },
+  fa: {
+    qrTitle: "کد QR",
+    qrDesc: "برای باز کردن یا ذخیره کارت اسکن کنید.",
+    scanBtn: "اسکن کد QR",
+    shareTitle: "اشتراک‌گذاری کارت من",
+    addBtn: "افزودن به مخاطبین",
+    qrOnline: "کد QR آنلاین",
+    qrOffline: "کد QR آفلاین",
+    offlineNote: "بعد از اسکن می‌توانید در مخاطبین ذخیره کنید.",
+    shareDefault: "کارت دیجیتال من در KHContactum.com را ببینید.",
+    mailSubject: "کارت دیجیتال KHContactum",
+    confirmTitle: "آیا {{name}} به مخاطبین اضافه شود؟",
+    confirmYes: "بله",
+    confirmNo: "خیر",
+  },
 };
 
-/* ✅ Քո ֆիքսված կոնտեքստը (եթե later ուզես թարգմանել՝ կավելացնես) */
+/* ✅ Քո ֆիքսված կոնտեքստը */
 const SHARE_CONTEXT = {
   am:  "Իմ թվային բիզնես քարտը՝ ստեղծված KHContactum.com հարթակում։",
   hy:  "Իմ թվային բիզնես քարտը՝ ստեղծված KHContactum.com հարթակում։",
@@ -161,6 +242,12 @@ const SHARE_CONTEXT = {
   fr:  "Ma carte de visite numérique créée sur la plateforme KHContactum.com.",
   kz:  "KHContactum.com платформасында жасалған менің цифрлық визиткам.",
   chn: "我的数字名片，创建于 KHContactum.com 平台。",
+
+  /* ---------- NEW LANGUAGES ---------- */
+  de:  "Meine digitale Visitenkarte, erstellt auf der Plattform KHContactum.com.",
+  es:  "Mi tarjeta de presentación digital creada en la plataforma KHContactum.com.",
+  it:  "Il mio biglietto da visita digitale creato sulla piattaforma KHContactum.com.",
+  fa:  "کارت ویزیت دیجیتال من که در پلتفرم KHContactum.com ساخته شده است.",
 };
 
 /* quick flags դեռ պահում ենք struct-ի մեջ (admin panel-ի համար) */
@@ -429,7 +516,7 @@ async function saveVCardUniversal({
 }
 
 /**
- * lang-ը կարող ես փոխանցել HomePage-ից (htmlLang → "hy","ru","en","ar","fr","kz","chn").
+ * lang-ը կարող ես փոխանցել HomePage-ից (htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa").
  * autoOpenConfirm → VisitCard հղումով մտնելու դեպքում բացի popup
  */
 export default function SharePage({ info, cardId, lang, autoOpenConfirm = false }) {
@@ -597,7 +684,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
       ),
 
       // ======== «Կիսվել իմ քարտով» button =========
-       h(
+      h(
         "h3",
         { style: { margin: "0 0 10px", fontSize: 16, color: shareTitleColor } },
         t.shareTitle

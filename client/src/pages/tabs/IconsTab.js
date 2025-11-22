@@ -6,10 +6,12 @@ import "../icons.layout.css";
 const h = React.createElement;
 
 /* ---------------- constants & helpers ---------------- */
-// ամբողջ հավաքածուն (7 լեզու)
-const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn"];
+// ամբողջ հավաքածուն (11 լեզու)
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 const rtlProps = (code) =>
-  code === "ar" ? { dir: "rtl", style: { textAlign: "right" } } : {};
+  (code === "ar" || code === "fa")
+    ? { dir: "rtl", style: { textAlign: "right" } }
+    : {};
 
 /* ---------- UI TEXT (multi-lang) ---------- */
 const ICONS_UI_TEXT = {
@@ -246,6 +248,139 @@ const ICONS_UI_TEXT = {
     moveUp: "上移",
     moveDown: "下移",
   },
+
+  // DE / ES / IT / FA — basic fallback UI (same as EN for now)
+  de: {
+    styleLabel: "Style",
+    styleOption1: "Style 1",
+    styleOption2: "Style 2",
+    styleOption3: "Style 3",
+    styleOption4: "Style 4 (circle)",
+
+    colsLabel: "Columns",
+    labelColor: "Icon name color",
+    iconBg: "Icon background",
+    iconColor: "Icon color",
+    rowCardBg: "Row icons background (column 1)",
+    addButton: "Add",
+    deleteButton: "Delete",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+    urlPlaceholder: "Link (URL)",
+    presetButton: "Select",
+    presetSearchPlaceholder: "Search…",
+    validateLabelsMissing: "Fill in the name fields",
+    validateAmMissing: "Fill in the AM name field",
+    validateHrefMissing: "Fill in the Link (URL) field",
+    rowsAttention: "Attention: fill in the rows marked in red",
+    savedOk: "Saved ✅",
+    loadFailed: "Loading failed",
+    saveFailed: "Saving failed",
+    title: "Icons settings",
+
+    moveUp: "Up",
+    moveDown: "Down",
+  },
+
+  es: {
+    styleLabel: "Style",
+    styleOption1: "Style 1",
+    styleOption2: "Style 2",
+    styleOption3: "Style 3",
+    styleOption4: "Style 4 (circle)",
+
+    colsLabel: "Columns",
+    labelColor: "Icon name color",
+    iconBg: "Icon background",
+    iconColor: "Icon color",
+    rowCardBg: "Row icons background (column 1)",
+    addButton: "Add",
+    deleteButton: "Delete",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+    urlPlaceholder: "Link (URL)",
+    presetButton: "Select",
+    presetSearchPlaceholder: "Search…",
+    validateLabelsMissing: "Fill in the name fields",
+    validateAmMissing: "Fill in the AM name field",
+    validateHrefMissing: "Fill in the Link (URL) field",
+    rowsAttention: "Attention: fill in the rows marked in red",
+    savedOk: "Saved ✅",
+    loadFailed: "Loading failed",
+    saveFailed: "Saving failed",
+    title: "Icons settings",
+
+    moveUp: "Up",
+    moveDown: "Down",
+  },
+
+  it: {
+    styleLabel: "Style",
+    styleOption1: "Style 1",
+    styleOption2: "Style 2",
+    styleOption3: "Style 3",
+    styleOption4: "Style 4 (circle)",
+
+    colsLabel: "Columns",
+    labelColor: "Icon name color",
+    iconBg: "Icon background",
+    iconColor: "Icon color",
+    rowCardBg: "Row icons background (column 1)",
+    addButton: "Add",
+    deleteButton: "Delete",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+    urlPlaceholder: "Link (URL)",
+    presetButton: "Select",
+    presetSearchPlaceholder: "Search…",
+    validateLabelsMissing: "Fill in the name fields",
+    validateAmMissing: "Fill in the AM name field",
+    validateHrefMissing: "Fill in the Link (URL) field",
+    rowsAttention: "Attention: fill in the rows marked in red",
+    savedOk: "Saved ✅",
+    loadFailed: "Loading failed",
+    saveFailed: "Saving failed",
+    title: "Icons settings",
+
+    moveUp: "Up",
+    moveDown: "Down",
+  },
+
+  fa: {
+    styleLabel: "Style",
+    styleOption1: "Style 1",
+    styleOption2: "Style 2",
+    styleOption3: "Style 3",
+    styleOption4: "Style 4 (circle)",
+
+    colsLabel: "Columns",
+    labelColor: "Icon name color",
+    iconBg: "Icon background",
+    iconColor: "Icon color",
+    rowCardBg: "Row icons background (column 1)",
+    addButton: "Add",
+    deleteButton: "Delete",
+    saveButton: "Save",
+    savingButton: "Saving…",
+    loading: "Loading…",
+    urlPlaceholder: "Link (URL)",
+    presetButton: "Select",
+    presetSearchPlaceholder: "Search…",
+    validateLabelsMissing: "Fill in the name fields",
+    validateAmMissing: "Fill in the AM name field",
+    validateHrefMissing: "Fill in the Link (URL) field",
+    rowsAttention: "Attention: fill in the rows marked in red",
+    savedOk: "Saved ✅",
+    loadFailed: "Loading failed",
+    saveFailed: "Saving failed",
+    title: "Icons settings",
+
+    moveUp: "Up",
+    moveDown: "Down",
+  },
 };
 
 const ICON_MAP = {
@@ -336,7 +471,7 @@ function withUid(x) {
 }
 
 function normLabels(label) {
-  // պահում ենք բոլոր 7 լեզուները, անկախ active langs-ից
+  // պահում ենք բոլոր 11 լեզուները, անկախ active langs-ից
   if (label && typeof label === "object") {
     const out = {
       am: "",
@@ -346,6 +481,10 @@ function normLabels(label) {
       fr: "",
       kz: "",
       chn: "",
+      de: "",
+      es: "",
+      it: "",
+      fa: "",
       ...label,
     };
     LANGS.forEach((k) => {
@@ -361,6 +500,10 @@ function normLabels(label) {
     fr: "",
     kz: "",
     chn: "",
+    de: "",
+    es: "",
+    it: "",
+    fa: "",
   };
 }
 
@@ -725,7 +868,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
   const [baseInfo, setBaseInfo] = React.useState(null);
 
-  // items: { uid, id?, label:{am,ru,en,ar,fr,kz,chn}, href, icon }
+  // items: { uid, id?, label:{...}, href, icon }
   const [items, setItems] = React.useState([]);
   const [style, setStyle] = React.useState({
     labelHEX: "#d9caa0",
@@ -1114,7 +1257,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         })
       ),
 
-      // ✅ NEW icon color section (ոչինչ չի փոխվել, միայն ավելացել)
+      // icon color
       h(
         "div",
         {
