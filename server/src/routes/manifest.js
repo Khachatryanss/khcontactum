@@ -1,34 +1,34 @@
 import express from "express";
-import db from "../db.js";
+import { pool } from "../db.js";
 
 const router = express.Router();
 
-// /manifest/101  → կվերադարձնի տվյալ card-ի manifest
+// /manifest/101 → տվյալ card-ի manifest.json
 router.get("/manifest/:cardId", async (req, res) => {
   try {
     const { cardId } = req.params;
 
-    // Քաշում ենք տվյալ card-ի public info-ն
+    // ⚠️ եթե քո table/column անունը ուրիշ է՝ այստեղ փոխիր
     const q = `
-      SELECT name, title, companyTitle, info
+      SELECT information
       FROM public_info
-      WHERE cardId = ?
+      WHERE cardid = $1
     `;
-    const rows = await db.all(q, [cardId]);
+
+    const result = await pool.query(q, [cardId]);
+    const rows = result.rows || [];
 
     let displayName = "KHContactum";
 
-    if (rows && rows.length > 0) {
-      const item = rows[0];
+    if (rows.length) {
+      const info = rows[0].information || {};
 
-      // ընտրում ենք այն անունը, որը երևում է մեր public էջում
-      // եթե companyTitle կա — դա
-      // եթե name.am կա — դա
-      // եթե title կա — դա
+      // նույնը ինչ public Home-ում avatar-ի տակ ցույց ես տալիս
       displayName =
-        item.companyTitle ||
-        (item.name?.am || item.name || "") ||
-        item.title ||
+        info.company?.name?.am ||
+        info.company?.name?.en ||
+        info.company?.name?.ru ||
+        info.companyTitle ||
         "KHContactum";
     }
 
@@ -42,20 +42,12 @@ router.get("/manifest/:cardId", async (req, res) => {
       background_color: "#000000",
       theme_color: "#000000",
       icons: [
-        {
-          src: "/icon-192.png",
-          sizes: "192x192",
-          type: "image/png"
-        },
-        {
-          src: "/icon-512.png",
-          sizes: "512x512",
-          type: "image/png"
-        }
+        { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { src: "/icon-512.png", sizes: "512x512", type: "image/png" }
       ]
     });
   } catch (e) {
-    console.log(e);
+    console.log("Manifest error:", e);
     res.json({
       name: "KHContactum",
       short_name: "KHContactum"
