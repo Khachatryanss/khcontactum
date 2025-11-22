@@ -26,7 +26,7 @@ const BRANDINFO_TEXT = {
     savingButton: "Պահպանում…",
     loading: "Բեռնվում է…",
     avatarLabel: "Վերբեռնել",
-    avatarDeleteLabel: "Ջնջել լոգոն",          // ✅ NEW
+    deleteAvatarButton: "Ջնջել լոգոն",
     fileTypeError: "Ընդունվում է միայն նկար",
     uploadAvatarOk: "Avatar-ը վերբեռնվեց ✔",
     uploadImageOk: "Նկարը վերբեռնվեց ✔",
@@ -54,7 +54,7 @@ const BRANDINFO_TEXT = {
     savingButton: "Сохранение…",
     loading: "Загрузка…",
     avatarLabel: "Загрузить",
-    avatarDeleteLabel: "Удалить логотип",     // ✅ NEW
+    deleteAvatarButton: "Удалить логотип",
     fileTypeError: "Допускается только изображение",
     uploadAvatarOk: "Аватар загружен ✔",
     uploadImageOk: "Изображение загружено ✔",
@@ -82,7 +82,7 @@ const BRANDINFO_TEXT = {
     savingButton: "Saving…",
     loading: "Loading…",
     avatarLabel: "Upload",
-    avatarDeleteLabel: "Delete logo",         // ✅ NEW
+    deleteAvatarButton: "Delete logo",
     fileTypeError: "Only image files are allowed",
     uploadAvatarOk: "Avatar uploaded ✔",
     uploadImageOk: "Image uploaded ✔",
@@ -110,7 +110,7 @@ const BRANDINFO_TEXT = {
     savingButton: "جاري الحفظ…",
     loading: "جاري التحميل…",
     avatarLabel: "رفع",
-    avatarDeleteLabel: "حذف الشعار",          // ✅ NEW
+    deleteAvatarButton: "حذف الشعار",
     fileTypeError: "يُسمح بالصور فقط",
     uploadAvatarOk: "تم رفع الـ Avatar ✔",
     uploadImageOk: "تم رفع الصورة ✔",
@@ -139,7 +139,7 @@ const BRANDINFO_TEXT = {
     savingButton: "Enregistrement…",
     loading: "Chargement…",
     avatarLabel: "Téléverser",
-    avatarDeleteLabel: "Supprimer le logo",   // ✅ NEW
+    deleteAvatarButton: "Supprimer le logo",
     fileTypeError: "Seule une image est acceptée",
     uploadAvatarOk: "Avatar téléversé ✔",
     uploadImageOk: "Image téléversée ✔",
@@ -169,7 +169,7 @@ const BRANDINFO_TEXT = {
     savingButton: "Сақталуда…",
     loading: "Жүктелуде…",
     avatarLabel: "Жүктеу",
-    avatarDeleteLabel: "Логотипті өшіру",     // ✅ NEW
+    deleteAvatarButton: "Логотипті жою",
     fileTypeError: "Тек сурет файлдарына рұқсат етіледі",
     uploadAvatarOk: "Аватар жүктелді ✔",
     uploadImageOk: "Сурет жүктелді ✔",
@@ -198,7 +198,7 @@ const BRANDINFO_TEXT = {
     savingButton: "正在保存…",
     loading: "正在加载…",
     avatarLabel: "上传",
-    avatarDeleteLabel: "删除 Logo",           // ✅ NEW
+    deleteAvatarButton: "删除 Logo",
     fileTypeError: "仅允许上传图片文件",
     uploadAvatarOk: "头像已上传 ✔",
     uploadImageOk: "图片已上传 ✔",
@@ -420,26 +420,28 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
     setWorkers((list) => list.filter((w) => w.id !== id));
   }
 
-  // ✅ NEW: delete avatar/logo
-  function deleteWorkerAvatar(id) {
-    setWorkers((list) =>
-      list.map((w) => (w.id === id ? { ...w, avatar: "" } : w))
-    );
-  }
-
-  // ✅ NEW: reorder like BrandsTab (swap)
+  // ✅ move up/down (hertakanutyun)
   function moveWorker(id, dir) {
     setWorkers((list) => {
       const idx = list.findIndex((x) => x.id === id);
       if (idx < 0) return list;
-      const j = idx + dir;
-      if (j < 0 || j >= list.length) return list;
+      const ni = idx + dir;
+      if (ni < 0 || ni >= list.length) return list;
       const out = list.slice();
       const tmp = out[idx];
-      out[idx] = out[j];
-      out[j] = tmp;
+      out[idx] = out[ni];
+      out[ni] = tmp;
       return out;
     });
+  }
+
+  // ✅ delete avatar/logo
+  function deleteWorkerAvatar(id) {
+    setWorkers((list) =>
+      list.map((w) =>
+        w.id === id ? { ...w, avatar: "" } : w
+      )
+    );
   }
 
   /* ------ upload helpers ------ */
@@ -588,57 +590,29 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
     h(
       "div",
       { className: "admin-workers" },
-      workers.map((w, wi) =>
+      workers.map((w, index) =>
         h(
           "div",
           { key: w.id, className: "worker-row card" },
 
-          // avatar + upload + delete + reorder
+          // ✅ LEFT COLUMN: avatar + buttons under it
           h(
             "div",
-            { className: "worker-avatar", id: "avatarUpload" },
+            { className: "worker-left" },
 
-            w.avatar
-              ? h("img", { src: absPreview(w.avatar), alt: "worker" })
-              : h(
-                  "span",
-                  { className: "worker-avatar-initials" },
-                  (w.name && (w.name.am || w.name.en || "?"))
-                    .slice(0, 2)
-                    .toUpperCase()
-                ),
-
-            // ✅ NEW: reorder column (left side)
+            // avatar + upload overlay
             h(
               "div",
-              { className: "reorder-col" },
-              h(
-                "button",
-                {
-                  type: "button",
-                  className: "reorder-btn up",
-                  disabled: wi === 0,
-                  onClick: () => moveWorker(w.id, -1),
-                },
-                "↑"
-              ),
-              h(
-                "button",
-                {
-                  type: "button",
-                  className: "reorder-btn down",
-                  disabled: wi === workers.length - 1,
-                  onClick: () => moveWorker(w.id, +1),
-                },
-                "↓"
-              )
-            ),
-
-            // ✅ NEW: bottom buttons (upload + delete)
-            h(
-              "div",
-              { className: "avatar-buttons" },
-
+              { className: "worker-avatar", id: "avatarUpload" },
+              w.avatar
+                ? h("img", { src: absPreview(w.avatar), alt: "worker" })
+                : h(
+                    "span",
+                    { className: "worker-avatar-initials" },
+                    (w.name && (w.name.am || w.name.en || "?"))
+                      .slice(0, 2)
+                      .toUpperCase()
+                  ),
               h(
                 "label",
                 {
@@ -656,18 +630,52 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
                     e.target.value = "";
                   },
                 })
+              )
+            ),
+
+            // ✅ delete logo + up/down under upload
+            h(
+              "div",
+              { className: "worker-left-actions" },
+
+              h(
+                "button",
+                {
+                  type: "button",
+                  className: "btn pill danger btn-small",
+                  onClick: () => deleteWorkerAvatar(w.id),
+                  disabled: !w.avatar,
+                  title: T.deleteAvatarButton,
+                },
+                T.deleteAvatarButton
               ),
 
-              w.avatar &&
+              h(
+                "div",
+                { className: "order-btns" },
                 h(
                   "button",
                   {
                     type: "button",
-                    className: "btn pill danger btn-small avatar-delete",
-                    onClick: () => deleteWorkerAvatar(w.id),
+                    className: "order-btn up",
+                    onClick: () => moveWorker(w.id, -1),
+                    disabled: index === 0,
+                    title: "Up",
                   },
-                  T.avatarDeleteLabel
+                  "↑"
+                ),
+                h(
+                  "button",
+                  {
+                    type: "button",
+                    className: "order-btn down",
+                    onClick: () => moveWorker(w.id, +1),
+                    disabled: index === workers.length - 1,
+                    title: "Down",
+                  },
+                  "↓"
                 )
+              )
             )
           ),
 
@@ -907,25 +915,22 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
       [
         ".admin-scroll-root{overscroll-behavior:contain;}",
         ".admin-workers{display:flex;flex-direction:column;gap:12px;}",
-        ".worker-row{display:grid;grid-template-columns:96px 1fr;gap:12px;}",
-        "@media(max-width:520px){.worker-row{grid-template-columns:80px 1fr;}}",
+        ".worker-row{display:grid;grid-template-columns:110px 1fr;gap:12px;align-items:start;}",
+        "@media(max-width:520px){.worker-row{grid-template-columns:96px 1fr;}}",
 
-        // ✅ updated avatar layout
+        /* ✅ left column fixes */
+        ".worker-left{display:flex;flex-direction:column;align-items:center;gap:8px;}",
+        ".worker-left-actions{width:100%;display:flex;flex-direction:column;gap:6px;align-items:center;}",
+        ".order-btns{width:100%;display:flex;flex-direction:column;gap:6px;align-items:center;}",
+
+        ".order-btn{width:46px;height:30px;border:none;border-radius:10px;background:#111;color:#fff;cursor:pointer;font-weight:700;display:grid;place-items:center;}",
+        ".order-btn[disabled]{opacity:.35;cursor:not-allowed;}",
+        ".order-btn.up{background:#bcbcbc;color:#111;}",
+
         ".worker-avatar{width:96px;height:96px;border-radius:16px;overflow:hidden;background:#f2f2f2;display:grid;place-items:center;position:relative;}",
         ".worker-avatar img{width:100%;height:100%;object-fit:cover;}",
         ".worker-avatar-initials{font-weight:700;color:#777;}",
-
-        // ✅ NEW: bottom buttons container
-        ".avatar-buttons{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:6px;flex-wrap:wrap;justify-content:center;z-index:3;}",
-        ".avatar-upload{position:static;transform:none;padding:6px 10px;font-size:11px;opacity:.95;cursor:pointer;}",
-        ".avatar-delete{padding:6px 10px;font-size:11px;}",
-
-        // ✅ NEW: reorder column like BrandsTab
-        ".reorder-col{position:absolute;left:6px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:3;}",
-        ".reorder-btn{width:44px;height:28px;border-radius:10px;border:none;font-weight:800;cursor:pointer;}",
-        ".reorder-btn.up{background:#bdbdbd;color:#111;}",
-        ".reorder-btn.down{background:#111;color:#fff;}",
-        ".reorder-btn:disabled{opacity:.45;cursor:not-allowed;}",
+        ".avatar-upload{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);padding:6px 12px;font-size:11px;opacity:.95;cursor:pointer;}",
 
         ".worker-main{display:grid;gap:8px;align-content:start;}",
         ".worker-gallery-row{display:flex;gap:8px;flex-wrap:wrap;}",
@@ -940,10 +945,12 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         ".i18n-item{display:grid;gap:4px;}",
         ".tag{font-size:12px;font-weight:700;opacity:.7;}",
         ".input{width:100%;padding:8px 10px;border:1px solid:#ddd;border-radius:12px;background:#fff;}",
+
         ".btn{padding:10px 14px;border:none;border-radius:12px;background:#111;color:#fff;cursor:pointer;}",
         ".btn.pill{border-radius:999px;}",
         ".btn.danger{background:#e8554d;}",
         ".btn.strong{font-weight:700;}",
+
         ".footer-actions{position:sticky;bottom:0;display:flex;align-items:center;gap:10px;padding-top:8px;padding-bottom:6px;background:#fff;border-top:1px solid:#ececec;}",
         ".small-msg{margin-left:8px;font-size:12px;color:#444;}",
         ".small{font-size:12px;color:#666;}",
