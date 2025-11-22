@@ -1307,6 +1307,7 @@
 #companyNameColor .color-hex-input{
   flex:1;
   min-width:0;
+  width: 120px;
 }
 
 #companyNameColor .color-picker{
@@ -1355,7 +1356,7 @@
 #selectOurBackground ~ .block .color-hex-input{
   flex:1;
   min-width:0;
-  width: 120px;
+  
 }
 
 .public-home #selectOurBackground + .block .color-picker,
