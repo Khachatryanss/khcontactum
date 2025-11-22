@@ -198,7 +198,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeVideo: "فيديو",
     avatarImageUrlLabel: "رابط صورة الـ Avatar",
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
-    avatarVideoUrlLabel: "رابط Видео الـ Avatar",
+    avatarVideoUrlLabel: "رابط فيديو الـ Avatar",
     avatarVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
 
     companyNameTitle: "اسم الشركة",
@@ -213,7 +213,7 @@ const ADMIN_UI_TEXT = {
     backgroundTypeVideo: "فيديو",
     backgroundColorLabel: "لون الخلفية",
     backgroundImageUrlLabel: "رابط صورة الخلفية",
-    backgroundVideoUrlLabel: "رابط Видео الخلفية",
+    backgroundVideoUrlLabel: "رابط فيديو الخلفية",
     backgroundVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
 
     saveButton: "حفظ",
@@ -252,7 +252,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeVideo: "Vidéo",
     avatarImageUrlLabel: "URL de l’image avatar",
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
-    avatarVideoUrlLabel: "URL de la видео avatar",
+    avatarVideoUrlLabel: "URL de la vidéo avatar",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
 
     companyNameTitle: "NOM DE L’ENTREPRISE",
@@ -281,10 +281,9 @@ const ADMIN_UI_TEXT = {
 
     defaultBadge: "Par défaut",
 
-    chooseFileLabel: "Choisir un файл",
+    chooseFileLabel: "Choisir un fichier",
   },
 
-  /* ---- Kazakh (KZ) ---- */
   kz: {
     tabs: {
       home: "Басты бет",
@@ -339,7 +338,6 @@ const ADMIN_UI_TEXT = {
     chooseFileLabel: "Файл таңдау",
   },
 
-  /* ---- Chinese (CHN) – 简体中文 ---- */
   chn: {
     tabs: {
       home: "首页",
@@ -394,7 +392,6 @@ const ADMIN_UI_TEXT = {
     chooseFileLabel: "选择文件",
   },
 
-  /* ---- German (DE) ---- */
   de: {
     tabs: {
       home: "Startseite",
@@ -449,7 +446,6 @@ const ADMIN_UI_TEXT = {
     chooseFileLabel: "Datei wählen",
   },
 
-  /* ---- Spanish (ES) ---- */
   es: {
     tabs: {
       home: "Inicio",
@@ -504,7 +500,6 @@ const ADMIN_UI_TEXT = {
     chooseFileLabel: "Elegir archivo",
   },
 
-  /* ---- Italian (IT) ---- */
   it: {
     tabs: {
       home: "Home",
@@ -559,7 +554,6 @@ const ADMIN_UI_TEXT = {
     chooseFileLabel: "Scegli file",
   },
 
-  /* ---- Persian (FA) ---- */
   fa: {
     tabs: {
       home: "صفحه اصلی",
@@ -776,11 +770,10 @@ export default function AdminDashboard({
   function handleUiLangChange(next) {
     if (!next || next === uiLang) return;
     if (onLangChange) {
-      onLangChange(next); // բարձրացնում ենք App.js, որը պահում է state + sessionStorage
+      onLangChange(next);
     }
   }
 
-  // tabs: "home" | "icons" | "brands" | "brandinfo" | "share" | "password"
   const [tab, setTab] = useState("home");
   const [showMenu, setShowMenu] = useState(false);
 
@@ -789,21 +782,17 @@ export default function AdminDashboard({
 
   const [me, setMe] = useState(null);
 
-  // Home (info.json)
   const [cardId, setCardId] = useState(null);
   const [info, setInfo] = useState(DEFAULT_INFO);
   const [savingInfo, setSavingInfo] = useState(false);
   const [infoMsg, setInfoMsg] = useState("");
 
-  // լեզուների կարգավորումներ (ակտիվ + կարգ)
   const [langs, setLangs] = useState(["am", "ru", "en", "ar", "fr"]);
 
-  // previews
   const [avatarPreview, setAvatarPreview] = useState("");
   const [bgImagePreview, setBgImagePreview] = useState("");
   const [bgVideoPreview, setBgVideoPreview] = useState("");
 
-  // initial load
   useEffect(() => {
     (async () => {
       if (!token) {
@@ -821,7 +810,6 @@ export default function AdminDashboard({
         const normalized = normalizeInfo(root);
         setInfo(normalized);
 
-        // languages from server
         const rawAvail = Array.isArray(root.available_langs)
           ? root.available_langs
           : null;
@@ -861,7 +849,6 @@ export default function AdminDashboard({
     })();
   }, [token]);
 
-  /* ===== Logout ===== */
   function doLogout() {
     try {
       sessionStorage.removeItem("adminToken");
@@ -870,7 +857,6 @@ export default function AdminDashboard({
     onLogout && onLogout();
   }
 
-  /* ===== Info mutation helpers ===== */
   function setInfoPath(path, value) {
     setInfo((prev) => {
       const next = normalizeInfo(prev);
@@ -948,7 +934,6 @@ export default function AdminDashboard({
     return (n / (1024 * 1024)).toFixed(1);
   }
 
-  // small circular preview
   function CirclePreview(src, kind) {
     return h(
       "div",
@@ -991,7 +976,6 @@ export default function AdminDashboard({
     );
   }
 
-  // ---- uploads ----
   async function handleAvatarUpload(e) {
     const f = e.target.files?.[0];
     if (!f) return;
@@ -1118,7 +1102,6 @@ export default function AdminDashboard({
     }
   }
 
-  /* --- լեզուների helper-ներ --- */
   function toggleLang(code) {
     setLangs((prev) => {
       const exists = prev.includes(code);
@@ -1143,7 +1126,6 @@ export default function AdminDashboard({
     });
   }
 
-  /* dropdown menu item */
   function TabMenuItem(id, label) {
     const active = tab === id;
     return h(
@@ -1161,7 +1143,6 @@ export default function AdminDashboard({
     );
   }
 
-  /* 3 կետանոց մենյուի anchor (card-ի վերևի աջ) */
   function TabsAnchor() {
     if (!token || loading) return null;
     return h(
@@ -1202,7 +1183,6 @@ export default function AdminDashboard({
     );
   }
 
-  /* Լեզվի selector admin-ի քարտի header-ում */
   function LangSelector() {
     if (!token || loading) return null;
 
@@ -1223,7 +1203,6 @@ export default function AdminDashboard({
     );
   }
 
-  /* small helpers for render */
   const Card = (title, children) =>
     h(
       "div",
@@ -1249,20 +1228,18 @@ export default function AdminDashboard({
                 gap: 8,
               },
             },
-            LangSelector(), // ← ձախ՝ լեզվի selector
-            TabsAnchor() // ← աջ՝ երեք կետանոց մենյու
+            LangSelector(),
+            TabsAnchor()
           )
         ),
       children || null
     );
 
-  /* ====== PAGE: HOME ====== */
   const PageHome = Card(
     T.tabs.home,
     h(
       React.Fragment,
       null,
-      /* LANGUAGES */
       h("h3", { className: "title mb-2" }, T.langsTitle),
       h(
         "div",
@@ -1353,7 +1330,6 @@ export default function AdminDashboard({
         })
       ),
 
-      /* AVATAR */
       h("h3", { className: "title mb-2" }, T.avatarTitle),
       h(
         "label",
@@ -1472,20 +1448,35 @@ export default function AdminDashboard({
         );
       }),
 
+      /* ✅ COMPANY NAME COLOR — FIXED */
       h(
         "div",
-        { className: "row mb-4", id: "companyNameColor" },
-        input(
-          T.nameColorLabel,
-          info?.company?.nameColor || "#000000",
-          (v) => setInfoPath("company.nameColor", v),
-          { style: { maxWidth: 200 } }
+        { className: "block mb-4", id: "companyNameColor" },
+        h(
+          "div",
+          { className: "text-sm mb-1", id: "nkariBajin" },
+          T.nameColorLabel
         ),
-        h("input", {
-          type: "color",
-          value: info?.company?.nameColor || "#000000",
-          onChange: (e) => setInfoPath("company.nameColor", e.target.value),
-        })
+        h(
+          "div",
+          { className: "color-row" },
+          h("input", {
+            className: "input color-hex-input",
+            id: "nkarInput",
+            value: info?.company?.nameColor || "#000000",
+            onChange: (e) =>
+              setInfoPath("company.nameColor", e.target.value),
+            style: { maxWidth: 200 },
+            placeholder: "#000000",
+          }),
+          h("input", {
+            type: "color",
+            className: "color-picker",
+            value: info?.company?.nameColor || "#000000",
+            onChange: (e) =>
+              setInfoPath("company.nameColor", e.target.value),
+          })
+        )
       ),
 
       /* DESCRIPTION */
@@ -1534,20 +1525,35 @@ export default function AdminDashboard({
         );
       }),
 
+      /* ✅ DESCRIPTION COLOR — FIXED */
       h(
         "div",
-        { className: "row mb-4", id: "descriptionColor" },
-        input(
-          T.descriptionColorLabel,
-          info?.description?.color || "#000000",
-          (v) => setInfoPath("description.color", v),
-          { style: { maxWidth: 180 } }
+        { className: "block mb-4", id: "descriptionColor" },
+        h(
+          "div",
+          { className: "text-sm mb-1", id: "nkariBajin" },
+          T.descriptionColorLabel
         ),
-        h("input", {
-          type: "color",
-          value: info?.description?.color || "#000000",
-          onChange: (e) => setInfoPath("description.color", e.target.value),
-        })
+        h(
+          "div",
+          { className: "color-row" },
+          h("input", {
+            className: "input color-hex-input",
+            id: "nkarInput",
+            value: info?.description?.color || "#000000",
+            onChange: (e) =>
+              setInfoPath("description.color", e.target.value),
+            style: { maxWidth: 180 },
+            placeholder: "#000000",
+          }),
+          h("input", {
+            type: "color",
+            className: "color-picker",
+            value: info?.description?.color || "#000000",
+            onChange: (e) =>
+              setInfoPath("description.color", e.target.value),
+          })
+        )
       ),
 
       /* BACKGROUND */
@@ -1569,22 +1575,36 @@ export default function AdminDashboard({
         )
       ),
 
+      /* ✅ BACKGROUND COLOR — FIXED */
       info?.background?.type === "color" &&
         h(
           "div",
-          { className: "row mb-4" },
-          input(
-            T.backgroundColorLabel,
-            info?.background?.color || "#ffffff",
-            (v) => setInfoPath("background.color", v),
-            { style: { maxWidth: 180 } }
+          { className: "block mb-4" },
+          h(
+            "div",
+            { className: "text-sm mb-1", id: "nkariBajin" },
+            T.backgroundColorLabel
           ),
-          h("input", {
-            type: "color",
-            value: info?.background?.color || "#ffffff",
-            onChange: (e) =>
-              setInfoPath("background.color", e.target.value),
-          })
+          h(
+            "div",
+            { className: "color-row" },
+            h("input", {
+              className: "input color-hex-input",
+              id: "nkarInput",
+              value: info?.background?.color || "#ffffff",
+              onChange: (e) =>
+                setInfoPath("background.color", e.target.value),
+              style: { maxWidth: 180 },
+              placeholder: "#ffffff",
+            }),
+            h("input", {
+              type: "color",
+              className: "color-picker",
+              value: info?.background?.color || "#ffffff",
+              onChange: (e) =>
+                setInfoPath("background.color", e.target.value),
+            })
+          )
         ),
 
       info?.background?.type === "image" &&
@@ -1660,7 +1680,6 @@ export default function AdminDashboard({
     )
   );
 
-  /* ===== other tabs ===== */
   const PageIcons = Card(T.tabs.icons, h(IconsTab, { langs, uiLang }));
   const PageBrands = Card(T.tabs.brands, h(BrandsTab, { langs, uiLang }));
   const PageBrandInfo = Card(
