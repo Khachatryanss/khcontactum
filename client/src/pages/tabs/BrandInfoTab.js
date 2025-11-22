@@ -216,22 +216,31 @@ function absPreview(u) {
   if (!s.startsWith("/")) s = "/" + s;
   return filesBase() + s;
 }
+
+/**
+ * ✅ space-երը պահող տարբերակ (trim չկա)
+ */
 function toI18nObj(v, fb = "") {
   if (v && typeof v === "object" && !Array.isArray(v)) {
     const out = {};
-    for (const L of LANGS) out[L] = (v[L] ?? "").toString().trim();
+    for (const L of LANGS) out[L] = (v[L] ?? "").toString();
     return out;
   }
-  const s = (v ?? fb ?? "").toString().trim();
+  const s = (v ?? fb ?? "").toString(); // no trim
   const out = {};
   for (const L of LANGS) out[L] = L === "am" ? s : "";
   return out;
 }
-function trimI18nObj(o) {
+
+/**
+ * ✅ save-ի ժամանակ name/bio-ն այլևս trim չենք անում
+ */
+function normalizeI18nObj(o) {
   const out = {};
-  for (const L of LANGS) out[L] = (o?.[L] ?? "").toString().trim();
+  for (const L of LANGS) out[L] = (o?.[L] ?? "").toString();
   return out;
 }
+
 function uid() {
   if (typeof crypto !== "undefined" && crypto.randomUUID) {
     return crypto.randomUUID();
@@ -509,9 +518,9 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
     try {
       const cleanWorkers = workers.map((w) => ({
         id: w.id,
-        keyword: (w.keyword || "").toString().trim(),
-        name: trimI18nObj(w.name),
-        bio: trimI18nObj(w.bio),
+        keyword: (w.keyword || "").toString().trim(), // keyword-ը թողնում ենք trim
+        name: normalizeI18nObj(w.name),              // ✅ no trim
+        bio: normalizeI18nObj(w.bio),                // ✅ no trim
         avatar: (w.avatar || "").toString().trim(),
         gallery: cleanGallery(w.gallery),
         nameColor: (w.nameColor || "#ffffff").toString(),

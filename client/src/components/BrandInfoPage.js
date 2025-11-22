@@ -70,7 +70,7 @@ function pickLang(v, lang = "hy", fallbacks = ["am","en","ru","ar","fr","kz","ch
 
   for (const k of order) {
     const s = v?.[k];
-    if (s && String(s).trim()) return String(s).trim();
+    if (s && String(s).trim()) return String(s);
   }
   return "";
 }
@@ -96,6 +96,47 @@ function noPhotoLabel(lang) {
   if (k === "kz") return "фото";
   if (k === "chn") return "照片";
   return "photo";
+}
+
+/* ---------- ✅ linkify description ---------- */
+function normalizeUrl(u) {
+  const s = (u || "").trim();
+  if (!s) return "";
+  if (/^https?:\/\//i.test(s)) return s;
+  if (/^www\./i.test(s)) return "https://" + s;
+  return s;
+}
+
+function linkify(text) {
+  if (!text) return null;
+
+  // գտնում ենք URL-երը
+  const urlRegex = /(https?:\/\/[^\s]+|www\.[^\s]+)/gi;
+  const parts = String(text).split(urlRegex);
+
+  return parts.map((part, i) => {
+    if (!part) return null;
+    if (urlRegex.test(part)) {
+      const href = normalizeUrl(part);
+      return h(
+        "a",
+        {
+          key: "lnk-" + i,
+          href,
+          target: "_blank",
+          rel: "noopener noreferrer",
+          style: {
+            color: "inherit",
+            textDecoration: "underline",
+            fontWeight: 600,
+            wordBreak: "break-word"
+          }
+        },
+        part
+      );
+    }
+    return part;
+  });
 }
 
 /* մեկ աշխատակցի քարտ */
@@ -142,6 +183,8 @@ function WorkerCard({ item, lang }) {
   const nameColor   = (item.nameColor   || "#ffffff").toString();
   const bioColor    = (item.bioColor    || "#ffffff").toString();
   const bioBgColor  = (item.bioBgColor  || "rgba(0,0,0,0.55)").toString();
+
+  const descNodes = linkify(desc);
 
   return h(
     "div",
@@ -206,9 +249,9 @@ function WorkerCard({ item, lang }) {
         fontSize:14,
         lineHeight:1.5,
         textAlign:"left",
-        whiteSpace:"pre-line"
+        whiteSpace:"pre-line" // line breaks still ok
       }
-    }, desc),
+    }, descNodes),
 
     /* slider */
     hasSlides && h("div", {
