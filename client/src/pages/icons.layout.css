@@ -130,7 +130,6 @@
   position: relative;
   width: var(--size);
   height: var(--size);
-  border-radius: 22px;                  /* ← like picture */
   background:
     radial-gradient(140% 140% at 30% 18%, rgba(255,255,255,.55), transparent 60%),
     var(--icons-chip-bg, #f4f6fa);      /* ← keeps admin color */
