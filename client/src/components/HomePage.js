@@ -9,9 +9,6 @@ import BrandInfoPage from "./BrandInfoPage.js";
 import SharePage     from "./SharePage.js";
 import contactumLogo from "../img/Contactum.png"; // ✅ splash logo
 
-// ✅ NEW: santa hat image import
-import santaHat from "../img/santa_hat.png";
-
 const h = React.createElement;
 
 /* ------------ utils ------------ */
@@ -318,14 +315,20 @@ export default function HomePage({ cardId = "101" }) {
   );
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
   const [splashDone, setSplashDone] = React.useState(false);   // ✅ splash timer
+
+  // ✅ pop-up share-ի ավտոմատ բացում՝ միայն առաջին անգամ
   const [shareAutoOpened, setShareAutoOpened] = React.useState(false);
 
+  // 🔤 ներսում աշխատող լեզվի key՝ hy/ru/en/ar/fr/kz/chn/de/es/it/fa
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
-    try { document.documentElement.lang = htmlLang; } catch {}
+    try {
+      document.documentElement.lang = htmlLang;
+    } catch {}
   }, [htmlLang]);
 
+  /* ✅ splash-ը գոնե 2 վրկ պահելու համար */
   React.useEffect(() => {
     const t = setTimeout(() => setSplashDone(true), 2000);
     return () => clearTimeout(t);
@@ -360,12 +363,16 @@ export default function HomePage({ cardId = "101" }) {
         if (!killed) setLoading(false);
       }
     })();
-    return () => { killed = true; };
+    return () => {
+      killed = true;
+    };
   }, [cardId]);
 
+  // ✅ NEW: dynamic manifest + iOS title based on current card info
   React.useEffect(() => {
     if (!info) return;
 
+    // ընտրում ենք անունը՝ ըստ լեզվի
     const nameByLang = {
       hy:  info?.company?.name?.am  || "",
       ru:  info?.company?.name?.ru  || "",
@@ -374,6 +381,8 @@ export default function HomePage({ cardId = "101" }) {
       fr:  info?.company?.name?.fr  || "",
       kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
+
+      // ✅ NEW langs
       de:  info?.company?.name?.de  || "",
       es:  info?.company?.name?.es  || "",
       it:  info?.company?.name?.it  || "",
@@ -386,8 +395,14 @@ export default function HomePage({ cardId = "101" }) {
       nameByLang.en ||
       "KHContactum";
 
+    /* -----------------------------------------
+       1) PAGE TITLE (web + PWA title)
+    ----------------------------------------- */
     try { document.title = displayName; } catch {}
 
+    /* -----------------------------------------
+       2) iOS Meta Title
+    ----------------------------------------- */
     try {
       let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
       if (!meta) {
@@ -398,6 +413,9 @@ export default function HomePage({ cardId = "101" }) {
       meta.setAttribute("content", displayName);
     } catch {}
 
+    /* -----------------------------------------
+       3) Android & Chrome manifest.json (dynamic)
+    ----------------------------------------- */
     try {
       let link = document.querySelector('link[rel="manifest"]');
       if (!link) {
@@ -408,6 +426,11 @@ export default function HomePage({ cardId = "101" }) {
       link.setAttribute("href", `/manifest/${cardId}`);
     } catch {}
 
+    /* -----------------------------------------
+       4) iOS Home Screen ICONS (VERY IMPORTANT)
+          ‼️ Սա է ուղիղ icon-ը, որը iOS-ը օգտագործում է
+          "Add to Home Screen" պահին
+    ----------------------------------------- */
     try {
       const iosIcons = [
         { size: 180, href: "/icon-180.png" },
@@ -431,12 +454,15 @@ export default function HomePage({ cardId = "101" }) {
 
   }, [info, htmlLang, cardId]);
 
+
+  // ✅ splash + loading ավարտվելուց հետո auto-open միայն մեկ անգամ
   React.useEffect(() => {
     if (splashDone && !loading && !shareAutoOpened) {
       setShareAutoOpened(true);
     }
   }, [splashDone, loading, shareAutoOpened]);
 
+  /* ===== Splash loader – Contactum logo ===== */
   if (!splashDone || loading) {
     return h(
       "div",
@@ -480,7 +506,7 @@ export default function HomePage({ cardId = "101" }) {
   try {
     const serverLangs =
       Array.isArray(info?.available_langs) && info.available_langs.length
-        ? info.available_langs.slice(0, 11)
+        ? info.available_langs.slice(0, 11) // 👉 մինչև 11 լեզու backend-ից
         : ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 
     const nameByLang = {
@@ -491,6 +517,8 @@ export default function HomePage({ cardId = "101" }) {
       fr:  info?.company?.name?.fr  || "",
       kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
+
+      // ✅ NEW langs
       de:  info?.company?.name?.de  || "",
       es:  info?.company?.name?.es  || "",
       it:  info?.company?.name?.it  || "",
@@ -508,6 +536,8 @@ export default function HomePage({ cardId = "101" }) {
       fr:  (desc?.fr  ?? about?.fr)  || "",
       kz:  (desc?.kz  ?? about?.kz)  || "",
       chn: (desc?.chn ?? about?.chn) || "",
+
+      // ✅ NEW langs
       de:  (desc?.de  ?? about?.de)  || "",
       es:  (desc?.es  ?? about?.es)  || "",
       it:  (desc?.it  ?? about?.it)  || "",
@@ -618,9 +648,6 @@ export default function HomePage({ cardId = "101" }) {
     const brandInfos = Array.isArray(info?.brandInfos) ? info.brandInfos : [];
     const showBrandInfo = !!activeBrandKeyword;
 
-    // ✅ NEW: public flag
-    const santaHatEnabled = !!info?.santaHatEnabled;
-
     return h(
       "div",
       {
@@ -701,50 +728,13 @@ export default function HomePage({ cardId = "101" }) {
                     textAlign: "center",
                     paddingTop: 10,
                     paddingBottom: 18,
-
-                    // ✅ CHANGED (1 tiny change): make section relative so hat can be positioned
-                    position: "relative",
                   },
                 },
-
-                // ✅ CHANGED (2nd tiny change): Avatar line stays, but now inside wrapper
-                h(
-                  "div",
-                  {
-                    style: {
-                      position: "relative",
-                      width: 150,
-                      height: 150,
-                      margin: "0 auto 8px",
-                    },
-                  },
-                  h(AvatarMedia, {
-                    src: avatarAbs,
-                    isVideo: avatarIsVideo,
-                    initials: (name || "KH").slice(0, 2),
-                  }),
-
-                  // ✅ NEW: hat overlay
-                  santaHatEnabled
-                    ? h("img", {
-                        src: santaHat,
-                        alt: "santa-hat",
-                        style: {
-                          position: "absolute",
-                          top: -18,
-                          left: "50%",
-                          transform: "translateX(-50%) rotate(-8deg)",
-                          width: 110,
-                          height: "auto",
-                          pointerEvents: "none",
-                          filter:
-                            "drop-shadow(0 6px 10px rgba(0,0,0,.35))",
-                        },
-                        loading: "lazy",
-                      })
-                    : null
-                ),
-
+                h(AvatarMedia, {
+                  src: avatarAbs,
+                  isVideo: avatarIsVideo,
+                  initials: (name || "KH").slice(0, 2),
+                }),
                 h(
                   "h1",
                   {
@@ -763,10 +753,7 @@ export default function HomePage({ cardId = "101" }) {
                     className: "hero-desc",
                     style: descStyle,
                     lang: htmlLang,
-                    dir:
-                      htmlLang === "ar" || htmlLang === "fa"
-                        ? "rtl"
-                        : "ltr",
+                    dir: htmlLang === "ar" || htmlLang === "fa" ? "rtl" : "ltr",
                   },
                   description
                 )
@@ -796,15 +783,12 @@ export default function HomePage({ cardId = "101" }) {
                     lang: htmlLang,
 
                     onKeywordClick: (kw) => {
-                      const container =
-                        document.querySelector(".public-scroll-layer");
-                      const scrollY = container
-                        ? container.scrollTop
-                        : 0;
-                      sessionStorage.setItem(
-                        "publicScrollPos",
-                        String(scrollY)
-                      );
+                      // ✅ պահում ենք scroll-ը հենց public-scroll-layer-ից
+                      const container = document.querySelector(".public-scroll-layer");
+                      const scrollY = container ? container.scrollTop : 0;
+                      sessionStorage.setItem("publicScrollPos", String(scrollY));
+
+                      // հետո նոր բացում ենք 2-րդ էջը
                       setActiveBrandKeyword(kw);
                     },
                   })
@@ -814,6 +798,7 @@ export default function HomePage({ cardId = "101" }) {
                 cardId,
                 info,
                 lang: htmlLang,
+                // ✅ առաջին լոադին auto-open, հետո՝ ոչ
                 autoOpenConfirm: !shareAutoOpened,
               })
             )

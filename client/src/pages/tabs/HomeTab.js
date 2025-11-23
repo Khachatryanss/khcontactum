@@ -1,4 +1,4 @@
-// client/src/components/HomePage.js   // (քո մոտ այսպես էր գրված, չեմ փոխել)
+// client/src/components/HomePage.js
 import React from "react";
 import { getPublicInfoByCardId, API } from "../api.js";
 import "./Responcive.css";
@@ -400,21 +400,6 @@ function AvatarMedia({ src, isVideo, initials }) {
   return h(VideoLoop, { src, style: commonStyle });
 }
 
-/* ✅ NEW: checkbox text in all languages */
-const SANTA_TEXT = {
-  hy:  "Ցուցադրել Ձմեռ պապիկի գլխարկը",
-  ru:  "Показать шапку Санты",
-  en:  "Show Santa hat",
-  ar:  "إظهار قبعة سانتا",
-  fr:  "Afficher le bonnet du Père Noël",
-  kz:  "Аяз ата қалпағын көрсету",
-  chn: "显示圣诞帽",
-  de:  "Nikolausmütze anzeigen",
-  es:  "Mostrar gorro de Santa",
-  it:  "Mostra cappello di Babbo Natale",
-  fa:  "نمایش کلاه بابانوئل",
-};
-
 export default function HomePage({ cardId = "101" }) {
   const [loading, setLoading] = React.useState(true);
   const [err, setErr] = React.useState("");
@@ -426,9 +411,6 @@ export default function HomePage({ cardId = "101" }) {
   );
   const [activeBrandKeyword, setActiveBrandKeyword] =
     React.useState("");
-
-  // ✅ NEW: santa toggle state
-  const [santaHatEnabled, setSantaHatEnabled] = React.useState(false);
 
   const htmlLang = lang === "am" ? "hy" : lang;
 
@@ -449,10 +431,6 @@ export default function HomePage({ cardId = "101" }) {
         const root = data?.information || data || {};
         if (!killed) {
           setInfo(root);
-
-          // ✅ NEW: read from backend
-          setSantaHatEnabled(!!root?.santaHatEnabled);
-
           if (!localStorage.getItem("lang")) {
             const def =
               root &&
@@ -721,41 +699,6 @@ export default function HomePage({ cardId = "101" }) {
           onChange: setLang,
           langs: serverLangs,
         }),
-
-        // ✅ NEW: checkbox block
-        h(
-          "div",
-          {
-            className: "card",
-            style: {
-              padding: "10px 12px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 10,
-              marginBottom: 10,
-            },
-          },
-          h(
-            "div",
-            { style: { fontSize: 14, opacity: 0.9 } },
-            SANTA_TEXT[htmlLang] || SANTA_TEXT.hy
-          ),
-          h("input", {
-            type: "checkbox",
-            checked: santaHatEnabled,
-            onChange: (e) => {
-              const v = !!e.target.checked;
-              setSantaHatEnabled(v);
-
-              // ✅ NEW: info-ում պահում ենք, որ public-ը կարդա
-              setInfo(prev => ({ ...(prev || {}), santaHatEnabled: v }));
-
-              // backend save-ը դու քո save համակարգով կպահես
-            },
-            style: { transform: "scale(1.2)" },
-          })
-        ),
 
         showBrandInfo
           ? h(BrandInfoPage, {
