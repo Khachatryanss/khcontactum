@@ -1,6 +1,6 @@
-// client/src/components/HomeTab.js
+// client/src/components/HomePage.js
 import React from "react";
-import { getPublicInfoByCardId, API, adminSaveInfo } from "../api.js"; // ✅ NEW: adminSaveInfo
+import { getPublicInfoByCardId, API } from "../api.js";
 import "./Responcive.css";
 import "./AdminResponcive.css"
 import IconsPage from "./IconsPage.js";
@@ -234,6 +234,7 @@ function VideoLoop({ src, style }) {
 
     let killed = false;
 
+    // required attrs for mobile autoplay
     v.muted = true;
     v.setAttribute("muted", "");
     v.playsInline = true;
@@ -250,6 +251,7 @@ function VideoLoop({ src, style }) {
       if (p && p.catch) {
         p.catch(() => {
           if (killed) return;
+          // try again a bit later
           requestAnimationFrame(() =>
             setTimeout(tryPlay, 200)
           );
@@ -289,6 +291,7 @@ function VideoLoop({ src, style }) {
       tryPlay();
     };
 
+    // watchdog – amen 5 վրկ-ը մի անգամ ստուգում ենք
     const watchdog = setInterval(() => {
       if (killed || !v) return;
       if (
@@ -299,6 +302,7 @@ function VideoLoop({ src, style }) {
       }
     }, 5000);
 
+    // intersection observer – erb card@ tesanum enq, nor krknic darnum e
     let io = null;
     if (
       typeof window !== "undefined" &&
@@ -315,6 +319,7 @@ function VideoLoop({ src, style }) {
       io.observe(v);
     }
 
+    // first attempt
     tryPlay();
 
     v.addEventListener("canplay", onCanPlay);
@@ -407,9 +412,6 @@ export default function HomePage({ cardId = "101" }) {
   const [activeBrandKeyword, setActiveBrandKeyword] =
     React.useState("");
 
-  // ✅ NEW: santa hat checkbox state
-  const [avatarHatEnabled, setAvatarHatEnabled] = React.useState(false);
-
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
@@ -429,10 +431,6 @@ export default function HomePage({ cardId = "101" }) {
         const root = data?.information || data || {};
         if (!killed) {
           setInfo(root);
-
-          // ✅ NEW: load hat flag
-          setAvatarHatEnabled(!!root?.avatarHatEnabled);
-
           if (!localStorage.getItem("lang")) {
             const def =
               root &&
@@ -457,19 +455,6 @@ export default function HomePage({ cardId = "101" }) {
       killed = true;
     };
   }, [cardId]);
-
-  // ✅ NEW: toggle handler (autosave)
-  async function toggleHat(nextVal) {
-    setAvatarHatEnabled(nextVal);
-    if (!info) return;
-    try {
-      const nextInfo = { ...info, avatarHatEnabled: nextVal };
-      setInfo(nextInfo);
-      await adminSaveInfo(nextInfo);
-    } catch (e) {
-      console.warn("toggleHat save error:", e);
-    }
-  }
 
   if (loading)
     return h("div", { className: "pad" }, "Բեռնվում է…");
@@ -692,39 +677,6 @@ export default function HomePage({ cardId = "101" }) {
           : null
       ),
 
-      /* ✅ NEW CHECKBOX (background-ից ՀԵՏՈ) */
-      h(
-        "div",
-        {
-          style: {
-            position: "absolute",
-            left: 12,
-            right: 12,
-            top: 70,           // AM chip-ի տակ
-            zIndex: 2,
-            pointerEvents: "auto",
-          },
-        },
-        h(
-          "label",
-          {
-            className: "card",
-            style: {
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              padding: "10px 12px",
-            },
-          },
-          h("input", {
-            type: "checkbox",
-            checked: avatarHatEnabled,
-            onChange: (e) => toggleHat(e.target.checked),
-          }),
-          h("span", null, "Դնել ձմեռ պապիկի գլխարկ avatar-ի վրա")
-        )
-      ),
-
       /* SCROLL LAYER */
       h(
         "div",
@@ -740,7 +692,6 @@ export default function HomePage({ cardId = "101" }) {
             overflowY: "auto",
             WebkitOverflowScrolling: "touch",
             padding: "12px",
-            paddingTop: 120, // ✅ որ checkbox-ը չծածկի վերևը
           },
         },
         h(LangDropdown, {
