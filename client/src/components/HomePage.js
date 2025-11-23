@@ -9,8 +9,6 @@ import BrandInfoPage from "./BrandInfoPage.js";
 import SharePage     from "./SharePage.js";
 import contactumLogo from "../img/Contactum.png"; // ✅ splash logo
 
-import santaHat from "../img/santa_hat.png"; // ✅ NEW: santa hat image
-
 const h = React.createElement;
 
 /* ------------ utils ------------ */
@@ -278,29 +276,22 @@ function VideoLoop({ src, style }) {
   });
 }
 
-/* ✅ UPDATED: AvatarMedia now supports santa hat overlay */
-function AvatarMedia({ src, isVideo, initials, withHat = false }) {
-  const mediaStyle = {
+function AvatarMedia({ src, isVideo, initials }) {
+  const commonStyle = {
     width: 150,
     height: 150,
     borderRadius: "50%",
     objectFit: "cover",
+    margin: "0 auto 8px",
     display: "block",
     boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
   };
-
-  const wrapperStyle = withHat
-    ? { position: "relative", width: 150, height: 150, margin: "0 auto 8px" }
-    : null;
-
-  let mediaEl = null;
-
   if (!src) {
-    mediaEl = h(
+    return h(
       "div",
       {
         style: {
-          ...mediaStyle,
+          ...commonStyle,
           background: "#f2f2f2",
           display: "grid",
           placeItems: "center",
@@ -310,40 +301,9 @@ function AvatarMedia({ src, isVideo, initials, withHat = false }) {
       },
       (initials || "KH").slice(0, 2).toUpperCase()
     );
-  } else if (!isVideo) {
-    mediaEl = h("img", { src, alt: "avatar", style: mediaStyle, loading: "lazy" });
-  } else {
-    mediaEl = h(VideoLoop, { src, style: mediaStyle });
   }
-
-  if (!withHat) {
-    return h(
-      "div",
-      { style: { margin: "0 auto 8px", width: 150, height: 150 } },
-      mediaEl
-    );
-  }
-
-  return h(
-    "div",
-    { style: wrapperStyle },
-    mediaEl,
-    h("img", {
-      src: santaHat,
-      alt: "santa hat",
-      style: {
-        position: "absolute",
-        top: -22,
-        left: "50%",
-        transform: "translateX(-50%) rotate(-8deg)",
-        width: 115,
-        height: "auto",
-        pointerEvents: "none",
-        filter: "drop-shadow(0 6px 10px rgba(0,0,0,0.35))",
-      },
-      draggable: false,
-    })
-  );
+  if (!isVideo) return h("img", { src, alt: "avatar", style: commonStyle, loading: "lazy" });
+  return h(VideoLoop, { src, style: commonStyle });
 }
 
 export default function HomePage({ cardId = "101" }) {
@@ -761,20 +721,19 @@ export default function HomePage({ cardId = "101" }) {
               "div",
               { style: { position: "relative" } },
               h(
-                "section",{
+                "section",
+                {
                   className: "card",
                   style: {
                     textAlign: "center",
                     paddingTop: 10,
                     paddingBottom: 18,
                   },
-                }
-                ),
+                },
                 h(AvatarMedia, {
                   src: avatarAbs,
                   isVideo: avatarIsVideo,
                   initials: (name || "KH").slice(0, 2),
-                  withHat: true, // ✅ NEW: santa hat ON
                 }),
                 h(
                   "h1",
@@ -844,6 +803,7 @@ export default function HomePage({ cardId = "101" }) {
               })
             )
       )
+    );
   } catch (e) {
     return h(
       "div",
