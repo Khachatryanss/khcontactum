@@ -1,6 +1,11 @@
-// client/src/components/HomePage.js
+// client/src/components/HomeTab.js
 import React from "react";
-import { getPublicInfoByCardId, API } from "../api.js";
+import {
+  getPublicInfoByCardId,
+  API,
+  // ✅ NEW: admin save (եթե չկա api.js-ում, պարզապես ignore կլինի)
+  adminSaveInfo
+} from "../api.js";
 import "./Responcive.css";
 import "./AdminResponcive.css"
 import IconsPage from "./IconsPage.js";
@@ -234,7 +239,6 @@ function VideoLoop({ src, style }) {
 
     let killed = false;
 
-    // required attrs for mobile autoplay
     v.muted = true;
     v.setAttribute("muted", "");
     v.playsInline = true;
@@ -251,7 +255,6 @@ function VideoLoop({ src, style }) {
       if (p && p.catch) {
         p.catch(() => {
           if (killed) return;
-          // try again a bit later
           requestAnimationFrame(() =>
             setTimeout(tryPlay, 200)
           );
@@ -291,7 +294,6 @@ function VideoLoop({ src, style }) {
       tryPlay();
     };
 
-    // watchdog – amen 5 վրկ-ը մի անգամ ստուգում ենք
     const watchdog = setInterval(() => {
       if (killed || !v) return;
       if (
@@ -302,7 +304,6 @@ function VideoLoop({ src, style }) {
       }
     }, 5000);
 
-    // intersection observer – erb card@ tesanum enq, nor krknic darnum e
     let io = null;
     if (
       typeof window !== "undefined" &&
@@ -319,7 +320,6 @@ function VideoLoop({ src, style }) {
       io.observe(v);
     }
 
-    // first attempt
     tryPlay();
 
     v.addEventListener("canplay", onCanPlay);
@@ -400,7 +400,22 @@ function AvatarMedia({ src, isVideo, initials }) {
   return h(VideoLoop, { src, style: commonStyle });
 }
 
-export default function HomePage({ cardId = "101" }) {
+/* ✅ NEW: Santa hat checkbox text */
+const SANTA_TEXT = {
+  hy:  "Ցուցադրել Ձմեռ պապիկի գլխարկը",
+  ru:  "Показать шапку Санты",
+  en:  "Show Santa hat",
+  ar:  "إظهار قبعة سانتا",
+  fr:  "Afficher le bonnet du Père Noël",
+  kz:  "Аяз ата қалпағын көрсету",
+  chn: "显示圣诞帽",
+  de:  "Nikolausmütze anzeigen",
+  es:  "Mostrar gorro de Santa",
+  it:  "Mostra cappello di Babbo Natale",
+  fa:  "نمایش کلاه بابانوئل",
+};
+
+export default function HomeTab({ cardId = "101" }) {
   const [loading, setLoading] = React.useState(true);
   const [err, setErr] = React.useState("");
   const [info, setInfo] = React.useState(null);
@@ -411,6 +426,9 @@ export default function HomePage({ cardId = "101" }) {
   );
   const [activeBrandKeyword, setActiveBrandKeyword] =
     React.useState("");
+
+  // ✅ NEW: santa hat enabled state (from info)
+  const [santaHatEnabled, setSantaHatEnabled] = React.useState(false);
 
   const htmlLang = lang === "am" ? "hy" : lang;
 
@@ -431,6 +449,8 @@ export default function HomePage({ cardId = "101" }) {
         const root = data?.information || data || {};
         if (!killed) {
           setInfo(root);
+          setSantaHatEnabled(!!root?.santaHatEnabled);
+
           if (!localStorage.getItem("lang")) {
             const def =
               root &&
@@ -455,6 +475,20 @@ export default function HomePage({ cardId = "101" }) {
       killed = true;
     };
   }, [cardId]);
+
+  // ✅ NEW: save santa hat flag to backend (if possible)
+  async function persistSantaHat(nextVal) {
+    try {
+      const nextInfo = { ...(info || {}), santaHatEnabled: nextVal };
+      setInfo(nextInfo);
+      if (typeof adminSaveInfo === "function") {
+        await adminSaveInfo(nextInfo);
+      }
+    } catch (e) {
+      console.warn("santaHat save failed", e);
+      // նույնիսկ եթե save-ը չստացվեց, state-ն արդեն փոխված է
+    }
+  }
 
   if (loading)
     return h("div", { className: "pad" }, "Բեռնվում է…");
@@ -699,6 +733,37 @@ export default function HomePage({ cardId = "101" }) {
           onChange: setLang,
           langs: serverLangs,
         }),
+
+        // ✅ NEW: Santa hat checkbox block (admin tab UI)
+        h(
+          "div",
+          {
+            className: "card",
+            style: {
+              padding: "10px 12px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 10,
+              marginBottom: 10,
+            },
+          },
+          h(
+            "div",
+            { style: { fontSize: 14, opacity: 0.9 } },
+            SANTA_TEXT[htmlLang] || SANTA_TEXT.hy
+          ),
+          h("input", {
+            type: "checkbox",
+            checked: santaHatEnabled,
+            onChange: (e) => {
+              const v = !!e.target.checked;
+              setSantaHatEnabled(v);
+              persistSantaHat(v);
+            },
+            style: { transform: "scale(1.2)" },
+          })
+        ),
 
         showBrandInfo
           ? h(BrandInfoPage, {

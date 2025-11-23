@@ -9,6 +9,9 @@ import BrandInfoPage from "./BrandInfoPage.js";
 import SharePage     from "./SharePage.js";
 import contactumLogo from "../img/Contactum.png"; // ✅ splash logo
 
+// ✅ NEW: Santa hat image for public avatar overlay
+import santaHat from "../img/santa_hat.png";
+
 const h = React.createElement;
 
 /* ------------ utils ------------ */
@@ -648,6 +651,9 @@ export default function HomePage({ cardId = "101" }) {
     const brandInfos = Array.isArray(info?.brandInfos) ? info.brandInfos : [];
     const showBrandInfo = !!activeBrandKeyword;
 
+    // ✅ NEW: santa hat flag from backend/admin
+    const santaHatEnabled = !!info?.santaHatEnabled;
+
     return h(
       "div",
       {
@@ -730,11 +736,42 @@ export default function HomePage({ cardId = "101" }) {
                     paddingBottom: 18,
                   },
                 },
-                h(AvatarMedia, {
-                  src: avatarAbs,
-                  isVideo: avatarIsVideo,
-                  initials: (name || "KH").slice(0, 2),
-                }),
+
+                // ✅ Avatar + santa hat wrapper
+                h(
+                  "div",
+                  {
+                    style: {
+                      position: "relative",
+                      width: 150,
+                      height: 150,
+                      margin: "0 auto 8px",
+                    },
+                  },
+                  h(AvatarMedia, {
+                    src: avatarAbs,
+                    isVideo: avatarIsVideo,
+                    initials: (name || "KH").slice(0, 2),
+                  }),
+                  santaHatEnabled
+                    ? h("img", {
+                        src: santaHat,
+                        alt: "santa-hat",
+                        style: {
+                          position: "absolute",
+                          top: -18,
+                          left: "50%",
+                          transform: "translateX(-50%) rotate(-8deg)",
+                          width: 110,
+                          height: "auto",
+                          pointerEvents: "none",
+                          filter: "drop-shadow(0 6px 10px rgba(0,0,0,.35))",
+                        },
+                        loading: "lazy",
+                      })
+                    : null
+                ),
+
                 h(
                   "h1",
                   {
@@ -783,12 +820,9 @@ export default function HomePage({ cardId = "101" }) {
                     lang: htmlLang,
 
                     onKeywordClick: (kw) => {
-                      // ✅ պահում ենք scroll-ը հենց public-scroll-layer-ից
                       const container = document.querySelector(".public-scroll-layer");
                       const scrollY = container ? container.scrollTop : 0;
                       sessionStorage.setItem("publicScrollPos", String(scrollY));
-
-                      // հետո նոր բացում ենք 2-րդ էջը
                       setActiveBrandKeyword(kw);
                     },
                   })
@@ -798,7 +832,6 @@ export default function HomePage({ cardId = "101" }) {
                 cardId,
                 info,
                 lang: htmlLang,
-                // ✅ առաջին լոադին auto-open, հետո՝ ոչ
                 autoOpenConfirm: !shareAutoOpened,
               })
             )
