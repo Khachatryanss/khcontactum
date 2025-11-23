@@ -1,11 +1,6 @@
-// client/src/components/HomeTab.js
+// client/src/components/HomePage.js   // (քո մոտ այսպես էր գրված, չեմ փոխել)
 import React from "react";
-import {
-  getPublicInfoByCardId,
-  API,
-  // ✅ NEW: admin save (եթե չկա api.js-ում, պարզապես ignore կլինի)
-  adminSaveInfo
-} from "../api.js";
+import { getPublicInfoByCardId, API } from "../api.js";
 import "./Responcive.css";
 import "./AdminResponcive.css"
 import IconsPage from "./IconsPage.js";
@@ -239,6 +234,7 @@ function VideoLoop({ src, style }) {
 
     let killed = false;
 
+    // required attrs for mobile autoplay
     v.muted = true;
     v.setAttribute("muted", "");
     v.playsInline = true;
@@ -255,6 +251,7 @@ function VideoLoop({ src, style }) {
       if (p && p.catch) {
         p.catch(() => {
           if (killed) return;
+          // try again a bit later
           requestAnimationFrame(() =>
             setTimeout(tryPlay, 200)
           );
@@ -294,6 +291,7 @@ function VideoLoop({ src, style }) {
       tryPlay();
     };
 
+    // watchdog – amen 5 վրկ-ը մի անգամ ստուգում ենք
     const watchdog = setInterval(() => {
       if (killed || !v) return;
       if (
@@ -304,6 +302,7 @@ function VideoLoop({ src, style }) {
       }
     }, 5000);
 
+    // intersection observer – erb card@ tesanum enq, nor krknic darnum e
     let io = null;
     if (
       typeof window !== "undefined" &&
@@ -320,6 +319,7 @@ function VideoLoop({ src, style }) {
       io.observe(v);
     }
 
+    // first attempt
     tryPlay();
 
     v.addEventListener("canplay", onCanPlay);
@@ -400,7 +400,7 @@ function AvatarMedia({ src, isVideo, initials }) {
   return h(VideoLoop, { src, style: commonStyle });
 }
 
-/* ✅ NEW: Santa hat checkbox text */
+/* ✅ NEW: checkbox text in all languages */
 const SANTA_TEXT = {
   hy:  "Ցուցադրել Ձմեռ պապիկի գլխարկը",
   ru:  "Показать шапку Санты",
@@ -415,7 +415,7 @@ const SANTA_TEXT = {
   fa:  "نمایش کلاه بابانوئل",
 };
 
-export default function HomeTab({ cardId = "101" }) {
+export default function HomePage({ cardId = "101" }) {
   const [loading, setLoading] = React.useState(true);
   const [err, setErr] = React.useState("");
   const [info, setInfo] = React.useState(null);
@@ -427,7 +427,7 @@ export default function HomeTab({ cardId = "101" }) {
   const [activeBrandKeyword, setActiveBrandKeyword] =
     React.useState("");
 
-  // ✅ NEW: santa hat enabled state (from info)
+  // ✅ NEW: santa toggle state
   const [santaHatEnabled, setSantaHatEnabled] = React.useState(false);
 
   const htmlLang = lang === "am" ? "hy" : lang;
@@ -449,6 +449,8 @@ export default function HomeTab({ cardId = "101" }) {
         const root = data?.information || data || {};
         if (!killed) {
           setInfo(root);
+
+          // ✅ NEW: read from backend
           setSantaHatEnabled(!!root?.santaHatEnabled);
 
           if (!localStorage.getItem("lang")) {
@@ -475,20 +477,6 @@ export default function HomeTab({ cardId = "101" }) {
       killed = true;
     };
   }, [cardId]);
-
-  // ✅ NEW: save santa hat flag to backend (if possible)
-  async function persistSantaHat(nextVal) {
-    try {
-      const nextInfo = { ...(info || {}), santaHatEnabled: nextVal };
-      setInfo(nextInfo);
-      if (typeof adminSaveInfo === "function") {
-        await adminSaveInfo(nextInfo);
-      }
-    } catch (e) {
-      console.warn("santaHat save failed", e);
-      // նույնիսկ եթե save-ը չստացվեց, state-ն արդեն փոխված է
-    }
-  }
 
   if (loading)
     return h("div", { className: "pad" }, "Բեռնվում է…");
@@ -734,7 +722,7 @@ export default function HomeTab({ cardId = "101" }) {
           langs: serverLangs,
         }),
 
-        // ✅ NEW: Santa hat checkbox block (admin tab UI)
+        // ✅ NEW: checkbox block
         h(
           "div",
           {
@@ -759,7 +747,11 @@ export default function HomeTab({ cardId = "101" }) {
             onChange: (e) => {
               const v = !!e.target.checked;
               setSantaHatEnabled(v);
-              persistSantaHat(v);
+
+              // ✅ NEW: info-ում պահում ենք, որ public-ը կարդա
+              setInfo(prev => ({ ...(prev || {}), santaHatEnabled: v }));
+
+              // backend save-ը դու քո save համակարգով կպահես
             },
             style: { transform: "scale(1.2)" },
           })
