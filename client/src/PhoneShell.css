@@ -357,24 +357,16 @@ body{
   color:inherit;
 }
 
-/* ===============================
-   ✅ HERO DESC — CENTER ALIGN
-   =============================== */
 .hero-desc{
   margin: 15px auto 0;
   max-width: 90%;
   font-size: 15.5px;
   line-height: 1.6;
-
-  /* ⭐ PURE CENTER ALIGN */
-  text-align: center;
-  text-align-last: center;
-
-  /* ⭐ WORD NORMALIZATION */
-  word-spacing: 0.15em;   /* ← ամեն բառից հետո 1 space-ի հավասար արդյունավետություն */
+  text-align: justify;
+  text-justify: inter-word;
 
   overflow-wrap: break-word;
-  word-break: break-word;
+  word-break: normal;
 
   hyphens: auto;
   -webkit-hyphens: auto;
@@ -382,6 +374,7 @@ body{
 
   opacity: .9;
   font-weight: 700;
+  text-align-last: left;
   color:inherit;
 }
 
@@ -537,12 +530,6 @@ div section{
     overscroll-behavior-y: contain;
     -webkit-overflow-scrolling: touch;
   }
-
-  .hero-desc{
-    font-size: 14px;
-    line-height: 1.52;
-    max-width: 96%;
-  }
 }
 
 /* ====== 320px և ներքև – մի քիչ փոքրացնենք ամեն ինչ ====== */
@@ -576,7 +563,7 @@ div section{
   }
 
   .hero-desc {
-    font-size: 13.5px;
+    font-size: 14px;
     line-height: 1.5;
   }
 
@@ -744,11 +731,6 @@ div section{
     font-size: clamp(21px, 3.2vw, 36px);
     max-width: 92%;
   }
-
-  .hero-desc{
-    font-size: 15px;
-    max-width: 92%;
-  }
 }
 
 /* ====== 1366px ====== */
@@ -757,11 +739,6 @@ div section{
   .hero-title,
   .brands-title {
     font-size: clamp(20px, 3.4vw, 34px);
-    max-width: 92%;
-  }
-
-  .hero-desc{
-    font-size: 14.8px;
     max-width: 92%;
   }
 }
@@ -774,11 +751,6 @@ div section{
     font-size: clamp(19px, 3.6vw, 33px);
     max-width: 92%;
   }
-
-  .hero-desc{
-    font-size: 14.6px;
-    max-width: 92%;
-  }
 }
 
 /* ====== 1024px (tablet) ====== */
@@ -789,12 +761,6 @@ div section{
     font-size: clamp(18px, 4.6vw, 30px);
     line-height: 1.1;
     max-width: 96%;
-  }
-
-  .hero-desc{
-    font-size: 14.2px;
-    max-width: 95%;
-    line-height: 1.55;
   }
 }
 
