@@ -366,9 +366,12 @@ body{
   font-size: 15.5px;
   line-height: 1.6;
 
-  /* ✅ PURE CENTER */
+  /* ⭐ PURE CENTER ALIGN */
   text-align: center;
   text-align-last: center;
+
+  /* ⭐ WORD NORMALIZATION */
+  word-spacing: 0.15em;   /* ← ամեն բառից հետո 1 space-ի հավասար արդյունավետություն */
 
   overflow-wrap: break-word;
   word-break: break-word;
