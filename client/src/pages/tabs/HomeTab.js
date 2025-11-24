@@ -2,7 +2,7 @@
 import React from "react";
 import { getPublicInfoByCardId, API } from "../api.js";
 import "./Responcive.css";
-import "./AdminResponcive.css";
+import "./AdminResponcive.css"
 import IconsPage from "./IconsPage.js";
 import BrandsPage from "./BrandsPage.js";
 import BrandInfoPage from "./BrandInfoPage.js";
@@ -234,6 +234,7 @@ function VideoLoop({ src, style }) {
 
     let killed = false;
 
+    // required attrs for mobile autoplay
     v.muted = true;
     v.setAttribute("muted", "");
     v.playsInline = true;
@@ -250,7 +251,10 @@ function VideoLoop({ src, style }) {
       if (p && p.catch) {
         p.catch(() => {
           if (killed) return;
-          requestAnimationFrame(() => setTimeout(tryPlay, 200));
+          // try again a bit later
+          requestAnimationFrame(() =>
+            setTimeout(tryPlay, 200)
+          );
         });
       }
     };
@@ -263,12 +267,18 @@ function VideoLoop({ src, style }) {
     };
     const onPause = () => {
       if (killed || !v) return;
-      if (document.visibilityState === "visible" && !v.ended) {
+      if (
+        document.visibilityState === "visible" &&
+        !v.ended
+      ) {
         tryPlay();
       }
     };
     const onVisibility = () => {
-      if (!killed && document.visibilityState === "visible") {
+      if (
+        !killed &&
+        document.visibilityState === "visible"
+      ) {
         tryPlay();
       }
     };
@@ -281,13 +291,18 @@ function VideoLoop({ src, style }) {
       tryPlay();
     };
 
+    // watchdog – amen 5 վրկ-ը մի անգամ ստուգում ենք
     const watchdog = setInterval(() => {
       if (killed || !v) return;
-      if (v.readyState >= 2 && (v.paused || v.ended)) {
+      if (
+        v.readyState >= 2 &&
+        (v.paused || v.ended)
+      ) {
         tryPlay();
       }
     }, 5000);
 
+    // intersection observer – erb card@ tesanum enq, nor krknic darnum e
     let io = null;
     if (
       typeof window !== "undefined" &&
@@ -304,6 +319,7 @@ function VideoLoop({ src, style }) {
       io.observe(v);
     }
 
+    // first attempt
     tryPlay();
 
     v.addEventListener("canplay", onCanPlay);
@@ -311,7 +327,10 @@ function VideoLoop({ src, style }) {
     v.addEventListener("pause", onPause);
     v.addEventListener("waiting", onWaiting);
     v.addEventListener("stalled", onStalled);
-    document.addEventListener("visibilitychange", onVisibility);
+    document.addEventListener(
+      "visibilitychange",
+      onVisibility
+    );
 
     return () => {
       killed = true;
@@ -323,7 +342,10 @@ function VideoLoop({ src, style }) {
       v.removeEventListener("pause", onPause);
       v.removeEventListener("waiting", onWaiting);
       v.removeEventListener("stalled", onStalled);
-      document.removeEventListener("visibilitychange", onVisibility);
+      document.removeEventListener(
+        "visibilitychange",
+        onVisibility
+      );
     };
   }, [src]);
 
@@ -376,228 +398,6 @@ function AvatarMedia({ src, isVideo, initials }) {
       loading: "lazy",
     });
   return h(VideoLoop, { src, style: commonStyle });
-}
-
-/* ================================
-   NEW: Languages section (Drag up/down + Switch)
-   ================================ */
-const ALL_LANGS = [
-  "am",
-  "ru",
-  "en",
-  "ar",
-  "fr",
-  "kz",
-  "chn",
-  "de",
-  "es",
-  "it",
-  "fa",
-];
-
-const LANG_LABELS = {
-  am: "Հայերեն (AM)",
-  ru: "Русский (RU)",
-  en: "English (EN)",
-  ar: "العربية (AR)",
-  fr: "Français (FR)",
-  kz: "Қазақша (KZ)",
-  chn: "中文 (CHN)",
-  de: "Deutsch (DE)",
-  es: "Español (ES)",
-  it: "Italiano (IT)",
-  fa: "فارسی (FA)",
-};
-
-function Switch({ checked, onChange }) {
-  return h(
-    "button",
-    {
-      type: "button",
-      onClick: () => onChange(!checked),
-      "aria-pressed": checked,
-      style: {
-        width: 46,
-        height: 26,
-        borderRadius: 999,
-        border: "1px solid rgba(0,0,0,0.15)",
-        background: checked ? "#111" : "#d1d1d1",
-        position: "relative",
-        cursor: "pointer",
-        transition: "0.2s",
-      },
-    },
-    h("span", {
-      style: {
-        position: "absolute",
-        top: 2,
-        left: checked ? 22 : 2,
-        width: 22,
-        height: 22,
-        borderRadius: "50%",
-        background: "#fff",
-        boxShadow: "0 2px 6px rgba(0,0,0,.25)",
-        transition: "0.2s",
-      },
-    })
-  );
-}
-
-function LanguagesSection({ items, setItems }) {
-  const dragIndexRef = React.useRef(null);
-
-  const activeItems = items.filter((x) => x.active);
-  const inactiveItems = items.filter((x) => !x.active);
-
-  const toggleActive = (code, nextVal) => {
-    setItems((prev) => {
-      let next = prev.map((x) =>
-        x.code === code ? { ...x, active: nextVal } : x
-      );
-
-      // actives first
-      const act = next.filter((x) => x.active);
-      const inact = next.filter((x) => !x.active);
-      return [...act, ...inact];
-    });
-  };
-
-  const reorderActive = (from, to) => {
-    setItems((prev) => {
-      const act = prev.filter((x) => x.active);
-      const inact = prev.filter((x) => !x.active);
-
-      const moved = act.splice(from, 1)[0];
-      act.splice(to, 0, moved);
-
-      return [...act, ...inact];
-    });
-  };
-
-  const renderRow = (item, index, isActiveList) => {
-    const isDefault = isActiveList && index === 0;
-
-    return h(
-      "div",
-      {
-        key: item.code,
-        draggable: isActiveList,
-        onDragStart: () => (dragIndexRef.current = index),
-        onDragOver: (e) => {
-          if (!isActiveList) return;
-          e.preventDefault();
-        },
-        onDrop: (e) => {
-          if (!isActiveList) return;
-          e.preventDefault();
-          const from = dragIndexRef.current;
-          const to = index;
-          if (from == null || to == null || from === to) return;
-          reorderActive(from, to);
-          dragIndexRef.current = null;
-        },
-        style: {
-          display: "grid",
-          gridTemplateColumns: "64px 1fr auto auto",
-          alignItems: "center",
-          gap: 10,
-          padding: "10px 8px",
-          borderRadius: 12,
-          background: isActiveList ? "#fff" : "#f3f3f3",
-          opacity: isActiveList ? 1 : 0.6,
-          border: "1px solid rgba(0,0,0,0.06)",
-          cursor: isActiveList ? "grab" : "default",
-        },
-      },
-      // code chip
-      h(
-        "div",
-        {
-          style: {
-            height: 30,
-            minWidth: 44,
-            padding: "0 12px",
-            borderRadius: 999,
-            background: isActiveList ? "#111" : "#9a9a9a",
-            color: "#fff",
-            display: "grid",
-            placeItems: "center",
-            fontWeight: 800,
-            letterSpacing: 0.5,
-            fontSize: 12,
-          },
-        },
-        item.code.toUpperCase()
-      ),
-
-      // label
-      h(
-        "div",
-        { style: { fontSize: 14, fontWeight: 600 } },
-        LANG_LABELS[item.code] || item.code.toUpperCase()
-      ),
-
-      // default badge (NO numbers now)
-      h(
-        "div",
-        {
-          style: {
-            fontSize: 12,
-            color: "#666",
-            fontWeight: 700,
-          },
-        },
-        isDefault ? "Default" : ""
-      ),
-
-      // switch
-      h(Switch, {
-        checked: item.active,
-        onChange: (v) => toggleActive(item.code, v),
-      })
-    );
-  };
-
-  return h(
-    "section",
-    {
-      className: "card",
-      style: { marginBottom: 12, padding: 12 },
-    },
-    h(
-      "div",
-      { style: { fontWeight: 800, marginBottom: 8, fontSize: 16 } },
-      "Languages"
-    ),
-    h(
-      "div",
-      {
-        style: {
-          fontSize: 12,
-          color: "#666",
-          marginBottom: 10,
-          lineHeight: 1.4,
-        },
-      },
-      "Active լեզուները քաշիր վերև/ներքև Drag & Drop-ով։ Առաջինը default է։ Inactive-ը միացնում/անջատում ես switch-ով։"
-    ),
-
-    // active list (reorderable)
-    h(
-      "div",
-      { style: { display: "grid", gap: 8, marginBottom: 10 } },
-      ...activeItems.map((it, i) => renderRow(it, i, true))
-    ),
-
-    // inactive list
-    inactiveItems.length
-      ? h(
-          "div",
-          { style: { display: "grid", gap: 8 } },
-          ...inactiveItems.map((it, i) => renderRow(it, i, false))
-        )
-      : null
-  );
 }
 
 export default function HomePage({ cardId = "101" }) {
@@ -656,52 +456,6 @@ export default function HomePage({ cardId = "101" }) {
     };
   }, [cardId]);
 
-  // ===== NEW states for languages (SAFE hooks) =====
-  const initialServerLangs = React.useMemo(() => {
-    if (
-      Array.isArray(info?.available_langs) &&
-      info.available_langs.length
-    ) {
-      return info.available_langs.slice(0, 11);
-    }
-    return ALL_LANGS.slice();
-  }, [info]);
-
-  const [langItems, setLangItems] = React.useState(null);
-
-  // init once after info loaded
-  React.useEffect(() => {
-    if (langItems) return;
-    const activeSet = new Set(initialServerLangs);
-    const activeOrdered = initialServerLangs.filter((c) => ALL_LANGS.includes(c));
-    const inactive = ALL_LANGS.filter((c) => !activeSet.has(c));
-
-    setLangItems([
-      ...activeOrdered.map((code) => ({ code, active: true })),
-      ...inactive.map((code) => ({ code, active: false })),
-    ]);
-  }, [initialServerLangs, langItems]);
-
-  // derive active order + default
-  const activeOrder = React.useMemo(() => {
-    if (!langItems) return initialServerLangs;
-    return langItems.filter((x) => x.active).map((x) => x.code);
-  }, [langItems, initialServerLangs]);
-
-  const defaultLang =
-    activeOrder[0] ||
-    (initialServerLangs[0] || "am");
-
-  // keep current lang valid
-  React.useEffect(() => {
-    if (!activeOrder.length) return;
-    if (!activeOrder.includes(lang)) {
-      const nextLang = defaultLang;
-      localStorage.setItem("lang", nextLang);
-      setLang(nextLang);
-    }
-  }, [activeOrder, defaultLang, lang]);
-
   if (loading)
     return h("div", { className: "pad" }, "Բեռնվում է…");
   if (err)
@@ -711,7 +465,10 @@ export default function HomePage({ cardId = "101" }) {
 
   try {
     const serverLangs =
-      activeOrder.length ? activeOrder : initialServerLangs;
+      Array.isArray(info?.available_langs) &&
+      info.available_langs.length
+        ? info.available_langs.slice(0, 11)
+        : ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 
     const nameByLang = {
       hy: info?.company?.name?.am || "",
@@ -937,15 +694,6 @@ export default function HomePage({ cardId = "101" }) {
             padding: "12px",
           },
         },
-
-        // ✅ NEW languages block
-        langItems
-          ? h(LanguagesSection, {
-              items: langItems,
-              setItems: setLangItems,
-            })
-          : null,
-
         h(LangDropdown, {
           value: lang,
           onChange: setLang,
@@ -999,10 +747,7 @@ export default function HomePage({ cardId = "101" }) {
                     className: "hero-desc",
                     style: descStyle,
                     lang: htmlLang,
-                    dir:
-                      htmlLang === "ar" || htmlLang === "fa"
-                        ? "rtl"
-                        : "ltr",
+                    dir: (htmlLang === "ar" || htmlLang === "fa") ? "rtl" : "ltr",
                   },
                   description
                 )
