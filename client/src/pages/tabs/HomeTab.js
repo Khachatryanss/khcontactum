@@ -35,12 +35,22 @@ function isVideo(u = "") {
 /* ===== Armenian hyphenation ===== */
 function hyphenateHy(text, uiLang = "hy") {
   if (!text) return "";
-  const TOKENS = /(\bhttps?:\/\/\S+|\b\S+@\S+\.\S+|\b[\d._\-]+(?:\b|$))/gi;
+  const TOKENS =
+    /(\bhttps?:\/\/\S+|\b\S+@\S+\.\S+|\b[\d._\-]+(?:\b|$))/gi;
   const U_DIGR = "\uE000";
   const toPh = (s) => s.replace(/ու/g, U_DIGR);
   const fromPh = (s) => s.replace(new RegExp(U_DIGR, "g"), "ու");
-  const VOWEL = new Set(["ա", "ե", "է", "ը", "ի", "ո", "օ", "և", U_DIGR]);
-
+  const VOWEL = new Set([
+    "ա",
+    "ե",
+    "է",
+    "ը",
+    "ի",
+    "ո",
+    "օ",
+    "և",
+    U_DIGR,
+  ]);
   function hyphenateWord(w) {
     if (!w) return w;
     if (w.length < 6) return w;
@@ -50,7 +60,6 @@ function hyphenateHy(text, uiLang = "hy") {
     const isV = (ch) => VOWEL.has(ch);
     const isC = (ch) => !VOWEL.has(ch);
     let lastBreak = -6;
-
     for (let i = 0; i < chars.length - 2; i++) {
       const a = chars[i],
         b = chars[i + 1],
@@ -65,7 +74,6 @@ function hyphenateHy(text, uiLang = "hy") {
         isV(chars[i + 3])
       )
         place = i + 2;
-
       if (place > 1 && place < chars.length - 2) {
         if (place - lastBreak >= 6) {
           breaks.push(place);
@@ -73,14 +81,12 @@ function hyphenateHy(text, uiLang = "hy") {
         }
       }
     }
-
     for (let k = breaks.length - 1; k >= 0; k--) {
       const at = breaks[k];
       chars.splice(at, 0, "\u00AD");
     }
     return fromPh(chars.join(""));
   }
-
   const out = String(text)
     .split(TOKENS)
     .map((chunk) => {
@@ -283,7 +289,10 @@ function VideoLoop({ src, style }) {
     }, 5000);
 
     let io = null;
-    if (typeof window !== "undefined" && "IntersectionObserver" in window) {
+    if (
+      typeof window !== "undefined" &&
+      "IntersectionObserver" in window
+    ) {
       io = new IntersectionObserver(
         (entries) => {
           entries.forEach((en) => {
@@ -370,9 +379,21 @@ function AvatarMedia({ src, isVideo, initials }) {
 }
 
 /* ================================
-   NEW: Language Manager (DnD + Switch)
+   NEW: Languages section (Drag up/down + Switch)
    ================================ */
-const ALL_LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
+const ALL_LANGS = [
+  "am",
+  "ru",
+  "en",
+  "ar",
+  "fr",
+  "kz",
+  "chn",
+  "de",
+  "es",
+  "it",
+  "fa",
+];
 
 const LANG_LABELS = {
   am: "Հայերեն (AM)",
@@ -388,12 +409,12 @@ const LANG_LABELS = {
   fa: "فارسی (FA)",
 };
 
-function Switch({ checked, onChange, disabled }) {
+function Switch({ checked, onChange }) {
   return h(
     "button",
     {
       type: "button",
-      onClick: disabled ? undefined : () => onChange(!checked),
+      onClick: () => onChange(!checked),
       "aria-pressed": checked,
       style: {
         width: 46,
@@ -402,8 +423,7 @@ function Switch({ checked, onChange, disabled }) {
         border: "1px solid rgba(0,0,0,0.15)",
         background: checked ? "#111" : "#d1d1d1",
         position: "relative",
-        cursor: disabled ? "not-allowed" : "pointer",
-        opacity: disabled ? 0.5 : 1,
+        cursor: "pointer",
         transition: "0.2s",
       },
     },
@@ -423,31 +443,24 @@ function Switch({ checked, onChange, disabled }) {
   );
 }
 
-function LanguageManager({ initialActive = [], onChange }) {
-  const [items, setItems] = React.useState(() => {
-    const activeSet = new Set(initialActive);
-    const activeOrdered = initialActive.filter((c) => ALL_LANGS.includes(c));
-    const inactive = ALL_LANGS.filter((c) => !activeSet.has(c));
-    return [
-      ...activeOrdered.map((code) => ({ code, active: true })),
-      ...inactive.map((code) => ({ code, active: false })),
-    ];
-  });
-
-  // drag state
+function LanguagesSection({ items, setItems }) {
   const dragIndexRef = React.useRef(null);
 
   const activeItems = items.filter((x) => x.active);
   const inactiveItems = items.filter((x) => !x.active);
 
-  const emit = React.useCallback(
-    (nextItems) => {
-      const activeOrder = nextItems.filter((x) => x.active).map((x) => x.code);
-      const def = activeOrder[0] || "am";
-      onChange && onChange(activeOrder, def, nextItems);
-    },
-    [onChange]
-  );
+  const toggleActive = (code, nextVal) => {
+    setItems((prev) => {
+      let next = prev.map((x) =>
+        x.code === code ? { ...x, active: nextVal } : x
+      );
+
+      // actives first
+      const act = next.filter((x) => x.active);
+      const inact = next.filter((x) => !x.active);
+      return [...act, ...inact];
+    });
+  };
 
   const reorderActive = (from, to) => {
     setItems((prev) => {
@@ -457,25 +470,7 @@ function LanguageManager({ initialActive = [], onChange }) {
       const moved = act.splice(from, 1)[0];
       act.splice(to, 0, moved);
 
-      const next = [...act, ...inact];
-      emit(next);
-      return next;
-    });
-  };
-
-  const toggleActive = (code, nextVal) => {
-    setItems((prev) => {
-      let next = prev.map((x) =>
-        x.code === code ? { ...x, active: nextVal } : x
-      );
-
-      // keep actives first, preserving their order as much as possible
-      const act = next.filter((x) => x.active);
-      const inact = next.filter((x) => !x.active);
-      next = [...act, ...inact];
-
-      emit(next);
-      return next;
+      return [...act, ...inact];
     });
   };
 
@@ -486,7 +481,7 @@ function LanguageManager({ initialActive = [], onChange }) {
       "div",
       {
         key: item.code,
-        draggable: isActiveList, // only active list can be reordered
+        draggable: isActiveList,
         onDragStart: () => (dragIndexRef.current = index),
         onDragOver: (e) => {
           if (!isActiveList) return;
@@ -542,7 +537,7 @@ function LanguageManager({ initialActive = [], onChange }) {
         LANG_LABELS[item.code] || item.code.toUpperCase()
       ),
 
-      // default badge or order number
+      // default badge (NO numbers now)
       h(
         "div",
         {
@@ -552,7 +547,7 @@ function LanguageManager({ initialActive = [], onChange }) {
             fontWeight: 700,
           },
         },
-        isDefault ? "Default" : isActiveList ? `#${index + 1}` : ""
+        isDefault ? "Default" : ""
       ),
 
       // switch
@@ -567,20 +562,11 @@ function LanguageManager({ initialActive = [], onChange }) {
     "section",
     {
       className: "card",
-      style: {
-        marginBottom: 12,
-        padding: 12,
-      },
+      style: { marginBottom: 12, padding: 12 },
     },
     h(
       "div",
-      {
-        style: {
-          fontWeight: 800,
-          marginBottom: 8,
-          fontSize: 16,
-        },
-      },
+      { style: { fontWeight: 800, marginBottom: 8, fontSize: 16 } },
       "Languages"
     ),
     h(
@@ -593,17 +579,17 @@ function LanguageManager({ initialActive = [], onChange }) {
           lineHeight: 1.4,
         },
       },
-      "Select active languages and reorder them by drag & drop. First active language becomes default."
+      "Active լեզուները քաշիր վերև/ներքև Drag & Drop-ով։ Առաջինը default է։ Inactive-ը միացնում/անջատում ես switch-ով։"
     ),
 
-    // Active list
+    // active list (reorderable)
     h(
       "div",
       { style: { display: "grid", gap: 8, marginBottom: 10 } },
       ...activeItems.map((it, i) => renderRow(it, i, true))
     ),
 
-    // Inactive list
+    // inactive list
     inactiveItems.length
       ? h(
           "div",
@@ -619,9 +605,12 @@ export default function HomePage({ cardId = "101" }) {
   const [err, setErr] = React.useState("");
   const [info, setInfo] = React.useState(null);
   const [lang, setLang] = React.useState(
-    (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
+    (typeof window !== "undefined"
+      ? localStorage.getItem("lang")
+      : "am") || "am"
   );
-  const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
+  const [activeBrandKeyword, setActiveBrandKeyword] =
+    React.useState("");
 
   const htmlLang = lang === "am" ? "hy" : lang;
 
@@ -647,7 +636,9 @@ export default function HomePage({ cardId = "101" }) {
               root &&
               root.default_lang &&
               Array.isArray(root.available_langs)
-                ? root.available_langs.includes(root.default_lang)
+                ? root.available_langs.includes(
+                    root.default_lang
+                  )
                   ? root.default_lang
                   : undefined
                 : undefined;
@@ -665,25 +656,62 @@ export default function HomePage({ cardId = "101" }) {
     };
   }, [cardId]);
 
-  if (loading) return h("div", { className: "pad" }, "Բեռնվում է…");
-  if (err) return h("div", { className: "pad" }, "Սխալ: " + err);
-  if (!info) return h("div", { className: "pad" }, "Տվյալ չկա");
+  // ===== NEW states for languages (SAFE hooks) =====
+  const initialServerLangs = React.useMemo(() => {
+    if (
+      Array.isArray(info?.available_langs) &&
+      info.available_langs.length
+    ) {
+      return info.available_langs.slice(0, 11);
+    }
+    return ALL_LANGS.slice();
+  }, [info]);
+
+  const [langItems, setLangItems] = React.useState(null);
+
+  // init once after info loaded
+  React.useEffect(() => {
+    if (langItems) return;
+    const activeSet = new Set(initialServerLangs);
+    const activeOrdered = initialServerLangs.filter((c) => ALL_LANGS.includes(c));
+    const inactive = ALL_LANGS.filter((c) => !activeSet.has(c));
+
+    setLangItems([
+      ...activeOrdered.map((code) => ({ code, active: true })),
+      ...inactive.map((code) => ({ code, active: false })),
+    ]);
+  }, [initialServerLangs, langItems]);
+
+  // derive active order + default
+  const activeOrder = React.useMemo(() => {
+    if (!langItems) return initialServerLangs;
+    return langItems.filter((x) => x.active).map((x) => x.code);
+  }, [langItems, initialServerLangs]);
+
+  const defaultLang =
+    activeOrder[0] ||
+    (initialServerLangs[0] || "am");
+
+  // keep current lang valid
+  React.useEffect(() => {
+    if (!activeOrder.length) return;
+    if (!activeOrder.includes(lang)) {
+      const nextLang = defaultLang;
+      localStorage.setItem("lang", nextLang);
+      setLang(nextLang);
+    }
+  }, [activeOrder, defaultLang, lang]);
+
+  if (loading)
+    return h("div", { className: "pad" }, "Բեռնվում է…");
+  if (err)
+    return h("div", { className: "pad" }, "Սխալ: " + err);
+  if (!info)
+    return h("div", { className: "pad" }, "Տվյալ չկա");
 
   try {
-    const initialServerLangs =
-      Array.isArray(info?.available_langs) && info.available_langs.length
-        ? info.available_langs.slice(0, 11)
-        : ALL_LANGS.slice();
-
-    // NEW: local state for languages ordering/active
-    const [availableLangs, setAvailableLangs] = React.useState(initialServerLangs);
-    const [defaultLang, setDefaultLang] = React.useState(
-      info?.default_lang && initialServerLangs.includes(info.default_lang)
-        ? info.default_lang
-        : initialServerLangs[0] || "am"
-    );
-
-    const serverLangs = availableLangs.length ? availableLangs : initialServerLangs;
+    const serverLangs =
+      activeOrder.length ? activeOrder : initialServerLangs;
 
     const nameByLang = {
       hy: info?.company?.name?.am || "",
@@ -715,9 +743,12 @@ export default function HomePage({ cardId = "101" }) {
       fa: (desc?.fa ?? about?.fa) || "",
     };
 
-    const nameColor = info?.company?.nameColor || "#111";
+    const nameColor =
+      info?.company?.nameColor || "#111";
     const descColor =
-      info?.description?.color || info?.profile?.aboutColor || "#666";
+      info?.description?.color ||
+      info?.profile?.aboutColor ||
+      "#666";
 
     const avTop = info?.avatar;
     const avProf = info?.profile?.avatar;
@@ -730,7 +761,10 @@ export default function HomePage({ cardId = "101" }) {
         : info?.company?.logo?.imageUrl || "");
 
     const fallbackLogo =
-      info?.assets?.logo_url || info?.logo_url || companyLogo || "";
+      info?.assets?.logo_url ||
+      info?.logo_url ||
+      companyLogo ||
+      "";
 
     let avatarUrl = "";
     let avatarType = "";
@@ -738,21 +772,33 @@ export default function HomePage({ cardId = "101" }) {
     if (typeof avTop === "string") avatarUrl = avTop;
     else if (avTop && typeof avTop === "object") {
       avatarType = avTop.type || "";
-      if (avatarType === "image") avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
-      else if (avatarType === "video") avatarUrl = avTop.videoUrl || avTop.imageUrl || "";
-      else avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
+      if (avatarType === "image")
+        avatarUrl =
+          avTop.imageUrl || avTop.videoUrl || "";
+      else if (avatarType === "video")
+        avatarUrl =
+          avTop.videoUrl || avTop.imageUrl || "";
+      else
+        avatarUrl =
+          avTop.imageUrl || avTop.videoUrl || "";
     }
 
     if (!avatarUrl && avProf) {
       if (typeof avProf === "string") avatarUrl = avProf;
       else if (typeof avProf === "object")
-        avatarUrl = avProf.imageUrl || avProf.videoUrl || "";
+        avatarUrl =
+          avProf.imageUrl || avProf.videoUrl || "";
     }
-    if (!avatarUrl && fallbackLogo) avatarUrl = fallbackLogo;
+    if (!avatarUrl && fallbackLogo)
+      avatarUrl = fallbackLogo;
 
     const avatarAbs = absSrc(avatarUrl);
     const avatarIsVideo =
-      avatarType === "video" ? true : avatarType === "image" ? false : isVideo(avatarAbs);
+      avatarType === "video"
+        ? true
+        : avatarType === "image"
+        ? false
+        : isVideo(avatarAbs);
 
     const bg =
       info?.background || {
@@ -767,8 +813,8 @@ export default function HomePage({ cardId = "101" }) {
       nameByLang.hy ||
       nameByLang.en ||
       "—";
-
-    const descriptionRaw = textByLang[htmlLang] || "";
+    const descriptionRaw =
+      textByLang[htmlLang] || "";
     const description =
       htmlLang === "hy"
         ? hyphenateHy(descriptionRaw, "hy")
@@ -788,25 +834,45 @@ export default function HomePage({ cardId = "101" }) {
     };
 
     const icons = info?.icons || {};
-    const links = Array.isArray(icons.links) ? icons.links : [];
+    const links = Array.isArray(icons.links)
+      ? icons.links
+      : [];
     const styles = icons?.styles || {};
 
-    const labelColor = styles.labelCss || styles.labelHEX || "";
-    const chipColor = styles.chipCss || rgbaToCss(styles.chipRGBA) || "";
-    const rowCardColor = styles.rowCardCss || rgbaToCss(styles.rowCardRGBA) || "";
-    const layoutStyle = styles.layoutStyle || "dzev1";
+    const labelColor =
+      styles.labelCss || styles.labelHEX || "";
+    const chipColor =
+      styles.chipCss || rgbaToCss(styles.chipRGBA) || "";
+    const rowCardColor =
+      styles.rowCardCss ||
+      rgbaToCss(styles.rowCardRGBA) ||
+      "";
+    const layoutStyle =
+      styles.layoutStyle || "dzev1";
     const cols = Number(styles.cols || 4);
     const glowEnabled = !!styles.glowEnabled;
     const glowColor = styles.glowColor || "#7dd3fc";
 
-    const brandsArray = Array.isArray(info?.brands) ? info.brands : [];
-    const brandsCols = Number(info?.brandsCols || 3);
-    const brandsTitleColor = info?.brandsTitleColor || "#000000";
-    const brandsTitleText = info?.brandsTitleText || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ";
-    const brandsBgColor = info?.brandsBgColor || "#ffffff";
-    const brandsNameColor = info?.brandsNameColor || "#000000";
+    const brandsArray = Array.isArray(info?.brands)
+      ? info.brands
+      : [];
+    const brandsCols = Number(
+      info?.brandsCols || 3
+    );
+    const brandsTitleColor =
+      info?.brandsTitleColor || "#000000";
+    const brandsTitleText =
+      info?.brandsTitleText || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ";
+    const brandsBgColor =
+      info?.brandsBgColor || "#ffffff";
+    const brandsNameColor =
+      info?.brandsNameColor || "#000000";
 
-    const brandInfos = Array.isArray(info?.brandInfos) ? info.brandInfos : [];
+    const brandInfos = Array.isArray(
+      info?.brandInfos
+    )
+      ? info.brandInfos
+      : [];
     const showBrandInfo = !!activeBrandKeyword;
 
     return h(
@@ -836,14 +902,20 @@ export default function HomePage({ cardId = "101" }) {
               bg.type === "color"
                 ? bg.color || "#ffffff"
                 : bg.type === "image"
-                ? `url(${absSrc(bg.imageUrl)}) center/cover no-repeat`
+                ? `url(${absSrc(
+                    bg.imageUrl
+                  )}) center/cover no-repeat`
                 : "transparent",
           },
         },
         bg.type === "video" && bg.videoUrl
           ? h(VideoLoop, {
               src: absSrc(bg.videoUrl),
-              style: { width: "100%", height: "100%", objectFit: "cover" },
+              style: {
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              },
             })
           : null
       ),
@@ -866,21 +938,13 @@ export default function HomePage({ cardId = "101" }) {
           },
         },
 
-        // NEW: Language reorder + switches section
-        h(LanguageManager, {
-          initialActive: initialServerLangs,
-          onChange: (activeOrder, def) => {
-            setAvailableLangs(activeOrder);
-            setDefaultLang(def);
-
-            // keep current lang valid
-            if (!activeOrder.includes(lang)) {
-              const nextLang = def || activeOrder[0] || "am";
-              localStorage.setItem("lang", nextLang);
-              setLang(nextLang);
-            }
-          },
-        }),
+        // ✅ NEW languages block
+        langItems
+          ? h(LanguagesSection, {
+              items: langItems,
+              setItems: setLangItems,
+            })
+          : null,
 
         h(LangDropdown, {
           value: lang,
@@ -893,7 +957,8 @@ export default function HomePage({ cardId = "101" }) {
               brandInfos,
               keyword: activeBrandKeyword,
               lang: htmlLang,
-              onBack: () => setActiveBrandKeyword(""),
+              onBack: () =>
+                setActiveBrandKeyword(""),
             })
           : h(
               "div",
@@ -903,18 +968,28 @@ export default function HomePage({ cardId = "101" }) {
                 "section",
                 {
                   className: "card",
-                  style: { textAlign: "center", paddingTop: 10, paddingBottom: 18 },
+                  style: {
+                    textAlign: "center",
+                    paddingTop: 10,
+                    paddingBottom: 18,
+                  },
                 },
                 h(AvatarMedia, {
                   src: avatarAbs,
                   isVideo: avatarIsVideo,
-                  initials: (name || "KH").slice(0, 2).toUpperCase(),
+                  initials: (name || "KH")
+                    .slice(0, 2)
+                    .toUpperCase(),
                 }),
                 h(
                   "h1",
                   {
                     className: "hero-title",
-                    style: { color: nameColor, margin: "15px 0 4px", fontSize: 35 },
+                    style: {
+                      color: nameColor,
+                      margin: "15px 0 4px",
+                      fontSize: 35,
+                    },
                   },
                   name
                 ),
@@ -924,7 +999,10 @@ export default function HomePage({ cardId = "101" }) {
                     className: "hero-desc",
                     style: descStyle,
                     lang: htmlLang,
-                    dir: htmlLang === "ar" || htmlLang === "fa" ? "rtl" : "ltr",
+                    dir:
+                      htmlLang === "ar" || htmlLang === "fa"
+                        ? "rtl"
+                        : "ltr",
                   },
                   description
                 )
@@ -955,7 +1033,8 @@ export default function HomePage({ cardId = "101" }) {
                     brandsBgColor,
                     brandsNameColor,
                     lang: htmlLang,
-                    onKeywordClick: (kw) => setActiveBrandKeyword(kw),
+                    onKeywordClick: (kw) =>
+                      setActiveBrandKeyword(kw),
                   })
                 : null,
 
@@ -969,6 +1048,10 @@ export default function HomePage({ cardId = "101" }) {
       )
     );
   } catch (e) {
-    return h("div", { className: "pad" }, "Render error: " + (e.message || String(e)));
+    return h(
+      "div",
+      { className: "pad" },
+      "Render error: " + (e.message || String(e))
+    );
   }
 }
