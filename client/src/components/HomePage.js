@@ -33,6 +33,13 @@ function isVideo(u = "") {
   return /\.(mp4|webm|ogg)(\?.*)?$/i.test(u);
 }
 
+/* ✅ NEW: normalize any whitespace to exactly ONE space between words */
+function normalizeSpaces(text = "") {
+  return String(text)
+    .replace(/\s+/g, " ")  // multi spaces / tabs / newlines -> single space
+    .trim();              // remove leading/trailing spaces
+}
+
 function hyphenateHy(text, uiLang = "hy") {
   if (!text) return "";
   const TOKENS = /(\bhttps?:\/\/\S+|\b\S+@\S+\.\S+|\b[\d._\-]+(?:\b|$))/gi;
@@ -372,7 +379,6 @@ export default function HomePage({ cardId = "101" }) {
   React.useEffect(() => {
     if (!info) return;
 
-    // ընտրում ենք անունը՝ ըստ լեզվի
     const nameByLang = {
       hy:  info?.company?.name?.am  || "",
       ru:  info?.company?.name?.ru  || "",
@@ -382,7 +388,6 @@ export default function HomePage({ cardId = "101" }) {
       kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
 
-      // ✅ NEW langs
       de:  info?.company?.name?.de  || "",
       es:  info?.company?.name?.es  || "",
       it:  info?.company?.name?.it  || "",
@@ -395,14 +400,8 @@ export default function HomePage({ cardId = "101" }) {
       nameByLang.en ||
       "KHContactum";
 
-    /* -----------------------------------------
-       1) PAGE TITLE (web + PWA title)
-    ----------------------------------------- */
     try { document.title = displayName; } catch {}
 
-    /* -----------------------------------------
-       2) iOS Meta Title
-    ----------------------------------------- */
     try {
       let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
       if (!meta) {
@@ -413,9 +412,6 @@ export default function HomePage({ cardId = "101" }) {
       meta.setAttribute("content", displayName);
     } catch {}
 
-    /* -----------------------------------------
-       3) Android & Chrome manifest.json (dynamic)
-    ----------------------------------------- */
     try {
       let link = document.querySelector('link[rel="manifest"]');
       if (!link) {
@@ -426,11 +422,6 @@ export default function HomePage({ cardId = "101" }) {
       link.setAttribute("href", `/manifest/${cardId}`);
     } catch {}
 
-    /* -----------------------------------------
-       4) iOS Home Screen ICONS (VERY IMPORTANT)
-          ‼️ Սա է ուղիղ icon-ը, որը iOS-ը օգտագործում է
-          "Add to Home Screen" պահին
-    ----------------------------------------- */
     try {
       const iosIcons = [
         { size: 180, href: "/icon-180.png" },
@@ -454,8 +445,6 @@ export default function HomePage({ cardId = "101" }) {
 
   }, [info, htmlLang, cardId]);
 
-
-  // ✅ splash + loading ավարտվելուց հետո auto-open միայն մեկ անգամ
   React.useEffect(() => {
     if (splashDone && !loading && !shareAutoOpened) {
       setShareAutoOpened(true);
@@ -506,7 +495,7 @@ export default function HomePage({ cardId = "101" }) {
   try {
     const serverLangs =
       Array.isArray(info?.available_langs) && info.available_langs.length
-        ? info.available_langs.slice(0, 11) // 👉 մինչև 11 լեզու backend-ից
+        ? info.available_langs.slice(0, 11)
         : ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 
     const nameByLang = {
@@ -518,7 +507,6 @@ export default function HomePage({ cardId = "101" }) {
       kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
 
-      // ✅ NEW langs
       de:  info?.company?.name?.de  || "",
       es:  info?.company?.name?.es  || "",
       it:  info?.company?.name?.it  || "",
@@ -537,7 +525,6 @@ export default function HomePage({ cardId = "101" }) {
       kz:  (desc?.kz  ?? about?.kz)  || "",
       chn: (desc?.chn ?? about?.chn) || "",
 
-      // ✅ NEW langs
       de:  (desc?.de  ?? about?.de)  || "",
       es:  (desc?.es  ?? about?.es)  || "",
       it:  (desc?.it  ?? about?.it)  || "",
@@ -603,11 +590,14 @@ export default function HomePage({ cardId = "101" }) {
       nameByLang.en ||
       "—";
 
+    // ✅ NEW: normalize spaces BEFORE hyphenation
     const descriptionRaw = textByLang[htmlLang] || "";
+    const normalizedDescRaw = normalizeSpaces(descriptionRaw);
+
     const description =
       htmlLang === "hy"
-        ? hyphenateHy(descriptionRaw, "hy")
-        : hyphenateHy(descriptionRaw, htmlLang);
+        ? hyphenateHy(normalizedDescRaw, "hy")
+        : hyphenateHy(normalizedDescRaw, htmlLang);
 
     const [minCh, maxCh] = idealColsForLang(htmlLang);
 
@@ -783,12 +773,9 @@ export default function HomePage({ cardId = "101" }) {
                     lang: htmlLang,
 
                     onKeywordClick: (kw) => {
-                      // ✅ պահում ենք scroll-ը հենց public-scroll-layer-ից
                       const container = document.querySelector(".public-scroll-layer");
                       const scrollY = container ? container.scrollTop : 0;
                       sessionStorage.setItem("publicScrollPos", String(scrollY));
-
-                      // հետո նոր բացում ենք 2-րդ էջը
                       setActiveBrandKeyword(kw);
                     },
                   })
@@ -798,7 +785,6 @@ export default function HomePage({ cardId = "101" }) {
                 cardId,
                 info,
                 lang: htmlLang,
-                // ✅ առաջին լոադին auto-open, հետո՝ ոչ
                 autoOpenConfirm: !shareAutoOpened,
               })
             )
