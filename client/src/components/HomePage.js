@@ -33,10 +33,10 @@ function isVideo(u = "") {
   return /\.(mp4|webm|ogg)(\?.*)?$/i.test(u);
 }
 
-/* ✅ NEW: normalize any whitespace to exactly ONE space between words */
+/* ✅ NEW: normalize ANY whitespace to exactly 1 space between words */
 function normalizeSpaces(text = "") {
   return String(text)
-    .replace(/\s+/g, " ")  // multi spaces / tabs / newlines -> single space
+    .replace(/\s+/g, " ")  // tabs/newlines/multi-spaces -> single space
     .trim();              // remove leading/trailing spaces
 }
 
@@ -99,7 +99,6 @@ function idealColsForLang(lang) {
     case "kz":  return [34, 40];
     case "chn": return [28, 34];
 
-    // ✅ NEW langs (same sizing logic, no other changes)
     case "de":  return [36, 42];
     case "es":  return [36, 42];
     case "it":  return [36, 42];
@@ -172,7 +171,6 @@ function rgbaToCss(obj) {
   return `rgba(${(+r | 0)}, ${(+g | 0)}, ${(+b | 0)}, ${(isFinite(+a) ? +a : 1)})`;
 }
 
-// (այս պահին չի օգտագործվում, բայց թարմացրի 11 լեզվի համար)
 function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
@@ -321,12 +319,10 @@ export default function HomePage({ cardId = "101" }) {
     (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
   );
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
-  const [splashDone, setSplashDone] = React.useState(false);   // ✅ splash timer
+  const [splashDone, setSplashDone] = React.useState(false);
 
-  // ✅ pop-up share-ի ավտոմատ բացում՝ միայն առաջին անգամ
   const [shareAutoOpened, setShareAutoOpened] = React.useState(false);
 
-  // 🔤 ներսում աշխատող լեզվի key՝ hy/ru/en/ar/fr/kz/chn/de/es/it/fa
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
@@ -335,7 +331,6 @@ export default function HomePage({ cardId = "101" }) {
     } catch {}
   }, [htmlLang]);
 
-  /* ✅ splash-ը գոնե 2 վրկ պահելու համար */
   React.useEffect(() => {
     const t = setTimeout(() => setSplashDone(true), 2000);
     return () => clearTimeout(t);
@@ -370,12 +365,9 @@ export default function HomePage({ cardId = "101" }) {
         if (!killed) setLoading(false);
       }
     })();
-    return () => {
-      killed = true;
-    };
+    return () => { killed = true; };
   }, [cardId]);
 
-  // ✅ NEW: dynamic manifest + iOS title based on current card info
   React.useEffect(() => {
     if (!info) return;
 
@@ -387,7 +379,6 @@ export default function HomePage({ cardId = "101" }) {
       fr:  info?.company?.name?.fr  || "",
       kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
-
       de:  info?.company?.name?.de  || "",
       es:  info?.company?.name?.es  || "",
       it:  info?.company?.name?.it  || "",
@@ -430,9 +421,7 @@ export default function HomePage({ cardId = "101" }) {
       ];
 
       iosIcons.forEach(({ size, href }) => {
-        let l = document.querySelector(
-          `link[rel="apple-touch-icon"][sizes="${size}x${size}"]`
-        );
+        let l = document.querySelector(`link[rel="apple-touch-icon"][sizes="${size}x${size}"]`);
         if (!l) {
           l = document.createElement("link");
           l.setAttribute("rel", "apple-touch-icon");
@@ -451,7 +440,6 @@ export default function HomePage({ cardId = "101" }) {
     }
   }, [splashDone, loading, shareAutoOpened]);
 
-  /* ===== Splash loader – Contactum logo ===== */
   if (!splashDone || loading) {
     return h(
       "div",
@@ -506,7 +494,6 @@ export default function HomePage({ cardId = "101" }) {
       fr:  info?.company?.name?.fr  || "",
       kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
-
       de:  info?.company?.name?.de  || "",
       es:  info?.company?.name?.es  || "",
       it:  info?.company?.name?.it  || "",
@@ -524,7 +511,6 @@ export default function HomePage({ cardId = "101" }) {
       fr:  (desc?.fr  ?? about?.fr)  || "",
       kz:  (desc?.kz  ?? about?.kz)  || "",
       chn: (desc?.chn ?? about?.chn) || "",
-
       de:  (desc?.de  ?? about?.de)  || "",
       es:  (desc?.es  ?? about?.es)  || "",
       it:  (desc?.it  ?? about?.it)  || "",
@@ -584,20 +570,22 @@ export default function HomePage({ cardId = "101" }) {
         videoUrl: "",
       };
 
-    const name =
+    // ✅ normalize company name for ALL langs
+    const nameRaw =
       nameByLang[htmlLang] ||
       nameByLang.hy ||
       nameByLang.en ||
       "—";
+    const name = normalizeSpaces(nameRaw);
 
-    // ✅ NEW: normalize spaces BEFORE hyphenation
+    // ✅ normalize description for ALL langs, THEN hyphenate
     const descriptionRaw = textByLang[htmlLang] || "";
-    const normalizedDescRaw = normalizeSpaces(descriptionRaw);
+    const cleanedDescRaw = normalizeSpaces(descriptionRaw);
 
     const description =
       htmlLang === "hy"
-        ? hyphenateHy(normalizedDescRaw, "hy")
-        : hyphenateHy(normalizedDescRaw, htmlLang);
+        ? hyphenateHy(cleanedDescRaw, "hy")
+        : hyphenateHy(cleanedDescRaw, htmlLang);
 
     const [minCh, maxCh] = idealColsForLang(htmlLang);
 
@@ -776,6 +764,7 @@ export default function HomePage({ cardId = "101" }) {
                       const container = document.querySelector(".public-scroll-layer");
                       const scrollY = container ? container.scrollTop : 0;
                       sessionStorage.setItem("publicScrollPos", String(scrollY));
+
                       setActiveBrandKeyword(kw);
                     },
                   })
