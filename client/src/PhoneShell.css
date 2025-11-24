@@ -355,6 +355,8 @@ body{
   letter-spacing:.6px;
   text-transform:uppercase;
   color:inherit;
+  justify-content: center;
+  align-items: center;
 }
 
 .hero-desc{
