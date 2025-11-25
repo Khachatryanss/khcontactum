@@ -1214,430 +1214,350 @@ export default function AdminDashboard({
       children || null
     );
 
-  const PageHome = Card(
+    const PageHome = Card(
     T.tabs.home,
     h(
-      React.Fragment,
-      null,
-      h("h3", { className: "title mb-2" }, T.langsTitle),
+      "div",
+      { className: "admin-home-layout" },
+      // 🔹 scroll भाग – բոլոր դաշտերը
       h(
         "div",
-        { className: "mb-4" },
+        { className: "admin-home-scroll" },
+        h("h3", { className: "title mb-2" }, T.langsTitle),
         h(
           "div",
-          {
-            className: "text-sm mb-2",
-            style: { opacity: 0.75, width: 280 },
-          },
-          T.langsDescription
-        ),
-
-        ALL_LANGS.map(({ code, label }) => {
-          const orderIndex = langs.indexOf(code);
-          const active = orderIndex !== -1;
-          const orderLabel = active ? `#${orderIndex + 1}` : "—";
-
-          const upDisabled = !active || orderIndex === 0;
-          const downDisabled =
-            !active || orderIndex === langs.length - 1;
-
-          return h(
+          { className: "mb-4" },
+          h(
             "div",
             {
-              key: code,
-              className: "row mb-1",
-              style: {
-                display: "flex",
-                marginLeft: "5px",
-                alignItems: "center",
-                opacity: active ? 1 : 0.4,
-                borderRadius: 8,
-                padding: "2px 4px",
-              },
+              className: "text-sm mb-2",
+              style: { opacity: 0.75, width: 280 },
             },
-            // left badge (AM / RU / ...)
-            h(
-              "button",
-              {
-                type: "button",
-                className: "btn",
-                onClick: () => toggleLang(code),
-                style: {
-                  padding: "2px 5px",
-                  width: 60,
-                },
-              },
-              code.toUpperCase()
-            ),
+            T.langsDescription
+          ),
 
-            // full label
-            h(
-              "span",
-              {
-                style: {
-                  flex: 1,
-                  fontSize: "14px",
-                  fontFamily: "revert-layer",
-                  width: 100,
-                  paddingLeft: 6,
-                },
-              },
-              label
-            ),
+          ALL_LANGS.map(({ code, label }) => {
+            const orderIndex = langs.indexOf(code);
+            const active = orderIndex !== -1;
+            const orderLabel = active ? `#${orderIndex + 1}` : "—";
 
-            // order label (#1, #2, ...)
-            h(
-              "span",
-              {
-                style: {
-                  minWidth: 32,
-                  fontSize: "13px",
-                  opacity: 0.8,
-                  textAlign: "right",
-                  marginRight: 6,
-                },
-              },
-              orderLabel
-            ),
+            const upDisabled = !active || orderIndex === 0;
+            const downDisabled =
+              !active || orderIndex === langs.length - 1;
 
-            // up / down arrows
-            h(
+            return h(
               "div",
               {
+                key: code,
+                className: "row mb-1",
                 style: {
                   display: "flex",
-                  flexDirection: "column",
-                  gap: 2,
-                  marginRight: 6,
-                },
-              },
-              h(
-                "button",
-                {
-                  type: "button",
-                  disabled: upDisabled,
-                  onClick: () => !upDisabled && moveLang(code, "up"),
-                  style: {
-                    width: 22,
-                    height: 16,
-                    borderRadius: 4,
-                    border: "none",
-                    fontSize: 11,
-                    lineHeight: 1,
-                    cursor: upDisabled ? "default" : "pointer",
-                    opacity: upDisabled ? 0.3 : 0.9,
-                  },
-                },
-                "▲"
-              ),
-              h(
-                "button",
-                {
-                  type: "button",
-                  disabled: downDisabled,
-                  onClick: () => !downDisabled && moveLang(code, "down"),
-                  style: {
-                    width: 22,
-                    height: 16,
-                    borderRadius: 4,
-                    border: "none",
-                    fontSize: 11,
-                    lineHeight: 1,
-                    cursor: downDisabled ? "default" : "pointer",
-                    opacity: downDisabled ? 0.3 : 0.9,
-                  },
-                },
-                "▼"
-              )
-            ),
-
-            // active / inactive switch
-            h(
-              "button",
-              {
-                type: "button",
-                onClick: () => toggleLang(code),
-                style: {
-                  width: 42,
-                  height: 22,
-                  borderRadius: 999,
-                  border: "none",
-                  padding: 2,
-                  display: "flex",
+                  marginLeft: "5px",
                   alignItems: "center",
-                  justifyContent: active ? "flex-end" : "flex-start",
-                  background: active ? "#111" : "#d4d4d4",
-                  transition: "background 0.15s, justify-content 0.15s",
-                  marginRight: 6,
+                  opacity: active ? 1 : 0.4,
+                  borderRadius: 8,
+                  padding: "2px 4px",
                 },
               },
-              h("div", {
-                style: {
-                  width: 18,
-                  height: 18,
-                  borderRadius: "999px",
-                  background: "#fff",
-                  boxShadow: "0 1px 3px rgba(0,0,0,0.25)",
+              // left badge (AM / RU / ...)
+              h(
+                "button",
+                {
+                  type: "button",
+                  className: "btn",
+                  onClick: () => toggleLang(code),
+                  style: {
+                    padding: "2px 5px",
+                    width: 60,
+                  },
                 },
-              })
+                code.toUpperCase()
+              ),
+
+              // full label
+              h(
+                "span",
+                {
+                  style: {
+                    flex: 1,
+                    fontSize: "14px",
+                    fontFamily: "revert-layer",
+                    width: 100,
+                    paddingLeft: 6,
+                  },
+                },
+                label
+              ),
+
+              // order label (#1, #2, ...)
+              h(
+                "span",
+                {
+                  style: {
+                    minWidth: 32,
+                    fontSize: "13px",
+                    opacity: 0.8,
+                    textAlign: "right",
+                    marginRight: 6,
+                  },
+                },
+                orderLabel
+              ),
+
+              // up / down arrows
+              h(
+                "div",
+                {
+                  style: {
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    marginRight: 6,
+                  },
+                },
+                h(
+                  "button",
+                  {
+                    type: "button",
+                    disabled: upDisabled,
+                    onClick: () =>
+                      !upDisabled && moveLang(code, "up"),
+                    style: {
+                      width: 22,
+                      height: 16,
+                      borderRadius: 4,
+                      border: "none",
+                      fontSize: 11,
+                      lineHeight: 1,
+                      cursor: upDisabled ? "default" : "pointer",
+                      opacity: upDisabled ? 0.3 : 0.9,
+                    },
+                  },
+                  "▲"
+                ),
+                h(
+                  "button",
+                  {
+                    type: "button",
+                    disabled: downDisabled,
+                    onClick: () =>
+                      !downDisabled && moveLang(code, "down"),
+                    style: {
+                      width: 22,
+                      height: 16,
+                      borderRadius: 4,
+                      border: "none",
+                      fontSize: 11,
+                      lineHeight: 1,
+                      cursor: downDisabled ? "default" : "pointer",
+                      opacity: downDisabled ? 0.3 : 0.9,
+                    },
+                  },
+                  "▼"
+                )
+              ),
+
+              // active / inactive switch
+              h(
+                "button",
+                {
+                  type: "button",
+                  onClick: () => toggleLang(code),
+                  style: {
+                    width: 42,
+                    height: 22,
+                    borderRadius: 999,
+                    border: "none",
+                    padding: 2,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: active
+                      ? "flex-end"
+                      : "flex-start",
+                    background: active ? "#111" : "#d4d4d4",
+                    transition:
+                      "background 0.15s, justify-content 0.15s",
+                    marginRight: 6,
+                  },
+                },
+                h("div", {
+                  style: {
+                    width: 18,
+                    height: 18,
+                    borderRadius: "999px",
+                    background: "#fff",
+                    boxShadow:
+                      "0 1px 3px rgba(0,0,0,0.25)",
+                  },
+                })
+              )
+            );
+          })
+        ),
+
+        h("h3", { className: "title mb-2" }, T.avatarTitle),
+        h(
+          "label",
+          { className: "block mb-3" },
+          h(
+            "div",
+            { className: "text-sm mb-1" },
+            T.typeLabel
+          ),
+          h(
+            "select",
+            {
+              className: "input",
+              value: info?.avatar?.type || "image",
+              onChange: (e) =>
+                handleAvatarTypeChange(e.target.value),
+            },
+            h(
+              "option",
+              { value: "image" },
+              T.avatarTypeImage
+            ),
+            h(
+              "option",
+              { value: "video" },
+              T.avatarTypeVideo
+            )
+          )
+        ),
+
+        info?.avatar?.type === "image" &&
+          h(
+            "div",
+            {
+              className: "mb-4",
+              style: {
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+              },
+            },
+            CirclePreview(
+              fileUrl(
+                avatarPreview ||
+                  info?.avatar?.imageUrl ||
+                  info.logo_url
+              ),
+              "image"
+            ),
+            input(
+              T.avatarImageUrlLabel,
+              info?.avatar?.imageUrl ||
+                info.logo_url ||
+                "",
+              (v) => {
+                setInfoPath("avatar.imageUrl", v);
+                setInfoPath("logo_url", v);
+              },
+              { placeholder: "https://..." }
+            ),
+            h(FileButton, {
+              label: T.chooseFileLabel,
+              accept:
+                "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
+              onChange: handleAvatarUpload,
+            }),
+            h("div", { className: "small" }, T.avatarImageHint)
+          ),
+
+        info?.avatar?.type === "video" &&
+          h(
+            "div",
+            {
+              className: "mb-4",
+              id: "uploadImg",
+              style: {
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              },
+            },
+            CirclePreview(
+              fileUrl(
+                avatarPreview ||
+                  info?.avatar?.videoUrl ||
+                  ""
+              ),
+              "video"
+            ),
+            input(
+              T.avatarVideoUrlLabel,
+              info?.avatar?.videoUrl || "",
+              (v) => setInfoPath("avatar.videoUrl", v),
+              { placeholder: "/file/..." }
+            ),
+            h(FileButton, {
+              label: T.chooseFileLabel,
+              accept: "video/*,.mp4,.webm,.ogg",
+              onChange: handleAvatarUpload,
+            }),
+            h("div", { className: "small" }, T.avatarVideoHint)
+          ),
+
+        /* COMPANY */
+        h("h3", { className: "title mb-2" }, T.companyNameTitle),
+
+        langs.map((code) => {
+          const meta = ALL_LANGS.find((x) => x.code === code);
+          const label = meta
+            ? meta.label
+            : code.toUpperCase();
+          const placeholder =
+            code === "am"
+              ? "Անուն (AM)"
+              : code === "ru"
+              ? "Название (RU)"
+              : code === "en"
+              ? "Company Name (EN)"
+              : code === "ar"
+              ? "الاسم (AR)"
+              : code === "fr"
+              ? "Nom de l'entreprise (FR)"
+              : code === "kz"
+              ? "Компания атауы (KZ)"
+              : code === "chn"
+              ? "公司名称 (CHN)"
+              : code === "de"
+              ? "Firmenname (DE)"
+              : code === "es"
+              ? "Nombre de la empresa (ES)"
+              : code === "it"
+              ? "Nome dell'azienda (IT)"
+              : "نام شرکت (FA)";
+
+          const extraProps =
+            code === "ar" || code === "fa"
+              ? { dir: "rtl", placeholder }
+              : { placeholder };
+
+          return h(
+            React.Fragment,
+            { key: code },
+            input(
+              label,
+              info?.company?.name?.[code] || "",
+              (v) =>
+                setInfoPath(`company.name.${code}`, v),
+              extraProps
             )
           );
-        })
-      ),
+        }),
 
-      h("h3", { className: "title mb-2" }, T.avatarTitle),
-      h(
-        "label",
-        { className: "block mb-3" },
-        h("div", { className: "text-sm mb-1" }, T.typeLabel),
-        h(
-          "select",
-          {
-            className: "input",
-            value: info?.avatar?.type || "image",
-            onChange: (e) => handleAvatarTypeChange(e.target.value),
-          },
-          h("option", { value: "image" }, T.avatarTypeImage),
-          h("option", { value: "video" }, T.avatarTypeVideo)
-        )
-      ),
-
-      info?.avatar?.type === "image" &&
+        /* COMPANY NAME COLOR */
         h(
           "div",
           {
-            className: "mb-4",
-            style: { display: "flex", alignItems: "center", gap: "10px" },
+            className: "block mb-4",
+            id: "companyNameColor",
           },
-          CirclePreview(
-            fileUrl(avatarPreview || info?.avatar?.imageUrl || info.logo_url),
-            "image"
-          ),
-          input(
-            T.avatarImageUrlLabel,
-            info?.avatar?.imageUrl || info.logo_url || "",
-            (v) => {
-              setInfoPath("avatar.imageUrl", v);
-              setInfoPath("logo_url", v);
-            },
-            { placeholder: "https://..." }
-          ),
-          h(FileButton, {
-            label: T.chooseFileLabel,
-            accept:
-              "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
-            onChange: handleAvatarUpload,
-          }),
-          h("div", { className: "small" }, T.avatarImageHint)
-        ),
-
-      info?.avatar?.type === "video" &&
-        h(
-          "div",
-          {
-            className: "mb-4",
-            id: "uploadImg",
-            style: { display: "flex", alignItems: "center", gap: "12px" },
-          },
-          CirclePreview(
-            fileUrl(avatarPreview || info?.avatar?.videoUrl || ""),
-            "video"
-          ),
-          input(
-            T.avatarVideoUrlLabel,
-            info?.avatar?.videoUrl || "",
-            (v) => setInfoPath("avatar.videoUrl", v),
-            { placeholder: "/file/..." }
-          ),
-          h(FileButton, {
-            label: T.chooseFileLabel,
-            accept: "video/*,.mp4,.webm,.ogg",
-            onChange: handleAvatarUpload,
-          }),
-          h("div", { className: "small" }, T.avatarVideoHint)
-        ),
-
-      /* COMPANY */
-      h("h3", { className: "title mb-2" }, T.companyNameTitle),
-
-      langs.map((code) => {
-        const meta = ALL_LANGS.find((x) => x.code === code);
-        const label = meta ? meta.label : code.toUpperCase();
-        const placeholder =
-          code === "am"
-            ? "Անուն (AM)"
-            : code === "ru"
-            ? "Название (RU)"
-            : code === "en"
-            ? "Company Name (EN)"
-            : code === "ar"
-            ? "الاسم (AR)"
-            : code === "fr"
-            ? "Nom de l'entreprise (FR)"
-            : code === "kz"
-            ? "Компания атауы (KZ)"
-            : code === "chn"
-            ? "公司名称 (CHN)"
-            : code === "de"
-            ? "Firmenname (DE)"
-            : code === "es"
-            ? "Nombre de la empresa (ES)"
-            : code === "it"
-            ? "Nome dell'azienda (IT)"
-            : "نام شرکت (FA)";
-
-        const extraProps =
-          code === "ar" || code === "fa"
-            ? { dir: "rtl", placeholder }
-            : { placeholder };
-
-        return h(
-          React.Fragment,
-          { key: code },
-          input(
-            label,
-            info?.company?.name?.[code] || "",
-            (v) => setInfoPath(`company.name.${code}`, v),
-            extraProps
-          )
-        );
-      }),
-
-      /* COMPANY NAME COLOR */
-      h(
-        "div",
-        { className: "block mb-4", id: "companyNameColor" },
-        h(
-          "div",
-          { className: "text-sm mb-1", id: "nkariBajin" },
-          T.nameColorLabel
-        ),
-        h(
-          "div",
-          { className: "color-row" },
-          h("input", {
-            className: "input color-hex-input",
-            id: "nkarInput",
-            value: info?.company?.nameColor || "#000000",
-            onChange: (e) =>
-              setInfoPath("company.nameColor", e.target.value),
-            style: { maxWidth: 200 },
-            placeholder: "#000000",
-          }),
-          h("input", {
-            type: "color",
-            className: "color-picker",
-            value: info?.company?.nameColor || "#000000",
-            onChange: (e) =>
-              setInfoPath("company.nameColor", e.target.value),
-          })
-        )
-      ),
-
-      /* DESCRIPTION */
-      h("h3", { className: "title mb-2" }, T.descriptionTitle),
-
-      langs.map((code) => {
-        const meta = ALL_LANGS.find((x) => x.code === code);
-        const label = meta ? meta.label : code.toUpperCase();
-        const placeholder =
-          code === "am"
-            ? "Նկարագրություն (AM)"
-            : code === "ru"
-            ? "Описание (RU)"
-            : code === "en"
-            ? "Description (EN)"
-            : code === "ar"
-            ? "الوصف (AR)"
-            : code === "fr"
-            ? "Description (FR)"
-            : code === "kz"
-            ? "Сипаттама (KZ)"
-            : code === "chn"
-            ? "描述 (CHN)"
-            : code === "de"
-            ? "Beschreibung (DE)"
-            : code === "es"
-            ? "Descripción (ES)"
-            : code === "it"
-            ? "Descrizione (IT)"
-            : "توضیحات (FA)";
-
-        const extraProps =
-          code === "ar" || code === "fa"
-            ? { dir: "rtl", placeholder }
-            : { placeholder };
-
-        return h(
-          React.Fragment,
-          { key: code },
-          textarea(
-            label,
-            info?.description?.[code] || "",
-            (v) => setInfoPath(`description.${code}`, v),
-            extraProps
-          )
-        );
-      }),
-
-      /* DESCRIPTION COLOR */
-      h(
-        "div",
-        { className: "block mb-4", id: "descriptionColor" },
-        h(
-          "div",
-          { className: "text-sm mb-1", id: "nkariBajin" },
-          T.descriptionColorLabel
-        ),
-        h(
-          "div",
-          { className: "color-row" },
-          h("input", {
-            className: "input color-hex-input",
-            id: "nkarInput",
-            value: info?.description?.color || "#000000",
-            onChange: (e) =>
-              setInfoPath("description.color", e.target.value),
-            style: { maxWidth: 180 },
-            placeholder: "#000000",
-          }),
-          h("input", {
-            type: "color",
-            className: "color-picker",
-            value: info?.description?.color || "#000000",
-            onChange: (e) =>
-              setInfoPath("description.color", e.target.value),
-          })
-        )
-      ),
-
-      /* BACKGROUND */
-      h("h3", { className: "title mb-2" }, T.backgroundTitle),
-      h(
-        "label",
-        { className: "block mb-3", id: "selectOurBackground" },
-        h("div", { className: "text-sm mb-1" }, T.typeLabel),
-        h(
-          "select",
-          {
-            className: "input",
-            value: info?.background?.type || "color",
-            onChange: (e) => handleBgTypeChange(e.target.value),
-          },
-          h("option", { value: "color" }, T.backgroundTypeColor),
-          h("option", { value: "image" }, T.backgroundTypeImage),
-          h("option", { value: "video" }, T.backgroundTypeVideo)
-        )
-      ),
-
-      info?.background?.type === "color" &&
-        h(
-          "div",
-          { className: "block mb-4" },
           h(
             "div",
             { className: "text-sm mb-1", id: "nkariBajin" },
-            T.backgroundColorLabel
+            T.nameColorLabel
           ),
           h(
             "div",
@@ -1645,145 +1565,311 @@ export default function AdminDashboard({
             h("input", {
               className: "input color-hex-input",
               id: "nkarInput",
-              value: info?.background?.color || "#ffffff",
+              value:
+                info?.company?.nameColor || "#000000",
               onChange: (e) =>
-                setInfoPath("background.color", e.target.value),
-              style: { maxWidth: 180 },
-              placeholder: "#ffffff",
+                setInfoPath(
+                  "company.nameColor",
+                  e.target.value
+                ),
+              style: { maxWidth: 200 },
+              placeholder: "#000000",
             }),
             h("input", {
               type: "color",
               className: "color-picker",
-              value: info?.background?.color || "#ffffff",
+              value:
+                info?.company?.nameColor || "#000000",
               onChange: (e) =>
-                setInfoPath("background.color", e.target.value),
+                setInfoPath(
+                  "company.nameColor",
+                  e.target.value
+                ),
             })
           )
         ),
 
-      info?.background?.type === "image" &&
+        /* DESCRIPTION */
+        h("h3", { className: "title mb-2" }, T.descriptionTitle),
+
+        langs.map((code) => {
+          const meta = ALL_LANGS.find((x) => x.code === code);
+          const label = meta
+            ? meta.label
+            : code.toUpperCase();
+          const placeholder =
+            code === "am"
+              ? "Նկարագրություն (AM)"
+              : code === "ru"
+              ? "Описание (RU)"
+              : code === "en"
+              ? "Description (EN)"
+              : code === "ar"
+              ? "الوصف (AR)"
+              : code === "fr"
+              ? "Description (FR)"
+              : code === "kz"
+              ? "Сипаттама (KZ)"
+              : code === "chn"
+              ? "描述 (CHN)"
+              : code === "de"
+              ? "Beschreibung (DE)"
+              : code === "es"
+              ? "Descripción (ES)"
+              : code === "it"
+              ? "Descrizione (IT)"
+              : "توضیحات (FA)";
+
+          const extraProps =
+            code === "ar" || code === "fa"
+              ? { dir: "rtl", placeholder }
+              : { placeholder };
+
+          return h(
+            React.Fragment,
+            { key: code },
+            textarea(
+              label,
+              info?.description?.[code] || "",
+              (v) =>
+                setInfoPath(
+                  `description.${code}`,
+                  v
+                ),
+              extraProps
+            )
+          );
+        }),
+
+        /* DESCRIPTION COLOR */
         h(
           "div",
           {
-            className: "row mb-3",
-            style: {
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              marginBottom: "20px",
+            className: "block mb-4",
+            id: "descriptionColor",
+          },
+          h(
+            "div",
+            { className: "text-sm mb-1", id: "nkariBajin" },
+            T.descriptionColorLabel
+          ),
+          h(
+            "div",
+            { className: "color-row" },
+            h("input", {
+              className: "input color-hex-input",
+              id: "nkarInput",
+              value:
+                info?.description?.color ||
+                "#000000",
+              onChange: (e) =>
+                setInfoPath(
+                  "description.color",
+                  e.target.value
+                ),
+              style: { maxWidth: 180 },
+              placeholder: "#000000",
+            }),
+            h("input", {
+              type: "color",
+              className: "color-picker",
+              value:
+                info?.description?.color ||
+                "#000000",
+              onChange: (e) =>
+                setInfoPath(
+                  "description.color",
+                  e.target.value
+                ),
+            })
+          )
+        ),
+
+        /* BACKGROUND */
+        h("h3", { className: "title mb-2" }, T.backgroundTitle),
+        h(
+          "label",
+          {
+            className: "block mb-3",
+            id: "selectOurBackground",
+          },
+          h(
+            "div",
+            { className: "text-sm mb-1" },
+            T.typeLabel
+          ),
+          h(
+            "select",
+            {
+              className: "input",
+              value:
+                info?.background?.type || "color",
+              onChange: (e) =>
+                handleBgTypeChange(e.target.value),
             },
-          },
-          CirclePreview(
-            fileUrl(bgImagePreview || info?.background?.imageUrl || ""),
-            "image"
-          ),
-          input(
-            T.backgroundImageUrlLabel,
-            info?.background?.imageUrl || "",
-            (v) => setInfoPath("background.imageUrl", v),
-            { placeholder: "https://..." }
-          ),
-          h(FileButton, {
-            label: T.chooseFileLabel,
-            accept:
-              "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
-            onChange: handleBgImageUpload,
-          })
+            h(
+              "option",
+              { value: "color" },
+              T.backgroundTypeColor
+            ),
+            h(
+              "option",
+              { value: "image" },
+              T.backgroundTypeImage
+            ),
+            h(
+              "option",
+              { value: "video" },
+              T.backgroundTypeVideo
+            )
+          )
         ),
 
-      info?.background?.type === "video" &&
-        h(
-          "div",
-          {
-            className: "row mb-3",
-            style: { display: "flex", alignItems: "center", gap: "12px" },
-          },
-          CirclePreview(
-            fileUrl(bgVideoPreview || info?.background?.videoUrl || ""),
-            "video"
+        info?.background?.type === "color" &&
+          h(
+            "div",
+            { className: "block mb-4" },
+            h(
+              "div",
+              {
+                className: "text-sm mb-1",
+                id: "nkariBajin",
+              },
+              T.backgroundColorLabel
+            ),
+            h(
+              "div",
+              { className: "color-row" },
+              h("input", {
+                className:
+                  "input color-hex-input",
+                id: "nkarInput",
+                value:
+                  info?.background?.color ||
+                  "#ffffff",
+                onChange: (e) =>
+                  setInfoPath(
+                    "background.color",
+                    e.target.value
+                  ),
+                style: { maxWidth: 180 },
+                placeholder: "#ffffff",
+              }),
+              h("input", {
+                type: "color",
+                className: "color-picker",
+                value:
+                  info?.background?.color ||
+                  "#ffffff",
+                onChange: (e) =>
+                  setInfoPath(
+                    "background.color",
+                    e.target.value
+                  ),
+              })
+            )
           ),
-          input(
-            T.backgroundVideoUrlLabel,
-            info?.background?.videoUrl || "",
-            (v) => setInfoPath("background.videoUrl", v),
-            { placeholder: "/file/..." }
-          ),
-          h(FileButton, {
-            label: T.chooseFileLabel,
-            accept: "video/*,.mp4,.webm,.ogg",
-            onChange: handleBgVideoUpload,
-          }),
-          h("div", { className: "small" }, T.backgroundVideoHint)
-        ),
 
+        info?.background?.type === "image" &&
+          h(
+            "div",
+            {
+              className: "row mb-3",
+              style: {
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+                marginBottom: "20px",
+              },
+            },
+            CirclePreview(
+              fileUrl(
+                bgImagePreview ||
+                  info?.background?.imageUrl ||
+                  ""
+              ),
+              "image"
+            ),
+            input(
+              T.backgroundImageUrlLabel,
+              info?.background?.imageUrl || "",
+              (v) =>
+                setInfoPath(
+                  "background.imageUrl",
+                  v
+                ),
+              { placeholder: "https://..." }
+            ),
+            h(FileButton, {
+              label: T.chooseFileLabel,
+              accept:
+                "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
+              onChange: handleBgImageUpload,
+            })
+          ),
+
+        info?.background?.type === "video" &&
+          h(
+            "div",
+            {
+              className: "row mb-3",
+              style: {
+                display: "flex",
+                alignItems: "center",
+                gap: "12px",
+              },
+            },
+            CirclePreview(
+              fileUrl(
+                bgVideoPreview ||
+                  info?.background?.videoUrl ||
+                  ""
+              ),
+              "video"
+            ),
+            input(
+              T.backgroundVideoUrlLabel,
+              info?.background?.videoUrl || "",
+              (v) =>
+                setInfoPath(
+                  "background.videoUrl",
+                  v
+                ),
+              { placeholder: "/file/..." }
+            ),
+            h(FileButton, {
+              label: T.chooseFileLabel,
+              accept: "video/*,.mp4,.webm,.ogg",
+              onChange: handleBgVideoUpload,
+            }),
+            h(
+              "div",
+              { className: "small" },
+              T.backgroundVideoHint
+            )
+          )
+      ),
+
+      // 🔹 fixed / sticky save bar ներքևում
       h(
         "div",
-        { className: "row mt-4" },
+        { className: "admin-home-savebar" },
         h(
           "button",
           {
-            className: "btn",
+            className: "btn admin-save-btn",
             disabled: savingInfo,
             onClick: saveInfo,
           },
           savingInfo ? T.savingButton : T.saveButton
         ),
-
-        (infoMsg || msg) && h("div", { className: "small" }, infoMsg || msg)
+        (infoMsg || msg) &&
+          h(
+            "div",
+            { className: "small admin-save-msg" },
+            infoMsg || msg
+          )
       )
     )
-  );
-
-  const PageIcons = Card(T.tabs.icons, h(IconsTab, { langs, uiLang }));
-  const PageBrands = Card(T.tabs.brands, h(BrandsTab, { langs, uiLang }));
-  const PageBrandInfo = Card(
-    T.tabs.brandinfo,
-    h(BrandInfoTab, { langs, uiLang })
-  );
-  const PageShare = Card(
-    T.tabs.share,
-    h(ShareTab, { cardId, info, uiLang })
-  );
-  const PagePassword = Card(
-    T.tabs.password,
-    h(PasswordTab, { token, uiLang })
-  );
-
-  const pages = {
-    home: PageHome,
-    icons: PageIcons,
-    brands: PageBrands,
-    brandinfo: PageBrandInfo,
-    share: PageShare,
-    password: PagePassword,
-  };
-
-  const TITLE_MAP = {
-    home: T.tabs.home,
-    icons: T.tabs.icons,
-    brands: T.tabs.brands,
-    brandinfo: T.tabs.brandinfo,
-    share: T.tabs.share,
-    password: T.tabs.password,
-  };
-  const headerTitle = `${T.headerAdminPrefix} • ${
-    TITLE_MAP[tab] || T.tabs.home
-  }`;
-
-  const bodyContent = !token
-    ? Card(T.needLoginTitle, T.needLoginBody)
-    : loading
-    ? Card(T.loading)
-    : pages[tab] || PageHome;
-
-  return h(
-    PhoneShell,
-    { title: headerTitle, light: true },
-    showMenu &&
-      h("div", {
-        className: "menu-backdrop",
-        onClick: () => setShowMenu(false),
-      }),
-    bodyContent
   );
 }
