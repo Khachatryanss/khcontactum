@@ -299,7 +299,7 @@ const ADMIN_UI_TEXT = {
     avatarVideoUrlLabel: "Avatar видеосының сілтемесі",
     avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
 
-    companyNameTitle: "КОМПАНИЯ АТЫ",
+    companyNameTitle: "КОМПԱՆИЯ АТЫ",
     nameColorLabel: "Атаудың түсі",
 
     descriptionTitle: "СИПАТТАМА",
@@ -765,8 +765,17 @@ export default function AdminDashboard({
   const [savingInfo, setSavingInfo] = useState(false);
   const [infoMsg, setInfoMsg] = useState("");
 
+  // ակտիվ լեզուներ
   const [langs, setLangs] = useState(["am", "ru", "en", "ar", "fr"]);
-  const [dragLang, setDragLang] = useState(null); // 🔥 dnd state
+
+  // code → դիրք (1..N) սլայդերի համար
+  const [langOrder, setLangOrder] = useState(() => {
+    const o = {};
+    ALL_LANGS.forEach((l, i) => {
+      o[l.code] = i + 1;
+    });
+    return o;
+  });
 
   const [avatarPreview, setAvatarPreview] = useState("");
   const [bgImagePreview, setBgImagePreview] = useState("");
@@ -819,7 +828,17 @@ export default function AdminDashboard({
         });
 
         if (!langsArr.length) langsArr = ["am"];
+
         setLangs(langsArr);
+
+        // sync sliders with order from server (default_lang first)
+        setLangOrder((prev) => {
+          const next = { ...prev };
+          langsArr.forEach((code, idx) => {
+            next[code] = idx + 1;
+          });
+          return next;
+        });
       } catch (e) {
         setMsg(e.message || "Load failed");
       } finally {
@@ -1081,59 +1100,42 @@ export default function AdminDashboard({
     }
   }
 
+  // on/off toggle
   function toggleLang(code) {
     setLangs((prev) => {
       const exists = prev.includes(code);
       if (exists) {
+        // գոնե 1 լեզու թող անպայման մնա
         if (prev.length === 1) return prev;
         return prev.filter((c) => c !== code);
       }
+      // նոր միացված լեզուն դնում ենք հաջորդ ազատ դիրքում
+      setLangOrder((prevOrder) => {
+        const maxOrder = Object.values(prevOrder).reduce(
+          (max, n) =>
+            typeof n === "number" && n > max ? n : max,
+          0
+        );
+        return { ...prevOrder, [code]: maxOrder + 1 };
+      });
       return [...prev, code];
     });
   }
 
-  // հին up/down տարբերակը թողում ենք (շատ չորսն է),
-  // բայց UI-ում չենք օգտագործում, reorder-ը հիմա drag & drop է
-  function moveLang(code, dir) {
-    setLangs((prev) => {
-      const idx = prev.indexOf(code);
-      if (idx === -1) return prev;
-      const nextIdx = dir === "up" ? idx - 1 : idx + 1;
-      if (nextIdx < 0 || nextIdx >= prev.length) return prev;
-      const arr = prev.slice();
-      const [item] = arr.splice(idx, 1);
-      arr.splice(nextIdx, 0, item);
-      return arr;
-    });
-  }
-
-  // 🔥 Drag & Drop handlers
-  function handleLangDragStart(code) {
-    if (!langs.includes(code)) return;
-    setDragLang(code);
-  }
-
-  function handleLangDragOver(e) {
-    // թույլ ենք տալիս drop
-    e.preventDefault();
-  }
-
-  function handleLangDrop(targetCode) {
-    if (!dragLang || dragLang === targetCode) return;
-    setLangs((prev) => {
-      const from = prev.indexOf(dragLang);
-      const to = prev.indexOf(targetCode);
-      if (from === -1 || to === -1) return prev;
-      const next = prev.slice();
-      const [item] = next.splice(from, 1);
-      next.splice(to, 0, item);
+  // slider–ով հերթականության փոփոխություն
+  function handleLangOrderChange(code, newPos) {
+    setLangOrder((prev) => {
+      const next = { ...prev, [code]: newPos };
+      // sort ակտիվ լեզուները ըստ նոր կարգի
+      setLangs((prevLangs) => {
+        const arr = prevLangs.slice();
+        arr.sort(
+          (a, b) => (next[a] || 999) - (next[b] || 999)
+        );
+        return arr;
+      });
       return next;
     });
-    setDragLang(null);
-  }
-
-  function handleLangDragEnd() {
-    setDragLang(null);
   }
 
   function TabMenuItem(id, label) {
@@ -1265,8 +1267,10 @@ export default function AdminDashboard({
 
         ALL_LANGS.map(({ code, label }, staticIndex) => {
           const active = langs.includes(code);
-          const idx = langs.indexOf(code);
-          const isDragging = dragLang === code;
+          const orderValue =
+            typeof langOrder[code] === "number"
+              ? langOrder[code]
+              : staticIndex + 1;
 
           return h(
             "div",
@@ -1278,16 +1282,10 @@ export default function AdminDashboard({
                 marginLeft: "5px",
                 alignItems: "center",
                 opacity: active ? 1 : 0.4,
-                cursor: active ? "grab" : "default",
-                background: isDragging ? "rgba(0,0,0,0.04)" : "transparent",
+                background: "transparent",
                 borderRadius: 8,
                 padding: "2px 4px",
               },
-              draggable: active,
-              onDragStart: () => handleLangDragStart(code),
-              onDragOver: handleLangDragOver,
-              onDrop: () => handleLangDrop(code),
-              onDragEnd: handleLangDragEnd,
             },
             // left badge (AM / RU / ...)
             h(
@@ -1318,7 +1316,7 @@ export default function AdminDashboard({
               label
             ),
 
-            // 🔢 հաստատուն համար (#1,#2,...) ըստ ALL_LANGS կարգի — reorder անելուց չի փոխվում
+            // հաստատուն համար (#1,#2,...) ըստ ALL_LANGS կարգի — չի փոխվում
             h(
               "span",
               {
@@ -1334,7 +1332,23 @@ export default function AdminDashboard({
               `#${staticIndex + 1}`
             ),
 
-            // 🟢/⚪ switch (active / inactive)
+            // slider — իրական հերթականությունը
+            h("input", {
+              type: "range",
+              min: 1,
+              max: ALL_LANGS.length,
+              value: orderValue,
+              disabled: !active,
+              onChange: (e) =>
+                handleLangOrderChange(code, Number(e.target.value)),
+              style: {
+                width: 80,
+                marginRight: 6,
+                cursor: active ? "pointer" : "not-allowed",
+              },
+            }),
+
+            // on/off switch
             h(
               "button",
               {
@@ -1363,27 +1377,6 @@ export default function AdminDashboard({
                   boxShadow: "0 1px 3px rgba(0,0,0,0.25)",
                 },
               })
-            ),
-
-            // drag handle (visual only, իրական drag-ը row-ի վրա է)
-            h(
-              "div",
-              {
-                className: "lang-drag-handle",
-                style: {
-                  width: 14,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: 2,
-                  opacity: active ? 0.9 : 0.25,
-                  fontSize: 10,
-                  userSelect: "none",
-                },
-              },
-              "⋮",
-              "⋮"
             )
           );
         })
