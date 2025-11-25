@@ -460,8 +460,9 @@ const FA_PRESETS = [
   "fa-brands fa-threads",
 ];
 
-/* ==== phone-like icon href patterns (prefix fixed, user types only number) ==== */
+/* ==== icon href patterns (fixed prefix; user types only number / username / slug) ==== */
 const ICON_HREF_PATTERNS = {
+  // phones
   "fa-solid fa-phone": {
     prefix: "tel:",
     placeholder: "+374XXXXXXXX",
@@ -482,11 +483,164 @@ const ICON_HREF_PATTERNS = {
     placeholder: "+374XXXXXXXX",
     label: "Viber phone number",
   },
+  "fa-brands fa-signal-messenger": {
+    prefix: "signal://send?phone=",
+    placeholder: "+374XXXXXXXX",
+    label: "Signal phone number",
+  },
+
+  // Telegram
   "fa-brands fa-telegram": {
     prefix: "https://t.me/",
     placeholder: "@username or phone",
     label: "Telegram",
   },
+
+  // Email
+  "fa-solid fa-envelope": {
+    prefix: "mailto:",
+    placeholder: "name@example.com",
+    label: "Email",
+  },
+
+  // Social usernames / handles
+  "fa-brands fa-instagram": {
+    prefix: "https://www.instagram.com/",
+    placeholder: "username",
+    label: "Instagram username",
+  },
+  "fa-brands fa-facebook-f": {
+    prefix: "https://www.facebook.com/",
+    placeholder: "username or page",
+    label: "Facebook profile or page",
+  },
+  "fa-brands fa-facebook-messenger": {
+    prefix: "https://m.me/",
+    placeholder: "username",
+    label: "Messenger username",
+  },
+  "fa-brands fa-linkedin-in": {
+    prefix: "https://www.linkedin.com/in/",
+    placeholder: "username",
+    label: "LinkedIn profile",
+  },
+  "fa-brands fa-tiktok": {
+    prefix: "https://www.tiktok.com/@",
+    placeholder: "username",
+    label: "TikTok username",
+  },
+  "fa-brands fa-twitter": {
+    prefix: "https://twitter.com/",
+    placeholder: "username",
+    label: "Twitter username",
+  },
+  "fa-brands fa-x-twitter": {
+    prefix: "https://x.com/",
+    placeholder: "username",
+    label: "X username",
+  },
+  "fa-brands fa-snapchat": {
+    prefix: "https://www.snapchat.com/add/",
+    placeholder: "username",
+    label: "Snapchat username",
+  },
+  "fa-brands fa-pinterest": {
+    prefix: "https://www.pinterest.com/",
+    placeholder: "username",
+    label: "Pinterest profile",
+  },
+  "fa-brands fa-reddit-alien": {
+    prefix: "https://www.reddit.com/user/",
+    placeholder: "username",
+    label: "Reddit username",
+  },
+  "fa-brands fa-discord": {
+    prefix: "https://discord.gg/",
+    placeholder: "inviteCode",
+    label: "Discord invite",
+  },
+  "fa-brands fa-github": {
+    prefix: "https://github.com/",
+    placeholder: "username",
+    label: "GitHub username",
+  },
+  "fa-brands fa-spotify": {
+    prefix: "https://open.spotify.com/user/",
+    placeholder: "username or ID",
+    label: "Spotify user",
+  },
+  "fa-brands fa-behance": {
+    prefix: "https://www.behance.net/",
+    placeholder: "username",
+    label: "Behance profile",
+  },
+  "fa-brands fa-dribbble": {
+    prefix: "https://dribbble.com/",
+    placeholder: "username",
+    label: "Dribbble profile",
+  },
+  "fa-brands fa-medium": {
+    prefix: "https://medium.com/@",
+    placeholder: "username",
+    label: "Medium profile",
+  },
+  "fa-brands fa-vimeo-v": {
+    prefix: "https://vimeo.com/",
+    placeholder: "username",
+    label: "Vimeo profile",
+  },
+  "fa-brands fa-vk": {
+    prefix: "https://vk.com/",
+    placeholder: "username",
+    label: "VK profile",
+  },
+  "fa-brands fa-odnoklassniki": {
+    prefix: "https://ok.ru/",
+    placeholder: "profileId",
+    label: "OK.ru profile",
+  },
+
+  // Messengers / others
+  "fa-brands fa-skype": {
+    prefix: "skype:",
+    placeholder: "live:username",
+    label: "Skype username",
+  },
+  "fa-brands fa-weixin": {
+    prefix: "https://u.wechat.com/",
+    placeholder: "id or link",
+    label: "WeChat link",
+  },
+  "fa-brands fa-line": {
+    prefix: "https://line.me/R/ti/p/",
+    placeholder: "@yourid",
+    label: "LINE ID",
+  },
+
+  // Zoom meeting
+  "fa-solid fa-video": {
+    prefix: "https://zoom.us/j/",
+    placeholder: "meetingId",
+    label: "Zoom meeting ID",
+  },
+
+  // Wikipedia article
+  "fa-brands fa-wikipedia-w": {
+    prefix: "https://wikipedia.org/wiki/",
+    placeholder: "Article_Name",
+    label: "Wikipedia article",
+  },
+
+  // Threads username
+  "fa-brands fa-threads": {
+    prefix: "https://www.threads.net/@",
+    placeholder: "username",
+    label: "Threads username",
+  },
+
+  // Globe / location special cases – ամեն ինչ ամբողջ URL-ով, դրա համար pattern չենք դնում
+  // "fa-solid fa-globe": (full URL),
+  // "fa-solid fa-location-dot": (Google Maps full link),
 };
 
 function uid() {
@@ -766,7 +920,7 @@ function IconRow({
     })
   );
 
-  // 👉 phone-like icons՝ prefix + միայն համարի դաշտ
+  // 👉 phone-like/social icons՝ prefix + միայն համարի/username-ի դաշտ
   const hrefPattern = getHrefPatternForIcon(it.icon);
   const rawHref = it.href || "";
   let phoneValue = rawHref;
