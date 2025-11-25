@@ -766,7 +766,6 @@ export default function AdminDashboard({
   const [infoMsg, setInfoMsg] = useState("");
 
   const [langs, setLangs] = useState(["am", "ru", "en", "ar", "fr"]);
-  const [dragLang, setDragLang] = useState(null); // 🔥 dnd state
 
   const [avatarPreview, setAvatarPreview] = useState("");
   const [bgImagePreview, setBgImagePreview] = useState("");
@@ -1092,8 +1091,7 @@ export default function AdminDashboard({
     });
   }
 
-  // հին up/down տարբերակը թողում ենք (շատ չորսն է),
-  // բայց UI-ում չենք օգտագործում, reorder-ը հիմա drag & drop է
+  // վերև / ներքև reorder (օգտագործում ենք սլաքների համար)
   function moveLang(code, dir) {
     setLangs((prev) => {
       const idx = prev.indexOf(code);
@@ -1105,35 +1103,6 @@ export default function AdminDashboard({
       arr.splice(nextIdx, 0, item);
       return arr;
     });
-  }
-
-  // 🔥 Drag & Drop handlers
-  function handleLangDragStart(code) {
-    if (!langs.includes(code)) return;
-    setDragLang(code);
-  }
-
-  function handleLangDragOver(e) {
-    // թույլ ենք տալիս drop
-    e.preventDefault();
-  }
-
-  function handleLangDrop(targetCode) {
-    if (!dragLang || dragLang === targetCode) return;
-    setLangs((prev) => {
-      const from = prev.indexOf(dragLang);
-      const to = prev.indexOf(targetCode);
-      if (from === -1 || to === -1) return prev;
-      const next = prev.slice();
-      const [item] = next.splice(from, 1);
-      next.splice(to, 0, item);
-      return next;
-    });
-    setDragLang(null);
-  }
-
-  function handleLangDragEnd() {
-    setDragLang(null);
   }
 
   function TabMenuItem(id, label) {
@@ -1263,10 +1232,14 @@ export default function AdminDashboard({
           T.langsDescription
         ),
 
-        ALL_LANGS.map(({ code, label }, staticIndex) => {
-          const active = langs.includes(code);
-          const idx = langs.indexOf(code);
-          const isDragging = dragLang === code;
+        ALL_LANGS.map(({ code, label }) => {
+          const orderIndex = langs.indexOf(code);
+          const active = orderIndex !== -1;
+          const orderLabel = active ? `#${orderIndex + 1}` : "—";
+
+          const upDisabled = !active || orderIndex === 0;
+          const downDisabled =
+            !active || orderIndex === langs.length - 1;
 
           return h(
             "div",
@@ -1278,16 +1251,9 @@ export default function AdminDashboard({
                 marginLeft: "5px",
                 alignItems: "center",
                 opacity: active ? 1 : 0.4,
-                cursor: active ? "grab" : "default",
-                background: isDragging ? "rgba(0,0,0,0.04)" : "transparent",
                 borderRadius: 8,
                 padding: "2px 4px",
               },
-              draggable: active,
-              onDragStart: () => handleLangDragStart(code),
-              onDragOver: handleLangDragOver,
-              onDrop: () => handleLangDrop(code),
-              onDragEnd: handleLangDragEnd,
             },
             // left badge (AM / RU / ...)
             h(
@@ -1304,7 +1270,7 @@ export default function AdminDashboard({
               code.toUpperCase()
             ),
 
-            // label
+            // full label
             h(
               "span",
               {
@@ -1313,28 +1279,79 @@ export default function AdminDashboard({
                   fontSize: "14px",
                   fontFamily: "revert-layer",
                   width: 100,
+                  paddingLeft: 6,
                 },
               },
               label
             ),
 
-            // 🔢 հաստատուն համար (#1,#2,...) ըստ ALL_LANGS կարգի — reorder անելուց չի փոխվում
+            // order label (#1, #2, ...)
             h(
               "span",
               {
-                className: "small",
                 style: {
-                  minWidth: 40,
+                  minWidth: 32,
                   fontSize: "13px",
                   opacity: 0.8,
                   textAlign: "right",
                   marginRight: 6,
                 },
               },
-              `#${staticIndex + 1}`
+              orderLabel
             ),
 
-            // 🟢/⚪ switch (active / inactive)
+            // up / down arrows
+            h(
+              "div",
+              {
+                style: {
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                  marginRight: 6,
+                },
+              },
+              h(
+                "button",
+                {
+                  type: "button",
+                  disabled: upDisabled,
+                  onClick: () => !upDisabled && moveLang(code, "up"),
+                  style: {
+                    width: 22,
+                    height: 16,
+                    borderRadius: 4,
+                    border: "none",
+                    fontSize: 11,
+                    lineHeight: 1,
+                    cursor: upDisabled ? "default" : "pointer",
+                    opacity: upDisabled ? 0.3 : 0.9,
+                  },
+                },
+                "▲"
+              ),
+              h(
+                "button",
+                {
+                  type: "button",
+                  disabled: downDisabled,
+                  onClick: () => !downDisabled && moveLang(code, "down"),
+                  style: {
+                    width: 22,
+                    height: 16,
+                    borderRadius: 4,
+                    border: "none",
+                    fontSize: 11,
+                    lineHeight: 1,
+                    cursor: downDisabled ? "default" : "pointer",
+                    opacity: downDisabled ? 0.3 : 0.9,
+                  },
+                },
+                "▼"
+              )
+            ),
+
+            // active / inactive switch
             h(
               "button",
               {
@@ -1363,27 +1380,6 @@ export default function AdminDashboard({
                   boxShadow: "0 1px 3px rgba(0,0,0,0.25)",
                 },
               })
-            ),
-
-            // drag handle (visual only, իրական drag-ը row-ի վրա է)
-            h(
-              "div",
-              {
-                className: "lang-drag-handle",
-                style: {
-                  width: 14,
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: 2,
-                  opacity: active ? 0.9 : 0.25,
-                  fontSize: 10,
-                  userSelect: "none",
-                },
-              },
-              "⋮",
-              "⋮"
             )
           );
         })
