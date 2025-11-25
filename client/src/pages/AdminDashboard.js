@@ -1716,21 +1716,26 @@ export default function AdminDashboard({
           h("div", { className: "small" }, T.backgroundVideoHint)
         ),
 
-      h(
+            h(
         "div",
-        { className: "row mt-4" },
+        { className: "admin-save-bar" },
         h(
           "button",
           {
-            className: "btn",
+            className: "btn admin-save-btn",
             disabled: savingInfo,
             onClick: saveInfo,
           },
           savingInfo ? T.savingButton : T.saveButton
         ),
-
-        (infoMsg || msg) && h("div", { className: "small" }, infoMsg || msg)
+        (infoMsg || msg) &&
+          h(
+            "div",
+            { className: "small admin-save-msg" },
+            infoMsg || msg
+          )
       )
+
     )
   );
 

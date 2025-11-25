@@ -419,3 +419,29 @@
   align-items: center;
 }
 
+/* ===== Fixed save bar in admin Home tab ===== */
+.admin-save-bar {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0 12px;
+  margin-top: 12px;
+
+  /* ֆոնի շերտ, որ текстերը չխառնվեն ֆորմի հետ */
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(5px);
+  z-index: 5;
+}
+
+/* որ button-ը ձգվի ամբողջ լայնությամբ փոքր էկրաններին */
+.admin-save-btn {
+  flex: 1 1 auto;
+}
+
+/* փոքր տեքստը կողքը, բայց չսեղմի կոճակին */
+.admin-save-msg {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
