@@ -14,7 +14,6 @@ const h = React.createElement;
 
 /* ---------- UI TEXT BY LANGUAGE ---------- */
 const ADMIN_UI_TEXT = {
-  /* ... ԱՄԲՈՂՋ T օբյեկտը նույնն եմ թողնում, ինչ ուղարկել էիր ... */
   am: {
     tabs: {
       home: "Գլխավոր էջ",
@@ -67,17 +66,525 @@ const ADMIN_UI_TEXT = {
     chooseFileLabel: "Ընտրել ֆայլ",
   },
 
-  /* ... ru, en, ar, fr, kz, chn, de, es, it, fa — ինչպես արդեն ունես ... */
-  ru: { /* ... */ },
-  en: { /* ... */ },
-  ar: { /* ... */ },
-  fr: { /* ... */ },
-  kz: { /* ... */ },
-  chn: { /* ... */ },
-  de: { /* ... */ },
-  es: { /* ... */ },
-  it: { /* ... */ },
-  fa: { /* ... */ },
+  ru: {
+    tabs: {
+      home: "Главная",
+      icons: "Иконки",
+      brands: "Бренды",
+      brandinfo: "Инфо о бренде",
+      share: "Поделиться / QR",
+      password: "Смена пароля",
+    },
+    logout: "ВЫХОД",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "ЯЗЫКИ",
+    langsDescription:
+      "Выберите активные языки и поменяйте порядок: первый будет языком по умолчанию на публичной странице.",
+
+    avatarTitle: "AVATAR",
+    typeLabel: "Тип",
+    avatarTypeImage: "Изображение",
+    avatarTypeVideo: "Видео",
+    avatarImageUrlLabel: "Ссылка на аватар",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "Ссылка на видео-аватар",
+    avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "НАЗВАНИЕ КОМПАНИИ",
+    nameColorLabel: "Цвет названия",
+
+    descriptionTitle: "ОПИСАНИЕ",
+    descriptionColorLabel: "Цвет описания",
+
+    backgroundTitle: "ФОН",
+    backgroundTypeColor: "Цвет",
+    backgroundTypeImage: "Изображение",
+    backgroundTypeVideo: "Видео",
+    backgroundColorLabel: "Цвет фона",
+    backgroundImageUrlLabel: "Ссылка на фон-картинку",
+    backgroundVideoUrlLabel: "Ссылка на фон-видео",
+    backgroundVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
+
+    saveButton: "Сохранить",
+    savingButton: "Сохранение...",
+    saveOk: "Сохранено ✅",
+    saveError: "Ошибка при сохранении",
+
+    needLoginTitle: "Требуется вход",
+    needLoginBody: "Авторизуйтесь на странице /.",
+    loading: "Загрузка…",
+
+    chooseFileLabel: "Выбрать файл",
+  },
+
+  en: {
+    tabs: {
+      home: "Home",
+      icons: "Icons",
+      brands: "Brands",
+      brandinfo: "Brand Info",
+      share: "Share / QR",
+      password: "Change Password",
+    },
+    logout: "LOG OUT",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "LANGUAGES",
+    langsDescription:
+      "Select active languages and reorder them; the first one will be the default language on the public page.",
+
+    avatarTitle: "AVATAR",
+    typeLabel: "Type",
+    avatarTypeImage: "Image",
+    avatarTypeVideo: "Video",
+    avatarImageUrlLabel: "Avatar Image URL",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "Avatar Video URL",
+    avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "COMPANY NAME",
+    nameColorLabel: "Name Color",
+
+    descriptionTitle: "DESCRIPTION",
+    descriptionColorLabel: "Description Color",
+
+    backgroundTitle: "BACKGROUND",
+    backgroundTypeColor: "Color",
+    backgroundTypeImage: "Image",
+    backgroundTypeVideo: "Video",
+    backgroundColorLabel: "Background Color",
+    backgroundImageUrlLabel: "Background Image URL",
+    backgroundVideoUrlLabel: "Background Video URL",
+    backgroundVideoHint: "Max 20 MB (mp4, webm, ogg)",
+
+    saveButton: "Save",
+    savingButton: "Saving...",
+    saveOk: "Saved ✅",
+    saveError: "Error while saving",
+
+    needLoginTitle: "Login required",
+    needLoginBody: "Please log in on the / page.",
+    loading: "Loading…",
+
+    chooseFileLabel: "Choose File",
+  },
+
+  ar: {
+    tabs: {
+      home: "الصفحة الرئيسية",
+      icons: "الأيقونات",
+      brands: "العلامات التجارية",
+      brandinfo: "معلومات العلامة",
+      share: "مشاركة / QR",
+      password: "تغيير كلمة المرور",
+    },
+    logout: "تسجيل الخروج",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "اللغات",
+    langsDescription:
+      "اختر اللغات النشطة وقم بتغيير الترتيب؛ الأول سيكون اللغة الافتراضية في الصفحة العامة.",
+
+    avatarTitle: "الصورة (Avatar)",
+    typeLabel: "النوع",
+    avatarTypeImage: "صورة",
+    avatarTypeVideo: "فيديو",
+    avatarImageUrlLabel: "رابط صورة الـ Avatar",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "رابط فيديو الـ Avatar",
+    avatarVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
+
+    companyNameTitle: "اسم الشركة",
+    nameColorLabel: "لون الاسم",
+
+    descriptionTitle: "الوصف",
+    descriptionColorLabel: "لون الوصف",
+
+    backgroundTitle: "الخلفية",
+    backgroundTypeColor: "لون",
+    backgroundTypeImage: "صورة",
+    backgroundTypeVideo: "فيديو",
+    backgroundColorLabel: "لون الخلفية",
+    backgroundImageUrlLabel: "رابط صورة الخلفية",
+    backgroundVideoUrlLabel: "رابط فيديو الخلفية",
+    backgroundVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
+
+    saveButton: "حفظ",
+    savingButton: "جاري الحفظ...",
+    saveOk: "تم الحفظ ✅",
+    saveError: "خطأ أثناء الحفظ",
+
+    needLoginTitle: "مطلوب تسجيل الدخول",
+    needLoginBody: "يرجى تسجيل الدخول من صفحة /.",
+    loading: "جاري التحميل…",
+
+    chooseFileLabel: "اختر ملفًا",
+  },
+
+  fr: {
+    tabs: {
+      home: "Accueil",
+      icons: "Icônes",
+      brands: "Marques",
+      brandinfo: "Infos marque",
+      share: "Partager / QR",
+      password: "Changer le mot de passe",
+    },
+    logout: "DÉCONNEXION",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "LANGUES",
+    langsDescription:
+      "Sélectionnez les langues actives et changez l’ordre ; la première sera la langue par défaut sur la page publique.",
+
+    avatarTitle: "AVATAR",
+    typeLabel: "Type",
+    avatarTypeImage: "Image",
+    avatarTypeVideo: "Vidéo",
+    avatarImageUrlLabel: "URL de l’image avatar",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "URL de la vidéo avatar",
+    avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "NOM DE L’ENTREPRISE",
+    nameColorLabel: "Couleur du nom",
+
+    descriptionTitle: "DESCRIPTION",
+    descriptionColorLabel: "Couleur de la description",
+
+    backgroundTitle: "ARRIÈRE-PLAN",
+    backgroundTypeColor: "Couleur",
+    backgroundTypeImage: "Image",
+    backgroundTypeVideo: "Vidéo",
+    backgroundColorLabel: "Couleur de fond",
+    backgroundImageUrlLabel: "URL de l’image de fond",
+    backgroundVideoUrlLabel: "URL de la vidéo de fond",
+    backgroundVideoHint: "Max 20 MB (mp4, webm, ogg)",
+
+    saveButton: "Enregistrer",
+    savingButton: "Enregistrement...",
+    saveOk: "Enregistré ✅",
+    saveError: "Erreur lors de l’enregistrement",
+
+    needLoginTitle: "Connexion requise",
+    needLoginBody: "Connectez-vous sur la page /.",
+    loading: "Chargement…",
+
+    chooseFileLabel: "Choisir un fichier",
+  },
+
+  kz: {
+    tabs: {
+      home: "Басты бет",
+      icons: "Икондар",
+      brands: "Брендтер",
+      brandinfo: "Бренд туралы",
+      share: "Бөлісу / QR",
+      password: "Құпиясөзді өзгерту",
+    },
+    logout: "ШЫҒУ",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "ТІЛДЕР",
+    langsDescription:
+      "Белсенді тілдерді таңдаңыз және ретін өзгертіңіз; біріншісі public бетінің әдепкі тілі болады.",
+
+    avatarTitle: "AVATAR",
+    typeLabel: "Түрі",
+    avatarTypeImage: "Сурет",
+    avatarTypeVideo: "Видео",
+    avatarImageUrlLabel: "Avatar суретінің сілтемесі",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "Avatar видеосының сілтемесі",
+    avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "КОМПАНИЯ АТЫ",
+    nameColorLabel: "Атаудың түсі",
+
+    descriptionTitle: "СИПАТТАМА",
+    descriptionColorLabel: "Сипаттаманың түсі",
+
+    backgroundTitle: "ФОН",
+    backgroundTypeColor: "Түс",
+    backgroundTypeImage: "Сурет",
+    backgroundTypeVideo: "Видео",
+    backgroundColorLabel: "Фон түсі",
+    backgroundImageUrlLabel: "Фон суретінің сілтемесі",
+    backgroundVideoUrlLabel: "Фон видеосының сілтемесі",
+    backgroundVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
+
+    saveButton: "Сақтау",
+    savingButton: "Сақталуда...",
+    saveOk: "Сақталды ✅",
+    saveError: "Сақтау кезінде қате",
+
+    needLoginTitle: "Кіру қажет",
+    needLoginBody: "/ бетінде жүйеге кіріңіз.",
+    loading: "Жүктелуде…",
+
+    chooseFileLabel: "Файл таңдау",
+  },
+
+  chn: {
+    tabs: {
+      home: "首页",
+      icons: "图标",
+      brands: "品牌",
+      brandinfo: "品牌信息",
+      share: "分享 / QR",
+      password: "修改密码",
+    },
+    logout: "退出登录",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "语言",
+    langsDescription:
+      "选择启用的语言并调整顺序；第一个将作为公开页面的默认语言。",
+
+    avatarTitle: "头像",
+    typeLabel: "类型",
+    avatarTypeImage: "图片",
+    avatarTypeVideo: "视频",
+    avatarImageUrlLabel: "头像图片链接",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "头像视频链接",
+    avatarVideoHint: "最大 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "公司名称",
+    nameColorLabel: "名称颜色",
+
+    descriptionTitle: "描述",
+    descriptionColorLabel: "描述颜色",
+
+    backgroundTitle: "背景",
+    backgroundTypeColor: "纯色",
+    backgroundTypeImage: "图片",
+    backgroundTypeVideo: "视频",
+    backgroundColorLabel: "背景颜色",
+    backgroundImageUrlLabel: "背景图片链接",
+    backgroundVideoUrlLabel: "背景视频链接",
+    backgroundVideoHint: "最大 20 MB (mp4, webm, ogg)",
+
+    saveButton: "保存",
+    savingButton: "保存中...",
+    saveOk: "已保存 ✅",
+    saveError: "保存时出错",
+
+    needLoginTitle: "需要登录",
+    needLoginBody: "请在 / 页面登录。",
+    loading: "加载中…",
+
+    chooseFileLabel: "选择文件",
+  },
+
+  de: {
+    tabs: {
+      home: "Startseite",
+      icons: "Symbole",
+      brands: "Marken",
+      brandinfo: "Markeninfo",
+      share: "Teilen / QR",
+      password: "Passwort ändern",
+    },
+    logout: "ABMELDEN",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "SPRACHEN",
+    langsDescription:
+      "Wähle aktive Sprachen aus und ändere die Reihenfolge; die erste ist die Standardsprache auf der öffentlichen Seite.",
+
+    avatarTitle: "AVATAR",
+    typeLabel: "Typ",
+    avatarTypeImage: "Bild",
+    avatarTypeVideo: "Video",
+    avatarImageUrlLabel: "Avatar-Bild-URL",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "Avatar-Video-URL",
+    avatarVideoHint: "Max. 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "FIRMENNAME",
+    nameColorLabel: "Farbe des Namens",
+
+    descriptionTitle: "BESCHREIBUNG",
+    descriptionColorLabel: "Farbe der Beschreibung",
+
+    backgroundTitle: "HINTERGRUND",
+    backgroundTypeColor: "Farbe",
+    backgroundTypeImage: "Bild",
+    backgroundTypeVideo: "Video",
+    backgroundColorLabel: "Hintergrundfarbe",
+    backgroundImageUrlLabel: "Hintergrundbild-URL",
+    backgroundVideoUrlLabel: "Hintergrundvideo-URL",
+    backgroundVideoHint: "Max. 20 MB (mp4, webm, ogg)",
+
+    saveButton: "Speichern",
+    savingButton: "Wird gespeichert...",
+    saveOk: "Gespeichert ✅",
+    saveError: "Fehler beim Speichern",
+
+    needLoginTitle: "Anmeldung erforderlich",
+    needLoginBody: "Bitte auf der / Seite anmelden.",
+    loading: "Lädt…",
+
+    chooseFileLabel: "Datei wählen",
+  },
+
+  es: {
+    tabs: {
+      home: "Inicio",
+      icons: "Íconos",
+      brands: "Marcas",
+      brandinfo: "Info de marca",
+      share: "Compartir / QR",
+      password: "Cambiar contraseña",
+    },
+    logout: "SALIR",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "IDIOMAS",
+    langsDescription:
+      "Selecciona los idiomas activos y cambia el orden; el primero será el idioma predeterminado en la página pública.",
+
+    avatarTitle: "AVATAR",
+    typeLabel: "Tipo",
+    avatarTypeImage: "Imagen",
+    avatarTypeVideo: "Vídeo",
+    avatarImageUrlLabel: "URL de imagen del avatar",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "URL de vídeo del avatar",
+    avatarVideoHint: "Máx. 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "NOMBRE DE LA EMPRESA",
+    nameColorLabel: "Color del nombre",
+
+    descriptionTitle: "DESCRIPCIÓN",
+    descriptionColorLabel: "Color de la descripción",
+
+    backgroundTitle: "FONDO",
+    backgroundTypeColor: "Color",
+    backgroundTypeImage: "Imagen",
+    backgroundTypeVideo: "Vídeo",
+    backgroundColorLabel: "Color de fondo",
+    backgroundImageUrlLabel: "URL de imagen de fondo",
+    backgroundVideoUrlLabel: "URL de vídeo de fondo",
+    backgroundVideoHint: "Máx. 20 MB (mp4, webm, ogg)",
+
+    saveButton: "Guardar",
+    savingButton: "Guardando...",
+    saveOk: "Guardado ✅",
+    saveError: "Error al guardar",
+
+    needLoginTitle: "Se requiere inicio de sesión",
+    needLoginBody: "Por favor inicia sesión en la página /.",
+    loading: "Cargando…",
+
+    chooseFileLabel: "Elegir archivo",
+  },
+
+  it: {
+    tabs: {
+      home: "Home",
+      icons: "Icone",
+      brands: "Brand",
+      brandinfo: "Info brand",
+      share: "Condividi / QR",
+      password: "Cambia password",
+    },
+    logout: "ESCI",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "LINGUE",
+    langsDescription:
+      "Seleziona le lingue attive e cambia l’ordine; la prima sarà la lingua predefinita nella pagina pubblica.",
+
+    avatarTitle: "AVATAR",
+    typeLabel: "Tipo",
+    avatarTypeImage: "Immagine",
+    avatarTypeVideo: "Video",
+    avatarImageUrlLabel: "URL immagine avatar",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "URL video avatar",
+    avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
+
+    companyNameTitle: "NOME AZIENDA",
+    nameColorLabel: "Colore del nome",
+
+    descriptionTitle: "DESCRIZIONE",
+    descriptionColorLabel: "Colore della descrizione",
+
+    backgroundTitle: "SFONDO",
+    backgroundTypeColor: "Colore",
+    backgroundTypeImage: "Immagine",
+    backgroundTypeVideo: "Video",
+    backgroundColorLabel: "Colore di sfondo",
+    backgroundImageUrlLabel: "URL immagine di sfondo",
+    backgroundVideoUrlLabel: "URL video di sfondo",
+    backgroundVideoHint: "Max 20 MB (mp4, webm, ogg)",
+
+    saveButton: "Salva",
+    savingButton: "Salvataggio...",
+    saveOk: "Salvato ✅",
+    saveError: "Errore durante il salvataggio",
+
+    needLoginTitle: "Accesso richiesto",
+    needLoginBody: "Effettua l’accesso nella pagina /.",
+    loading: "Caricamento…",
+
+    chooseFileLabel: "Scegli file",
+  },
+
+  fa: {
+    tabs: {
+      home: "صفحه اصلی",
+      icons: "آیکون‌ها",
+      brands: "برندها",
+      brandinfo: "اطلاعات برند",
+      share: "اشتراک‌گذاری / QR",
+      password: "تغییر رمز عبور",
+    },
+    logout: "خروج",
+    headerAdminPrefix: "ADMIN",
+
+    langsTitle: "زبان‌ها",
+    langsDescription:
+      "زبان‌های فعال را انتخاب کنید و ترتیب را تغییر دهید؛ اولین زبان، زبان پیش‌فرض صفحه عمومی خواهد بود.",
+
+    avatarTitle: "آواتار",
+    typeLabel: "نوع",
+    avatarTypeImage: "تصویر",
+    avatarTypeVideo: "ویدئو",
+    avatarImageUrlLabel: "لینک تصویر آواتار",
+    avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+    avatarVideoUrlLabel: "لینک ویدئوی آواتار",
+    avatarVideoHint: "حداکثر ۲۰ مگابایت (mp4, webm, ogg)",
+
+    companyNameTitle: "نام شرکت",
+    nameColorLabel: "رنگ نام",
+
+    descriptionTitle: "توضیحات",
+    descriptionColorLabel: "رنگ توضیحات",
+
+    backgroundTitle: "پس‌زمینه",
+    backgroundTypeColor: "رنگ",
+    backgroundTypeImage: "تصویر",
+    backgroundTypeVideo: "ویدئو",
+    backgroundColorLabel: "رنگ پس‌زمینه",
+    backgroundImageUrlLabel: "لینک تصویر پس‌زمینه",
+    backgroundVideoUrlLabel: "لینک ویدئوی پس‌زمینه",
+    backgroundVideoHint: "حداکثر ۲۰ مگابایت (mp4, webm, ogg)",
+
+    saveButton: "ذخیره",
+    savingButton: "در حال ذخیره...",
+    saveOk: "ذخیره شد ✅",
+    saveError: "خطا هنگام ذخیره",
+
+    needLoginTitle: "ورود لازم است",
+    needLoginBody: "لطفاً در صفحه / وارد شوید.",
+    loading: "در حال بارگذاری…",
+
+    chooseFileLabel: "انتخاب فایل",
+  },
 };
 
 const DEFAULT_INFO = {
@@ -258,17 +765,8 @@ export default function AdminDashboard({
   const [savingInfo, setSavingInfo] = useState(false);
   const [infoMsg, setInfoMsg] = useState("");
 
-  // ակտիվ լեզուների հերթականություն (payload-ի համար)
   const [langs, setLangs] = useState(["am", "ru", "en", "ar", "fr"]);
-
-  // սլայդերի արժեքները՝ code → position
-  const [langOrder, setLangOrder] = useState(() => {
-    const o = {};
-    ALL_LANGS.forEach((l, i) => {
-      o[l.code] = i + 1;
-    });
-    return o;
-  });
+  const [dragLang, setDragLang] = useState(null); // 🔥 dnd state
 
   const [avatarPreview, setAvatarPreview] = useState("");
   const [bgImagePreview, setBgImagePreview] = useState("");
@@ -322,15 +820,6 @@ export default function AdminDashboard({
 
         if (!langsArr.length) langsArr = ["am"];
         setLangs(langsArr);
-
-        // սինքրոնացնենք սլայդերի արժեքները ակտիվ լեզուների հերթականությամբ
-        setLangOrder((prev) => {
-          const next = { ...prev };
-          langsArr.forEach((code, idx) => {
-            next[code] = idx + 1; // #1՝ default, #2՝ երկրորդ, ...
-          });
-          return next;
-        });
       } catch (e) {
         setMsg(e.message || "Load failed");
       } finally {
@@ -592,41 +1081,59 @@ export default function AdminDashboard({
     }
   }
 
-  // on/off toggle
   function toggleLang(code) {
     setLangs((prev) => {
       const exists = prev.includes(code);
       if (exists) {
-        if (prev.length === 1) return prev; // գոնե 1 լեզու թող մնա
+        if (prev.length === 1) return prev;
         return prev.filter((c) => c !== code);
-      } else {
-        // նոր միացված լեզուն դնենք վերջում՝ order=max+1
-        setLangOrder((prevOrder) => {
-          const maxOrder = Object.values(prevOrder).reduce(
-            (max, n) =>
-              typeof n === "number" && n > max ? n : max,
-            0
-          );
-          return { ...prevOrder, [code]: maxOrder + 1 };
-        });
-        return [...prev, code];
       }
+      return [...prev, code];
     });
   }
 
-  // սլայդերի փոփոխություն — փոխում է langs-ի հերթականությունը
-  function handleLangOrderChange(code, newPos) {
-    setLangOrder((prev) => {
-      const next = { ...prev, [code]: newPos };
-      setLangs((prevLangs) => {
-        const arr = prevLangs.slice();
-        arr.sort(
-          (a, b) => (next[a] || 999) - (next[b] || 999)
-        );
-        return arr;
-      });
+  // հին up/down տարբերակը թողում ենք (շատ չորսն է),
+  // բայց UI-ում չենք օգտագործում, reorder-ը հիմա drag & drop է
+  function moveLang(code, dir) {
+    setLangs((prev) => {
+      const idx = prev.indexOf(code);
+      if (idx === -1) return prev;
+      const nextIdx = dir === "up" ? idx - 1 : idx + 1;
+      if (nextIdx < 0 || nextIdx >= prev.length) return prev;
+      const arr = prev.slice();
+      const [item] = arr.splice(idx, 1);
+      arr.splice(nextIdx, 0, item);
+      return arr;
+    });
+  }
+
+  // 🔥 Drag & Drop handlers
+  function handleLangDragStart(code) {
+    if (!langs.includes(code)) return;
+    setDragLang(code);
+  }
+
+  function handleLangDragOver(e) {
+    // թույլ ենք տալիս drop
+    e.preventDefault();
+  }
+
+  function handleLangDrop(targetCode) {
+    if (!dragLang || dragLang === targetCode) return;
+    setLangs((prev) => {
+      const from = prev.indexOf(dragLang);
+      const to = prev.indexOf(targetCode);
+      if (from === -1 || to === -1) return prev;
+      const next = prev.slice();
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
       return next;
     });
+    setDragLang(null);
+  }
+
+  function handleLangDragEnd() {
+    setDragLang(null);
   }
 
   function TabMenuItem(id, label) {
@@ -743,7 +1250,6 @@ export default function AdminDashboard({
     h(
       React.Fragment,
       null,
-      /* ---------- LANGS BLOCK ---------- */
       h("h3", { className: "title mb-2" }, T.langsTitle),
       h(
         "div",
@@ -759,10 +1265,8 @@ export default function AdminDashboard({
 
         ALL_LANGS.map(({ code, label }, staticIndex) => {
           const active = langs.includes(code);
-          const orderValue =
-            typeof langOrder[code] === "number"
-              ? langOrder[code]
-              : staticIndex + 1;
+          const idx = langs.indexOf(code);
+          const isDragging = dragLang === code;
 
           return h(
             "div",
@@ -774,10 +1278,16 @@ export default function AdminDashboard({
                 marginLeft: "5px",
                 alignItems: "center",
                 opacity: active ? 1 : 0.4,
-                background: "transparent",
+                cursor: active ? "grab" : "default",
+                background: isDragging ? "rgba(0,0,0,0.04)" : "transparent",
                 borderRadius: 8,
                 padding: "2px 4px",
               },
+              draggable: active,
+              onDragStart: () => handleLangDragStart(code),
+              onDragOver: handleLangDragOver,
+              onDrop: () => handleLangDrop(code),
+              onDragEnd: handleLangDragEnd,
             },
             // left badge (AM / RU / ...)
             h(
@@ -808,37 +1318,21 @@ export default function AdminDashboard({
               label
             ),
 
-            // 🔢 հաստատուն համար (#1,#2,...) ըստ ALL_LANGS կարգի — չի փոխվում
+            // 🔢 հաստատուն համար (#1,#2,...) ըստ ALL_LANGS կարգի — reorder անելուց չի փոխվում
             h(
               "span",
               {
                 className: "small",
                 style: {
-                  minWidth: 32,
+                  minWidth: 40,
                   fontSize: "13px",
                   opacity: 0.8,
                   textAlign: "right",
-                  marginRight: 4,
+                  marginRight: 6,
                 },
               },
               `#${staticIndex + 1}`
             ),
-
-            // 🌡 սլայդեր՝ լեզվի իսկական հերթականությունը փոխելու համար
-            h("input", {
-              type: "range",
-              min: 1,
-              max: ALL_LANGS.length,
-              value: orderValue,
-              disabled: !active, // միայն ակտիվների համար իմաստ ունի
-              onChange: (e) =>
-                handleLangOrderChange(code, Number(e.target.value)),
-              style: {
-                width: 80,
-                marginRight: 6,
-                cursor: active ? "pointer" : "not-allowed",
-              },
-            }),
 
             // 🟢/⚪ switch (active / inactive)
             h(
@@ -869,12 +1363,31 @@ export default function AdminDashboard({
                   boxShadow: "0 1px 3px rgba(0,0,0,0.25)",
                 },
               })
+            ),
+
+            // drag handle (visual only, իրական drag-ը row-ի վրա է)
+            h(
+              "div",
+              {
+                className: "lang-drag-handle",
+                style: {
+                  width: 14,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 2,
+                  opacity: active ? 0.9 : 0.25,
+                  fontSize: 10,
+                  userSelect: "none",
+                },
+              },
+              "⋮",
+              "⋮"
             )
           );
         })
       ),
-
-      /* ---------- ԱՎԱՏԱՐ, ԿՈՄՓԱՆԻԱ, DESCRIPTION, BACKGROUND — նույնը ինչ ունեիր ---------- */
 
       h("h3", { className: "title mb-2" }, T.avatarTitle),
       h(
