@@ -180,6 +180,7 @@ const ICONS_UI_TEXT = {
     moveDown: "Descendre",
   },
 
+  // 🇰🇿 Kazakh (KZ)
   kz: {
     styleLabel: "Стиль",
     styleOption1: "Стиль 1",
@@ -214,6 +215,7 @@ const ICONS_UI_TEXT = {
     moveDown: "Төмен",
   },
 
+  // 🇨🇳 Chinese (CHN)
   chn: {
     styleLabel: "样式",
     styleOption1: "样式 1",
@@ -247,6 +249,7 @@ const ICONS_UI_TEXT = {
     moveDown: "下移",
   },
 
+  // DE / ES / IT / FA — basic fallback UI (same as EN for now)
   de: {
     styleLabel: "Style",
     styleOption1: "Style 1",
@@ -457,43 +460,33 @@ const FA_PRESETS = [
   "fa-brands fa-threads",
 ];
 
-/* ==== URL examples՝ placeholder/auto-fill ==== */
-const ICON_URL_EXAMPLES = {
-  "fa-solid fa-phone": "tel:+37499111222",
-  "fa-solid fa-comment-dots": "sms:+37499111222",
-  "fa-brands fa-whatsapp": "https://wa.me/37499111222",
-  "fa-brands fa-telegram": "https://t.me/username",
-  "fa-brands fa-viber": "viber://chat?number=+37499111222",
-  "fa-solid fa-envelope": "mailto:info@example.com",
-  "fa-brands fa-instagram": "https://www.instagram.com/username/",
-  "fa-solid fa-globe": "https://example.com",
-  "fa-solid fa-location-dot": "https://maps.google.com/?q=40.1850,44.5150",
-  "fa-brands fa-linkedin-in": "https://www.linkedin.com/in/username/",
-  "fa-brands fa-facebook-f": "https://www.facebook.com/username",
-  "fa-brands fa-facebook-messenger": "https://m.me/username",
-  "fa-solid fa-video": "https://zoom.us/j/123456789",
-  "fa-brands fa-odnoklassniki": "https://ok.ru/profile/1234567890",
-  "fa-brands fa-youtube": "https://www.youtube.com/@channelname",
-  "fa-brands fa-tiktok": "https://www.tiktok.com/@username",
-  "fa-brands fa-skype": "skype:live:username?chat",
-  "fa-brands fa-twitter": "https://twitter.com/username",
-  "fa-brands fa-x-twitter": "https://x.com/username",
-  "fa-brands fa-snapchat": "https://www.snapchat.com/add/username",
-  "fa-brands fa-pinterest": "https://www.pinterest.com/username/",
-  "fa-brands fa-reddit-alien": "https://www.reddit.com/user/username/",
-  "fa-brands fa-discord": "https://discord.gg/inviteCode",
-  "fa-brands fa-github": "https://github.com/username",
-  "fa-brands fa-spotify": "https://open.spotify.com/user/username",
-  "fa-brands fa-behance": "https://www.behance.net/username",
-  "fa-brands fa-dribbble": "https://dribbble.com/username",
-  "fa-brands fa-medium": "https://medium.com/@username",
-  "fa-brands fa-vimeo-v": "https://vimeo.com/username",
-  "fa-brands fa-vk": "https://vk.com/username",
-  "fa-brands fa-weixin": "https://u.wechat.com/ID",
-  "fa-brands fa-line": "https://line.me/R/ti/p/@yourid",
-  "fa-brands fa-signal-messenger": "signal://send?phone=+37499111222",
-  "fa-brands fa-wikipedia-w": "https://wikipedia.org/wiki/Article_Name",
-  "fa-brands fa-threads": "https://www.threads.net/@username",
+/* ==== phone-like icon href patterns (prefix fixed, user types only number) ==== */
+const ICON_HREF_PATTERNS = {
+  "fa-solid fa-phone": {
+    prefix: "tel:",
+    placeholder: "+374XXXXXXXX",
+    label: "Phone number",
+  },
+  "fa-solid fa-comment-dots": {
+    prefix: "sms:",
+    placeholder: "+374XXXXXXXX",
+    label: "SMS phone number",
+  },
+  "fa-brands fa-whatsapp": {
+    prefix: "https://wa.me/",
+    placeholder: "374XXXXXXXX",
+    label: "WhatsApp number",
+  },
+  "fa-brands fa-viber": {
+    prefix: "viber://chat?number=",
+    placeholder: "+374XXXXXXXX",
+    label: "Viber phone number",
+  },
+  "fa-brands fa-telegram": {
+    prefix: "https://t.me/",
+    placeholder: "@username or phone",
+    label: "Telegram",
+  },
 };
 
 function uid() {
@@ -587,13 +580,19 @@ function parseCssRgba(str) {
   return { r, g, b, a };
 }
 
-/* ---- derive FA class from field ---- */
+/* ---- derive FA class from field (no images allowed) ---- */
 function faClass(raw) {
   const s = String(raw || "").trim();
   if (!s) return "";
   if (/\bfa-(solid|regular|brands)\b|\bfa-[a-z0-9-]+/i.test(s)) return s; // already class
   const m = ICON_MAP[s.toLowerCase()];
   return m || "";
+}
+
+/* ---- helper: get href pattern for icon ---- */
+function getHrefPatternForIcon(iconRaw) {
+  const fa = faClass(iconRaw);
+  return ICON_HREF_PATTERNS[fa] || null;
 }
 
 /* =================== Custom Preset Dropdown =================== */
@@ -746,9 +745,6 @@ function IconRow({
       )
     : null;
 
-  const faCls = faClass(it.icon) || "fa-solid fa-link";
-  const exampleHref = ICON_URL_EXAMPLES[faCls];
-
   const preview = h(
     "div",
     {
@@ -765,10 +761,18 @@ function IconRow({
       },
     },
     h("i", {
-      className: faCls,
+      className: faClass(it.icon) || "fa-solid fa-link",
       style: { fontSize: 20 },
     })
   );
+
+  // 👉 phone-like icons՝ prefix + միայն համարի դաշտ
+  const hrefPattern = getHrefPatternForIcon(it.icon);
+  const rawHref = it.href || "";
+  let phoneValue = rawHref;
+  if (hrefPattern && rawHref.startsWith(hrefPattern.prefix)) {
+    phoneValue = rawHref.slice(hrefPattern.prefix.length);
+  }
 
   return h(
     React.Fragment,
@@ -852,41 +856,87 @@ function IconRow({
           )
         ),
 
-        // href + preset (մի input, բայց placeholder = exampleHref)
-        h(
-          "div",
-          {
-            style: {
-              display: "grid",
-              gap: 6,
-            },
-          },
-          h("input", {
-            className: "input",
-            value: it.href || "",
-            placeholder: exampleHref || T.urlPlaceholder,
-            onChange: (e) => onField(it.uid, { href: e.target.value }),
-          }),
-          exampleHref &&
-            h(
+        // href + preset (երկու տարբերակով)
+        hrefPattern
+          ? h(
+              "div",
+              { style: { display: "grid", gap: 8 } },
+              h(
+                "div",
+                {
+                  style: {
+                    fontSize: 12,
+                    opacity: 0.75,
+                    fontWeight: 500,
+                  },
+                },
+                hrefPattern.label
+              ),
+              h(
+                "div",
+                {
+                  style: {
+                    display: "grid",
+                    gridTemplateColumns: "auto minmax(0,1fr)",
+                    gap: 8,
+                    alignItems: "center",
+                  },
+                },
+                h(
+                  "div",
+                  {
+                    style: {
+                      padding: "8px 10px",
+                      borderRadius: 8,
+                      background: "#f3f4f6",
+                      border: "1px solid #e5e7eb",
+                      fontFamily: "monospace",
+                      fontSize: 13,
+                      whiteSpace: "nowrap",
+                    },
+                  },
+                  hrefPattern.prefix
+                ),
+                h("input", {
+                  className: "input",
+                  value: phoneValue,
+                  placeholder: hrefPattern.placeholder || "+374…",
+                  onChange: (e) => {
+                    const num = e.target.value.trim();
+                    onField(it.uid, {
+                      href: hrefPattern.prefix + num,
+                    });
+                  },
+                })
+              ),
+              h(PresetSelect, {
+                presets: FA_PRESETS,
+                onPick: (v) => onField(it.uid, { icon: v }),
+                label: T.presetButton,
+                searchPlaceholder: T.presetSearchPlaceholder,
+              })
+            )
+          : h(
               "div",
               {
                 style: {
-                  fontSize: 12,
-                  opacity: 0.75,
-                  fontFamily: "monospace",
+                  display: "grid",
+                  gap: 8,
                 },
               },
-              "Օրինակ՝ ",
-              exampleHref
+              h("input", {
+                className: "input",
+                value: it.href || "",
+                placeholder: T.urlPlaceholder,
+                onChange: (e) => onField(it.uid, { href: e.target.value }),
+              }),
+              h(PresetSelect, {
+                presets: FA_PRESETS,
+                onPick: (v) => onField(it.uid, { icon: v }),
+                label: T.presetButton,
+                searchPlaceholder: T.presetSearchPlaceholder,
+              })
             ),
-          h(PresetSelect, {
-            presets: FA_PRESETS,
-            onPick: (v) => onField(it.uid, { icon: v }),
-            label: T.presetButton,
-            searchPlaceholder: T.presetSearchPlaceholder,
-          })
-        ),
 
         h(
           "div",
@@ -1060,7 +1110,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
     if (!href) return { ok: false, msg: T.validateHrefMissing };
 
-    const faCls = faClass(it.icon);
+    const fa = faClass(it.icon);
     return {
       ok: true,
       payload: {
@@ -1069,11 +1119,12 @@ export default function IconsTab({ langs, uiLang = "en" }) {
           {}
         ),
         href,
-        icon: faCls || "fa-solid fa-link",
+        icon: fa || "fa-solid fa-link",
       },
     };
   };
 
+  // ԱՎԵԼԱՑՆԵԼ՝ auto-scroll նոր icon-card-ի վրա
   const add = () =>
     setItems((list) => {
       const next = [
@@ -1109,12 +1160,14 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         if (it.uid !== uidKey) return it;
         let next = { ...it, ...patch };
 
-        // icon–ը փոխելիս, եթե href դատարկ է → լցնենք օրինակը
+        // եթե icon-ը փոխվեց՝ ավտոմատ դնենք prefix
         if (patch.icon) {
-          const faCls = faClass(patch.icon);
-          const example = ICON_URL_EXAMPLES[faCls];
-          if (example && !(next.href && next.href.trim())) {
-            next.href = example;
+          const pattern = getHrefPatternForIcon(patch.icon);
+          if (pattern) {
+            const cur = String(next.href || "");
+            if (!cur.startsWith(pattern.prefix)) {
+              next.href = pattern.prefix;
+            }
           }
         }
         return next;
@@ -1147,6 +1200,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     setItems((list) => list.filter((x) => x.uid !== uidKey));
   };
 
+  // reorder
   const onMoveUp = (uidKey) => {
     setItems((list) => {
       const idx = list.findIndex((x) => x.uid === uidKey);
@@ -1193,6 +1247,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
       const info = { ...(baseInfo || {}) };
 
+      // rowCard background-ը կապում ենք icon background-ին
       info.icons = {
         links,
         styles: {
