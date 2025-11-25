@@ -47,7 +47,7 @@ function pickLabel(label, lang = "hy"){
         primaryKeys.push("chn");
         break;
 
-      // ✅ NEW langs — direct key usage
+      // NEW langs
       case "de":
         primaryKeys.push("de");
         break;
@@ -86,7 +86,7 @@ export default function IconsPage({
   labelColor,
   chipColor,
   rowCardColor,
-  iconColor, // ✅ NEW
+  iconColor, // NEW
   layoutStyle = "dzev1",
   cols = 4,
   glowEnabled = false,
@@ -94,7 +94,7 @@ export default function IconsPage({
   lang = "hy"
 }) {
   /* ===== dzev4 — ձեռքով պտտվող շրջան (ոչ ավտոմատ) ===== */
-  const [orbitAngle, setOrbitAngle] = React.useState(0); // градусовով
+  const [orbitAngle, setOrbitAngle] = React.useState(0);
   const draggingRef = React.useRef(false);
   const lastXRef = React.useRef(0);
 
@@ -121,7 +121,7 @@ export default function IconsPage({
     draggingRef.current = false;
   };
 
-  // ✅ rtl for ar + fa
+  // rtl for ar + fa
   const rtlLangs = new Set(["ar", "fa"]);
   const labelDir   = rtlLangs.has(lang) ? "rtl" : "ltr";
   const labelAlign = rtlLangs.has(lang) ? "right" : "left";
@@ -130,8 +130,9 @@ export default function IconsPage({
   const isOneColumnRow = layoutStyle !== "dzev4" && Number(cols) === 1;
 
   if (isOneColumnRow) {
-    const textColor = labelColor || "#ffffff";
-    const icColor   = iconColor || "#ffffff"; // ✅ NEW
+    const textColor   = labelColor || "#ffffff";
+    const icColor     = iconColor || "#ffffff";
+    const circleBg    = chipColor || "#111111";   // ✅ icon background from admin
 
     return h(
       "section",
@@ -158,7 +159,13 @@ export default function IconsPage({
           },
           h(
             "div",
-            { className: "icon-row-circle", style:{ color: icColor } }, // ✅ NEW apply
+            {
+              className: "icon-row-circle",
+              style: {
+                color: icColor,
+                background: circleBg          // ✅ այստեղ է գույնը կապվում
+              }
+            },
             h("i", { className: faCls, "aria-hidden": "true" })
           ),
           h(
@@ -205,7 +212,7 @@ export default function IconsPage({
           display:grid;
           place-items:center;
           flex-shrink:0;
-          background:#111;
+          /* background-ը հիմա գալիս է inline style-ով chipColor-ից */
         }
         .icon-row-circle i{
           font-size:22px;
@@ -238,7 +245,7 @@ export default function IconsPage({
   if (glowColor)  containerStyle["--icons-glow-color"]  = glowColor;
   if (chipColor)  containerStyle["--icons-chip-bg"]     = chipColor;
   if (labelColor) containerStyle["--icons-label-color"] = labelColor;
-  if (iconColor)  containerStyle["--icons-icon-color"]  = iconColor; // ✅ NEW
+  if (iconColor)  containerStyle["--icons-icon-color"]  = iconColor;
 
   if (layoutStyle !== "dzev4" && Number(cols) === 1) {
     const cardBg = rowCardColor || chipColor;
@@ -325,7 +332,7 @@ export default function IconsPage({
       );
     }),
 
-    // ✅ NEW — icon color apply (բոլոր layout-ների համար)
+    // icon color for باقی layout-ներ
     h(
       "style",
       null,
