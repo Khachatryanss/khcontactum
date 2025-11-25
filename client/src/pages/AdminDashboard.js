@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import PhoneShell from "../PhoneShell.js";
 import { adminMe, adminGetInfo, adminSaveInfo, uploadFile } from "../api.js";
-import "./tabs/AdminResponcive.css"
+import "./tabs/AdminResponcive.css";
 import { fileUrl } from "../utils/fileUrl.js";
 import IconsTab from "./tabs/IconsTab.js";
 import BrandsTab from "./tabs/BrandsTab.js";
@@ -63,8 +63,6 @@ const ADMIN_UI_TEXT = {
     needLoginBody: "Մուտք գործիր / էջում։",
     loading: "Բեռնվում է…",
 
-    defaultBadge: "Default",
-
     chooseFileLabel: "Ընտրել ֆայլ",
   },
 
@@ -116,8 +114,6 @@ const ADMIN_UI_TEXT = {
     needLoginTitle: "Требуется вход",
     needLoginBody: "Авторизуйтесь на странице /.",
     loading: "Загрузка…",
-
-    defaultBadge: "По умолчанию",
 
     chooseFileLabel: "Выбрать файл",
   },
@@ -171,8 +167,6 @@ const ADMIN_UI_TEXT = {
     needLoginBody: "Please log in on the / page.",
     loading: "Loading…",
 
-    defaultBadge: "Default",
-
     chooseFileLabel: "Choose File",
   },
 
@@ -223,9 +217,7 @@ const ADMIN_UI_TEXT = {
 
     needLoginTitle: "مطلوب تسجيل الدخول",
     needLoginBody: "يرجى تسجيل الدخول من صفحة /.",
-    loading: "جاري التحمیل…",
-
-    defaultBadge: "افتراضي",
+    loading: "جاري التحميل…",
 
     chooseFileLabel: "اختر ملفًا",
   },
@@ -279,8 +271,6 @@ const ADMIN_UI_TEXT = {
     needLoginBody: "Connectez-vous sur la page /.",
     loading: "Chargement…",
 
-    defaultBadge: "Par défaut",
-
     chooseFileLabel: "Choisir un fichier",
   },
 
@@ -332,8 +322,6 @@ const ADMIN_UI_TEXT = {
     needLoginTitle: "Кіру қажет",
     needLoginBody: "/ бетінде жүйеге кіріңіз.",
     loading: "Жүктелуде…",
-
-    defaultBadge: "Әдепкі",
 
     chooseFileLabel: "Файл таңдау",
   },
@@ -387,8 +375,6 @@ const ADMIN_UI_TEXT = {
     needLoginBody: "请在 / 页面登录。",
     loading: "加载中…",
 
-    defaultBadge: "默认",
-
     chooseFileLabel: "选择文件",
   },
 
@@ -440,8 +426,6 @@ const ADMIN_UI_TEXT = {
     needLoginTitle: "Anmeldung erforderlich",
     needLoginBody: "Bitte auf der / Seite anmelden.",
     loading: "Lädt…",
-
-    defaultBadge: "Standard",
 
     chooseFileLabel: "Datei wählen",
   },
@@ -495,8 +479,6 @@ const ADMIN_UI_TEXT = {
     needLoginBody: "Por favor inicia sesión en la página /.",
     loading: "Cargando…",
 
-    defaultBadge: "Predeterminado",
-
     chooseFileLabel: "Elegir archivo",
   },
 
@@ -549,8 +531,6 @@ const ADMIN_UI_TEXT = {
     needLoginBody: "Effettua l’accesso nella pagina /.",
     loading: "Caricamento…",
 
-    defaultBadge: "Default",
-
     chooseFileLabel: "Scegli file",
   },
 
@@ -602,8 +582,6 @@ const ADMIN_UI_TEXT = {
     needLoginTitle: "ورود لازم است",
     needLoginBody: "لطفاً در صفحه / وارد شوید.",
     loading: "در حال بارگذاری…",
-
-    defaultBadge: "پیش‌فرض",
 
     chooseFileLabel: "انتخاب فایل",
   },
@@ -668,41 +646,6 @@ const ALL_LANGS = [
   { code: "fa", label: "فارسی (FA)" },
 ];
 const ALL_CODES = ALL_LANGS.map((x) => x.code);
-
-function LangSwitch({ active, onToggle }) {
-  return React.createElement(
-    "button",
-    {
-      type: "button",
-      onClick: () => onToggle && onToggle(),
-      "aria-pressed": active,
-      style: {
-        width: 42,
-        height: 24,
-        borderRadius: 999,
-        border: "1px solid rgba(0,0,0,0.15)",
-        background: active ? "#111" : "#d1d1d1",
-        position: "relative",
-        cursor: "pointer",
-        padding: 0,
-        outline: "none",
-      },
-    },
-    React.createElement("span", {
-      style: {
-        position: "absolute",
-        top: 2,
-        left: active ? 20 : 2,
-        width: 20,
-        height: 20,
-        borderRadius: "50%",
-        background: "#fff",
-        boxShadow: "0 2px 4px rgba(0,0,0,.3)",
-        transition: "left 0.18s ease-out",
-      },
-    })
-  );
-}
 
 // always return full shape + back-compat mapping
 function normalizeInfo(partial) {
@@ -799,7 +742,7 @@ export default function AdminDashboard({
 
   const T = ADMIN_UI_TEXT[uiLang] || ADMIN_UI_TEXT.en;
 
-  // UI լեզուների selector-ի համար (նույն տրամաբանությունը, ինչ AdminLogin-ում)
+  // UI լեզուների selector
   const UI_LANGS = ["en", "am", "fr", "ar", "ru", "kz", "chn", "de", "es", "it", "fa"];
 
   function handleUiLangChange(next) {
@@ -823,7 +766,7 @@ export default function AdminDashboard({
   const [infoMsg, setInfoMsg] = useState("");
 
   const [langs, setLangs] = useState(["am", "ru", "en", "ar", "fr"]);
-  const dragLangIndex = React.useRef(null);
+  const [dragLang, setDragLang] = useState(null); // 🔥 dnd state
 
   const [avatarPreview, setAvatarPreview] = useState("");
   const [bgImagePreview, setBgImagePreview] = useState("");
@@ -931,7 +874,7 @@ export default function AdminDashboard({
     return h(
       "label",
       { className: "block mb-3", id: "nkariMecbajin" },
-      h("div", { className: "text-sm mb-1", id: "nkariBajin"}, label),
+      h("div", { className: "text-sm mb-1", id: "nkariBajin" }, label),
       h(
         "input",
         Object.assign(
@@ -1149,6 +1092,8 @@ export default function AdminDashboard({
     });
   }
 
+  // հին up/down տարբերակը թողում ենք (շատ չորսն է),
+  // բայց UI-ում չենք օգտագործում, reorder-ը հիմա drag & drop է
   function moveLang(code, dir) {
     setLangs((prev) => {
       const idx = prev.indexOf(code);
@@ -1160,6 +1105,35 @@ export default function AdminDashboard({
       arr.splice(nextIdx, 0, item);
       return arr;
     });
+  }
+
+  // 🔥 Drag & Drop handlers
+  function handleLangDragStart(code) {
+    if (!langs.includes(code)) return;
+    setDragLang(code);
+  }
+
+  function handleLangDragOver(e) {
+    // թույլ ենք տալիս drop
+    e.preventDefault();
+  }
+
+  function handleLangDrop(targetCode) {
+    if (!dragLang || dragLang === targetCode) return;
+    setLangs((prev) => {
+      const from = prev.indexOf(dragLang);
+      const to = prev.indexOf(targetCode);
+      if (from === -1 || to === -1) return prev;
+      const next = prev.slice();
+      const [item] = next.splice(from, 1);
+      next.splice(to, 0, item);
+      return next;
+    });
+    setDragLang(null);
+  }
+
+  function handleLangDragEnd() {
+    setDragLang(null);
   }
 
   function TabMenuItem(id, label) {
@@ -1289,10 +1263,10 @@ export default function AdminDashboard({
           T.langsDescription
         ),
 
-        ALL_LANGS.map(({ code, label }) => {
+        ALL_LANGS.map(({ code, label }, staticIndex) => {
           const active = langs.includes(code);
           const idx = langs.indexOf(code);
-          const isActive = active && idx !== -1;
+          const isDragging = dragLang === code;
 
           return h(
             "div",
@@ -1304,63 +1278,33 @@ export default function AdminDashboard({
                 marginLeft: "5px",
                 alignItems: "center",
                 opacity: active ? 1 : 0.4,
-                borderRadius: 12,
-                padding: "4px 4px",
-                cursor: isActive ? "grab" : "default",
+                cursor: active ? "grab" : "default",
+                background: isDragging ? "rgba(0,0,0,0.04)" : "transparent",
+                borderRadius: 8,
+                padding: "2px 4px",
               },
-              draggable: isActive,
-              onDragStart: isActive
-                ? () => {
-                    dragLangIndex.current = idx;
-                  }
-                : undefined,
-              onDragOver: isActive
-                ? (e) => {
-                    e.preventDefault();
-                  }
-                : undefined,
-              onDrop: isActive
-                ? (e) => {
-                    e.preventDefault();
-                    const from = dragLangIndex.current;
-                    if (from == null) return;
-
-                    setLangs((prev) => {
-                      const to = prev.indexOf(code);
-                      if (to === -1 || from === to) return prev;
-                      if (from < 0 || from >= prev.length) return prev;
-                      const arr = prev.slice();
-                      const [moved] = arr.splice(from, 1);
-                      arr.splice(to, 0, moved);
-                      return arr;
-                    });
-
-                    dragLangIndex.current = null;
-                  }
-                : undefined,
+              draggable: active,
+              onDragStart: () => handleLangDragStart(code),
+              onDragOver: handleLangDragOver,
+              onDrop: () => handleLangDrop(code),
+              onDragEnd: handleLangDragEnd,
             },
-
-            // language code pill (no toggle here)
+            // left badge (AM / RU / ...)
             h(
-              "div",
+              "button",
               {
+                type: "button",
+                className: "btn",
+                onClick: () => toggleLang(code),
                 style: {
-                  padding: "2px 10px",
+                  padding: "2px 5px",
                   width: 60,
-                  borderRadius: 999,
-                  border: "1px solid rgba(0,0,0,0.08)",
-                  background: active ? "#111" : "#b3b3b3",
-                  color: "#fff",
-                  fontWeight: 700,
-                  fontSize: 12,
-                  textAlign: "center",
-                  letterSpacing: 0.5,
                 },
               },
               code.toUpperCase()
             ),
 
-            // language label
+            // label
             h(
               "span",
               {
@@ -1369,37 +1313,77 @@ export default function AdminDashboard({
                   fontSize: "14px",
                   fontFamily: "revert-layer",
                   width: 100,
-                  paddingLeft: 8,
                 },
               },
               label
             ),
 
-            // default badge (no numeric #1, #2…)
-            active && idx === 0
-              ? h(
-                  "span",
-                  {
-                    className: "small",
-                    style: {
-                      minWidth: 60,
-                      fontSize: "13px",
-                      opacity: 0.8,
-                      marginRight: 6,
-                    },
-                  },
-                  T.defaultBadge
-                )
-              : h("span", { style: { width: 60 } }, ""),
+            // 🔢 հաստատուն համար (#1,#2,...) ըստ ALL_LANGS կարգի — reorder անելուց չի փոխվում
+            h(
+              "span",
+              {
+                className: "small",
+                style: {
+                  minWidth: 40,
+                  fontSize: "13px",
+                  opacity: 0.8,
+                  textAlign: "right",
+                  marginRight: 6,
+                },
+              },
+              `#${staticIndex + 1}`
+            ),
 
-            // on/off switch for active / inactive
+            // 🟢/⚪ switch (active / inactive)
+            h(
+              "button",
+              {
+                type: "button",
+                onClick: () => toggleLang(code),
+                style: {
+                  width: 42,
+                  height: 22,
+                  borderRadius: 999,
+                  border: "none",
+                  padding: 2,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: active ? "flex-end" : "flex-start",
+                  background: active ? "#111" : "#d4d4d4",
+                  transition: "background 0.15s, justify-content 0.15s",
+                  marginRight: 6,
+                },
+              },
+              h("div", {
+                style: {
+                  width: 18,
+                  height: 18,
+                  borderRadius: "999px",
+                  background: "#fff",
+                  boxShadow: "0 1px 3px rgba(0,0,0,0.25)",
+                },
+              })
+            ),
+
+            // drag handle (visual only, իրական drag-ը row-ի վրա է)
             h(
               "div",
-              { style: { marginLeft: 6 } },
-              h(LangSwitch, {
-                active,
-                onToggle: () => toggleLang(code),
-              })
+              {
+                className: "lang-drag-handle",
+                style: {
+                  width: 14,
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: 2,
+                  opacity: active ? 0.9 : 0.25,
+                  fontSize: 10,
+                  userSelect: "none",
+                },
+              },
+              "⋮",
+              "⋮"
             )
           );
         })
@@ -1440,7 +1424,7 @@ export default function AdminDashboard({
               setInfoPath("avatar.imageUrl", v);
               setInfoPath("logo_url", v);
             },
-            { placeholder: "https://..."}
+            { placeholder: "https://..." }
           ),
           h(FileButton, {
             label: T.chooseFileLabel,
@@ -1507,7 +1491,7 @@ export default function AdminDashboard({
             : "نام شرکت (FA)";
 
         const extraProps =
-          (code === "ar" || code === "fa")
+          code === "ar" || code === "fa"
             ? { dir: "rtl", placeholder }
             : { placeholder };
 
@@ -1523,7 +1507,7 @@ export default function AdminDashboard({
         );
       }),
 
-      /* ✅ COMPANY NAME COLOR — FIXED */
+      /* COMPANY NAME COLOR */
       h(
         "div",
         { className: "block mb-4", id: "companyNameColor" },
@@ -1584,7 +1568,7 @@ export default function AdminDashboard({
             : "توضیحات (FA)";
 
         const extraProps =
-          (code === "ar" || code === "fa")
+          code === "ar" || code === "fa"
             ? { dir: "rtl", placeholder }
             : { placeholder };
 
@@ -1600,7 +1584,7 @@ export default function AdminDashboard({
         );
       }),
 
-      /* ✅ DESCRIPTION COLOR — FIXED */
+      /* DESCRIPTION COLOR */
       h(
         "div",
         { className: "block mb-4", id: "descriptionColor" },
@@ -1650,7 +1634,6 @@ export default function AdminDashboard({
         )
       ),
 
-      /* ✅ BACKGROUND COLOR — FIXED */
       info?.background?.type === "color" &&
         h(
           "div",
