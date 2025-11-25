@@ -25,7 +25,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "Սյունակներ",
     labelColor: "Իկոնների անունների գույնը",
     iconBg: "Իկոնների հետնաֆոնը",
-    iconColor: "Իկոնների գույնը", // ✅ NEW
+    iconColor: "Իկոնների գույնը",
     rowCardBg: "Տողային իկոնների հետնաֆոն (Սյունակ 1)",
     addButton: "Ավելացնել",
     deleteButton: "Ջնջել",
@@ -58,7 +58,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "Колонки",
     labelColor: "Цвет названий иконок",
     iconBg: "Фон иконок",
-    iconColor: "Цвет иконок", // ✅ NEW
+    iconColor: "Цвет иконок",
     rowCardBg: "Фон строковых иконок (1 колонка)",
     addButton: "Добавить",
     deleteButton: "Удалить",
@@ -91,7 +91,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "Columns",
     labelColor: "Icon name color",
     iconBg: "Icon background",
-    iconColor: "Icon color", // ✅ NEW
+    iconColor: "Icon color",
     rowCardBg: "Row icons background (column 1)",
     addButton: "Add",
     deleteButton: "Delete",
@@ -124,7 +124,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "الأعمدة",
     labelColor: "لون أسماء الأيقونات",
     iconBg: "خلفية الأيقونات",
-    iconColor: "لون الأيقونات", // ✅ NEW
+    iconColor: "لون الأيقونات",
     rowCardBg: "خلفية الأيقونات في الصف (عمود واحد)",
     addButton: "إضافة",
     deleteButton: "حذف",
@@ -157,7 +157,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "Colonnes",
     labelColor: "Couleur des noms d’icônes",
     iconBg: "Arrière-plan des icônes",
-    iconColor: "Couleur des icônes", // ✅ NEW
+    iconColor: "Couleur des icônes",
     rowCardBg: "Arrière-plan des icônes en ligne (1 colonne)",
     addButton: "Ajouter",
     deleteButton: "Supprimer",
@@ -191,7 +191,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "Бағандар",
     labelColor: "Иконка атауларының түсі",
     iconBg: "Иконкалардың фоны",
-    iconColor: "Иконкалардың түсі", // ✅ NEW
+    iconColor: "Иконкалардың түсі",
     rowCardBg: "Жол иконкаларының фоны (1 баған)",
     addButton: "Қосу",
     deleteButton: "Жою",
@@ -226,7 +226,7 @@ const ICONS_UI_TEXT = {
     colsLabel: "列数",
     labelColor: "图标名称颜色",
     iconBg: "图标背景",
-    iconColor: "图标颜色", // ✅ NEW
+    iconColor: "图标颜色",
     rowCardBg: "行内图标背景（1 列）",
     addButton: "添加",
     deleteButton: "删除",
@@ -460,6 +460,35 @@ const FA_PRESETS = [
   "fa-brands fa-threads",
 ];
 
+/* ==== phone-like icon href patterns (prefix fixed, user types only number) ==== */
+const ICON_HREF_PATTERNS = {
+  "fa-solid fa-phone": {
+    prefix: "tel:",
+    placeholder: "+374XXXXXXXX",
+    label: "Phone number",
+  },
+  "fa-solid fa-comment-dots": {
+    prefix: "sms:",
+    placeholder: "+374XXXXXXXX",
+    label: "SMS phone number",
+  },
+  "fa-brands fa-whatsapp": {
+    prefix: "https://wa.me/",
+    placeholder: "374XXXXXXXX",
+    label: "WhatsApp number",
+  },
+  "fa-brands fa-viber": {
+    prefix: "viber://chat?number=",
+    placeholder: "+374XXXXXXXX",
+    label: "Viber phone number",
+  },
+  "fa-brands fa-telegram": {
+    prefix: "https://t.me/",
+    placeholder: "@username or phone",
+    label: "Telegram",
+  },
+};
+
 function uid() {
   return (
     globalThis.crypto?.randomUUID?.() ||
@@ -558,6 +587,12 @@ function faClass(raw) {
   if (/\bfa-(solid|regular|brands)\b|\bfa-[a-z0-9-]+/i.test(s)) return s; // already class
   const m = ICON_MAP[s.toLowerCase()];
   return m || "";
+}
+
+/* ---- helper: get href pattern for icon ---- */
+function getHrefPatternForIcon(iconRaw) {
+  const fa = faClass(iconRaw);
+  return ICON_HREF_PATTERNS[fa] || null;
 }
 
 /* =================== Custom Preset Dropdown =================== */
@@ -731,6 +766,14 @@ function IconRow({
     })
   );
 
+  // 👉 phone-like icons՝ prefix + միայն համարի դաշտ
+  const hrefPattern = getHrefPatternForIcon(it.icon);
+  const rawHref = it.href || "";
+  let phoneValue = rawHref;
+  if (hrefPattern && rawHref.startsWith(hrefPattern.prefix)) {
+    phoneValue = rawHref.slice(hrefPattern.prefix.length);
+  }
+
   return h(
     React.Fragment,
     null,
@@ -813,28 +856,87 @@ function IconRow({
           )
         ),
 
-        // href + preset
-        h(
-          "div",
-          {
-            style: {
-              display: "grid",
-              gap: 8,
-            },
-          },
-          h("input", {
-            className: "input",
-            value: it.href || "",
-            placeholder: T.urlPlaceholder,
-            onChange: (e) => onField(it.uid, { href: e.target.value }),
-          }),
-          h(PresetSelect, {
-            presets: FA_PRESETS,
-            onPick: (v) => onField(it.uid, { icon: v }),
-            label: T.presetButton,
-            searchPlaceholder: T.presetSearchPlaceholder,
-          })
-        ),
+        // href + preset (երկու տարբերակով)
+        hrefPattern
+          ? h(
+              "div",
+              { style: { display: "grid", gap: 8 } },
+              h(
+                "div",
+                {
+                  style: {
+                    fontSize: 12,
+                    opacity: 0.75,
+                    fontWeight: 500,
+                  },
+                },
+                hrefPattern.label
+              ),
+              h(
+                "div",
+                {
+                  style: {
+                    display: "grid",
+                    gridTemplateColumns: "auto minmax(0,1fr)",
+                    gap: 8,
+                    alignItems: "center",
+                  },
+                },
+                h(
+                  "div",
+                  {
+                    style: {
+                      padding: "8px 10px",
+                      borderRadius: 8,
+                      background: "#f3f4f6",
+                      border: "1px solid #e5e7eb",
+                      fontFamily: "monospace",
+                      fontSize: 13,
+                      whiteSpace: "nowrap",
+                    },
+                  },
+                  hrefPattern.prefix
+                ),
+                h("input", {
+                  className: "input",
+                  value: phoneValue,
+                  placeholder: hrefPattern.placeholder || "+374…",
+                  onChange: (e) => {
+                    const num = e.target.value.trim();
+                    onField(it.uid, {
+                      href: hrefPattern.prefix + num,
+                    });
+                  },
+                })
+              ),
+              h(PresetSelect, {
+                presets: FA_PRESETS,
+                onPick: (v) => onField(it.uid, { icon: v }),
+                label: T.presetButton,
+                searchPlaceholder: T.presetSearchPlaceholder,
+              })
+            )
+          : h(
+              "div",
+              {
+                style: {
+                  display: "grid",
+                  gap: 8,
+                },
+              },
+              h("input", {
+                className: "input",
+                value: it.href || "",
+                placeholder: T.urlPlaceholder,
+                onChange: (e) => onField(it.uid, { href: e.target.value }),
+              }),
+              h(PresetSelect, {
+                presets: FA_PRESETS,
+                onPick: (v) => onField(it.uid, { icon: v }),
+                label: T.presetButton,
+                searchPlaceholder: T.presetSearchPlaceholder,
+              })
+            ),
 
         h(
           "div",
@@ -872,7 +974,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   const [items, setItems] = React.useState([]);
   const [style, setStyle] = React.useState({
     labelHEX: "#d9caa0",
-    iconHEX: "#ffffff", // ✅ NEW
+    iconHEX: "#ffffff",
     chipRGBA: { r: 47, g: 47, b: 47, a: 1 },
     layoutStyle: "dzev1",
     cols: 4,
@@ -920,7 +1022,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     [labelRgbObj]
   );
 
-  // ✅ NEW derived icon css
   const iconRgbObj = React.useMemo(
     () => hexToRgb(style.iconHEX),
     [style.iconHEX]
@@ -972,7 +1073,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
         setStyle({
           labelHEX: icons.styles?.labelHEX || "#d9caa0",
-          iconHEX: icons.styles?.iconHEX || "#ffffff", // ✅ NEW load
+          iconHEX: icons.styles?.iconHEX || "#ffffff",
           chipRGBA: icons.styles?.chipRGBA || {
             r: 47,
             g: 47,
@@ -1055,7 +1156,22 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       return cp;
     });
     setItems((list) =>
-      list.map((it) => (it.uid === uidKey ? { ...it, ...patch } : it))
+      list.map((it) => {
+        if (it.uid !== uidKey) return it;
+        let next = { ...it, ...patch };
+
+        // եթե icon-ը փոխվեց՝ ավտոմատ դնենք prefix
+        if (patch.icon) {
+          const pattern = getHrefPatternForIcon(patch.icon);
+          if (pattern) {
+            const cur = String(next.href || "");
+            if (!cur.startsWith(pattern.prefix)) {
+              next.href = pattern.prefix;
+            }
+          }
+        }
+        return next;
+      })
     );
   };
 
@@ -1084,7 +1200,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     setItems((list) => list.filter((x) => x.uid !== uidKey));
   };
 
-  // ✅ reorder (B տարբերակ)
+  // reorder
   const onMoveUp = (uidKey) => {
     setItems((list) => {
       const idx = list.findIndex((x) => x.uid === uidKey);
@@ -1131,22 +1247,20 @@ export default function IconsTab({ langs, uiLang = "en" }) {
 
       const info = { ...(baseInfo || {}) };
 
-      // ❗ rowCard background-ը կապում ենք icon background-ին,
-      // որպեսզի 1 սյունակով layout-ի դեպքում էլ նույն գույնը լինի
+      // rowCard background-ը կապում ենք icon background-ին
       info.icons = {
         links,
         styles: {
           labelHEX: style.labelHEX,
-          iconHEX: style.iconHEX, // ✅ NEW save
+          iconHEX: style.iconHEX,
           chipRGBA: style.chipRGBA,
           layoutStyle: style.layoutStyle,
           cols: Number(style.cols || 4),
           glowEnabled: !!style.glowEnabled,
           glowColor: style.glowColor,
           labelCss,
-          iconCss, // ✅ NEW computed
+          iconCss,
           chipCss,
-          // ✅ row-card bg = նույնը, ինչ icon background-ը
           rowCardRGBA: style.chipRGBA,
           rowCardCss: chipCss,
         },
