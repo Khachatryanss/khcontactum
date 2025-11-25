@@ -1130,6 +1130,9 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       }
 
       const info = { ...(baseInfo || {}) };
+
+      // ❗ rowCard background-ը կապում ենք icon background-ին,
+      // որպեսզի 1 սյունակով layout-ի դեպքում էլ նույն գույնը լինի
       info.icons = {
         links,
         styles: {
@@ -1143,8 +1146,9 @@ export default function IconsTab({ langs, uiLang = "en" }) {
           labelCss,
           iconCss, // ✅ NEW computed
           chipCss,
-          rowCardRGBA: style.rowCardRGBA,
-          rowCardCss,
+          // ✅ row-card bg = նույնը, ինչ icon background-ը
+          rowCardRGBA: style.chipRGBA,
+          rowCardCss: chipCss,
         },
       };
 
