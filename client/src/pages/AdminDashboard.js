@@ -192,7 +192,7 @@ const ADMIN_UI_TEXT = {
     avatarTypeVideo: "فيديو",
     avatarImageUrlLabel: "رابط صورة الـ Avatar",
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
-    avatarVideoUrlLabel: "رابط Видео الـ Avatar",
+    avatarVideoUrlLabel: "رابط فيديو الـ Avatar",
     avatarVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
 
     companyNameTitle: "اسم الشركة",
@@ -207,7 +207,7 @@ const ADMIN_UI_TEXT = {
     backgroundTypeVideo: "فيديو",
     backgroundColorLabel: "لون الخلفية",
     backgroundImageUrlLabel: "رابط صورة الخلفية",
-    backgroundVideoUrlLabel: "رابط Видео الخلفية",
+    backgroundVideoUrlLabel: "رابط فيديو الخلفية",
     backgroundVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
 
     saveButton: "حفظ",
@@ -268,10 +268,10 @@ const ADMIN_UI_TEXT = {
     saveError: "Erreur lors de l’enregistrement",
 
     needLoginTitle: "Connexion requise",
-    needLoginBody: "Connectez-vous sur la 페이지 /.",
+    needLoginBody: "Connectez-vous sur la page /.",
     loading: "Chargement…",
 
-    chooseFileLabel: "Choisir файл",
+    chooseFileLabel: "Choisir un fichier",
   },
 
   kz: {
@@ -340,7 +340,7 @@ const ADMIN_UI_TEXT = {
 
     langsTitle: "语言",
     langsDescription:
-      "选择启용的语言并调整顺序；第一个将作为公开页面的默认语言。",
+      "选择启用的语言并调整顺序；第一个将作为公开页面的默认语言。",
 
     avatarTitle: "头像",
     typeLabel: "类型",
@@ -519,7 +519,7 @@ const ADMIN_UI_TEXT = {
     backgroundTypeVideo: "Video",
     backgroundColorLabel: "Colore di sfondo",
     backgroundImageUrlLabel: "URL immagine di sfondo",
-    backgroundVideoUrlLabel: "URL видео di sfondo",
+    backgroundVideoUrlLabel: "URL video di sfondo",
     backgroundVideoHint: "Max 20 MB (mp4, webm, ogg)",
 
     saveButton: "Salva",
@@ -531,7 +531,7 @@ const ADMIN_UI_TEXT = {
     needLoginBody: "Effettua l’accesso nella pagina /.",
     loading: "Caricamento…",
 
-    chooseFileLabel: "Scegli файл",
+    chooseFileLabel: "Scegli file",
   },
 
   fa: {
@@ -1185,7 +1185,7 @@ export default function AdminDashboard({
   const Card = (title, children) =>
     h(
       "div",
-      { className: "card admin-card" }, // ⬅️ ԱՅՍՏԵՂ ԱՎԵԼԱՑՐԵԼ ԵՄ admin-card
+      { className: "card" },
       (title || (token && !loading)) &&
         h(
           "div",
@@ -1722,7 +1722,7 @@ export default function AdminDashboard({
         h(
           "button",
           {
-            className: "btn save-btn-fixed", // ⬅️ ԱՅՍՏԵՂ ԱՎԵԼԱՑՐԵԼ ԵՄ save-btn-fixed
+            className: "btn",
             disabled: savingInfo,
             onClick: saveInfo,
           },
