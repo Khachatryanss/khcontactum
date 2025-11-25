@@ -418,3 +418,25 @@
   display: flex;
   align-items: center;
 }
+
+/* Admin card-ի ներքևի մասում տեղ բաց թողնենք, որ կոճակը չծածկի form-ը */
+.admin-card {
+  padding-bottom: 90px; /* կարելի է փոխել 70–110px-ի մեջ՝ ըստ ճաշակի */
+}
+
+/* Ֆիքսված Save կոճակ — հեռախոսի ներքևի բարը նման */
+.save-btn-fixed {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+
+  width: calc(100% - 48px); /* card-ի ներսում քիչ margin թողնելու համար */
+  max-width: 430px;         /* PhoneShell-ի լայնությանը մոտ արժեք */
+  z-index: 9999;
+
+  border-radius: 999px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.28);
+}
+
+
