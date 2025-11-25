@@ -299,7 +299,7 @@ const ADMIN_UI_TEXT = {
     avatarVideoUrlLabel: "Avatar видеосының сілтемесі",
     avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
 
-    companyNameTitle: "КОМПԱՆИЯ АТЫ",
+    companyNameTitle: "КОМПАНИЯ АТЫ",
     nameColorLabel: "Атаудың түсі",
 
     descriptionTitle: "СИПАТТАМА",
@@ -765,17 +765,7 @@ export default function AdminDashboard({
   const [savingInfo, setSavingInfo] = useState(false);
   const [infoMsg, setInfoMsg] = useState("");
 
-  // ակտիվ լեզուներ
   const [langs, setLangs] = useState(["am", "ru", "en", "ar", "fr"]);
-
-  // code → դիրք (1..N) սլայդերի համար
-  const [langOrder, setLangOrder] = useState(() => {
-    const o = {};
-    ALL_LANGS.forEach((l, i) => {
-      o[l.code] = i + 1;
-    });
-    return o;
-  });
 
   const [avatarPreview, setAvatarPreview] = useState("");
   const [bgImagePreview, setBgImagePreview] = useState("");
@@ -828,17 +818,7 @@ export default function AdminDashboard({
         });
 
         if (!langsArr.length) langsArr = ["am"];
-
         setLangs(langsArr);
-
-        // sync sliders with order from server (default_lang first)
-        setLangOrder((prev) => {
-          const next = { ...prev };
-          langsArr.forEach((code, idx) => {
-            next[code] = idx + 1;
-          });
-          return next;
-        });
       } catch (e) {
         setMsg(e.message || "Load failed");
       } finally {
@@ -1100,41 +1080,28 @@ export default function AdminDashboard({
     }
   }
 
-  // on/off toggle
   function toggleLang(code) {
     setLangs((prev) => {
       const exists = prev.includes(code);
       if (exists) {
-        // գոնե 1 լեզու թող անպայման մնա
         if (prev.length === 1) return prev;
         return prev.filter((c) => c !== code);
       }
-      // նոր միացված լեզուն դնում ենք հաջորդ ազատ դիրքում
-      setLangOrder((prevOrder) => {
-        const maxOrder = Object.values(prevOrder).reduce(
-          (max, n) =>
-            typeof n === "number" && n > max ? n : max,
-          0
-        );
-        return { ...prevOrder, [code]: maxOrder + 1 };
-      });
       return [...prev, code];
     });
   }
 
-  // slider–ով հերթականության փոփոխություն
-  function handleLangOrderChange(code, newPos) {
-    setLangOrder((prev) => {
-      const next = { ...prev, [code]: newPos };
-      // sort ակտիվ լեզուները ըստ նոր կարգի
-      setLangs((prevLangs) => {
-        const arr = prevLangs.slice();
-        arr.sort(
-          (a, b) => (next[a] || 999) - (next[b] || 999)
-        );
-        return arr;
-      });
-      return next;
+  // վերև / ներքև reorder (օգտագործում ենք սլաքների համար)
+  function moveLang(code, dir) {
+    setLangs((prev) => {
+      const idx = prev.indexOf(code);
+      if (idx === -1) return prev;
+      const nextIdx = dir === "up" ? idx - 1 : idx + 1;
+      if (nextIdx < 0 || nextIdx >= prev.length) return prev;
+      const arr = prev.slice();
+      const [item] = arr.splice(idx, 1);
+      arr.splice(nextIdx, 0, item);
+      return arr;
     });
   }
 
@@ -1265,12 +1232,14 @@ export default function AdminDashboard({
           T.langsDescription
         ),
 
-        ALL_LANGS.map(({ code, label }, staticIndex) => {
-          const active = langs.includes(code);
-          const orderValue =
-            typeof langOrder[code] === "number"
-              ? langOrder[code]
-              : staticIndex + 1;
+        ALL_LANGS.map(({ code, label }) => {
+          const orderIndex = langs.indexOf(code);
+          const active = orderIndex !== -1;
+          const orderLabel = active ? `#${orderIndex + 1}` : "—";
+
+          const upDisabled = !active || orderIndex === 0;
+          const downDisabled =
+            !active || orderIndex === langs.length - 1;
 
           return h(
             "div",
@@ -1282,7 +1251,6 @@ export default function AdminDashboard({
                 marginLeft: "5px",
                 alignItems: "center",
                 opacity: active ? 1 : 0.4,
-                background: "transparent",
                 borderRadius: 8,
                 padding: "2px 4px",
               },
@@ -1302,7 +1270,7 @@ export default function AdminDashboard({
               code.toUpperCase()
             ),
 
-            // label
+            // full label
             h(
               "span",
               {
@@ -1311,44 +1279,79 @@ export default function AdminDashboard({
                   fontSize: "14px",
                   fontFamily: "revert-layer",
                   width: 100,
+                  paddingLeft: 6,
                 },
               },
               label
             ),
 
-            // հաստատուն համար (#1,#2,...) ըստ ALL_LANGS կարգի — չի փոխվում
+            // order label (#1, #2, ...)
             h(
               "span",
               {
-                className: "small",
                 style: {
-                  minWidth: 40,
+                  minWidth: 32,
                   fontSize: "13px",
                   opacity: 0.8,
                   textAlign: "right",
                   marginRight: 6,
                 },
               },
-              `#${staticIndex + 1}`
+              orderLabel
             ),
 
-            // slider — իրական հերթականությունը
-            h("input", {
-              type: "range",
-              min: 1,
-              max: ALL_LANGS.length,
-              value: orderValue,
-              disabled: !active,
-              onChange: (e) =>
-                handleLangOrderChange(code, Number(e.target.value)),
-              style: {
-                width: 80,
-                marginRight: 6,
-                cursor: active ? "pointer" : "not-allowed",
+            // up / down arrows
+            h(
+              "div",
+              {
+                style: {
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                  marginRight: 6,
+                },
               },
-            }),
+              h(
+                "button",
+                {
+                  type: "button",
+                  disabled: upDisabled,
+                  onClick: () => !upDisabled && moveLang(code, "up"),
+                  style: {
+                    width: 22,
+                    height: 16,
+                    borderRadius: 4,
+                    border: "none",
+                    fontSize: 11,
+                    lineHeight: 1,
+                    cursor: upDisabled ? "default" : "pointer",
+                    opacity: upDisabled ? 0.3 : 0.9,
+                  },
+                },
+                "▲"
+              ),
+              h(
+                "button",
+                {
+                  type: "button",
+                  disabled: downDisabled,
+                  onClick: () => !downDisabled && moveLang(code, "down"),
+                  style: {
+                    width: 22,
+                    height: 16,
+                    borderRadius: 4,
+                    border: "none",
+                    fontSize: 11,
+                    lineHeight: 1,
+                    cursor: downDisabled ? "default" : "pointer",
+                    opacity: downDisabled ? 0.3 : 0.9,
+                  },
+                },
+                "▼"
+              )
+            ),
 
-            // on/off switch
+            // active / inactive switch
             h(
               "button",
               {
