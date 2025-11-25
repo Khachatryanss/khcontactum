@@ -223,7 +223,7 @@ const ADMIN_UI_TEXT = {
 
     needLoginTitle: "مطلوب تسجيل الدخول",
     needLoginBody: "يرجى تسجيل الدخول من صفحة /.",
-    loading: "جاري التحميل…",
+    loading: "جاري التحمیل…",
 
     defaultBadge: "افتراضي",
 
@@ -669,6 +669,41 @@ const ALL_LANGS = [
 ];
 const ALL_CODES = ALL_LANGS.map((x) => x.code);
 
+function LangSwitch({ active, onToggle }) {
+  return React.createElement(
+    "button",
+    {
+      type: "button",
+      onClick: () => onToggle && onToggle(),
+      "aria-pressed": active,
+      style: {
+        width: 42,
+        height: 24,
+        borderRadius: 999,
+        border: "1px solid rgba(0,0,0,0.15)",
+        background: active ? "#111" : "#d1d1d1",
+        position: "relative",
+        cursor: "pointer",
+        padding: 0,
+        outline: "none",
+      },
+    },
+    React.createElement("span", {
+      style: {
+        position: "absolute",
+        top: 2,
+        left: active ? 20 : 2,
+        width: 20,
+        height: 20,
+        borderRadius: "50%",
+        background: "#fff",
+        boxShadow: "0 2px 4px rgba(0,0,0,.3)",
+        transition: "left 0.18s ease-out",
+      },
+    })
+  );
+}
+
 // always return full shape + back-compat mapping
 function normalizeInfo(partial) {
   const i = partial || {};
@@ -788,6 +823,7 @@ export default function AdminDashboard({
   const [infoMsg, setInfoMsg] = useState("");
 
   const [langs, setLangs] = useState(["am", "ru", "en", "ar", "fr"]);
+  const dragLangIndex = React.useRef(null);
 
   const [avatarPreview, setAvatarPreview] = useState("");
   const [bgImagePreview, setBgImagePreview] = useState("");
@@ -1256,6 +1292,8 @@ export default function AdminDashboard({
         ALL_LANGS.map(({ code, label }) => {
           const active = langs.includes(code);
           const idx = langs.indexOf(code);
+          const isActive = active && idx !== -1;
+
           return h(
             "div",
             {
@@ -1266,19 +1304,63 @@ export default function AdminDashboard({
                 marginLeft: "5px",
                 alignItems: "center",
                 opacity: active ? 1 : 0.4,
+                borderRadius: 12,
+                padding: "4px 4px",
+                cursor: isActive ? "grab" : "default",
               },
+              draggable: isActive,
+              onDragStart: isActive
+                ? () => {
+                    dragLangIndex.current = idx;
+                  }
+                : undefined,
+              onDragOver: isActive
+                ? (e) => {
+                    e.preventDefault();
+                  }
+                : undefined,
+              onDrop: isActive
+                ? (e) => {
+                    e.preventDefault();
+                    const from = dragLangIndex.current;
+                    if (from == null) return;
+
+                    setLangs((prev) => {
+                      const to = prev.indexOf(code);
+                      if (to === -1 || from === to) return prev;
+                      if (from < 0 || from >= prev.length) return prev;
+                      const arr = prev.slice();
+                      const [moved] = arr.splice(from, 1);
+                      arr.splice(to, 0, moved);
+                      return arr;
+                    });
+
+                    dragLangIndex.current = null;
+                  }
+                : undefined,
             },
+
+            // language code pill (no toggle here)
             h(
-              "button",
+              "div",
               {
-                type: "button",
-                className: "btn",
-                onClick: () => toggleLang(code),
-                style: { padding: "2px 5px", width: 60 },
+                style: {
+                  padding: "2px 10px",
+                  width: 60,
+                  borderRadius: 999,
+                  border: "1px solid rgba(0,0,0,0.08)",
+                  background: active ? "#111" : "#b3b3b3",
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: 12,
+                  textAlign: "center",
+                  letterSpacing: 0.5,
+                },
               },
               code.toUpperCase()
             ),
 
+            // language label
             h(
               "span",
               {
@@ -1287,44 +1369,37 @@ export default function AdminDashboard({
                   fontSize: "14px",
                   fontFamily: "revert-layer",
                   width: 100,
+                  paddingLeft: 8,
                 },
               },
               label
             ),
 
-            active &&
-              h(
-                "span",
-                {
-                  className: "small",
-                  style: { minWidth: 60, fontSize: "13px", opacity: 0.8 },
-                },
-                idx === 0 ? T.defaultBadge : `#${idx + 1}`
-              ),
+            // default badge (no numeric #1, #2…)
+            active && idx === 0
+              ? h(
+                  "span",
+                  {
+                    className: "small",
+                    style: {
+                      minWidth: 60,
+                      fontSize: "13px",
+                      opacity: 0.8,
+                      marginRight: 6,
+                    },
+                  },
+                  T.defaultBadge
+                )
+              : h("span", { style: { width: 60 } }, ""),
 
+            // on/off switch for active / inactive
             h(
               "div",
-              { style: { display: "flex", gap: "4px" } },
-              h(
-                "button",
-                {
-                  type: "button",
-                  className: "btn",
-                  disabled: !active || idx <= 0,
-                  onClick: () => moveLang(code, "up"),
-                },
-                "↑"
-              ),
-              h(
-                "button",
-                {
-                  type: "button",
-                  className: "btn",
-                  disabled: !active || idx === langs.length - 1,
-                  onClick: () => moveLang(code, "down"),
-                },
-                "↓"
-              )
+              { style: { marginLeft: 6 } },
+              h(LangSwitch, {
+                active,
+                onToggle: () => toggleLang(code),
+              })
             )
           );
         })
