@@ -586,10 +586,7 @@ export default function HomePage({ cardId = "101" }) {
       "—";
 
     const descriptionRaw = textByLang[htmlLang] || "";
-    const description =
-      htmlLang === "hy"
-        ? hyphenateHy(descriptionRaw, "hy")
-        : hyphenateHy(descriptionRaw, htmlLang);
+    const description =descriptionRaw
 
     const [minCh, maxCh] = idealColsForLang(htmlLang);
 
