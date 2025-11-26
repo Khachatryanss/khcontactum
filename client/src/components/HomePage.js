@@ -395,8 +395,10 @@ export default function HomePage({ cardId = "101" }) {
       nameByLang.en ||
       "KHContactum";
 
+    /* 1) PAGE TITLE */
     try { document.title = displayName; } catch {}
 
+    /* 2) iOS Meta Title */
     try {
       let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
       if (!meta) {
@@ -407,6 +409,7 @@ export default function HomePage({ cardId = "101" }) {
       meta.setAttribute("content", displayName);
     } catch {}
 
+    /* 3) manifest.json */
     try {
       let link = document.querySelector('link[rel="manifest"]');
       if (!link) {
@@ -417,6 +420,7 @@ export default function HomePage({ cardId = "101" }) {
       link.setAttribute("href", `/manifest/${cardId}`);
     } catch {}
 
+    /* 4) iOS icons */
     try {
       const iosIcons = [
         { size: 180, href: "/icon-180.png" },
@@ -439,7 +443,6 @@ export default function HomePage({ cardId = "101" }) {
     } catch {}
 
   }, [info, htmlLang, cardId]);
-
 
   // ✅ splash + loading ավարտվելուց հետո auto-open միայն մեկ անգամ
   React.useEffect(() => {
@@ -586,17 +589,23 @@ export default function HomePage({ cardId = "101" }) {
       "—";
 
     const descriptionRaw = textByLang[htmlLang] || "";
-    const description =descriptionRaw
+    const description =
+      htmlLang === "hy"
+        ? hyphenateHy(descriptionRaw, "hy")
+        : hyphenateHy(descriptionRaw, htmlLang);
 
     const [minCh, maxCh] = idealColsForLang(htmlLang);
 
-    // ✅ Փոփոխված style — կենտրոնացված, հավասար եզրերով
+    // ✅ justifed + կենտրոնացված վերջին տող
     const descStyle = {
       color: descColor,
       margin: "15px auto 0",
       lineHeight: 1.6,
       maxWidth: `clamp(${minCh}ch, 90%, ${maxCh}ch)`,
-      textAlign: "center",
+      textAlign: "justify",
+      textJustify: "inter-word",
+      textAlignLast: "center",
+      WebkitTextAlignLast: "center",
       overflowWrap: "break-word",
       wordBreak: "break-word",
     };
