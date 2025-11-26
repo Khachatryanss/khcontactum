@@ -1010,8 +1010,8 @@ export default function AdminDashboard({
       setHomeDirty(true);
       setInfoMsg(
         isVid
-          ? "Avatar video ✔ (խնդրում եմ Save սեղմել վերջում)"
-          : "Avatar image ✔ (խնդրում եմ Save սեղմել վերջում)"
+          ? "Avatar video ✔"
+          : "Avatar image ✔)"
       );
     } catch (err) {
       setInfoMsg(err.message || "Upload failed");
@@ -1041,7 +1041,7 @@ export default function AdminDashboard({
       setInfoPath("background.imageUrl", urlFromRes);
       setInfoPath("background.type", "image");
       setHomeDirty(true);
-      setInfoMsg("Background image ✔ (Save սեղմիր վերջում)");
+      setInfoMsg("Background image ✔");
     } catch (err) {
       setInfoMsg(err.message || "Upload failed");
     } finally {
@@ -1074,7 +1074,7 @@ export default function AdminDashboard({
       setInfoPath("background.videoUrl", urlFromRes);
       setInfoPath("background.type", "video");
       setHomeDirty(true);
-      setInfoMsg("Background video ✔ (Save սեղմիր վերջում)");
+      setInfoMsg("Background video ✔");
     } catch (err) {
       setInfoMsg(err.message || "Upload failed");
     } finally {
