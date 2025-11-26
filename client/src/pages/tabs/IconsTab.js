@@ -8,10 +8,27 @@ const h = React.createElement;
 /* ---------------- constants & helpers ---------------- */
 // ամբողջ հավաքածուն (11 լեզու)
 const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
+
 const rtlProps = (code) =>
-  (code === "ar" || code === "fa")
+  code === "ar" || code === "fa"
     ? { dir: "rtl", style: { textAlign: "right" } }
     : {};
+
+/* UI լեզվի նորմալացում (որ hy → am, իսկ մնացածը 그대로) */
+const UI_LANG_MAP = {
+  hy: "am",
+  am: "am",
+  ru: "ru",
+  en: "en",
+  ar: "ar",
+  fr: "fr",
+  kz: "kz",
+  chn: "chn",
+  de: "de",
+  es: "es",
+  it: "it",
+  fa: "fa",
+};
 
 /* ---------- UI TEXT (multi-lang) ---------- */
 const ICONS_UI_TEXT = {
@@ -1117,7 +1134,8 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     localStorage.getItem("adminToken") ||
     "";
 
-  const T = ICONS_UI_TEXT[uiLang] || ICONS_UI_TEXT.en;
+  const normUi = UI_LANG_MAP[uiLang] || uiLang || "en";
+  const T = ICONS_UI_TEXT[normUi] || ICONS_UI_TEXT.en;
 
   const activeLangs =
     Array.isArray(langs) && langs.length ? langs : LANGS;
