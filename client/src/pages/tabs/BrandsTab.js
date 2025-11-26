@@ -218,7 +218,7 @@ const BRANDS_UI_TEXT = {
     uploadFailed: "Жүктеу сәтсіз аяқталды",
     loadFailed: "Жүктеу сәтсіз ավարտталды",
     savedOk: "Сақталды ✅",
-    saveFailed: "Сақтау сәтсіз ավարտталды",
+    saveFailed: "Սақтау սәтсіз ավարտталды",
   },
 
   // 🇨🇳 Chinese
@@ -665,7 +665,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
   const delBrand = (id) =>
     setBrands((list) => list.filter((b) => b.id !== id));
 
-  // ✅ NEW: clear logo (delete uploaded image)
+  // ✅ clear logo
   const clearLogo = (id) =>
     setBrands((list) =>
       list.map((b) => {
@@ -679,7 +679,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       })
     );
 
-  // ✅ NEW: reorder brands (up/down)
+  // ✅ reorder brands (up/down)
   const moveBrand = (id, dir) => {
     setBrands((list) => {
       const i = list.findIndex((b) => b.id === id);
@@ -796,8 +796,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
   return h(
     "div",
     {
-      className: "admin-scroll-root",
-      style: { minHeight: "100%", overflowX: "clip" }, // 👉 որ ներքևի toolbar-ը տեղ ունենա
+      className: "admin-scroll-root brands-tab-root",
     },
     h(
       "h2",
@@ -880,7 +879,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           "div",
           { key: b.id, className: "brand-row card" },
 
-          // ✅ LEFT SIDE: logo + remove logo + order arrows
+          // LEFT SIDE: logo + remove logo + order arrows
           h(
             "div",
             { className: "brand-side" },
@@ -901,7 +900,6 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
                   )
             ),
 
-            // ✅ NEW: remove uploaded logo button
             h(
               "button",
               {
@@ -914,7 +912,6 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
               T.removeLogoButton
             ),
 
-            // ✅ NEW: up/down ordering controls
             h(
               "div",
               { className: "order-controls" },
@@ -943,7 +940,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
             )
           ),
 
-          // RIGHT SIDE (unchanged)
+          // RIGHT SIDE
           h(
             "div",
             { className: "brand-main" },
@@ -1082,7 +1079,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
     // scroll target
     h("div", { ref: bottomRef, style: { height: 1 } }),
 
-    // ✅ sticky footer — նույն ոճով ինչպես IconsTab-ում
+    // ✅ FIXED (STICKY) FOOTER ԱՅՍՏԵՂ
     h(
       "div",
       { className: "footer-actions-fixed" },
@@ -1158,7 +1155,6 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         padding:12px;
       }
 
-      /* ✅ UPDATED: left column like screenshot */
       .brand-row{
         display:grid;
         grid-template-columns:110px 1fr;
@@ -1195,7 +1191,6 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         font-weight:700;
       }
 
-      /* ✅ NEW: order arrows */
       .order-controls{
         width:100%;
         display:grid;
@@ -1242,7 +1237,6 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       .btn.danger{ background:#e8554d; }
       .btn.strong{ font-weight:700; }
 
-      /* ✅ NEW: ghost button for remove logo */
       .btn.ghost{
         background:#f3f4f6;
         color:#111;
@@ -1265,23 +1259,28 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         color:#444;
       }
 
-      .admin-scroll-root{
+      .brands-tab-root{
+        min-height:100%;
+        display:flex;
+        flex-direction:column;
         overscroll-behavior:contain;
-        padding-bottom:88px; /* 👉 տեղ Add / Save fixed բարի համար */
+        padding-bottom:88px; /* տեղ toolbar-ի համար */
       }
 
+      /* 👇 ֆիքսված Add / Save բարը, IconsTab-ի ոճով */
       .footer-actions-fixed{
         position:sticky;
         bottom:0;
         z-index:20;
         margin-top:12px;
-        padding:10px 12px;
+        padding:10px 12px 12px;
         display:flex;
         align-items:center;
         gap:8px;
         background:#f7f7f8;
         border-top:1px solid rgba(0,0,0,.06);
-        box-shadow:0 -4px 18px rgba(0,0,0,.08);
+        box-shadow:0 -4px 18px rgba(0,0,0,.12);
+        border-radius:18px;
       }
 
       .floating-menu{
