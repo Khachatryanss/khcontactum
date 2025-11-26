@@ -216,9 +216,9 @@ const BRANDS_UI_TEXT = {
       "Тек сурет немесе видео файлдар қабылданады",
     uploadOk: "Логотип жүктелді ✔",
     uploadFailed: "Жүктеу сәтсіз аяқталды",
-    loadFailed: "Жүктеу սәтсіз ավարտталды",
+    loadFailed: "Жүктеу сәтсіз ավարտталды",
     savedOk: "Сақталды ✅",
-    saveFailed: "Սақтау սәтсіз ավարտталды",
+    saveFailed: "Сақтау сәтсіз ավարտталды",
   },
 
   // 🇨🇳 Chinese
@@ -795,7 +795,10 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
 
   return h(
     "div",
-    { className: "admin-scroll-root" },
+    {
+      className: "admin-scroll-root",
+      style: { minHeight: "100%", overflowX: "clip" }, // 👉 որ ներքևի toolbar-ը տեղ ունենա
+    },
     h(
       "h2",
       {
@@ -1079,7 +1082,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
     // scroll target
     h("div", { ref: bottomRef, style: { height: 1 } }),
 
-    // sticky footer
+    // ✅ sticky footer — նույն ոճով ինչպես IconsTab-ում
     h(
       "div",
       { className: "footer-actions-fixed" },
@@ -1264,19 +1267,21 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
 
       .admin-scroll-root{
         overscroll-behavior:contain;
-        padding-bottom:16px;
+        padding-bottom:88px; /* 👉 տեղ Add / Save fixed բարի համար */
       }
 
       .footer-actions-fixed{
         position:sticky;
         bottom:0;
+        z-index:20;
         margin-top:12px;
-        padding:10px 8px 6px;
+        padding:10px 12px;
         display:flex;
         align-items:center;
-        gap:10px;
-        background:#fff;
-        border-radius:18px;
+        gap:8px;
+        background:#f7f7f8;
+        border-top:1px solid rgba(0,0,0,.06);
+        box-shadow:0 -4px 18px rgba(0,0,0,.08);
       }
 
       .floating-menu{
