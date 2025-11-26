@@ -1269,20 +1269,21 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       }
 
       /* 👇 ֆիքսված Add / Save բարը, IconsTab-ի ոճով */
-      .footer-actions-fixed{
-        position:sticky;
-        bottom:0;
-        z-index:20;
-        margin-top:12px;
-        padding:10px 12px 12px;
-        display:flex;
-        align-items:center;
-        gap:8px;
-        background:#f7f7f8;
-        border-top:1px solid rgba(0,0,0,.06);
-        box-shadow:0 -4px 18px rgba(0,0,0,.12);
-        border-radius:18px;
-      }
+      .footer-actions-fixed {
+  position: fixed !important;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  
+  padding: 12px 20px;
+  background: #fff;
+  z-index: 9999;
+  box-shadow: 0 -6px 18px rgba(0,0,0,0.1);
+  
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
 
       .floating-menu{
         max-height:60vh;
@@ -1300,6 +1301,11 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       .floating-menu .menu-item:hover{
         background:#f4f4f4;
       }
+        .admin-scroll-root {
+  overflow: visible !important;
+  position: relative;
+  padding-bottom: 100px; /* որ ներքևում տեղ լինի */
+}
     `
     )
   );
