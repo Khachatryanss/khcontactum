@@ -131,7 +131,7 @@ const TEXT = {
     scanBtn: "QR-КОДТЫ СКАНЕРЛЕУ",
     shareTitle: "МЕНІҢ КАРТАМДЫ БӨЛІСУ",
     addBtn: "МЕНІ БАЙЛАНЫС ТІЗІМІНЕ ҚОСУ",
-    qrOnline: "ОНЛАЙՆ QR-КОД",
+    qrOnline: "ОНЛАЙН QR-КОД",
     qrOffline: "ОФФЛАЙН QR-КОД",
     offlineNote: "Сканерлегеннен кейін контактілеріңізге сақтай аласыз.",
     shareDefault: "Менің KHContactum.com цифрлық визиткамды қараңыз.",
@@ -200,7 +200,7 @@ const TEXT = {
     qrOnline: "کد QR آنلاین",
     qrOffline: "کد QR آفلاین",
     offlineNote: "بعد از اسکن می‌توانید در مخاطبین ذخیره کنید.",
-    shareDefault: "کارت دیجیتال من در KHContactum.com را ببینید.",
+    shareDefault: "کارت ویزیت دیجیتال من که در KHContactum.com ساخته شده است را ببینید.",
     mailSubject: "کارت دیجیتال KHContactum",
     confirmTitle: "آیا {{name}} به مخاطبین اضافه شود؟",
     confirmYes: "بله",
@@ -310,6 +310,83 @@ function guessLabelFromUrl(u) {
   if (s.includes("youtube.") || s.includes("youtu.be")) return "YouTube";
   if (s.includes("tiktok.")) return "TikTok";
   if (s.includes("khcontactum.com")) return "KHContactum Digital Card";
+  return "";
+}
+
+/* ======= ՆՈՐ helper — հանել phone-ը icon-ներից, fallback-ի համար ======= */
+function extractPrimaryPhoneFromIcons(info) {
+  if (!info) return "";
+
+  let icons = [];
+  if (Array.isArray(info.icons)) {
+    icons = info.icons;
+  } else if (Array.isArray(info.iconRows)) {
+    icons = info.iconRows.flatMap((row) =>
+      Array.isArray(row?.items) ? row.items : row ? [row] : []
+    );
+  }
+
+  if (!icons.length) return "";
+
+  // 1․ նախ փորձենք kind === phone / tel / call
+  for (const item of icons) {
+    if (!item) continue;
+    if (item.enabled === false || item.hidden === true) continue;
+
+    const kind = (
+      item.kind ||
+      item.type ||
+      item.icon ||
+      ""
+    )
+      .toString()
+      .toLowerCase();
+
+    let value =
+      item.phone ||
+      item.href ||
+      item.url ||
+      item.link ||
+      item.value ||
+      item.text ||
+      "";
+    if (!value) continue;
+    value = String(value).trim();
+    if (!value) continue;
+
+    if (kind === "phone" || kind === "tel" || kind === "call") {
+      // հանենք tel: prefix-ը, թող մնա մաքուր համար
+      return value.replace(/^tel:/i, "").trim();
+    }
+  }
+
+  // 2․ եթե explicit kind չկա, փորձենք tel: կամ մաքուր համար
+  for (const item of icons) {
+    if (!item) continue;
+    if (item.enabled === false || item.hidden === true) continue;
+
+    let value =
+      item.phone ||
+      item.href ||
+      item.url ||
+      item.link ||
+      item.value ||
+      item.text ||
+      "";
+    if (!value) continue;
+    value = String(value).trim();
+    if (!value) continue;
+
+    if (/^tel:/i.test(value)) {
+      return value.replace(/^tel:/i, "").trim();
+    }
+
+    // մաքուր համար (կամ +374…)
+    if (/^\+?\d[\d\s\-()]{4,}$/.test(value)) {
+      return value;
+    }
+  }
+
   return "";
 }
 
@@ -520,17 +597,27 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
     share.onlineUrl || defaultOnlineUrl(cardId)
   );
 
-  // ընկերության անունը – փորձենք pickLang-ով
+  // ընկերության անունը – pickLang-ով
   const companyName =
     (info && info.company && pickLang(info.company.name, activeLangRaw)) ||
     "";
 
+  // 🔹 ՆՈՐ ԼՈԳԻԿԱ — offlineName միշտ companyName (fallback՝ share.offlineFullName)
   const offlineName =
-    share.offlineFullName ||
     companyName ||
+    share.offlineFullName ||
     "";
 
-  const offlinePhone = share.offlinePhone || "";
+  // 🔹 ՆՈՐ ԼՈԳԻԿԱ — Phone:
+  // 1) եթե admin-ում Phone դաշտը լրացված է → share.offlinePhone
+  // 2) եթե դատարկ է → հանել icons-ից phone-ը
+  // 3) եթե icons-ով էլ չկա → թողնել դատարկ
+  const explicitPhone = share.offlinePhone && share.offlinePhone.trim();
+  const phoneFromIcons = React.useMemo(
+    () => extractPrimaryPhoneFromIcons(info),
+    [info]
+  );
+  const offlinePhone = explicitPhone || phoneFromIcons || "";
 
   // KHContactum Digital Card + icon links
   const contactMeta = React.useMemo(
@@ -657,7 +744,7 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
         t.scanBtn
       ),
 
-      // ======== «Կիսվել իմ քարտով» button (վերևի h3-ը հանված է) =========
+      // ======== «Կիսվել իմ քարտով» button =========
       h(
         "button",
         {

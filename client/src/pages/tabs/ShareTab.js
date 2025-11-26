@@ -20,11 +20,11 @@ const SHARE_UI_TEXT = {
     offlineIntro:
       "Այս տվյալները կօգտագործվեն offline QR կոդի և “Ավելացրեք ինձ կոնտակտների ցանկում” կոճակի համար։",
 
+    // fullNameLabel հանում ենք UI-ից, բայց թողնում եմ, որ թարգմանությունը չխանգարի
     fullNameLabel: "Անուն, ազգանուն",
     phoneLabel: "Հեռախոս",
     phonePlaceholder: "+374...",
 
-    // quickTitle / quickIntro էլ ունենք, բայց UI-ում այլևս չենք օգտագործում
     quickTitle: "Արագ կիսվելու ձևեր",
     quickIntro: "Ընտրիր՝ որ icon-ները երևան կիսվելու հատվածում։",
 
@@ -531,7 +531,7 @@ function normalizeShare(raw, cardId) {
     onlineUrl: rawUrl || (cardId ? ONLINE_BASE + cardId : ""),
     onlinePath: (s.onlinePath || path || "").toString().trim(),
 
-    offlineFullName: (s.offlineFullName || "").toString().trim(),
+    offlineFullName: (s.offlineFullName || "").toString().trim(), // մնաց state-ի մեջ, բայց UI չունի
     offlinePhone: (s.offlinePhone || "").toString().trim(),
     shareText: (s.shareText || "").toString().trim(),
     quick: Object.assign({}, DEFAULT_QUICK, s.quick || {}),
@@ -748,16 +748,7 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
       T.offlineIntro
     ),
 
-    h(
-      "label",
-      { className: "block mb-3" },
-      h("div", { className: "text-sm mb-1" }, T.fullNameLabel),
-      h("input", {
-        className: "input",
-        value: share.offlineFullName,
-        onChange: (e) => setField("offlineFullName", e.target.value),
-      })
-    ),
+    // ⚠️ Full name դաշտը ՀԱՆՎԱԾ է, մնում է միայն Phone
 
     h(
       "div",
