@@ -395,14 +395,8 @@ export default function HomePage({ cardId = "101" }) {
       nameByLang.en ||
       "KHContactum";
 
-    /* -----------------------------------------
-       1) PAGE TITLE (web + PWA title)
-    ----------------------------------------- */
     try { document.title = displayName; } catch {}
 
-    /* -----------------------------------------
-       2) iOS Meta Title
-    ----------------------------------------- */
     try {
       let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
       if (!meta) {
@@ -413,9 +407,6 @@ export default function HomePage({ cardId = "101" }) {
       meta.setAttribute("content", displayName);
     } catch {}
 
-    /* -----------------------------------------
-       3) Android & Chrome manifest.json (dynamic)
-    ----------------------------------------- */
     try {
       let link = document.querySelector('link[rel="manifest"]');
       if (!link) {
@@ -426,11 +417,6 @@ export default function HomePage({ cardId = "101" }) {
       link.setAttribute("href", `/manifest/${cardId}`);
     } catch {}
 
-    /* -----------------------------------------
-       4) iOS Home Screen ICONS (VERY IMPORTANT)
-          ‼️ Սա է ուղիղ icon-ը, որը iOS-ը օգտագործում է
-          "Add to Home Screen" պահին
-    ----------------------------------------- */
     try {
       const iosIcons = [
         { size: 180, href: "/icon-180.png" },
@@ -506,7 +492,7 @@ export default function HomePage({ cardId = "101" }) {
   try {
     const serverLangs =
       Array.isArray(info?.available_langs) && info.available_langs.length
-        ? info.available_langs.slice(0, 11) // 👉 մինչև 11 լեզու backend-ից
+        ? info.available_langs.slice(0, 11)
         : ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 
     const nameByLang = {
@@ -517,15 +503,13 @@ export default function HomePage({ cardId = "101" }) {
       fr:  info?.company?.name?.fr  || "",
       kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
-
-      // ✅ NEW langs
       de:  info?.company?.name?.de  || "",
       es:  info?.company?.name?.es  || "",
       it:  info?.company?.name?.it  || "",
       fa:  info?.company?.name?.fa  || "",
     };
 
-    const desc = info?.description || {};
+    const desc  = info?.description || {};
     const about = info?.profile?.about || {};
 
     const textByLang = {
@@ -536,8 +520,6 @@ export default function HomePage({ cardId = "101" }) {
       fr:  (desc?.fr  ?? about?.fr)  || "",
       kz:  (desc?.kz  ?? about?.kz)  || "",
       chn: (desc?.chn ?? about?.chn) || "",
-
-      // ✅ NEW langs
       de:  (desc?.de  ?? about?.de)  || "",
       es:  (desc?.es  ?? about?.es)  || "",
       it:  (desc?.it  ?? about?.it)  || "",
@@ -611,13 +593,13 @@ export default function HomePage({ cardId = "101" }) {
 
     const [minCh, maxCh] = idealColsForLang(htmlLang);
 
+    // ✅ Փոփոխված style — կենտրոնացված, հավասար եզրերով
     const descStyle = {
       color: descColor,
       margin: "15px auto 0",
       lineHeight: 1.6,
       maxWidth: `clamp(${minCh}ch, 90%, ${maxCh}ch)`,
-      textAlign: "justify",
-      textJustify: "inter-word",
+      textAlign: "center",
       overflowWrap: "break-word",
       wordBreak: "break-word",
     };
@@ -781,24 +763,18 @@ export default function HomePage({ cardId = "101" }) {
                     brandsBgColor,
                     brandsNameColor,
                     lang: htmlLang,
-
                     onKeywordClick: (kw) => {
-                      // ✅ պահում ենք scroll-ը հենց public-scroll-layer-ից
                       const container = document.querySelector(".public-scroll-layer");
                       const scrollY = container ? container.scrollTop : 0;
                       sessionStorage.setItem("publicScrollPos", String(scrollY));
-
-                      // հետո նոր բացում ենք 2-րդ էջը
                       setActiveBrandKeyword(kw);
                     },
                   })
                 : null,
-
               h(SharePage, {
                 cardId,
                 info,
                 lang: htmlLang,
-                // ✅ առաջին լոադին auto-open, հետո՝ ոչ
                 autoOpenConfirm: !shareAutoOpened,
               })
             )
