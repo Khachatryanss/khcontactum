@@ -771,6 +771,9 @@ export default function AdminDashboard({
   const [bgImagePreview, setBgImagePreview] = useState("");
   const [bgVideoPreview, setBgVideoPreview] = useState("");
 
+  // նոր state — Home tab–ի unsaved փոփոխությունները track անելու համար
+  const [homeDirty, setHomeDirty] = useState(false);
+
   useEffect(() => {
     (async () => {
       if (!token) {
@@ -819,6 +822,7 @@ export default function AdminDashboard({
 
         if (!langsArr.length) langsArr = ["am"];
         setLangs(langsArr);
+        setHomeDirty(false);
       } catch (e) {
         setMsg(e.message || "Load failed");
       } finally {
@@ -835,6 +839,7 @@ export default function AdminDashboard({
     onLogout && onLogout();
   }
 
+  // Home tab-ի դաշտերը լոկալ state-ում ենք պահում, ամեն փոփոխությունից հետո միայն mark ենք անում dirty=true
   function setInfoPath(path, value) {
     setInfo((prev) => {
       const next = normalizeInfo(prev);
@@ -849,6 +854,7 @@ export default function AdminDashboard({
       cur[keys[keys.length - 1]] = value;
       return normalizeInfo(next);
     });
+    setHomeDirty(true);
   }
 
   async function saveInfo() {
@@ -861,6 +867,7 @@ export default function AdminDashboard({
 
       await adminSaveInfo(token, payload);
       setInfoMsg(T.saveOk);
+      setHomeDirty(false);
     } catch (e) {
       setInfoMsg(e.message || T.saveError);
     } finally {
@@ -981,21 +988,31 @@ export default function AdminDashboard({
       const field = isVid ? "avatar.videoUrl" : "avatar.imageUrl";
       const res = await uploadFile(token, f, field);
 
-      if (res?.information) {
-        if (!isVid) {
-          res.information.logo_url = res.url;
-        }
-        setInfo(normalizeInfo(res.information));
-      } else {
-        if (isVid) {
-          setInfoPath("avatar.videoUrl", res.url);
-        } else {
-          setInfoPath("avatar.imageUrl", res.url);
-          setInfoPath("logo_url", res.url);
-        }
+      const urlFromRes =
+        res?.url ||
+        (isVid
+          ? res?.information?.avatar?.videoUrl
+          : res?.information?.avatar?.imageUrl) ||
+        "";
+
+      if (!urlFromRes) {
+        setInfoMsg("Upload succeeded, but URL is missing");
+        return;
       }
 
-      setInfoMsg(isVid ? "Avatar video ✔" : "Avatar image ✔");
+      if (isVid) {
+        setInfoPath("avatar.videoUrl", urlFromRes);
+      } else {
+        setInfoPath("avatar.imageUrl", urlFromRes);
+        setInfoPath("logo_url", urlFromRes);
+      }
+
+      setHomeDirty(true);
+      setInfoMsg(
+        isVid
+          ? "Avatar video ✔ (խնդրում եմ Save սեղմել վերջում)"
+          : "Avatar image ✔ (խնդրում եմ Save սեղմել վերջում)"
+      );
     } catch (err) {
       setInfoMsg(err.message || "Upload failed");
     } finally {
@@ -1013,13 +1030,18 @@ export default function AdminDashboard({
     setBgImagePreview(URL.createObjectURL(f));
     try {
       const res = await uploadFile(token, f, "background.imageUrl");
-      if (res?.information) {
-        setInfo(normalizeInfo(res.information));
-      } else {
-        setInfoPath("background.imageUrl", res.url);
+      const urlFromRes =
+        res?.url || res?.information?.background?.imageUrl || "";
+
+      if (!urlFromRes) {
+        setInfoMsg("Upload succeeded, but URL is missing");
+        return;
       }
+
+      setInfoPath("background.imageUrl", urlFromRes);
       setInfoPath("background.type", "image");
-      setInfoMsg("Background image ✔");
+      setHomeDirty(true);
+      setInfoMsg("Background image ✔ (Save սեղմիր վերջում)");
     } catch (err) {
       setInfoMsg(err.message || "Upload failed");
     } finally {
@@ -1041,13 +1063,18 @@ export default function AdminDashboard({
     setBgVideoPreview(URL.createObjectURL(f));
     try {
       const res = await uploadFile(token, f, "background.videoUrl");
-      if (res?.information) {
-        setInfo(normalizeInfo(res.information));
-      } else {
-        setInfoPath("background.videoUrl", res.url);
+      const urlFromRes =
+        res?.url || res?.information?.background?.videoUrl || "";
+
+      if (!urlFromRes) {
+        setInfoMsg("Upload succeeded, but URL is missing");
+        return;
       }
+
+      setInfoPath("background.videoUrl", urlFromRes);
       setInfoPath("background.type", "video");
-      setInfoMsg("Background video ✔");
+      setHomeDirty(true);
+      setInfoMsg("Background video ✔ (Save սեղմիր վերջում)");
     } catch (err) {
       setInfoMsg(err.message || "Upload failed");
     } finally {
@@ -1059,9 +1086,10 @@ export default function AdminDashboard({
     setInfo((prev) => {
       const next = normalizeInfo(prev);
       next.avatar.type = val;
-      setAvatarPreview("");
       return next;
     });
+    setAvatarPreview("");
+    setHomeDirty(true);
   }
 
   function handleBgTypeChange(val) {
@@ -1078,17 +1106,22 @@ export default function AdminDashboard({
       setBgImagePreview("");
       setInfoPath("background.imageUrl", "");
     }
+    setHomeDirty(true);
   }
 
   function toggleLang(code) {
     setLangs((prev) => {
       const exists = prev.includes(code);
+      let next;
       if (exists) {
         if (prev.length === 1) return prev;
-        return prev.filter((c) => c !== code);
+        next = prev.filter((c) => c !== code);
+      } else {
+        next = [...prev, code];
       }
-      return [...prev, code];
+      return next;
     });
+    setHomeDirty(true);
   }
 
   // վերև / ներքև reorder (օգտագործում ենք սլաքների համար)
@@ -1103,6 +1136,7 @@ export default function AdminDashboard({
       arr.splice(nextIdx, 0, item);
       return arr;
     });
+    setHomeDirty(true);
   }
 
   function TabMenuItem(id, label) {
@@ -1716,7 +1750,7 @@ export default function AdminDashboard({
           h("div", { className: "small" }, T.backgroundVideoHint)
         ),
 
-            h(
+      h(
         "div",
         { className: "admin-save-bar" },
         h(
@@ -1735,7 +1769,6 @@ export default function AdminDashboard({
             infoMsg || msg
           )
       )
-
     )
   );
 
