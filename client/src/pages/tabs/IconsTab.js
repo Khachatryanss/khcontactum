@@ -1027,11 +1027,12 @@ function IconRow({
           )
         ),
 
-        // href + preset (երկու տարբերակով)
+        // ====== URL + preset — Select վերևում, URL/phone ներքևում ======
         hrefPattern
           ? h(
               "div",
               { style: { display: "grid", gap: 8 } },
+              // Phone label
               h(
                 "div",
                 {
@@ -1043,6 +1044,14 @@ function IconRow({
                 },
                 hrefPattern.label
               ),
+              // Preset (Select) – ՎԵՐԵՎ
+              h(PresetSelect, {
+                presets: FA_PRESETS,
+                onPick: (v) => onField(it.uid, { icon: v }),
+                label: T.presetButton,
+                searchPlaceholder: T.presetSearchPlaceholder,
+              }),
+              // Prefix + input – ՆԵՐՔԵՎ
               h(
                 "div",
                 {
@@ -1079,13 +1088,7 @@ function IconRow({
                     });
                   },
                 })
-              ),
-              h(PresetSelect, {
-                presets: FA_PRESETS,
-                onPick: (v) => onField(it.uid, { icon: v }),
-                label: T.presetButton,
-                searchPlaceholder: T.presetSearchPlaceholder,
-              })
+              )
             )
           : h(
               "div",
@@ -1095,17 +1098,19 @@ function IconRow({
                   gap: 8,
                 },
               },
-              h("input", {
-                className: "input",
-                value: it.href || "",
-                placeholder: T.urlPlaceholder,
-                onChange: (e) => onField(it.uid, { href: e.target.value }),
-              }),
+              // Preset (Select) – ՎԵՐԵՎ
               h(PresetSelect, {
                 presets: FA_PRESETS,
                 onPick: (v) => onField(it.uid, { icon: v }),
                 label: T.presetButton,
                 searchPlaceholder: T.presetSearchPlaceholder,
+              }),
+              // URL input – ՆԵՐՔԵՎ
+              h("input", {
+                className: "input",
+                value: it.href || "",
+                placeholder: T.urlPlaceholder,
+                onChange: (e) => onField(it.uid, { href: e.target.value }),
               })
             ),
 
