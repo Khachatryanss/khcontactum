@@ -630,15 +630,15 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
 
     h("h3", { className: "title mb-2" }, T.titleMain),
 
-    h(
-      "p",
-      {
-        id: "shareFirstText",
-        className: "small mb-3",
-        style: { maxWidth: 360 },
-      },
-      T.intro
-    ),
+    // h(
+    //   "p",
+    //   {
+    //     id: "shareFirstText",
+    //     className: "small mb-3",
+    //     style: { maxWidth: 360 },
+    //   },
+    //   T.intro
+    // ),
 
     // ONLINE LINK (fixed prefix + editable suffix)
     h("h4", { className: "title mb-1" }, T.onlineTitle),
