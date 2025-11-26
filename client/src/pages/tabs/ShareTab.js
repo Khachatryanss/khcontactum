@@ -18,7 +18,6 @@ const SHARE_UI_TEXT = {
     offlineIntro:
       "Այս տվյալները կօգտագործվեն offline QR կոդի և “Ավելացրեք ինձ կոնտակտների ցանկում” կոճակի համար։",
 
-    // fullNameLabel հանում ենք UI-ից, բայց թողնում եմ, որ թարգմանությունը չխանգարի
     fullNameLabel: "Անուն, ազգանուն",
     phoneLabel: "Հեռախոս",
     phonePlaceholder: "+374...",
@@ -217,7 +216,6 @@ const SHARE_UI_TEXT = {
     },
   },
 
-  // 🇰🇿 Kazakh
   kz: {
     onlineTitle: "Online QR · Сілтеме",
     onlineLabel: "Картаңыздың public сілтемесі",
@@ -261,7 +259,6 @@ const SHARE_UI_TEXT = {
     },
   },
 
-  // 🇨🇳 Chinese (Simplified)
   chn: {
     onlineTitle: "在线 QR · 链接",
     onlineLabel: "名片的公开链接",
@@ -304,7 +301,6 @@ const SHARE_UI_TEXT = {
     },
   },
 
-  // ✅ NEW langs — same UI text as EN (fallback until translations)
   de: {
     onlineTitle: "Online QR · Link",
     onlineLabel: "Public link of the card",
@@ -489,24 +485,20 @@ function normalizeShare(raw, cardId) {
   const s = raw && typeof raw === "object" ? raw : {};
   const rawUrl = (s.onlineUrl || "").toString().trim();
 
-  // derive path part after ONLINE_BASE (if any)
   let path = "";
   if (rawUrl.startsWith(ONLINE_BASE)) {
     path = rawUrl.slice(ONLINE_BASE.length);
   } else if (rawUrl) {
-    // if user had stored only number or short path before
     path = rawUrl.replace(/^https?:\/\/[^/]+\//i, "");
   }
 
-  // reasonable default: use cardId if exists
   if (!path && cardId) path = String(cardId);
 
   return {
-    // now we store both for UI; on save we will compose full URL
     onlineUrl: rawUrl || (cardId ? ONLINE_BASE + cardId : ""),
     onlinePath: (s.onlinePath || path || "").toString().trim(),
 
-    offlineFullName: (s.offlineFullName || "").toString().trim(), // state-ի մեջ կա, UI-ում չկա
+    offlineFullName: (s.offlineFullName || "").toString().trim(),
     offlinePhone: (s.offlinePhone || "").toString().trim(),
     shareText: (s.shareText || "").toString().trim(),
     quick: Object.assign({}, DEFAULT_QUICK, s.quick || {}),
@@ -520,7 +512,6 @@ function normalizeShare(raw, cardId) {
 }
 
 function isValidPath(p) {
-  // allow digits/letters/-/_ (so future slugs also ok), no spaces, no //, no protocol
   if (!p) return false;
   if (/^https?:\/\//i.test(p)) return false;
   if (p.includes(" ")) return false;
@@ -569,7 +560,6 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
       return;
     }
 
-    // validate path
     const path = share.onlinePath || "";
     if (!isValidPath(path)) {
       setMsg(T.pathInvalid);
@@ -624,30 +614,19 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
   }
 
   return h(
-    // 👉 փոքր paddingTop, որ menu dropdown-ը չընկնի ուղիղ Phone դաշտի վրա
+    // paddingBottom՝ որ fixed save-ը չծածկի content-ը
     "div",
-    { style: { paddingTop: 16 } },
+    { style: { paddingTop: 16, paddingBottom: 80, position: "relative" } },
 
     h("h3", { className: "title mb-2" }, T.titleMain),
 
-    // h(
-    //   "p",
-    //   {
-    //     id: "shareFirstText",
-    //     className: "small mb-3",
-    //     style: { maxWidth: 360 },
-    //   },
-    //   T.intro
-    // ),
-
-    // ONLINE LINK (fixed prefix + editable suffix)
+    // ONLINE LINK
     h("h4", { className: "title mb-1" }, T.onlineTitle),
     h(
       "label",
       { className: "block mb-2" },
       h("div", { className: "text-sm mb-1" }, T.onlineLabel),
 
-      // input group: non-editable base + editable path
       h(
         "div",
         {
@@ -657,7 +636,6 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
             gap: 0,
           },
         },
-        // prefix (read-only)
         h(
           "span",
           {
@@ -673,7 +651,6 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
           },
           ONLINE_BASE
         ),
-        // editable path
         h("input", {
           className: "input",
           style: {
@@ -724,7 +701,7 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
       T.offlineIntro
     ),
 
-    // ⚠️ Full name դաշտը ՀԱՆՎԱԾ է, մնում է միայն Phone
+    // միայն Phone դաշտը
     h(
       "label",
       { className: "block mb-4" },
@@ -746,20 +723,45 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
     colorRow(T.colorBtnText, "btnTextColor"),
     colorRow(T.colorBtnBg, "btnBgColor"),
 
+    // ===== FIXED SAVE BAR ներքևում (BrandsTab-ի նման) =====
     h(
       "div",
-      { className: "row mt-4" },
-      h(
-        "button",
-        {
-          type: "button",
-          className: "btn",
-          disabled: saving,
-          onClick: save,
+      {
+        style: {
+          position: "sticky",
+          bottom: 0,
+          marginTop: 16,
+          paddingTop: 8,
+          paddingBottom: 8,
+          background:
+            "linear-gradient(to top, rgba(255,255,255,0.98), rgba(255,255,255,0.7))",
+          zIndex: 5,
         },
-        saving ? T.savingButton : T.saveButton
-      ),
-      msg && h("div", { className: "small" }, msg)
+      },
+      h(
+        "div",
+        { className: "row", style: { alignItems: "center" } },
+        h(
+          "button",
+          {
+            type: "button",
+            className: "btn",
+            style: { flex: 1 },
+            disabled: saving,
+            onClick: save,
+          },
+          saving ? T.savingButton : T.saveButton
+        ),
+        msg &&
+          h(
+            "div",
+            {
+              className: "small",
+              style: { marginLeft: 8, whiteSpace: "nowrap" },
+            },
+            msg
+          )
+      )
     )
   );
 }
