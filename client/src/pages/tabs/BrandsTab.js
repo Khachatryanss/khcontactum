@@ -1144,6 +1144,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
       .tag{ font-size:12px; font-weight:700; opacity:.7; }
 
       .admin-brands{
+        flex: 1 1 auto;
         display:flex;
         flex-direction:column;
         gap:12px;
