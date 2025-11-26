@@ -8,7 +8,6 @@ import BrandsPage    from "./BrandsPage.js";
 import BrandInfoPage from "./BrandInfoPage.js";
 import SharePage     from "./SharePage.js";
 import contactumLogo from "../img/Contactum.png"; // ✅ splash logo
-import santaHat      from "../img/santa_hat.png"; // 🎅 avatar hat
 
 const h = React.createElement;
 
@@ -93,7 +92,7 @@ function idealColsForLang(lang) {
     case "kz":  return [34, 40];
     case "chn": return [28, 34];
 
-    // ✅ NEW langs
+    // ✅ NEW langs (same sizing logic, no other changes)
     case "de":  return [36, 42];
     case "es":  return [36, 42];
     case "it":  return [36, 42];
@@ -277,64 +276,34 @@ function VideoLoop({ src, style }) {
   });
 }
 
-/* ===== Avatar + Santa Hat ===== */
 function AvatarMedia({ src, isVideo, initials }) {
-  const size = 150;
-
-  const containerStyle = {
-    position: "relative",
-    width: size,
-    height: size,
-    margin: "0 auto 8px",
-  };
-
-  const avatarStyle = {
-    width: size,
-    height: size,
+  const commonStyle = {
+    width: 150,
+    height: 150,
     borderRadius: "50%",
     objectFit: "cover",
+    margin: "0 auto 8px",
+    display: "block",
     boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
   };
-
-  const hatStyle = {
-    position: "absolute",
-    top: -168,
-    left: "74%",
-    transform: "translateX(-50%)",
-    width: size * 1.5,
-    pointerEvents: "none",
-  };
-
-  const avatarNode = src
-    ? (!isVideo
-        ? h("img", {
-            src,
-            alt: "avatar",
-            style: avatarStyle,
-            loading: "lazy",
-          })
-        : h(VideoLoop, { src, style: avatarStyle }))
-    : h(
-        "div",
-        {
-          style: {
-            ...avatarStyle,
-            background: "#f2f2f2",
-            display: "grid",
-            placeItems: "center",
-            fontWeight: 700,
-            color: "#999",
-          },
+  if (!src) {
+    return h(
+      "div",
+      {
+        style: {
+          ...commonStyle,
+          background: "#f2f2f2",
+          display: "grid",
+          placeItems: "center",
+          fontWeight: 700,
+          color: "#999",
         },
-        (initials || "KH").slice(0, 2).toUpperCase()
-      );
-
-  return h(
-    "div",
-    { style: containerStyle },
-    avatarNode,
-    h("img", { src: santaHat, alt: "hat", style: hatStyle })
-  );
+      },
+      (initials || "KH").slice(0, 2).toUpperCase()
+    );
+  }
+  if (!isVideo) return h("img", { src, alt: "avatar", style: commonStyle, loading: "lazy" });
+  return h(VideoLoop, { src, style: commonStyle });
 }
 
 export default function HomePage({ cardId = "101" }) {
@@ -345,10 +314,12 @@ export default function HomePage({ cardId = "101" }) {
     (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
   );
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
-  const [splashDone, setSplashDone] = React.useState(false);
+  const [splashDone, setSplashDone] = React.useState(false);   // ✅ splash timer
 
+  // ✅ pop-up share-ի ավտոմատ բացում՝ միայն առաջին անգամ
   const [shareAutoOpened, setShareAutoOpened] = React.useState(false);
 
+  // 🔤 ներսում աշխատող լեզվի key՝ hy/ru/en/ar/fr/kz/chn/de/es/it/fa
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
@@ -357,6 +328,7 @@ export default function HomePage({ cardId = "101" }) {
     } catch {}
   }, [htmlLang]);
 
+  /* ✅ splash-ը գոնե 2 վրկ պահելու համար */
   React.useEffect(() => {
     const t = setTimeout(() => setSplashDone(true), 2000);
     return () => clearTimeout(t);
@@ -396,9 +368,11 @@ export default function HomePage({ cardId = "101" }) {
     };
   }, [cardId]);
 
+  // ✅ NEW: dynamic manifest + iOS title based on current card info
   React.useEffect(() => {
     if (!info) return;
 
+    // ընտրում ենք անունը՝ ըստ լեզվի
     const nameByLang = {
       hy:  info?.company?.name?.am  || "",
       ru:  info?.company?.name?.ru  || "",
@@ -407,6 +381,8 @@ export default function HomePage({ cardId = "101" }) {
       fr:  info?.company?.name?.fr  || "",
       kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
+
+      // ✅ NEW langs
       de:  info?.company?.name?.de  || "",
       es:  info?.company?.name?.es  || "",
       it:  info?.company?.name?.it  || "",
@@ -419,8 +395,10 @@ export default function HomePage({ cardId = "101" }) {
       nameByLang.en ||
       "KHContactum";
 
+    /* 1) PAGE TITLE */
     try { document.title = displayName; } catch {}
 
+    /* 2) iOS Meta Title */
     try {
       let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
       if (!meta) {
@@ -431,6 +409,7 @@ export default function HomePage({ cardId = "101" }) {
       meta.setAttribute("content", displayName);
     } catch {}
 
+    /* 3) manifest link */
     try {
       let link = document.querySelector('link[rel="manifest"]');
       if (!link) {
@@ -441,6 +420,7 @@ export default function HomePage({ cardId = "101" }) {
       link.setAttribute("href", `/manifest/${cardId}`);
     } catch {}
 
+    /* 4) iOS icons */
     try {
       const iosIcons = [
         { size: 180, href: "/icon-180.png" },
@@ -464,12 +444,15 @@ export default function HomePage({ cardId = "101" }) {
 
   }, [info, htmlLang, cardId]);
 
+
+  // ✅ splash + loading ավարտվելուց հետո auto-open միայն մեկ անգամ
   React.useEffect(() => {
     if (splashDone && !loading && !shareAutoOpened) {
       setShareAutoOpened(true);
     }
   }, [splashDone, loading, shareAutoOpened]);
 
+  /* ===== Splash loader – Contactum logo ===== */
   if (!splashDone || loading) {
     return h(
       "div",
@@ -614,6 +597,7 @@ export default function HomePage({ cardId = "101" }) {
 
     const [minCh, maxCh] = idealColsForLang(htmlLang);
 
+    // ✅ Կենտրոնացված, հավասար եզրերով, առանց ձգված բացատների
     const descStyle = {
       color: descColor,
       margin: "15px auto 0",
