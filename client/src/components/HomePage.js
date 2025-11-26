@@ -91,14 +91,18 @@ function idealColsForLang(lang) {
     case "fr":  return [36, 42];
     case "kz":  return [34, 40];
     case "chn": return [28, 34];
+
+    // ✅ NEW langs (same sizing logic, no other changes)
     case "de":  return [36, 42];
     case "es":  return [36, 42];
     case "it":  return [36, 42];
     case "fa":  return [30, 34];
+
     default:    return [34, 40];
   }
 }
 
+// 👉 default-ում էլ արդեն 11 լեզուն է
 function LangDropdown({
   value,
   onChange,
@@ -161,6 +165,7 @@ function rgbaToCss(obj) {
   return `rgba(${(+r | 0)}, ${(+g | 0)}, ${(+b | 0)}, ${(isFinite(+a) ? +a : 1)})`;
 }
 
+// (այս պահին չի օգտագործվում, բայց թարմացրի 11 լեզվի համար)
 function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
@@ -309,9 +314,12 @@ export default function HomePage({ cardId = "101" }) {
     (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
   );
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
-  const [splashDone, setSplashDone] = React.useState(false);
+  const [splashDone, setSplashDone] = React.useState(false);   // ✅ splash timer
+
+  // ✅ pop-up share-ի ավտոմատ բացում՝ միայն առաջին անգամ
   const [shareAutoOpened, setShareAutoOpened] = React.useState(false);
 
+  // 🔤 ներսում աշխատող լեզվի key՝ hy/ru/en/ar/fr/kz/chn/de/es/it/fa
   const htmlLang = lang === "am" ? "hy" : lang;
 
   React.useEffect(() => {
@@ -320,6 +328,7 @@ export default function HomePage({ cardId = "101" }) {
     } catch {}
   }, [htmlLang]);
 
+  /* ✅ splash-ը գոնե 2 վրկ պահելու համար */
   React.useEffect(() => {
     const t = setTimeout(() => setSplashDone(true), 2000);
     return () => clearTimeout(t);
@@ -359,9 +368,11 @@ export default function HomePage({ cardId = "101" }) {
     };
   }, [cardId]);
 
+  // ✅ NEW: dynamic manifest + iOS title based on current card info
   React.useEffect(() => {
     if (!info) return;
 
+    // ընտրում ենք անունը՝ ըստ լեզվի
     const nameByLang = {
       hy:  info?.company?.name?.am  || "",
       ru:  info?.company?.name?.ru  || "",
@@ -370,6 +381,8 @@ export default function HomePage({ cardId = "101" }) {
       fr:  info?.company?.name?.fr  || "",
       kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
+
+      // ✅ NEW langs
       de:  info?.company?.name?.de  || "",
       es:  info?.company?.name?.es  || "",
       it:  info?.company?.name?.it  || "",
@@ -382,8 +395,10 @@ export default function HomePage({ cardId = "101" }) {
       nameByLang.en ||
       "KHContactum";
 
+    /* 1) PAGE TITLE */
     try { document.title = displayName; } catch {}
 
+    /* 2) iOS Meta Title */
     try {
       let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
       if (!meta) {
@@ -394,6 +409,7 @@ export default function HomePage({ cardId = "101" }) {
       meta.setAttribute("content", displayName);
     } catch {}
 
+    /* 3) manifest link */
     try {
       let link = document.querySelector('link[rel="manifest"]');
       if (!link) {
@@ -404,6 +420,7 @@ export default function HomePage({ cardId = "101" }) {
       link.setAttribute("href", `/manifest/${cardId}`);
     } catch {}
 
+    /* 4) iOS icons */
     try {
       const iosIcons = [
         { size: 180, href: "/icon-180.png" },
@@ -427,12 +444,15 @@ export default function HomePage({ cardId = "101" }) {
 
   }, [info, htmlLang, cardId]);
 
+
+  // ✅ splash + loading ավարտվելուց հետո auto-open միայն մեկ անգամ
   React.useEffect(() => {
     if (splashDone && !loading && !shareAutoOpened) {
       setShareAutoOpened(true);
     }
   }, [splashDone, loading, shareAutoOpened]);
 
+  /* ===== Splash loader – Contactum logo ===== */
   if (!splashDone || loading) {
     return h(
       "div",
@@ -577,13 +597,15 @@ export default function HomePage({ cardId = "101" }) {
 
     const [minCh, maxCh] = idealColsForLang(htmlLang);
 
-    // ✅ Կենտրոնացված տեքստ, նորմալ բացատներով
+    // ✅ Կենտրոնացված, հավասար եզրերով, առանց ձգված բացատների
     const descStyle = {
       color: descColor,
       margin: "15px auto 0",
       lineHeight: 1.6,
       maxWidth: `clamp(${minCh}ch, 90%, ${maxCh}ch)`,
       textAlign: "center",
+      textAlignLast: "center",
+      textJustify: "auto",
       overflowWrap: "break-word",
       wordBreak: "break-word",
     };
@@ -611,7 +633,7 @@ export default function HomePage({ cardId = "101" }) {
     const brandsBgColor    = info?.brandsBgColor || "#ffffff";
     const brandsNameColor  = info?.brandsNameColor || "#000000";
 
-    const brandInfos    = Array.isArray(info?.brandInfos) ? info.brandInfos : [];
+    const brandInfos = Array.isArray(info?.brandInfos) ? info.brandInfos : [];
     const showBrandInfo = !!activeBrandKeyword;
 
     return h(
