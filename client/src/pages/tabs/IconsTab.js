@@ -8,27 +8,10 @@ const h = React.createElement;
 /* ---------------- constants & helpers ---------------- */
 // ամբողջ հավաքածուն (11 լեզու)
 const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
-
 const rtlProps = (code) =>
   code === "ar" || code === "fa"
     ? { dir: "rtl", style: { textAlign: "right" } }
     : {};
-
-/* UI լեզվի նորմալացում (որ hy → am, իսկ մնացածը 그대로) */
-const UI_LANG_MAP = {
-  hy: "am",
-  am: "am",
-  ru: "ru",
-  en: "en",
-  ar: "ar",
-  fr: "fr",
-  kz: "kz",
-  chn: "chn",
-  de: "de",
-  es: "es",
-  it: "it",
-  fa: "fa",
-};
 
 /* ---------- UI TEXT (multi-lang) ---------- */
 const ICONS_UI_TEXT = {
@@ -655,7 +638,7 @@ const ICON_HREF_PATTERNS = {
     label: "Threads username",
   },
 
-  // Globe / location special cases – ամեն ինչ ամբողջ URL-ով, դրա համար pattern չենք դնում
+  // Globe / location special cases – ամբողջ URL-ով
   // "fa-solid fa-globe": (full URL),
   // "fa-solid fa-location-dot": (Google Maps full link),
 };
@@ -1027,12 +1010,12 @@ function IconRow({
           )
         ),
 
-        // ====== URL + preset — Select վերևում, URL/phone ներքևում ======
+        // href + preset (երկու տարբերակով, բայց հիմա Select-ը ՎԵՐԵՎ)
         hrefPattern
           ? h(
               "div",
               { style: { display: "grid", gap: 8 } },
-              // Phone label
+              // label
               h(
                 "div",
                 {
@@ -1044,28 +1027,30 @@ function IconRow({
                 },
                 hrefPattern.label
               ),
-              // Preset (Select) – ՎԵՐԵՎ
+
+              // Preset (Select) — ՎԵՐԵՎ
               h(PresetSelect, {
                 presets: FA_PRESETS,
                 onPick: (v) => onField(it.uid, { icon: v }),
                 label: T.presetButton,
                 searchPlaceholder: T.presetSearchPlaceholder,
               }),
-              // Prefix + input – ՆԵՐՔԵՎ
+
+              // prefix + number field, բայց տարբեր տողերով
               h(
                 "div",
                 {
                   style: {
                     display: "grid",
-                    gridTemplateColumns: "auto minmax(0,1fr)",
-                    gap: 8,
-                    alignItems: "center",
+                    gap: 6,
+                    alignItems: "stretch",
                   },
                 },
                 h(
                   "div",
                   {
                     style: {
+                      justifySelf: "start",
                       padding: "8px 10px",
                       borderRadius: 8,
                       background: "#f3f4f6",
@@ -1139,8 +1124,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     localStorage.getItem("adminToken") ||
     "";
 
-  const normUi = UI_LANG_MAP[uiLang] || uiLang || "en";
-  const T = ICONS_UI_TEXT[normUi] || ICONS_UI_TEXT.en;
+  const T = ICONS_UI_TEXT[uiLang] || ICONS_UI_TEXT.en;
 
   const activeLangs =
     Array.isArray(langs) && langs.length ? langs : LANGS;
@@ -1627,7 +1611,10 @@ export default function IconsTab({ langs, uiLang = "en" }) {
             h(RgbaColorPicker, {
               color: style.chipRGBA,
               onChange: (c) =>
-                setStyle((s) => ({ ...s, chipRGBA: c })),
+                setStyle((s) => ({
+                  ...s,
+                  chipRGBA: c,
+                })),
             })
           )
       )
