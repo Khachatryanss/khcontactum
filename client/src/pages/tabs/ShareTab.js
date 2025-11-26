@@ -10,8 +10,6 @@ const ONLINE_BASE = "https://khcontactum.com/"; // fixed, non-editable
 /* ---------- UI TEXT BY LANGUAGE ---------- */
 const SHARE_UI_TEXT = {
   am: {
-    titleMain: "Share / QR",
-    intro: "QR կոդով և share հղումով կարող եք կիսվել ձեր քարտով։",
     onlineTitle: "Online QR · Հղում",
     onlineLabel: "Քարտի public link-ը",
     onlineHelp: "Հիմքը անփոփոխ է, մուտքագրեք միայն card_id / path-ը։",
@@ -52,9 +50,6 @@ const SHARE_UI_TEXT = {
     },
   },
   ru: {
-    titleMain: "Share / QR",
-    intro:
-      "Вы можете делиться своей карточкой через QR-код и ссылку для шаринга.",
     onlineTitle: "Online QR · Ссылка",
     onlineLabel: "Публичная ссылка на карточку",
     onlineHelp:
@@ -97,8 +92,6 @@ const SHARE_UI_TEXT = {
     },
   },
   en: {
-    titleMain: "Share / QR",
-    intro: "You can share your card via QR code and a share link.",
     onlineTitle: "Online QR · Link",
     onlineLabel: "Public link of the card",
     onlineHelp:
@@ -140,8 +133,6 @@ const SHARE_UI_TEXT = {
     },
   },
   ar: {
-    titleMain: "Share / QR",
-    intro: "يمكنك مشاركة بطاقتك عبر رمز QR ورابط المشاركة.",
     onlineTitle: "رمز QR أونلاين · الرابط",
     onlineLabel: "الرابط العلني للبطاقة",
     onlineHelp:
@@ -183,9 +174,6 @@ const SHARE_UI_TEXT = {
     },
   },
   fr: {
-    titleMain: "Share / QR",
-    intro:
-      "Vous pouvez partager votre carte via un code QR et un lien de partage.",
     onlineTitle: "QR en ligne · Lien",
     onlineLabel: "Lien public de la carte",
     onlineHelp:
@@ -231,9 +219,6 @@ const SHARE_UI_TEXT = {
 
   // 🇰🇿 Kazakh
   kz: {
-    titleMain: "Share / QR",
-    intro:
-      "Визиткаңызды QR-код және арнайы сілтеме арқылы бөлісе аласыз.",
     onlineTitle: "Online QR · Сілтеме",
     onlineLabel: "Картаңыздың public сілтемесі",
     onlineHelp:
@@ -278,8 +263,6 @@ const SHARE_UI_TEXT = {
 
   // 🇨🇳 Chinese (Simplified)
   chn: {
-    titleMain: "Share / QR",
-    intro: "你可以通过二维码和分享链接来分享你的名片。",
     onlineTitle: "在线 QR · 链接",
     onlineLabel: "名片的公开链接",
     onlineHelp:
@@ -323,8 +306,6 @@ const SHARE_UI_TEXT = {
 
   // ✅ NEW langs — same UI text as EN (fallback until translations)
   de: {
-    titleMain: "Share / QR",
-    intro: "You can share your card via QR code and a share link.",
     onlineTitle: "Online QR · Link",
     onlineLabel: "Public link of the card",
     onlineHelp:
@@ -367,8 +348,6 @@ const SHARE_UI_TEXT = {
   },
 
   es: {
-    titleMain: "Share / QR",
-    intro: "You can share your card via QR code and a share link.",
     onlineTitle: "Online QR · Link",
     onlineLabel: "Public link of the card",
     onlineHelp:
@@ -411,8 +390,6 @@ const SHARE_UI_TEXT = {
   },
 
   it: {
-    titleMain: "Share / QR",
-    intro: "You can share your card via QR code and a share link.",
     onlineTitle: "Online QR · Link",
     onlineLabel: "Public link of the card",
     onlineHelp:
@@ -455,8 +432,6 @@ const SHARE_UI_TEXT = {
   },
 
   fa: {
-    titleMain: "Share / QR",
-    intro: "You can share your card via QR code and a share link.",
     onlineTitle: "Online QR · Link",
     onlineLabel: "Public link of the card",
     onlineHelp:
