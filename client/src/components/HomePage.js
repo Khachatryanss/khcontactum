@@ -278,7 +278,7 @@ function VideoLoop({ src, style }) {
 }
 
 /* ===== Avatar + Santa Hat ===== */
-function AvatarMedia({ src, isVideo, initials }) {
+function AvatarMedia({ src, isVideo, initials, showHat }) {
   const size = 150;
 
   const containerStyle = {
@@ -333,7 +333,7 @@ function AvatarMedia({ src, isVideo, initials }) {
     "div",
     { style: containerStyle },
     avatarNode,
-    h("img", { src: santaHat, alt: "hat", style: hatStyle })
+    showHat && h("img", { src: santaHat, alt: "hat", style: hatStyle })
   );
 }
 
@@ -574,7 +574,8 @@ export default function HomePage({ cardId = "101" }) {
         avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
       else if (avatarType === "video")
         avatarUrl = avTop.videoUrl || avTop.imageUrl || "";
-      else avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
+      else
+        avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
     }
 
     if (!avatarUrl && avProf) {
@@ -649,8 +650,10 @@ export default function HomePage({ cardId = "101" }) {
     const brandsBgColor    = info?.brandsBgColor || "#ffffff";
     const brandsNameColor  = info?.brandsNameColor || "#000000";
 
-    const brandInfos = Array.isArray(info?.brandInfos) ? info.brandInfos : [];
-    const showBrandInfo = !!activeBrandKeyword;
+    const brandInfos       = Array.isArray(info?.brandInfos) ? info.brandInfos : [];
+    const showBrandInfo    = !!activeBrandKeyword;
+
+    const santaHatEnabled  = !!(info?.options?.santaHatEnabled); // 🎅 flag
 
     return h(
       "div",
@@ -738,6 +741,7 @@ export default function HomePage({ cardId = "101" }) {
                   src: avatarAbs,
                   isVideo: avatarIsVideo,
                   initials: (name || "KH").slice(0, 2),
+                  showHat: santaHatEnabled, // 🎅 public
                 }),
                 h(
                   "h1",
