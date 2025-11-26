@@ -531,7 +531,7 @@ function normalizeShare(raw, cardId) {
     onlineUrl: rawUrl || (cardId ? ONLINE_BASE + cardId : ""),
     onlinePath: (s.onlinePath || path || "").toString().trim(),
 
-    offlineFullName: (s.offlineFullName || "").toString().trim(), // մնաց state-ի մեջ, բայց UI չունի
+    offlineFullName: (s.offlineFullName || "").toString().trim(), // state-ի մեջ կա, UI-ում չկա
     offlinePhone: (s.offlinePhone || "").toString().trim(),
     shareText: (s.shareText || "").toString().trim(),
     quick: Object.assign({}, DEFAULT_QUICK, s.quick || {}),
@@ -649,8 +649,9 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
   }
 
   return h(
-    React.Fragment,
-    null,
+    // 👉 փոքր paddingTop, որ menu dropdown-ը չընկնի ուղիղ Phone դաշտի վրա
+    "div",
+    { style: { paddingTop: 16 } },
 
     h("h3", { className: "title mb-2" }, T.titleMain),
 
@@ -749,21 +750,16 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
     ),
 
     // ⚠️ Full name դաշտը ՀԱՆՎԱԾ է, մնում է միայն Phone
-
     h(
-      "div",
-      { className: "row mb-4", style: { gap: 8 } },
-      h(
-        "label",
-        { className: "block", style: { flex: 1 } },
-        h("div", { className: "text-sm mb-1" }, T.phoneLabel),
-        h("input", {
-          className: "input",
-          value: share.offlinePhone,
-          placeholder: T.phonePlaceholder,
-          onChange: (e) => setField("offlinePhone", e.target.value),
-        })
-      )
+      "label",
+      { className: "block mb-4" },
+      h("div", { className: "text-sm mb-1" }, T.phoneLabel),
+      h("input", {
+        className: "input",
+        value: share.offlinePhone,
+        placeholder: T.phonePlaceholder,
+        onChange: (e) => setField("offlinePhone", e.target.value),
+      })
     ),
 
     // COLORS
