@@ -301,7 +301,7 @@ function AvatarMedia({ src, isVideo, initials }) {
     top: -18,
     left: "50%",
     transform: "translateX(-50%)",
-    width: size * 0.9,
+    width: size * 1.5,
     pointerEvents: "none",
   };
 
