@@ -1,19 +1,12 @@
-// client/src/pages/tabs/HomeTab.js  (կամ որտեղ քեզ մոտ է)
-
+// client/src/components/HomePage.js
 import React from "react";
-import {
-  getPublicInfoByCardId,
-  API,
-  adminSaveInfo,
-} from "../api.js";            // 👈 ավելացրինք adminSaveInfo
+import { getPublicInfoByCardId, API } from "../api.js";
 import "./Responcive.css";
-import "./AdminResponcive.css";
-
-import IconsPage     from "./IconsPage.js";
-import BrandsPage    from "./BrandsPage.js";
+import "./AdminResponcive.css"
+import IconsPage from "./IconsPage.js";
+import BrandsPage from "./BrandsPage.js";
 import BrandInfoPage from "./BrandInfoPage.js";
-import SharePage     from "./SharePage.js";
-import santaHat      from "../img/santa_hat.png"; // 🎅 գլխարկ
+import SharePage from "./SharePage.js";
 
 const h = React.createElement;
 
@@ -47,8 +40,17 @@ function hyphenateHy(text, uiLang = "hy") {
   const U_DIGR = "\uE000";
   const toPh = (s) => s.replace(/ու/g, U_DIGR);
   const fromPh = (s) => s.replace(new RegExp(U_DIGR, "g"), "ու");
-  const VOWEL = new Set(["ա","ե","է","ը","ի","ո","օ","և",U_DIGR]);
-
+  const VOWEL = new Set([
+    "ա",
+    "ե",
+    "է",
+    "ը",
+    "ի",
+    "ո",
+    "օ",
+    "և",
+    U_DIGR,
+  ]);
   function hyphenateWord(w) {
     if (!w) return w;
     if (w.length < 6) return w;
@@ -59,10 +61,18 @@ function hyphenateHy(text, uiLang = "hy") {
     const isC = (ch) => !VOWEL.has(ch);
     let lastBreak = -6;
     for (let i = 0; i < chars.length - 2; i++) {
-      const a = chars[i], b = chars[i + 1], c = chars[i + 2];
+      const a = chars[i],
+        b = chars[i + 1],
+        c = chars[i + 2];
       let place = -1;
       if (isV(a) && isC(b) && isV(c)) place = i + 1;
-      if (isV(a) && isC(b) && isC(c) && i + 3 < chars.length && isV(chars[i + 3]))
+      if (
+        isV(a) &&
+        isC(b) &&
+        isC(c) &&
+        i + 3 < chars.length &&
+        isV(chars[i + 3])
+      )
         place = i + 2;
       if (place > 1 && place < chars.length - 2) {
         if (place - lastBreak >= 6) {
@@ -77,11 +87,13 @@ function hyphenateHy(text, uiLang = "hy") {
     }
     return fromPh(chars.join(""));
   }
-
   const out = String(text)
     .split(TOKENS)
     .map((chunk) => {
-      if (TOKENS.test(chunk)) { TOKENS.lastIndex = 0; return chunk; }
+      if (TOKENS.test(chunk)) {
+        TOKENS.lastIndex = 0;
+        return chunk;
+      }
       TOKENS.lastIndex = 0;
       return chunk.replace(/[\p{Script=Armenian}]+/gu, hyphenateWord);
     })
@@ -91,18 +103,30 @@ function hyphenateHy(text, uiLang = "hy") {
 
 function idealColsForLang(lang) {
   switch (lang) {
-    case "hy":  return [30, 34];
-    case "ru":  return [32, 38];
-    case "en":  return [36, 42];
-    case "ar":  return [30, 34];
-    case "fr":  return [36, 42];
-    case "kz":  return [32, 38];
-    case "chn": return [28, 34];
-    case "de":  return [36, 42];
-    case "es":  return [36, 42];
-    case "it":  return [36, 42];
-    case "fa":  return [30, 34];
-    default:    return [34, 40];
+    case "hy":
+      return [30, 34];
+    case "ru":
+      return [32, 38];
+    case "en":
+      return [36, 42];
+    case "ar":
+      return [30, 34];
+    case "fr":
+      return [36, 42];
+    case "kz":
+      return [32, 38];
+    case "chn":
+      return [28, 34];
+    case "de":
+      return [36, 42];
+    case "es":
+      return [36, 42];
+    case "it":
+      return [36, 42];
+    case "fa":
+      return [30, 34];
+    default:
+      return [34, 40];
   }
 }
 
@@ -124,54 +148,62 @@ function LangDropdown({
     "div",
     {
       className: "lang-dd",
-      style: { position: "absolute", right: 10, top: 10, zIndex: 2 },
+      style: {
+        position: "absolute",
+        right: 10,
+        top: 10,
+        zIndex: 2,
+      },
     },
     h(
       "button",
       {
         className: "chip active",
-        onClick: () => setOpen(v => !v),
+        onClick: () => setOpen((v) => !v),
         style: { minWidth: 48 },
       },
       (value || "am").toUpperCase()
     ),
-    open && h(
-      "div",
-      {
-        className: "card",
-        style: {
-          position: "absolute",
-          right: 0,
-          top: "calc(100% + 6px)",
-          padding: 6,
-          display: "grid",
-          gap: 6,
-          zIndex: 3,
-        },
-      },
-      ...langs.map(code =>
-        h(
-          "button",
-          {
-            key: code,
-            className: "chip" + (code === value ? " active" : ""),
-            onClick: () => {
-              localStorage.setItem("lang", code);
-              onChange(code);
-              setOpen(false);
-            },
+    open &&
+      h(
+        "div",
+        {
+          className: "card",
+          style: {
+            position: "absolute",
+            right: 0,
+            top: "calc(100% + 6px)",
+            padding: 6,
+            display: "grid",
+            gap: 6,
+            zIndex: 3,
           },
-          code.toUpperCase()
+        },
+        ...langs.map((code) =>
+          h(
+            "button",
+            {
+              key: code,
+              className: "chip" + (code === value ? " active" : ""),
+              onClick: () => {
+                localStorage.setItem("lang", code);
+                onChange(code);
+                setOpen(false);
+              },
+            },
+            code.toUpperCase()
+          )
         )
       )
-    )
   );
 }
 
 function rgbaToCss(obj) {
   if (!obj || typeof obj !== "object") return "";
   const { r = 0, g = 0, b = 0, a = 1 } = obj;
-  return `rgba(${(+r | 0)}, ${(+g | 0)}, ${(+b | 0)}, ${isFinite(+a) ? +a : 1})`;
+  return `rgba(${(+r | 0)}, ${(+g | 0)}, ${(+b | 0)}, ${
+    isFinite(+a) ? +a : 1
+  })`;
 }
 
 function pickLang(
@@ -181,7 +213,7 @@ function pickLang(
 ) {
   if (!v) return "";
   if (typeof v === "string") return v;
-  const order = [lang].concat(fallbacks.filter(x => x !== lang));
+  const order = [lang].concat(fallbacks.filter((x) => x !== lang));
   for (let i = 0; i < order.length; i++) {
     const k = order[i];
     const s = v && v[k];
@@ -202,10 +234,15 @@ function VideoLoop({ src, style }) {
 
     let killed = false;
 
-    v.muted = true;        v.setAttribute("muted", "");
-    v.playsInline = true;  v.setAttribute("playsinline", "");
-    v.autoplay = true;     v.setAttribute("autoplay", "");
-    v.loop = true;         v.setAttribute("loop", "");
+    // required attrs for mobile autoplay
+    v.muted = true;
+    v.setAttribute("muted", "");
+    v.playsInline = true;
+    v.setAttribute("playsinline", "");
+    v.autoplay = true;
+    v.setAttribute("autoplay", "");
+    v.loop = true;
+    v.setAttribute("loop", "");
     v.controls = false;
 
     const tryPlay = () => {
@@ -214,35 +251,63 @@ function VideoLoop({ src, style }) {
       if (p && p.catch) {
         p.catch(() => {
           if (killed) return;
-          requestAnimationFrame(() => setTimeout(tryPlay, 200));
+          // try again a bit later
+          requestAnimationFrame(() =>
+            setTimeout(tryPlay, 200)
+          );
         });
       }
     };
 
-    const onCanPlay   = () => tryPlay();
-    const onEnded     = () => { if (v) { v.currentTime = 0; tryPlay(); } };
-    const onPause     = () => {
-      if (!killed && document.visibilityState === "visible" && !v.ended) {
+    const onCanPlay = () => tryPlay();
+    const onEnded = () => {
+      if (!v) return;
+      v.currentTime = 0;
+      tryPlay();
+    };
+    const onPause = () => {
+      if (killed || !v) return;
+      if (
+        document.visibilityState === "visible" &&
+        !v.ended
+      ) {
         tryPlay();
       }
     };
     const onVisibility = () => {
-      if (!killed && document.visibilityState === "visible") {
+      if (
+        !killed &&
+        document.visibilityState === "visible"
+      ) {
         tryPlay();
       }
     };
-    const onWaiting   = () => !killed && tryPlay();
-    const onStalled   = () => !killed && tryPlay();
+    const onWaiting = () => {
+      if (killed || !v) return;
+      tryPlay();
+    };
+    const onStalled = () => {
+      if (killed || !v) return;
+      tryPlay();
+    };
 
+    // watchdog – amen 5 վրկ-ը մի անգամ ստուգում ենք
     const watchdog = setInterval(() => {
       if (killed || !v) return;
-      if (v.readyState >= 2 && (v.paused || v.ended)) {
+      if (
+        v.readyState >= 2 &&
+        (v.paused || v.ended)
+      ) {
         tryPlay();
       }
     }, 5000);
 
+    // intersection observer – erb card@ tesanum enq, nor krknic darnum e
     let io = null;
-    if (typeof window !== "undefined" && "IntersectionObserver" in window) {
+    if (
+      typeof window !== "undefined" &&
+      "IntersectionObserver" in window
+    ) {
       io = new IntersectionObserver(
         (entries) => {
           entries.forEach((en) => {
@@ -254,26 +319,33 @@ function VideoLoop({ src, style }) {
       io.observe(v);
     }
 
+    // first attempt
     tryPlay();
 
-    v.addEventListener("canplay",   onCanPlay);
-    v.addEventListener("ended",     onEnded);
-    v.addEventListener("pause",     onPause);
-    v.addEventListener("waiting",   onWaiting);
-    v.addEventListener("stalled",   onStalled);
-    document.addEventListener("visibilitychange", onVisibility);
+    v.addEventListener("canplay", onCanPlay);
+    v.addEventListener("ended", onEnded);
+    v.addEventListener("pause", onPause);
+    v.addEventListener("waiting", onWaiting);
+    v.addEventListener("stalled", onStalled);
+    document.addEventListener(
+      "visibilitychange",
+      onVisibility
+    );
 
     return () => {
       killed = true;
       if (io) io.disconnect();
       clearInterval(watchdog);
       if (!v) return;
-      v.removeEventListener("canplay",   onCanPlay);
-      v.removeEventListener("ended",     onEnded);
-      v.removeEventListener("pause",     onPause);
-      v.removeEventListener("waiting",   onWaiting);
-      v.removeEventListener("stalled",   onStalled);
-      document.removeEventListener("visibilitychange", onVisibility);
+      v.removeEventListener("canplay", onCanPlay);
+      v.removeEventListener("ended", onEnded);
+      v.removeEventListener("pause", onPause);
+      v.removeEventListener("waiting", onWaiting);
+      v.removeEventListener("stalled", onStalled);
+      document.removeEventListener(
+        "visibilitychange",
+        onVisibility
+      );
     };
   }, [src]);
 
@@ -291,71 +363,54 @@ function VideoLoop({ src, style }) {
   });
 }
 
-/* ===== Avatar + Santa Hat (admin preview) ===== */
-function AvatarMedia({ src, isVideo, initials, showHat }) {
-  const size = 150;
-
-  const containerStyle = {
-    position: "relative",
-    width: size,
-    height: size,
-    margin: "0 auto 8px",
-  };
-
-  const avatarStyle = {
-    width: size,
-    height: size,
+/* ===== Avatar media (image / video) ===== */
+function AvatarMedia({ src, isVideo, initials }) {
+  const commonStyle = {
+    width: 150,
+    height: 150,
     borderRadius: "50%",
     objectFit: "cover",
+    margin: "0 auto 8px",
+    display: "block",
     boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
   };
-
-  const hatStyle = {
-    position: "absolute",
-    top: -168,
-    left: "74%",
-    transform: "translateX(-50%)",
-    width: size * 1.5,
-    pointerEvents: "none",
-  };
-
-  const avatarNode = src
-    ? (!isVideo
-        ? h("img", { src, alt: "avatar", style: avatarStyle, loading: "lazy" })
-        : h(VideoLoop, { src, style: avatarStyle }))
-    : h(
-        "div",
-        {
-          style: {
-            ...avatarStyle,
-            background: "#f2f2f2",
-            display: "grid",
-            placeItems: "center",
-            fontWeight: 700,
-            color: "#999",
-          },
+  if (!src) {
+    return h(
+      "div",
+      {
+        style: {
+          ...commonStyle,
+          background: "#f2f2f2",
+          display: "grid",
+          placeItems: "center",
+          fontWeight: 700,
+          color: "#999",
         },
-        (initials || "KH").slice(0, 2).toUpperCase()
-      );
-
-  return h(
-    "div",
-    { style: containerStyle },
-    avatarNode,
-    showHat && h("img", { src: santaHat, alt: "hat", style: hatStyle })
-  );
+      },
+      (initials || "KH").slice(0, 2).toUpperCase()
+    );
+  }
+  if (!isVideo)
+    return h("img", {
+      src,
+      alt: "avatar",
+      style: commonStyle,
+      loading: "lazy",
+    });
+  return h(VideoLoop, { src, style: commonStyle });
 }
 
-export default function HomeTab({ cardId = "101" }) {
+export default function HomePage({ cardId = "101" }) {
   const [loading, setLoading] = React.useState(true);
   const [err, setErr] = React.useState("");
   const [info, setInfo] = React.useState(null);
   const [lang, setLang] = React.useState(
-    (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
+    (typeof window !== "undefined"
+      ? localStorage.getItem("lang")
+      : "am") || "am"
   );
-  const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
-  const [hatEnabled, setHatEnabled] = React.useState(false); // 🎅 state
-  const [savingHat, setSavingHat] = React.useState(false);
+  const [activeBrandKeyword, setActiveBrandKeyword] =
+    React.useState("");
 
   const htmlLang = lang === "am" ? "hy" : lang;
 
@@ -376,13 +431,14 @@ export default function HomeTab({ cardId = "101" }) {
         const root = data?.information || data || {};
         if (!killed) {
           setInfo(root);
-          setHatEnabled(!!(root?.options?.santaHatEnabled)); // 👈 կարդում ենք
           if (!localStorage.getItem("lang")) {
             const def =
               root &&
               root.default_lang &&
               Array.isArray(root.available_langs)
-                ? root.available_langs.includes(root.default_lang)
+                ? root.available_langs.includes(
+                    root.default_lang
+                  )
                   ? root.default_lang
                   : undefined
                 : undefined;
@@ -400,78 +456,58 @@ export default function HomeTab({ cardId = "101" }) {
     };
   }, [cardId]);
 
-  async function handleHatToggle(e) {
-    const checked = e.target.checked;
-    setHatEnabled(checked);
-    try {
-      setSavingHat(true);
-      await adminSaveInfo({
-        options: {
-          ...(info?.options || {}),
-          santaHatEnabled: checked,
-        },
-      });
-      // տեղական info-ն էլ թարմացնենք
-      setInfo((prev) => ({
-        ...(prev || {}),
-        options: {
-          ...((prev && prev.options) || {}),
-          santaHatEnabled: checked,
-        },
-      }));
-    } catch (err) {
-      console.error("santaHat save error:", err);
-    } finally {
-      setSavingHat(false);
-    }
-  }
-
-  if (loading) return h("div", { className: "pad" }, "Բեռնվում է…");
-  if (err)     return h("div", { className: "pad" }, "Սխալ: " + err);
-  if (!info)   return h("div", { className: "pad" }, "Տվյալ չկա");
+  if (loading)
+    return h("div", { className: "pad" }, "Բեռնվում է…");
+  if (err)
+    return h("div", { className: "pad" }, "Սխալ: " + err);
+  if (!info)
+    return h("div", { className: "pad" }, "Տվյալ չկա");
 
   try {
     const serverLangs =
-      Array.isArray(info?.available_langs) && info.available_langs.length
+      Array.isArray(info?.available_langs) &&
+      info.available_langs.length
         ? info.available_langs.slice(0, 11)
         : ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 
     const nameByLang = {
-      hy:  info?.company?.name?.am  || "",
-      ru:  info?.company?.name?.ru  || "",
-      en:  info?.company?.name?.en  || "",
-      ar:  info?.company?.name?.ar  || "",
-      fr:  info?.company?.name?.fr  || "",
-      kz:  info?.company?.name?.kz  || "",
+      hy: info?.company?.name?.am || "",
+      ru: info?.company?.name?.ru || "",
+      en: info?.company?.name?.en || "",
+      ar: info?.company?.name?.ar || "",
+      fr: info?.company?.name?.fr || "",
+      kz: info?.company?.name?.kz || "",
       chn: info?.company?.name?.chn || "",
-      de:  info?.company?.name?.de  || "",
-      es:  info?.company?.name?.es  || "",
-      it:  info?.company?.name?.it  || "",
-      fa:  info?.company?.name?.fa  || "",
+      de: info?.company?.name?.de || "",
+      es: info?.company?.name?.es || "",
+      it: info?.company?.name?.it || "",
+      fa: info?.company?.name?.fa || "",
     };
 
-    const desc  = info?.description || {};
+    const desc = info?.description || {};
     const about = info?.profile?.about || {};
     const textByLang = {
-      hy:  (desc?.am  ?? about?.am)  || "",
-      ru:  (desc?.ru  ?? about?.ru)  || "",
-      en:  (desc?.en  ?? about?.en)  || "",
-      ar:  (desc?.ar  ?? about?.ar)  || "",
-      fr:  (desc?.fr  ?? about?.fr)  || "",
-      kz:  (desc?.kz  ?? about?.kz)  || "",
+      hy: (desc?.am ?? about?.am) || "",
+      ru: (desc?.ru ?? about?.ru) || "",
+      en: (desc?.en ?? about?.en) || "",
+      ar: (desc?.ar ?? about?.ar) || "",
+      fr: (desc?.fr ?? about?.fr) || "",
+      kz: (desc?.kz ?? about?.kz) || "",
       chn: (desc?.chn ?? about?.chn) || "",
-      de:  (desc?.de  ?? about?.de)  || "",
-      es:  (desc?.es  ?? about?.es)  || "",
-      it:  (desc?.it  ?? about?.it)  || "",
-      fa:  (desc?.fa  ?? about?.fa)  || "",
+      de: (desc?.de ?? about?.de) || "",
+      es: (desc?.es ?? about?.es) || "",
+      it: (desc?.it ?? about?.it) || "",
+      fa: (desc?.fa ?? about?.fa) || "",
     };
 
     const nameColor =
       info?.company?.nameColor || "#111";
     const descColor =
-      info?.description?.color || info?.profile?.aboutColor || "#666";
+      info?.description?.color ||
+      info?.profile?.aboutColor ||
+      "#666";
 
-    const avTop  = info?.avatar;
+    const avTop = info?.avatar;
     const avProf = info?.profile?.avatar;
 
     const companyLogo =
@@ -482,7 +518,10 @@ export default function HomeTab({ cardId = "101" }) {
         : info?.company?.logo?.imageUrl || "");
 
     const fallbackLogo =
-      info?.assets?.logo_url || info?.logo_url || companyLogo || "";
+      info?.assets?.logo_url ||
+      info?.logo_url ||
+      companyLogo ||
+      "";
 
     let avatarUrl = "";
     let avatarType = "";
@@ -491,26 +530,32 @@ export default function HomeTab({ cardId = "101" }) {
     else if (avTop && typeof avTop === "object") {
       avatarType = avTop.type || "";
       if (avatarType === "image")
-        avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
+        avatarUrl =
+          avTop.imageUrl || avTop.videoUrl || "";
       else if (avatarType === "video")
-        avatarUrl = avTop.videoUrl || avTop.imageUrl || "";
+        avatarUrl =
+          avTop.videoUrl || avTop.imageUrl || "";
       else
-        avatarUrl = avTop.imageUrl || avTop.videoUrl || "";
+        avatarUrl =
+          avTop.imageUrl || avTop.videoUrl || "";
     }
 
     if (!avatarUrl && avProf) {
       if (typeof avProf === "string") avatarUrl = avProf;
       else if (typeof avProf === "object")
-        avatarUrl = avProf.imageUrl || avProf.videoUrl || "";
+        avatarUrl =
+          avProf.imageUrl || avProf.videoUrl || "";
     }
-    if (!avatarUrl && fallbackLogo) avatarUrl = fallbackLogo;
+    if (!avatarUrl && fallbackLogo)
+      avatarUrl = fallbackLogo;
 
-    const avatarAbs     = absSrc(avatarUrl);
-    const avatarIsVideo = avatarType === "video"
-      ? true
-      : avatarType === "image"
-      ? false
-      : isVideo(avatarAbs);
+    const avatarAbs = absSrc(avatarUrl);
+    const avatarIsVideo =
+      avatarType === "video"
+        ? true
+        : avatarType === "image"
+        ? false
+        : isVideo(avatarAbs);
 
     const bg =
       info?.background || {
@@ -525,8 +570,8 @@ export default function HomeTab({ cardId = "101" }) {
       nameByLang.hy ||
       nameByLang.en ||
       "—";
-
-    const descriptionRaw = textByLang[htmlLang] || "";
+    const descriptionRaw =
+      textByLang[htmlLang] || "";
     const description =
       htmlLang === "hy"
         ? hyphenateHy(descriptionRaw, "hy")
@@ -545,26 +590,46 @@ export default function HomeTab({ cardId = "101" }) {
       wordBreak: "break-word",
     };
 
-    const icons  = info?.icons || {};
-    const links  = Array.isArray(icons.links) ? icons.links : [];
+    const icons = info?.icons || {};
+    const links = Array.isArray(icons.links)
+      ? icons.links
+      : [];
     const styles = icons?.styles || {};
 
-    const labelColor   = styles.labelCss || styles.labelHEX || "";
-    const chipColor    = styles.chipCss || rgbaToCss(styles.chipRGBA) || "";
-    const rowCardColor = styles.rowCardCss || rgbaToCss(styles.rowCardRGBA) || "";
-    const layoutStyle  = styles.layoutStyle || "dzev1";
-    const cols         = Number(styles.cols || 4);
-    const glowEnabled  = !!styles.glowEnabled;
-    const glowColor    = styles.glowColor || "#7dd3fc";
+    const labelColor =
+      styles.labelCss || styles.labelHEX || "";
+    const chipColor =
+      styles.chipCss || rgbaToCss(styles.chipRGBA) || "";
+    const rowCardColor =
+      styles.rowCardCss ||
+      rgbaToCss(styles.rowCardRGBA) ||
+      "";
+    const layoutStyle =
+      styles.layoutStyle || "dzev1";
+    const cols = Number(styles.cols || 4);
+    const glowEnabled = !!styles.glowEnabled;
+    const glowColor = styles.glowColor || "#7dd3fc";
 
-    const brandsArray      = Array.isArray(info?.brands) ? info.brands : [];
-    const brandsCols       = Number(info?.brandsCols || 3);
-    const brandsTitleColor = info?.brandsTitleColor || "#000000";
-    const brandsTitleText  = info?.brandsTitleText || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ";
-    const brandsBgColor    = info?.brandsBgColor || "#ffffff";
-    const brandsNameColor  = info?.brandsNameColor || "#000000";
+    const brandsArray = Array.isArray(info?.brands)
+      ? info.brands
+      : [];
+    const brandsCols = Number(
+      info?.brandsCols || 3
+    );
+    const brandsTitleColor =
+      info?.brandsTitleColor || "#000000";
+    const brandsTitleText =
+      info?.brandsTitleText || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ";
+    const brandsBgColor =
+      info?.brandsBgColor || "#ffffff";
+    const brandsNameColor =
+      info?.brandsNameColor || "#000000";
 
-    const brandInfos = Array.isArray(info?.brandInfos) ? info.brandInfos : [];
+    const brandInfos = Array.isArray(
+      info?.brandInfos
+    )
+      ? info.brandInfos
+      : [];
     const showBrandInfo = !!activeBrandKeyword;
 
     return h(
@@ -594,14 +659,20 @@ export default function HomeTab({ cardId = "101" }) {
               bg.type === "color"
                 ? bg.color || "#ffffff"
                 : bg.type === "image"
-                ? `url(${absSrc(bg.imageUrl)}) center/cover no-repeat`
+                ? `url(${absSrc(
+                    bg.imageUrl
+                  )}) center/cover no-repeat`
                 : "transparent",
           },
         },
         bg.type === "video" && bg.videoUrl
           ? h(VideoLoop, {
               src: absSrc(bg.videoUrl),
-              style: { width: "100%", height: "100%", objectFit: "cover" },
+              style: {
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              },
             })
           : null
       ),
@@ -623,55 +694,23 @@ export default function HomeTab({ cardId = "101" }) {
             padding: "12px",
           },
         },
-        h(LangDropdown, { value: lang, onChange: setLang, langs: serverLangs }),
+        h(LangDropdown, {
+          value: lang,
+          onChange: setLang,
+          langs: serverLangs,
+        }),
 
         showBrandInfo
           ? h(BrandInfoPage, {
               brandInfos,
               keyword: activeBrandKeyword,
               lang: htmlLang,
-              onBack: () => setActiveBrandKeyword(""),
+              onBack: () =>
+                setActiveBrandKeyword(""),
             })
           : h(
               "div",
               { style: { position: "relative" } },
-
-              // 🎅 Checkbox card
-              h(
-                "section",
-                {
-                  className: "card",
-                  style: {
-                    marginBottom: 12,
-                    padding: "10px 14px",
-                    textAlign: "left",
-                  },
-                },
-                h(
-                  "label",
-                  {
-                    style: {
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                      fontSize: 14,
-                    },
-                  },
-                  h("input", {
-                    type: "checkbox",
-                    checked: hatEnabled,
-                    onChange: handleHatToggle,
-                  }),
-                  "Ցույց տալ Ամանորյա գլխարկը (Santa hat)",
-                  savingHat &&
-                    h(
-                      "span",
-                      { style: { marginLeft: 8, fontSize: 12, opacity: 0.7 } },
-                      "Պահպանում…"
-                    )
-                )
-              ),
-
               /* HERO CARD */
               h(
                 "section",
@@ -686,8 +725,9 @@ export default function HomeTab({ cardId = "101" }) {
                 h(AvatarMedia, {
                   src: avatarAbs,
                   isVideo: avatarIsVideo,
-                  initials: (name || "KH").slice(0, 2),
-                  showHat: hatEnabled,   // 👈 admin preview
+                  initials: (name || "KH")
+                    .slice(0, 2)
+                    .toUpperCase(),
                 }),
                 h(
                   "h1",
@@ -738,16 +778,25 @@ export default function HomeTab({ cardId = "101" }) {
                     brandsBgColor,
                     brandsNameColor,
                     lang: htmlLang,
-                    onKeywordClick: (kw) => setActiveBrandKeyword(kw),
+                    onKeywordClick: (kw) =>
+                      setActiveBrandKeyword(kw),
                   })
                 : null,
 
               /* SHARE */
-              h(SharePage, { cardId, info, lang: htmlLang })
+              h(SharePage, {
+                cardId,
+                info,
+                lang: htmlLang,
+              })
             )
       )
     );
   } catch (e) {
-    return h("div", { className: "pad" }, "Render error: " + (e.message || String(e)));
+    return h(
+      "div",
+      { className: "pad" },
+      "Render error: " + (e.message || String(e))
+    );
   }
 }
