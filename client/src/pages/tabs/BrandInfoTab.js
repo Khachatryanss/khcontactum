@@ -3,7 +3,7 @@ import React from "react";
 import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
 
 const h = React.createElement;
-// 👇 ավելացրինք kz, chn, de, es, it, fa
+// 👇 LANGS ամբողջ հավաքածու
 const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 
 /* ---------- UI TEXT ---------- */
@@ -201,7 +201,7 @@ const BRANDINFO_TEXT = {
     saveFailed: "保存失败",
   },
 
-  // ✅ NEW langs — same UI text as EN (fallback until translations)
+  // ✅ NEW langs — пока fallback EN
   de: {
     title: "Brand Info",
 
@@ -1072,6 +1072,47 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         ".footer-actions{position:sticky;bottom:0;display:flex;align-items:center;gap:10px;padding-top:8px;padding-bottom:6px;background:#fff;border-top:1px solid:#ececec;}",
         ".small-msg{margin-left:8px;font-size:12px;color:#444;}",
         ".small{font-size:12px;color:#666;}",
+
+        "/* ========= 1440px ========= */",
+        "@media (max-width:1440px){",
+        "  .card{padding:10px;}",
+        "  .worker-row{gap:10px;}",
+        "  .worker-main{gap:7px;}",
+        "}",
+
+        "/* ========= 1366px ========= */",
+        "@media (max-width:1366px){",
+        "  .worker-row{grid-template-columns:100px 1fr;}",
+        "  .worker-avatar{width:88px;height:88px;border-radius:14px;}",
+        "  .gallery-slot{width:86px;height:52px;}",
+        "}",
+
+        "/* ========= 1320px ========= */",
+        "@media (max-width:1320px){",
+        "  .worker-row{grid-template-columns:95px 1fr;}",
+        "  .worker-avatar{width:82px;height:82px;}",
+        "  .card{padding:10px 9px;}",
+        "  .input{padding:7px 9px;}",
+        "}",
+
+        "/* ========= 1240px ========= */",
+        "@media (max-width:1240px){",
+        "  .worker-row{grid-template-columns:90px 1fr;gap:10px;}",
+        "  .worker-gallery-row{gap:6px;}",
+        "  .gallery-slot{width:82px;height:50px;}",
+        "  .avatar-actions{gap:4px;}",
+        "}",
+
+        "/* ========= 1024px ========= */",
+        "@media (max-width:1024px){",
+        "  .worker-row{grid-template-columns:1fr;gap:10px;}",
+        "  .worker-left{flex-direction:row;align-items:flex-start;gap:10px;justify-content:flex-start;}",
+        "  .worker-avatar{width:76px;height:76px;border-radius:14px;}",
+        "  .reorder-col{flex-direction:row;justify-content:flex-start;gap:8px;}",
+        "  .avatar-actions{flex-direction:row;justify-content:flex-start;}",
+        "  .worker-main{gap:6px;}",
+        "  .footer-actions{flex-wrap:wrap;row-gap:6px;}",
+        "}",
       ].join("\n")
     )
   );
