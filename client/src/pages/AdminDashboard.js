@@ -704,7 +704,7 @@ function normalizeInfo(partial) {
 }
 
 /* ---------- Reusable file button (translated) ---------- */
-function FileButton({ label, accept, onChange }) {
+function FileButton({ label, accept, onChange, style }) {
   const inputRef = React.useRef(null);
   return h(
     React.Fragment,
@@ -714,6 +714,7 @@ function FileButton({ label, accept, onChange }) {
       {
         type: "button",
         className: "btn",
+        style,
         onClick: () => inputRef.current && inputRef.current.click(),
       },
       label
@@ -725,6 +726,120 @@ function FileButton({ label, accept, onChange }) {
       accept,
       onChange,
     })
+  );
+}
+
+/* ------- Avatar / Background circle preview ------- */
+function CirclePreview(src, kind) {
+  return h(
+    "div",
+    {
+      style: {
+        width: "64px",
+        height: "64px",
+        borderRadius: "9999px",
+        overflow: "hidden",
+        border: "1px solid rgba(0,0,0,.15)",
+        background: "#fff",
+        flex: "0 0 auto",
+        display: "grid",
+        placeItems: "center",
+      },
+    },
+    src
+      ? kind === "video"
+        ? h("video", {
+            src,
+            muted: true,
+            loop: true,
+            playsInline: true,
+            autoPlay: true,
+            style: { width: "100%", height: "100%", objectFit: "cover" },
+          })
+        : h("img", {
+            src,
+            alt: "preview",
+            style: { width: "100%", height: "100%", objectFit: "cover" },
+          })
+      : h("div", {
+          style: {
+            width: "60%",
+            height: "60%",
+            borderRadius: "9999px",
+            background: "#e5e7eb",
+          },
+        })
+  );
+}
+
+/* ------- Unified row for URL + Choose file + hint ------- */
+function MediaUploadRow({
+  label,
+  hint,
+  urlValue,
+  onUrlChange,
+  onFileChange,
+  previewSrc,
+  kind = "image",
+  fileLabel,
+  accept,
+  placeholder,
+}) {
+  return h(
+    "div",
+    {
+      className: "mb-4",
+      style: {
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 12,
+      },
+    },
+    CirclePreview(previewSrc, kind),
+    h(
+      "div",
+      null,
+      h("div", { className: "text-sm mb-1" }, label),
+      h(
+        "div",
+        {
+          style: {
+            display: "grid",
+            gridTemplateColumns: "minmax(0,1fr) auto",
+            gap: 8,
+            alignItems: "center",
+          },
+        },
+        h("input", {
+          className: "input",
+          id: "nkarInput",
+          value: urlValue || "",
+          onChange: (e) => onUrlChange && onUrlChange(e.target.value),
+          placeholder: placeholder || "",
+        }),
+        h(FileButton, {
+          label: fileLabel,
+          accept,
+          onChange: onFileChange,
+          style: {
+            minWidth: 110,
+            height: 36,
+            padding: "0 16px",
+            fontSize: 13,
+            fontWeight: 600,
+          },
+        })
+      ),
+      hint &&
+        h(
+          "div",
+          {
+            className: "small",
+            style: { marginTop: 4, fontSize: 11, opacity: 0.8 },
+          },
+          hint
+        )
+    )
   );
 }
 
@@ -917,48 +1032,6 @@ export default function AdminDashboard({
 
   function bytesMB(n) {
     return (n / (1024 * 1024)).toFixed(1);
-  }
-
-  function CirclePreview(src, kind) {
-    return h(
-      "div",
-      {
-        style: {
-          width: "64px",
-          height: "64px",
-          borderRadius: "9999px",
-          overflow: "hidden",
-          border: "1px solid rgba(0,0,0,.15)",
-          background: "#fff",
-          flex: "0 0 auto",
-          display: "grid",
-          placeItems: "center",
-        },
-      },
-      src
-        ? kind === "video"
-          ? h("video", {
-              src,
-              muted: true,
-              loop: true,
-              playsInline: true,
-              autoPlay: true,
-              style: { width: "100%", height: "100%", objectFit: "cover" },
-            })
-          : h("img", {
-              src,
-              alt: "preview",
-              style: { width: "100%", height: "100%", objectFit: "cover" },
-            })
-        : h("div", {
-            style: {
-              width: "60%",
-              height: "60%",
-              borderRadius: "9999px",
-              background: "#e5e7eb",
-            },
-          })
-    );
   }
 
   async function handleAvatarUpload(e) {
@@ -1437,59 +1510,38 @@ export default function AdminDashboard({
       ),
 
       info?.avatar?.type === "image" &&
-        h(
-          "div",
-          {
-            className: "mb-4",
-            style: { display: "flex", alignItems: "center", gap: "10px" },
+        h(MediaUploadRow, {
+          label: T.avatarImageUrlLabel,
+          hint: T.avatarImageHint,
+          urlValue: info?.avatar?.imageUrl || info.logo_url || "",
+          onUrlChange: (v) => {
+            setInfoPath("avatar.imageUrl", v);
+            setInfoPath("logo_url", v);
           },
-          CirclePreview(
-            fileUrl(avatarPreview || info?.avatar?.imageUrl || info.logo_url),
-            "image"
+          onFileChange: handleAvatarUpload,
+          previewSrc: fileUrl(
+            avatarPreview || info?.avatar?.imageUrl || info.logo_url
           ),
-          input(
-            T.avatarImageUrlLabel,
-            info?.avatar?.imageUrl || info.logo_url || "",
-            (v) => {
-              setInfoPath("avatar.imageUrl", v);
-              setInfoPath("logo_url", v);
-            },
-            { placeholder: "https://..." }
-          ),
-          h(FileButton, {
-            label: T.chooseFileLabel,
-            accept:
-              "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
-            onChange: handleAvatarUpload,
-          }),
-          h("div", { className: "small" }, T.avatarImageHint)
-        ),
+          kind: "image",
+          fileLabel: T.chooseFileLabel,
+          accept:
+            "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
+          placeholder: "https://...",
+        }),
 
       info?.avatar?.type === "video" &&
-        h(
-          "div",
-          {
-            className: "mb-4",
-            id: "uploadImg",
-            style: { display: "flex", alignItems: "center", gap: "12px" },
-          },
-          CirclePreview(
-            fileUrl(avatarPreview || info?.avatar?.videoUrl || ""),
-            "video"
-          ),
-          input(
-            T.avatarVideoUrlLabel,
-            info?.avatar?.videoUrl || "",
-            (v) => setInfoPath("avatar.videoUrl", v),
-            { placeholder: "/file/..." }
-          ),
-          h(FileButton, {
-            label: T.chooseFileLabel,
-            accept: "video/*,.mp4,.webm,.ogg",
-            onChange: handleAvatarUpload,
-          }),
-          h("div", { className: "small" }, T.avatarVideoHint)
-        ),
+        h(MediaUploadRow, {
+          label: T.avatarVideoUrlLabel,
+          hint: T.avatarVideoHint,
+          urlValue: info?.avatar?.videoUrl || "",
+          onUrlChange: (v) => setInfoPath("avatar.videoUrl", v),
+          onFileChange: handleAvatarUpload,
+          previewSrc: fileUrl(avatarPreview || info?.avatar?.videoUrl || ""),
+          kind: "video",
+          fileLabel: T.chooseFileLabel,
+          accept: "video/*,.mp4,.webm,.ogg",
+          placeholder: "/file/...",
+        }),
 
       /* COMPANY */
       h("h3", { className: "title mb-2" }, T.companyNameTitle),
@@ -1696,59 +1748,37 @@ export default function AdminDashboard({
         ),
 
       info?.background?.type === "image" &&
-        h(
-          "div",
-          {
-            className: "row mb-3",
-            style: {
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              marginBottom: "20px",
-            },
-          },
-          CirclePreview(
-            fileUrl(bgImagePreview || info?.background?.imageUrl || ""),
-            "image"
+        h(MediaUploadRow, {
+          label: T.backgroundImageUrlLabel,
+          hint: T.avatarImageHint, // նույն ֆորմատների տեքստը
+          urlValue: info?.background?.imageUrl || "",
+          onUrlChange: (v) => setInfoPath("background.imageUrl", v),
+          onFileChange: handleBgImageUpload,
+          previewSrc: fileUrl(
+            bgImagePreview || info?.background?.imageUrl || ""
           ),
-          input(
-            T.backgroundImageUrlLabel,
-            info?.background?.imageUrl || "",
-            (v) => setInfoPath("background.imageUrl", v),
-            { placeholder: "https://..." }
-          ),
-          h(FileButton, {
-            label: T.chooseFileLabel,
-            accept:
-              "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
-            onChange: handleBgImageUpload,
-          })
-        ),
+          kind: "image",
+          fileLabel: T.chooseFileLabel,
+          accept:
+            "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
+          placeholder: "https://...",
+        }),
 
       info?.background?.type === "video" &&
-        h(
-          "div",
-          {
-            className: "row mb-3",
-            style: { display: "flex", alignItems: "center", gap: "12px" },
-          },
-          CirclePreview(
-            fileUrl(bgVideoPreview || info?.background?.videoUrl || ""),
-            "video"
+        h(MediaUploadRow, {
+          label: T.backgroundVideoUrlLabel,
+          hint: T.backgroundVideoHint,
+          urlValue: info?.background?.videoUrl || "",
+          onUrlChange: (v) => setInfoPath("background.videoUrl", v),
+          onFileChange: handleBgVideoUpload,
+          previewSrc: fileUrl(
+            bgVideoPreview || info?.background?.videoUrl || ""
           ),
-          input(
-            T.backgroundVideoUrlLabel,
-            info?.background?.videoUrl || "",
-            (v) => setInfoPath("background.videoUrl", v),
-            { placeholder: "/file/..." }
-          ),
-          h(FileButton, {
-            label: T.chooseFileLabel,
-            accept: "video/*,.mp4,.webm,.ogg",
-            onChange: handleBgVideoUpload,
-          }),
-          h("div", { className: "small" }, T.backgroundVideoHint)
-        ),
+          kind: "video",
+          fileLabel: T.chooseFileLabel,
+          accept: "video/*,.mp4,.webm,.ogg",
+          placeholder: "/file/...",
+        }),
 
       h(
         "div",
