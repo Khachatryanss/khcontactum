@@ -1209,26 +1209,11 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     setChipText(chipCss);
   }, [chipCss]);
 
-  // ✅ hex + rgba support for icon background
   const handleChipTextBlur = () => {
-    const s = chipText.trim();
-
-    // hex → rgba
-    if (s.startsWith("#")) {
-      const rgb = hexToRgb(s);
-      const parsed = { r: rgb.r, g: rgb.g, b: rgb.b, a: 1 };
-      setStyle((st) => ({ ...st, chipRGBA: parsed }));
-      setChipText(`rgba(${parsed.r}, ${parsed.g}, ${parsed.b}, ${parsed.a})`);
-      return;
-    }
-
-    // try rgba / rgb
-    const parsed = parseCssRgba(s);
+    const parsed = parseCssRgba(chipText);
     if (parsed) {
-      setStyle((st) => ({ ...st, chipRGBA: parsed }));
-      setChipText(`rgba(${parsed.r}, ${parsed.g}, ${parsed.b}, ${parsed.a})`);
+      setStyle((s) => ({ ...s, chipRGBA: parsed }));
     } else {
-      // fallback
       setChipText(chipCss);
     }
   };
