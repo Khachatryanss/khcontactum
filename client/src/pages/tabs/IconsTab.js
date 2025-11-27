@@ -135,7 +135,7 @@ const ICONS_UI_TEXT = {
     presetButton: "اختيار",
     presetSearchPlaceholder: "بحث…",
     validateLabelsMissing: "يرجى تعبئة حقول الاسم",
-    validateAmMissing: "يرجى تعبئة حقل الاسم (AM)",
+    validateAmMissing: "يرجя تعبئة حقل الاسم (AM)",
     validateHrefMissing: "يرجى تعبئة حقل الرابط (URL)",
     rowsAttention: "تنبيه: يرجى تعبئة الصفوف المعلَّمة بالأحمر",
     savedOk: "تم الحفظ ✅",
@@ -1203,18 +1203,60 @@ export default function IconsTab({ langs, uiLang = "en" }) {
     [style.rowCardRGBA]
   );
 
-  // editable text for Icon background
+  // editable text for Icon background (hex / transparent)
   const [chipText, setChipText] = React.useState("");
   React.useEffect(() => {
-    setChipText(chipCss);
-  }, [chipCss]);
-
-  const handleChipTextBlur = () => {
-    const parsed = parseCssRgba(chipText);
-    if (parsed) {
-      setStyle((s) => ({ ...s, chipRGBA: parsed }));
+    const { r, g, b, a } = style.chipRGBA || {
+      r: 0,
+      g: 0,
+      b: 0,
+      a: 1,
+    };
+    if (a === 0) {
+      setChipText("transparent");
     } else {
-      setChipText(chipCss);
+      setChipText(rgbToHex({ r, g, b }));
+    }
+  }, [style.chipRGBA]);
+
+  // ✅ hex + transparent + rgba support
+  const handleChipTextBlur = () => {
+    const raw = (chipText || "").trim();
+    const lower = raw.toLowerCase();
+
+    // transparent keyword
+    if (lower === "transparent") {
+      setStyle((st) => {
+        const prev = st.chipRGBA || { r: 0, g: 0, b: 0, a: 1 };
+        const next = { ...prev, a: 0 };
+        return { ...st, chipRGBA: next };
+      });
+      return;
+    }
+
+    // hex → opaque rgba
+    if (raw.startsWith("#")) {
+      const { r, g, b } = hexToRgb(raw);
+      const next = { r, g, b, a: 1 };
+      setStyle((st) => ({ ...st, chipRGBA: next }));
+      setChipText(rgbToHex(next));
+      return;
+    }
+
+    // fallback: rgba(...) կամ rgb(...)
+    const parsed = parseCssRgba(raw);
+    if (parsed) {
+      setStyle((st) => ({ ...st, chipRGBA: parsed }));
+      if (parsed.a === 0) {
+        setChipText("transparent");
+      } else {
+        setChipText(rgbToHex(parsed));
+      }
+    } else {
+      // if invalid → revert to current state
+      const cur = style.chipRGBA || { r: 0, g: 0, b: 0, a: 1 };
+      if (cur.a === 0) setChipText("transparent");
+      else setChipText(rgbToHex(cur));
     }
   };
 
@@ -1588,7 +1630,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
           value: chipText,
           onChange: (e) => setChipText(e.target.value),
           onBlur: handleChipTextBlur,
-          placeholder: "rgba(0, 0, 0, 1) կամ #000000",
+          placeholder: "#000000 կամ transparent կամ rgba(...)",
           style: { opacity: 0.9 },
         }),
         showChipPicker &&
