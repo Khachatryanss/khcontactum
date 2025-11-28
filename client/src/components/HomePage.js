@@ -298,8 +298,8 @@ function AvatarMedia({ src, isVideo, initials, showHat }) {
 
   const hatStyle = {
     position: "absolute",
-    top: -56,
-    left: "-5%",
+    top: -41,
+    left: "1%",
     transform: "translateX(-50%)",
     width: size * 1.0,
     pointerEvents: "none",
