@@ -730,7 +730,7 @@ export default function HomePage({ cardId = "101" }) {
                     style: {
                       color: nameColor,
                       margin: "15px auto 4px",
-                      fontSize: 32,
+                      fontSize: 29,
                     },
                   },
                   name
