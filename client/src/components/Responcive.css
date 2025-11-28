@@ -20,7 +20,7 @@
   }
 
   .hero-title {
-    font-size: 28px !important;
+    font-size: 28px;
     margin: 12px 0 6px !important;
   }
 
@@ -766,14 +766,14 @@
 /* Base desktop fallback */
 .public-scroll-layer { padding: 16px; }
 .public-home .card { padding: 18px 20px 22px; border-radius: 16px; }
-.public-home .hero-title { font-size: 34px; line-height: 1.15; margin: 14px 0 6px; }
+.public-home .hero-title { font-size: 30px; line-height: 1.15; margin: 14px 0 6px; }
 .public-home .hero-desc  { font-size: 16px; line-height: 1.6; max-width: 72ch; }
 
 /* ===== 1280–1365 ===== */
 @media (min-width: 1280px) and (max-width: 1365.98px) {
   .public-scroll-layer { padding: 18px; }
   .public-home .card { padding: 18px 20px 22px; }
-  .public-home .hero-title { font-size: 32px; }
+  .public-home .hero-title { font-size: 28px; }
   .public-home .hero-desc  { font-size: 16px; max-width: 70ch; }
 }
 
@@ -789,7 +789,7 @@
 @media (min-width: 1440px) and (max-width: 1919.98px) {
   .public-scroll-layer { padding: 22px; }
   .public-home .card { padding: 22px 24px 26px; }
-  .public-home .hero-title { font-size: 35px; }
+  .public-home .hero-title { font-size: 30px; }
   .public-home .hero-desc  { font-size: 18px; max-width: 76ch; }
 }
 
