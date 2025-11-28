@@ -20,6 +20,7 @@
   }
 
   .hero-title {
+    flex-wrap: wrap;
     font-size: 28px;
     margin: 12px 0 6px !important;
   }
@@ -802,7 +803,7 @@
     margin: 0 auto;
   }
   .public-home .card { padding: 24px 26px 28px; }
-  .public-home .hero-title { font-size: 40px; }
+  .public-home .hero-title { font-size: 40px;}
   .public-home .hero-desc  { font-size: 19px; max-width: 80ch; }
 }
 
