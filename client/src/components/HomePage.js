@@ -7,9 +7,7 @@ import IconsPage     from "./IconsPage.js";
 import BrandsPage    from "./BrandsPage.js";
 import BrandInfoPage from "./BrandInfoPage.js";
 import SharePage     from "./SharePage.js";
-import contactumLogo from "../img/Contactum.png"; // splash logo (կարող է պետք գա)
-import splashVideo from "../img/splash.mp4";
-
+import contactumLogo from "../img/Contactum.png"; // ✅ splash logo
 
 const h = React.createElement;
 
@@ -41,7 +39,7 @@ function hyphenateHy(text, uiLang = "hy") {
   const U_DIGR = "\uE000";
   const toPh = (s) => s.replace(/ու/g, U_DIGR);
   const fromPh = (s) => s.replace(new RegExp(U_DIGR, "g"), "ու");
-  const VOWEL = new Set(["ա", "ե", "է", "ը", "ի", "ո", "օ", "և", U_DIGR]);
+  const VOWEL = new Set(["ա","ե","է","ը","ի","ո","օ","և",U_DIGR]);
 
   function hyphenateWord(w) {
     if (!w) return w;
@@ -55,19 +53,10 @@ function hyphenateHy(text, uiLang = "hy") {
     let lastBreak = -6;
 
     for (let i = 0; i < chars.length - 2; i++) {
-      const a = chars[i],
-        b = chars[i + 1],
-        c = chars[i + 2];
+      const a = chars[i], b = chars[i+1], c = chars[i+2];
       let place = -1;
       if (isV(a) && isC(b) && isV(c)) place = i + 1;
-      if (
-        isV(a) &&
-        isC(b) &&
-        isC(c) &&
-        i + 3 < chars.length &&
-        isV(chars[i + 3])
-      )
-        place = i + 2;
+      if (isV(a) && isC(b) && isC(c) && i+3 < chars.length && isV(chars[i+3])) place = i + 2;
       if (place > 1 && place < chars.length - 2) {
         if (place - lastBreak >= 6) {
           breaks.push(place);
@@ -85,10 +74,7 @@ function hyphenateHy(text, uiLang = "hy") {
   const out = String(text)
     .split(TOKENS)
     .map((chunk) => {
-      if (TOKENS.test(chunk)) {
-        TOKENS.lastIndex = 0;
-        return chunk;
-      }
+      if (TOKENS.test(chunk)) { TOKENS.lastIndex = 0; return chunk; }
       TOKENS.lastIndex = 0;
       return chunk.replace(/[\p{Script=Armenian}]+/gu, hyphenateWord);
     })
@@ -98,33 +84,21 @@ function hyphenateHy(text, uiLang = "hy") {
 
 function idealColsForLang(lang) {
   switch (lang) {
-    case "hy":
-      return [30, 34];
-    case "ru":
-      return [32, 38];
-    case "en":
-      return [36, 42];
-    case "ar":
-      return [30, 34];
-    case "fr":
-      return [36, 42];
-    case "kz":
-      return [34, 40];
-    case "chn":
-      return [28, 34];
+    case "hy":  return [30, 34];
+    case "ru":  return [32, 38];
+    case "en":  return [36, 42];
+    case "ar":  return [30, 34];
+    case "fr":  return [36, 42];
+    case "kz":  return [34, 40];
+    case "chn": return [28, 34];
 
     // ✅ NEW langs (same sizing logic, no other changes)
-    case "de":
-      return [36, 42];
-    case "es":
-      return [36, 42];
-    case "it":
-      return [36, 42];
-    case "fa":
-      return [30, 34];
+    case "de":  return [36, 42];
+    case "es":  return [36, 42];
+    case "it":  return [36, 42];
+    case "fa":  return [30, 34];
 
-    default:
-      return [34, 40];
+    default:    return [34, 40];
   }
 }
 
@@ -136,78 +110,66 @@ function LangDropdown({
 }) {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
-    const onDoc = (e) => {
-      if (!e.target.closest?.(".lang-dd")) setOpen(false);
-    };
+    const onDoc = (e) => { if (!e.target.closest?.(".lang-dd")) setOpen(false); };
     document.addEventListener("click", onDoc);
     return () => document.removeEventListener("click", onDoc);
   }, []);
   return h(
     "div",
-    {
-      className: "lang-dd",
-      style: { position: "absolute", right: 10, top: 10, zIndex: 2 },
-    },
+    { className: "lang-dd", style: { position: "absolute", right: 10, top: 10, zIndex: 2 } },
     h(
       "button",
       {
         className: "chip active",
-        onClick: () => setOpen((v) => !v),
+        onClick: () => setOpen(v => !v),
         style: { minWidth: 48 },
       },
       (value || "am").toUpperCase()
     ),
-    open &&
-      h(
-        "div",
-        {
-          className: "card",
-          style: {
-            position: "absolute",
-            right: 0,
-            top: "calc(100% + 6px)",
-            padding: 6,
-            display: "grid",
-            gap: 6,
-            zIndex: 3,
-          },
+    open && h(
+      "div",
+      {
+        className: "card",
+        style: {
+          position: "absolute",
+          right: 0,
+          top: "calc(100% + 6px)",
+          padding: 6,
+          display: "grid",
+          gap: 6,
+          zIndex: 3,
         },
-        ...langs.map((code) =>
-          h(
-            "button",
-            {
-              key: code,
-              className: "chip" + (code === value ? " active" : ""),
-              onClick: () => {
-                localStorage.setItem("lang", code);
-                onChange(code);
-                setOpen(false);
-              },
+      },
+      ...langs.map(code =>
+        h(
+          "button",
+          {
+            key: code,
+            className: "chip" + (code === value ? " active" : ""),
+            onClick: () => {
+              localStorage.setItem("lang", code);
+              onChange(code);
+              setOpen(false);
             },
-            code.toUpperCase()
-          )
+          },
+          code.toUpperCase()
         )
       )
+    )
   );
 }
 
 function rgbaToCss(obj) {
   if (!obj || typeof obj !== "object") return "";
   const { r = 0, g = 0, b = 0, a = 1 } = obj;
-  return `rgba(${+r | 0}, ${+g | 0}, ${+b | 0}, ${
-    isFinite(+a) ? +a : 1
-  })`;
+  return `rgba(${(+r | 0)}, ${(+g | 0)}, ${(+b | 0)}, ${(isFinite(+a) ? +a : 1)})`;
 }
 
 // (այս պահին չի օգտագործվում, բայց թարմացրի 11 լեզվի համար)
-function pickLang(
-  v,
-  lang,
-  fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]
-) {
+function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
-  const order = [lang].concat(fallbacks.filter((x) => x !== lang));
+  const order = [lang].concat(fallbacks.filter(x => x !== lang));
   for (let i = 0; i < order.length; i++) {
     const k = order[i];
     const s = v && v[k];
@@ -226,14 +188,10 @@ function VideoLoop({ src, style }) {
     const v = videoRef.current;
     if (!v || !src) return;
 
-    v.muted = true;
-    v.setAttribute("muted", "");
-    v.playsInline = true;
-    v.setAttribute("playsinline", "");
-    v.autoplay = true;
-    v.setAttribute("autoplay", "");
-    v.loop = true;
-    v.setAttribute("loop", "");
+    v.muted = true;                v.setAttribute("muted", "");
+    v.playsInline = true;          v.setAttribute("playsinline", "");
+    v.autoplay = true;             v.setAttribute("autoplay", "");
+    v.loop = true;                 v.setAttribute("loop", "");
     v.controls = false;
 
     let killed = false;
@@ -253,26 +211,18 @@ function VideoLoop({ src, style }) {
     };
 
     const onCanPlay = () => tryPlay();
-    const onEnded = () => {
+    const onEnded   = () => {
       if (!v) return;
       v.currentTime = 0;
       tryPlay();
     };
-    const onPause = () => {
-      if (
-        !killed &&
-        typeof document !== "undefined" &&
-        document.visibilityState === "visible"
-      ) {
+    const onPause   = () => {
+      if (!killed && typeof document !== "undefined" && document.visibilityState === "visible") {
         tryPlay();
       }
     };
     const onVisibility = () => {
-      if (
-        !killed &&
-        typeof document !== "undefined" &&
-        document.visibilityState === "visible"
-      ) {
+      if (!killed && typeof document !== "undefined" && document.visibilityState === "visible") {
         tryPlay();
       }
     };
@@ -293,8 +243,8 @@ function VideoLoop({ src, style }) {
     tryPlay();
 
     v.addEventListener("canplay", onCanPlay);
-    v.addEventListener("ended", onEnded);
-    v.addEventListener("pause", onPause);
+    v.addEventListener("ended",   onEnded);
+    v.addEventListener("pause",   onPause);
     if (typeof document !== "undefined") {
       document.addEventListener("visibilitychange", onVisibility);
     }
@@ -303,8 +253,8 @@ function VideoLoop({ src, style }) {
       killed = true;
       if (io) io.disconnect();
       v.removeEventListener("canplay", onCanPlay);
-      v.removeEventListener("ended", onEnded);
-      v.removeEventListener("pause", onPause);
+      v.removeEventListener("ended",   onEnded);
+      v.removeEventListener("pause",   onPause);
       if (typeof document !== "undefined") {
         document.removeEventListener("visibilitychange", onVisibility);
       }
@@ -352,13 +302,7 @@ function AvatarMedia({ src, isVideo, initials }) {
       (initials || "KH").slice(0, 2).toUpperCase()
     );
   }
-  if (!isVideo)
-    return h("img", {
-      src,
-      alt: "avatar",
-      style: commonStyle,
-      loading: "lazy",
-    });
+  if (!isVideo) return h("img", { src, alt: "avatar", style: commonStyle, loading: "lazy" });
   return h(VideoLoop, { src, style: commonStyle });
 }
 
@@ -367,11 +311,10 @@ export default function HomePage({ cardId = "101" }) {
   const [err, setErr] = React.useState("");
   const [info, setInfo] = React.useState(null);
   const [lang, setLang] = React.useState(
-    (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") ||
-      "am"
+    (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
   );
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
-  const [splashDone, setSplashDone] = React.useState(false); // ✅ splash timer
+  const [splashDone, setSplashDone] = React.useState(false);   // ✅ splash timer
 
   // ✅ pop-up share-ի ավտոմատ բացում՝ միայն առաջին անգամ
   const [shareAutoOpened, setShareAutoOpened] = React.useState(false);
@@ -385,9 +328,9 @@ export default function HomePage({ cardId = "101" }) {
     } catch {}
   }, [htmlLang]);
 
-  /* ✅ splash-ը գոնե 3 վրկ պահելու համար */
+  /* ✅ splash-ը գոնե 2 վրկ պահելու համար */
   React.useEffect(() => {
-    const t = setTimeout(() => setSplashDone(true), 3500); // 3 վրկ
+    const t = setTimeout(() => setSplashDone(true), 2000);
     return () => clearTimeout(t);
   }, []);
 
@@ -431,19 +374,19 @@ export default function HomePage({ cardId = "101" }) {
 
     // ընտրում ենք անունը՝ ըստ լեզվի
     const nameByLang = {
-      hy: info?.company?.name?.am || "",
-      ru: info?.company?.name?.ru || "",
-      en: info?.company?.name?.en || "",
-      ar: info?.company?.name?.ar || "",
-      fr: info?.company?.name?.fr || "",
-      kz: info?.company?.name?.kz || "",
+      hy:  info?.company?.name?.am  || "",
+      ru:  info?.company?.name?.ru  || "",
+      en:  info?.company?.name?.en  || "",
+      ar:  info?.company?.name?.ar  || "",
+      fr:  info?.company?.name?.fr  || "",
+      kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
 
       // ✅ NEW langs
-      de: info?.company?.name?.de || "",
-      es: info?.company?.name?.es || "",
-      it: info?.company?.name?.it || "",
-      fa: info?.company?.name?.fa || "",
+      de:  info?.company?.name?.de  || "",
+      es:  info?.company?.name?.es  || "",
+      it:  info?.company?.name?.it  || "",
+      fa:  info?.company?.name?.fa  || "",
     };
 
     const displayName =
@@ -453,15 +396,11 @@ export default function HomePage({ cardId = "101" }) {
       "KHContactum";
 
     /* 1) PAGE TITLE */
-    try {
-      document.title = displayName;
-    } catch {}
+    try { document.title = displayName; } catch {}
 
     /* 2) iOS Meta Title */
     try {
-      let meta = document.querySelector(
-        'meta[name="apple-mobile-web-app-title"]'
-      );
+      let meta = document.querySelector('meta[name="apple-mobile-web-app-title"]');
       if (!meta) {
         meta = document.createElement("meta");
         meta.setAttribute("name", "apple-mobile-web-app-title");
@@ -502,7 +441,9 @@ export default function HomePage({ cardId = "101" }) {
         l.setAttribute("href", href);
       });
     } catch {}
+
   }, [info, htmlLang, cardId]);
+
 
   // ✅ splash + loading ավարտվելուց հետո auto-open միայն մեկ անգամ
   React.useEffect(() => {
@@ -511,41 +452,45 @@ export default function HomePage({ cardId = "101" }) {
     }
   }, [splashDone, loading, shareAutoOpened]);
 
-  /* ===== Splash loader – Contactum VIDEO ===== */
-  /* ===== Splash loader – FULLSCREEN VIDEO ===== */
-/* ===== Splash loader – FULLSCREEN VIDEO ===== */
-if (!splashDone || loading) {
-  return h(
-    "div",
-    {
-      style: {
-        position: "fixed",
-        inset: 0,
-        background: "#000",   // կամ #fff, ինչպես ուզում ես
-        zIndex: 999,
-        overflow: "hidden",
+  /* ===== Splash loader – Contactum logo ===== */
+  if (!splashDone || loading) {
+    return h(
+      "div",
+      {
+        style: {
+          position: "fixed",
+          inset: 0,
+          background: "#ffffff",
+          display: "grid",
+          placeItems: "center",
+          zIndex: 999,
+        },
       },
-    },
-    h("video", {
-      src: splashVideo,          // ⚠️ Այժմ օգտագործում ենք imported ֆայլը
-      autoPlay: true,
-      muted: true,
-      playsInline: true,
-      loop: true,
-      controls: false,
-      style: {
-        width: "100%",
-        height: "100%",
-        objectFit: "cover",
-        display: "block",
-      },
-    })
-  );
-}
+      h(
+        "div",
+        { style: { textAlign: "center" } },
+        h("img", {
+          src: contactumLogo,
+          alt: "KHContactum",
+          style: { width: 120, height: "auto", marginBottom: 16 },
+        }),
+        h(
+          "div",
+          {
+            style: {
+              fontSize: 14,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+              color: "#444",
+            },
+          },
+          "KHContactum Digital Card"
+        )
+      )
+    );
+  }
 
-
-
-  if (err) return h("div", { className: "pad" }, "Սխալ: " + err);
+  if (err)   return h("div", { className: "pad" }, "Սխալ: " + err);
   if (!info) return h("div", { className: "pad" }, "Տվյալ չկա");
 
   try {
@@ -555,41 +500,41 @@ if (!splashDone || loading) {
         : ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
 
     const nameByLang = {
-      hy: info?.company?.name?.am || "",
-      ru: info?.company?.name?.ru || "",
-      en: info?.company?.name?.en || "",
-      ar: info?.company?.name?.ar || "",
-      fr: info?.company?.name?.fr || "",
-      kz: info?.company?.name?.kz || "",
+      hy:  info?.company?.name?.am  || "",
+      ru:  info?.company?.name?.ru  || "",
+      en:  info?.company?.name?.en  || "",
+      ar:  info?.company?.name?.ar  || "",
+      fr:  info?.company?.name?.fr  || "",
+      kz:  info?.company?.name?.kz  || "",
       chn: info?.company?.name?.chn || "",
-      de: info?.company?.name?.de || "",
-      es: info?.company?.name?.es || "",
-      it: info?.company?.name?.it || "",
-      fa: info?.company?.name?.fa || "",
+      de:  info?.company?.name?.de  || "",
+      es:  info?.company?.name?.es  || "",
+      it:  info?.company?.name?.it  || "",
+      fa:  info?.company?.name?.fa  || "",
     };
 
-    const desc = info?.description || {};
+    const desc  = info?.description || {};
     const about = info?.profile?.about || {};
 
     const textByLang = {
-      hy: (desc?.am ?? about?.am) || "",
-      ru: (desc?.ru ?? about?.ru) || "",
-      en: (desc?.en ?? about?.en) || "",
-      ar: (desc?.ar ?? about?.ar) || "",
-      fr: (desc?.fr ?? about?.fr) || "",
-      kz: (desc?.kz ?? about?.kz) || "",
+      hy:  (desc?.am  ?? about?.am)  || "",
+      ru:  (desc?.ru  ?? about?.ru)  || "",
+      en:  (desc?.en  ?? about?.en)  || "",
+      ar:  (desc?.ar  ?? about?.ar)  || "",
+      fr:  (desc?.fr  ?? about?.fr)  || "",
+      kz:  (desc?.kz  ?? about?.kz)  || "",
       chn: (desc?.chn ?? about?.chn) || "",
-      de: (desc?.de ?? about?.de) || "",
-      es: (desc?.es ?? about?.es) || "",
-      it: (desc?.it ?? about?.it) || "",
-      fa: (desc?.fa ?? about?.fa) || "",
+      de:  (desc?.de  ?? about?.de)  || "",
+      es:  (desc?.es  ?? about?.es)  || "",
+      it:  (desc?.it  ?? about?.it)  || "",
+      fa:  (desc?.fa  ?? about?.fa)  || "",
     };
 
     const nameColor = info?.company?.nameColor || "#111";
     const descColor =
       info?.description?.color || info?.profile?.aboutColor || "#666";
 
-    const avTop = info?.avatar;
+    const avTop  = info?.avatar;
     const avProf = info?.profile?.avatar;
 
     const companyLogo =
@@ -622,7 +567,7 @@ if (!splashDone || loading) {
     }
     if (!avatarUrl && fallbackLogo) avatarUrl = fallbackLogo;
 
-    const avatarAbs = absSrc(avatarUrl);
+    const avatarAbs     = absSrc(avatarUrl);
     const avatarIsVideo =
       avatarType === "video"
         ? true
@@ -665,29 +610,28 @@ if (!splashDone || loading) {
       wordBreak: "break-word",
     };
 
-    const icons = info?.icons || {};
-    const links = Array.isArray(icons.links) ? icons.links : [];
+    const icons  = info?.icons || {};
+    const links  = Array.isArray(icons.links) ? icons.links : [];
     const styles = icons?.styles || {};
 
-    const labelColor = styles.labelCss || styles.labelHEX || "";
-    const chipColor = styles.chipCss || rgbaToCss(styles.chipRGBA) || "";
-    const rowCardColor =
-      styles.rowCardCss || rgbaToCss(styles.rowCardRGBA) || "";
+    const labelColor   = styles.labelCss || styles.labelHEX || "";
+    const chipColor    = styles.chipCss || rgbaToCss(styles.chipRGBA) || "";
+    const rowCardColor = styles.rowCardCss || rgbaToCss(styles.rowCardRGBA) || "";
     const iconColor =
       info?.icons?.styles?.iconHEX ||
       info?.icons?.styles?.iconCss ||
       "#ffffff";
-    const layoutStyle = styles.layoutStyle || "dzev1";
-    const cols = Number(styles.cols || 4);
-    const glowEnabled = !!styles.glowEnabled;
-    const glowColor = styles.glowColor || "#7dd3fc";
+    const layoutStyle  = styles.layoutStyle || "dzev1";
+    const cols         = Number(styles.cols || 4);
+    const glowEnabled  = !!styles.glowEnabled;
+    const glowColor    = styles.glowColor || "#7dd3fc";
 
-    const brandsArray = Array.isArray(info?.brands) ? info.brands : [];
-    const brandsCols = Number(info?.brandsCols || 3);
+    const brandsArray      = Array.isArray(info?.brands) ? info.brands : [];
+    const brandsCols       = Number(info?.brandsCols || 3);
     const brandsTitleColor = info?.brandsTitleColor || "#000000";
-    const brandsTitleText = info?.brandsTitleText || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ";
-    const brandsBgColor = info?.brandsBgColor || "#ffffff";
-    const brandsNameColor = info?.brandsNameColor || "#000000";
+    const brandsTitleText  = info?.brandsTitleText || "ՄԵՐ ԲՐԵՆԴՆԵՐԸ";
+    const brandsBgColor    = info?.brandsBgColor || "#ffffff";
+    const brandsNameColor  = info?.brandsNameColor || "#000000";
 
     const brandInfos = Array.isArray(info?.brandInfos) ? info.brandInfos : [];
     const showBrandInfo = !!activeBrandKeyword;
@@ -797,10 +741,7 @@ if (!splashDone || loading) {
                     className: "hero-desc",
                     style: descStyle,
                     lang: htmlLang,
-                    dir:
-                      htmlLang === "ar" || htmlLang === "fa"
-                        ? "rtl"
-                        : "ltr",
+                    dir: htmlLang === "ar" || htmlLang === "fa" ? "rtl" : "ltr",
                   },
                   description
                 )
@@ -829,13 +770,9 @@ if (!splashDone || loading) {
                     brandsNameColor,
                     lang: htmlLang,
                     onKeywordClick: (kw) => {
-                      const container =
-                        document.querySelector(".public-scroll-layer");
+                      const container = document.querySelector(".public-scroll-layer");
                       const scrollY = container ? container.scrollTop : 0;
-                      sessionStorage.setItem(
-                        "publicScrollPos",
-                        String(scrollY)
-                      );
+                      sessionStorage.setItem("publicScrollPos", String(scrollY));
                       setActiveBrandKeyword(kw);
                     },
                   })
