@@ -8,6 +8,8 @@ import BrandsPage    from "./BrandsPage.js";
 import BrandInfoPage from "./BrandInfoPage.js";
 import SharePage     from "./SharePage.js";
 import contactumLogo from "../img/Contactum.png"; // splash logo (կարող է պետք գա)
+import splashVideo from "../img/splash.mp4";
+
 
 const h = React.createElement;
 
@@ -511,6 +513,7 @@ export default function HomePage({ cardId = "101" }) {
 
   /* ===== Splash loader – Contactum VIDEO ===== */
   /* ===== Splash loader – FULLSCREEN VIDEO ===== */
+/* ===== Splash loader – FULLSCREEN VIDEO ===== */
 if (!splashDone || loading) {
   return h(
     "div",
@@ -518,22 +521,28 @@ if (!splashDone || loading) {
       style: {
         position: "fixed",
         inset: 0,
-        background: "#000",  // կամ #fff, ինչպես ուզում ես
+        background: "#000",   // կամ #fff, ինչպես ուզում ես
         zIndex: 999,
         overflow: "hidden",
       },
     },
-    h(VideoLoop, {
-      src: "/video/khc.mp4",
+    h("video", {
+      src: splashVideo,          // ⚠️ Այժմ օգտագործում ենք imported ֆայլը
+      autoPlay: true,
+      muted: true,
+      playsInline: true,
+      loop: true,
+      controls: false,
       style: {
         width: "100%",
         height: "100%",
-        objectFit: "cover",  // լրիվ էկրանով
+        objectFit: "cover",
         display: "block",
       },
     })
   );
 }
+
 
 
   if (err) return h("div", { className: "pad" }, "Սխալ: " + err);
