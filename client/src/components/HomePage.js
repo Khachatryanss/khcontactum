@@ -175,7 +175,7 @@ function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn
     const k = order[i];
     const s = v && v[k];
     if (s && String(s).trim()) return String(s).trim();
-  }
+    }
   return "";
 }
 
@@ -278,7 +278,7 @@ function VideoLoop({ src, style }) {
 }
 
 /* ===== Avatar + Santa Hat ===== */
-function AvatarMedia({ src, isVideo, initials }) {
+function AvatarMedia({ src, isVideo, initials, showHat }) {
   const size = 150;
 
   const containerStyle = {
@@ -333,7 +333,12 @@ function AvatarMedia({ src, isVideo, initials }) {
     "div",
     { style: containerStyle },
     avatarNode,
-    h("img", { src: santaHat, alt: "hat", style: hatStyle })
+    showHat &&
+      h("img", {
+        src: santaHat,
+        alt: "hat",
+        style: hatStyle,
+      })
   );
 }
 
@@ -592,6 +597,9 @@ export default function HomePage({ cardId = "101" }) {
         ? false
         : isVideo(avatarAbs);
 
+    const showSantaHat =
+      !!(info && info.avatar && info.avatar.santaHat === true);
+
     const bg =
       info?.background || {
         type: "color",
@@ -738,6 +746,7 @@ export default function HomePage({ cardId = "101" }) {
                   src: avatarAbs,
                   isVideo: avatarIsVideo,
                   initials: (name || "KH").slice(0, 2),
+                  showHat: showSantaHat,
                 }),
                 h(
                   "h1",
