@@ -773,7 +773,7 @@
 @media (min-width: 1280px) and (max-width: 1365.98px) {
   .public-scroll-layer { padding: 18px; }
   .public-home .card { padding: 18px 20px 22px; }
-  .public-home .hero-title { font-size: 34px; }
+  .public-home .hero-title { font-size: 32px; }
   .public-home .hero-desc  { font-size: 16px; max-width: 70ch; }
 }
 
@@ -781,7 +781,7 @@
 @media (min-width: 1366px) and (max-width: 1439.98px) {
   .public-scroll-layer { padding: 20px; }
   .public-home .card { padding: 20px 22px 24px; }
-  .public-home .hero-title { font-size: 36px; }
+  .public-home .hero-title { font-size: 32px; }
   .public-home .hero-desc  { font-size: 17px; max-width: 72ch; }
 }
 
@@ -789,7 +789,7 @@
 @media (min-width: 1440px) and (max-width: 1919.98px) {
   .public-scroll-layer { padding: 22px; }
   .public-home .card { padding: 22px 24px 26px; }
-  .public-home .hero-title { font-size: 40px; }
+  .public-home .hero-title { font-size: 35px; }
   .public-home .hero-desc  { font-size: 18px; max-width: 76ch; }
 }
 
@@ -802,7 +802,7 @@
     margin: 0 auto;
   }
   .public-home .card { padding: 24px 26px 28px; }
-  .public-home .hero-title { font-size: 44px; }
+  .public-home .hero-title { font-size: 40px; }
   .public-home .hero-desc  { font-size: 19px; max-width: 80ch; }
 }
 
