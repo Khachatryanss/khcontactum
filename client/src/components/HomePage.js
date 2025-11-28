@@ -54,10 +54,10 @@ function hyphenateHy(text, uiLang = "hy") {
     let lastBreak = -6;
 
     for (let i = 0; i < chars.length - 2; i++) {
-      const a = chars[i], b = chars[i + 1], c = chars[i + 2];
+      const a = chars[i], b = chars[i+1], c = chars[i+2];
       let place = -1;
       if (isV(a) && isC(b) && isV(c)) place = i + 1;
-      if (isV(a) && isC(b) && isC(c) && i + 3 < chars.length && isV(chars[i + 3])) place = i + 2;
+      if (isV(a) && isC(b) && isC(c) && i+3 < chars.length && isV(chars[i+3])) place = i + 2;
       if (place > 1 && place < chars.length - 2) {
         if (place - lastBreak >= 6) {
           breaks.push(place);
@@ -75,10 +75,7 @@ function hyphenateHy(text, uiLang = "hy") {
   const out = String(text)
     .split(TOKENS)
     .map((chunk) => {
-      if (TOKENS.test(chunk)) {
-        TOKENS.lastIndex = 0;
-        return chunk;
-      }
+      if (TOKENS.test(chunk)) { TOKENS.lastIndex = 0; return chunk; }
       TOKENS.lastIndex = 0;
       return chunk.replace(/[\p{Script=Armenian}]+/gu, hyphenateWord);
     })
@@ -170,11 +167,7 @@ function rgbaToCss(obj) {
 }
 
 // (այս պահին չի օգտագործվում, բայց թարմացրի 11 լեզվի համար)
-function pickLang(
-  v,
-  lang,
-  fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]
-) {
+function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
   const order = [lang].concat(fallbacks.filter(x => x !== lang));
@@ -182,7 +175,7 @@ function pickLang(
     const k = order[i];
     const s = v && v[k];
     if (s && String(s).trim()) return String(s).trim();
-  }
+    }
   return "";
 }
 
@@ -604,10 +597,8 @@ export default function HomePage({ cardId = "101" }) {
         ? false
         : isVideo(avatarAbs);
 
-    // ✅ Գլխարկը ցույց ենք տալիս միայն եթե checkbox-ը true է
-    // և avatar-ը ՎԻԴԵՈ ՉԷ
     const showSantaHat =
-      !!(info && info.avatar && info.avatar.santaHat === true && !avatarIsVideo);
+      !!(info && info.avatar && info.avatar.santaHat === true);
 
     const bg =
       info?.background || {
