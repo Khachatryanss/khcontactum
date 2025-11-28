@@ -385,7 +385,7 @@ export default function HomePage({ cardId = "101" }) {
 
   /* ✅ splash-ը գոնե 3 վրկ պահելու համար */
   React.useEffect(() => {
-    const t = setTimeout(() => setSplashDone(true), 3000); // 3 վրկ
+    const t = setTimeout(() => setSplashDone(true), 3500); // 3 վրկ
     return () => clearTimeout(t);
   }, []);
 
@@ -510,35 +510,31 @@ export default function HomePage({ cardId = "101" }) {
   }, [splashDone, loading, shareAutoOpened]);
 
   /* ===== Splash loader – Contactum VIDEO ===== */
-  if (!splashDone || loading) {
-    return h(
-      "div",
-      {
-        style: {
-          position: "fixed",
-          inset: 0,
-          background: "#ffffff",
-          display: "grid",
-          placeItems: "center",
-          zIndex: 999,
-        },
+  /* ===== Splash loader – FULLSCREEN VIDEO ===== */
+if (!splashDone || loading) {
+  return h(
+    "div",
+    {
+      style: {
+        position: "fixed",
+        inset: 0,
+        background: "#000",  // կամ #fff, ինչպես ուզում ես
+        zIndex: 999,
+        overflow: "hidden",
       },
-      h(
-        "div",
-        { style: { textAlign: "center" } },
-        h(VideoLoop, {
-          src: "/video/splash.mp4", // 👉 քո վիդեոյի ուղին public-ում
-          style: {
-            width: 220,
-            height: "auto",
-            borderRadius: 16,
-            boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
-            marginBottom: 16,
-          },
-        })
-      )
-    );
-  }
+    },
+    h(VideoLoop, {
+      src: "/video/khc.mp4",
+      style: {
+        width: "100%",
+        height: "100%",
+        objectFit: "cover",  // լրիվ էկրանով
+        display: "block",
+      },
+    })
+  );
+}
+
 
   if (err) return h("div", { className: "pad" }, "Սխալ: " + err);
   if (!info) return h("div", { className: "pad" }, "Տվյալ չկա");
