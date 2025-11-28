@@ -754,7 +754,7 @@ export default function HomePage({ cardId = "101" }) {
                     className: "hero-title",
                     style: {
                       color: nameColor,
-                      margin: "15px 0 4px",
+                      margin: "15px auto 4px",
                       fontSize: 29,
                     },
                   },
