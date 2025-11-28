@@ -535,19 +535,7 @@ export default function HomePage({ cardId = "101" }) {
             boxShadow: "0 10px 30px rgba(0,0,0,0.4)",
             marginBottom: 16,
           },
-        }),
-        h(
-          "div",
-          {
-            style: {
-              fontSize: 14,
-              letterSpacing: 2,
-              textTransform: "uppercase",
-              color: "#444",
-            },
-          },
-          "KHContactum Digital Card"
-        )
+        })
       )
     );
   }
