@@ -767,7 +767,7 @@
 /* Base desktop fallback */
 .public-scroll-layer { padding: 16px; }
 .public-home .card { padding: 18px 20px 22px; border-radius: 16px; }
-/* .public-home .hero-title { font-size: 30px; line-height: 1.15; margin: 14px 0 6px; } */
+.public-home .hero-title { font-size: 30px; line-height: 1.15; margin: 14px 0 6px; }
 .public-home .hero-desc  { font-size: 16px; line-height: 1.6; max-width: 72ch; }
 
 /* ===== 1280–1365 ===== */
