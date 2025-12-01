@@ -209,10 +209,7 @@ r.post("/clone-card", auth("superadmin"), async (req, res) => {
   try {
     const { from_card_id, to_card_id } = req.body || {};
 
-    if (
-      from_card_id === undefined ||
-      to_card_id === undefined
-    ) {
+    if (from_card_id === undefined || to_card_id === undefined) {
       return res
         .status(400)
         .json({ error: "from_card_id և to_card_id դաշտերը պարտադիր են" });
@@ -256,7 +253,7 @@ r.post("/clone-card", auth("superadmin"), async (req, res) => {
     // մեկ transaction-ի մեջ
     await pool.query("BEGIN");
 
-    // admin_profiles-ի clone
+    // 1) admin_profiles-ի clone
     await pool.query(
       `INSERT INTO admin_profiles (admin_id, display_name, headline, bio, contacts)
        SELECT $2, display_name, headline, bio, contacts
@@ -270,8 +267,18 @@ r.post("/clone-card", auth("superadmin"), async (req, res) => {
       [srcAdminId, dstAdminId]
     );
 
-    // Եթե հետո ունենաս այլ աղյուսակներ card_id-ով կապված (icons, brands և այլն),
-    // այստեղ կարող ես ավելացնել լրացուցիչ COPY/INSERT ... SELECT հրամաններ նույն transaction-ի մեջ।
+    // 2) admin_info-ի clone (card-ի հիմնական JSON կոնտենտը)
+    await pool.query(
+      `INSERT INTO admin_info (admin_id, info)
+       SELECT $2, info
+       FROM admin_info
+       WHERE admin_id = $1
+       ON CONFLICT (admin_id) DO UPDATE
+       SET info = EXCLUDED.info`,
+      [srcAdminId, dstAdminId]
+    );
+
+    // եթե հետո icons/brands-ը հատուկ table-ներով են, կարող ես այստեղ էլ ավելացնել նման INSERT ... SELECT-եր
 
     await pool.query("COMMIT");
 
