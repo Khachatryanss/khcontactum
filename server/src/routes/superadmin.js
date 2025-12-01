@@ -230,7 +230,7 @@ r.post("/clone-card", auth("superadmin"), async (req, res) => {
         .json({ error: "from_card_id և to_card_id արժեքները պետք է տարբեր լինեն" });
     }
 
-    // գտնում ենք admins աղյուսակում
+    // ստուգենք, որ admins table-ում երկու card_id-ները կան
     const { rows: srcRows } = await pool.query(
       "SELECT id FROM admins WHERE card_id = $1",
       [fromIdNum]
@@ -253,7 +253,7 @@ r.post("/clone-card", auth("superadmin"), async (req, res) => {
     // մեկ transaction-ի մեջ
     await pool.query("BEGIN");
 
-    // 1) admin_profiles-ի clone
+    // 1) admin_profiles-ի clone admin_id-ներով (եթե օգտագործում ես)
     await pool.query(
       `INSERT INTO admin_profiles (admin_id, display_name, headline, bio, contacts)
        SELECT $2, display_name, headline, bio, contacts
@@ -267,18 +267,17 @@ r.post("/clone-card", auth("superadmin"), async (req, res) => {
       [srcAdminId, dstAdminId]
     );
 
-    // 2) admin_info-ի clone (card-ի հիմնական JSON կոնտենտը)
+    // 2) admin_info-ի clone card_id-ներով
+    // Այստեղ արդեն կարծիքն է, որ հիմնական JSON info-ն պահվում է admin_info(card_id, info) մեջ
     await pool.query(
-      `INSERT INTO admin_info (admin_id, info)
+      `INSERT INTO admin_info (card_id, info)
        SELECT $2, info
        FROM admin_info
-       WHERE admin_id = $1
-       ON CONFLICT (admin_id) DO UPDATE
+       WHERE card_id = $1
+       ON CONFLICT (card_id) DO UPDATE
        SET info = EXCLUDED.info`,
-      [srcAdminId, dstAdminId]
+      [fromIdNum, toIdNum]
     );
-
-    // եթե հետո icons/brands-ը հատուկ table-ներով են, կարող ես այստեղ էլ ավելացնել նման INSERT ... SELECT-եր
 
     await pool.query("COMMIT");
 
