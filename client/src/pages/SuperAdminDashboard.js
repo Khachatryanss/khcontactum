@@ -7,7 +7,7 @@ const h = React.createElement;
 
 export default function SuperAdminDashboard({ token, onLogout }) {
   const [list, setList] = useState([]);
-  const [mode, setMode] = useState(null); // "create" | "change" | "delete" | null
+  const [mode, setMode] = useState(null); // "create" | "change" | "delete" | "clone" | null
   const [msg, setMsg] = useState("");
 
   // create form
@@ -27,6 +27,12 @@ export default function SuperAdminDashboard({ token, onLogout }) {
   // delete form
   const [deleteForm, setDeleteForm] = useState({
     card_id: "",
+  });
+
+  // clone form (FROM → TO)
+  const [cloneForm, setCloneForm] = useState({
+    fromCardId: "",
+    toCardId: "",
   });
 
   const [selectedId, setSelectedId] = useState(null);
@@ -70,6 +76,12 @@ export default function SuperAdminDashboard({ token, onLogout }) {
       ...df,
       card_id: a.card_id != null ? String(a.card_id) : "",
     }));
+    // clone form-ի համար․ ընտրած row-ն կարելի է direct դնել FROM կամ TO,
+    // բայց հիմա ստանդարտով՝ դնենք FROM, TO-ն չփոխենք
+    setCloneForm((cl) => ({
+      ...cl,
+      fromCardId: a.card_id != null ? String(a.card_id) : cl.fromCardId,
+    }));
   }
 
   /* ------------ SEARCH logic ------------ */
@@ -101,6 +113,11 @@ export default function SuperAdminDashboard({ token, onLogout }) {
     setDeleteForm((df) => ({
       ...df,
       card_id: String(admin.card_id),
+    }));
+    // clone form-ի FROM-ը էլի լցնենք
+    setCloneForm((cl) => ({
+      ...cl,
+      fromCardId: String(admin.card_id),
     }));
   }
 
@@ -252,6 +269,71 @@ export default function SuperAdminDashboard({ token, onLogout }) {
     }
   }
 
+  /* ------------ CLONE CARD logic ------------ */
+  async function handleClone() {
+    setMsg("");
+    const { fromCardId, toCardId } = cloneForm;
+
+    if (!fromCardId || !toCardId) {
+      setMsg("Լրացրու երկու card_id-ները");
+      return;
+    }
+    if (String(fromCardId) === String(toCardId)) {
+      setMsg("Աղբյուր և թիրախ card_id-ները պետք է տարբեր լինեն");
+      return;
+    }
+
+    const srcAdmin = list.find(
+      (a) => String(a.card_id) === String(fromCardId)
+    );
+    const dstAdmin = list.find(
+      (a) => String(a.card_id) === String(toCardId)
+    );
+
+    if (!srcAdmin) {
+      setMsg("Աղբյուր card_id-ով admin չկա");
+      return;
+    }
+    if (!dstAdmin) {
+      setMsg("Թիրախ card_id-ով admin չկա");
+      return;
+    }
+
+    try {
+      // ⚠️ Սրա համար backend-ում պետք է առանձին endpoint ունենաս.
+      // Օրինակ՝ POST /api/superadmin/clone-card { from_card_id, to_card_id }
+      const resp = await fetch("/api/superadmin/clone-card", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          from_card_id: Number(fromCardId),
+          to_card_id: Number(toCardId),
+        }),
+      });
+
+      if (!resp.ok) {
+        let errText = "Clone failed";
+        try {
+          const d = await resp.json();
+          if (d && d.error) errText = d.error;
+        } catch (_) {}
+        throw new Error(errText);
+      }
+
+      setMsg(
+        `Card ${fromCardId}-ի տվյալները կլոնավորվեցին ${toCardId} card-ի վրա ✔`
+      );
+      setCloneForm({ fromCardId: "", toCardId: "" });
+      setMode(null);
+      await load();
+    } catch (e) {
+      setMsg(e.message || "Clone failed");
+    }
+  }
+
   /* ------------	render helpers ------------ */
   const changePlaceholder =
     changeForm.field === "card_id"
@@ -302,6 +384,12 @@ export default function SuperAdminDashboard({ token, onLogout }) {
           "button",
           { className: "btn", onClick: () => toggleMode("delete") },
           "Delete"
+        ),
+        // Նոր button՝ Delete-ի ու Log out-ի մեջ
+        h(
+          "button",
+          { className: "btn", onClick: () => toggleMode("clone") },
+          "Clone card"
         ),
         h(
           "button",
@@ -574,6 +662,62 @@ export default function SuperAdminDashboard({ token, onLogout }) {
               },
             },
             "Delete this admin"
+          )
+        ),
+
+      /* ---------- CLONE CARD panel ---------- */
+      mode === "clone" &&
+        h(
+          "div",
+          {
+            style: {
+              padding: 8,
+              borderRadius: 10,
+              background: "rgba(0,0,0,0.35)",
+              marginBottom: 12,
+              display: "flex",
+              flexDirection: "column",
+              gap: 6,
+            },
+          },
+          h(
+            "div",
+            { className: "small" },
+            "Կլոնավորել card-ի տվյալները մեկ այլ card_id-ի վրա"
+          ),
+          h("input", {
+            className: "input",
+            placeholder: "FROM card_id (որտեղից copy անենք)",
+            value: cloneForm.fromCardId,
+            onChange: (e) =>
+              setCloneForm((cl) => ({
+                ...cl,
+                fromCardId: e.target.value,
+              })),
+          }),
+          h("input", {
+            className: "input",
+            placeholder: "TO card_id (դատարկ account, որի վրա գրենք)",
+            value: cloneForm.toCardId,
+            onChange: (e) =>
+              setCloneForm((cl) => ({
+                ...cl,
+                toCardId: e.target.value,
+              })),
+          }),
+          h(
+            "button",
+            {
+              className: "btn",
+              onClick: handleClone,
+              style: {
+                alignSelf: "flex-end",
+                padding: "6px 16px",
+                fontSize: 12,
+                marginTop: 4,
+              },
+            },
+            "Clone card"
           )
         ),
 
