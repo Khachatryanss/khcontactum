@@ -204,4 +204,88 @@ r.delete("/admins/:id", auth("superadmin"), async (req, res) => {
   res.json({ ok: true });
 });
 
+/* --- Clone card data FROM one card_id TO another (միայն superadmin) --- */
+r.post("/clone-card", auth("superadmin"), async (req, res) => {
+  try {
+    const { from_card_id, to_card_id } = req.body || {};
+
+    if (
+      from_card_id === undefined ||
+      to_card_id === undefined
+    ) {
+      return res
+        .status(400)
+        .json({ error: "from_card_id և to_card_id դաշտերը պարտադիր են" });
+    }
+
+    const fromIdNum = Number(from_card_id);
+    const toIdNum   = Number(to_card_id);
+
+    if (!Number.isFinite(fromIdNum) || !Number.isFinite(toIdNum)) {
+      return res
+        .status(400)
+        .json({ error: "card_id-ները պետք է լինեն թվեր" });
+    }
+
+    if (fromIdNum === toIdNum) {
+      return res
+        .status(400)
+        .json({ error: "from_card_id և to_card_id արժեքները պետք է տարբեր լինեն" });
+    }
+
+    // գտնում ենք admins աղյուսակում
+    const { rows: srcRows } = await pool.query(
+      "SELECT id FROM admins WHERE card_id = $1",
+      [fromIdNum]
+    );
+    const { rows: dstRows } = await pool.query(
+      "SELECT id FROM admins WHERE card_id = $1",
+      [toIdNum]
+    );
+
+    if (!srcRows[0]) {
+      return res.status(404).json({ error: "from_card_id-ով admin չի գտնվել" });
+    }
+    if (!dstRows[0]) {
+      return res.status(404).json({ error: "to_card_id-ով admin չի գտնվել" });
+    }
+
+    const srcAdminId = srcRows[0].id;
+    const dstAdminId = dstRows[0].id;
+
+    // մեկ transaction-ի մեջ
+    await pool.query("BEGIN");
+
+    // admin_profiles-ի clone
+    await pool.query(
+      `INSERT INTO admin_profiles (admin_id, display_name, headline, bio, contacts)
+       SELECT $2, display_name, headline, bio, contacts
+       FROM admin_profiles
+       WHERE admin_id = $1
+       ON CONFLICT (admin_id) DO UPDATE
+       SET display_name = EXCLUDED.display_name,
+           headline     = EXCLUDED.headline,
+           bio          = EXCLUDED.bio,
+           contacts     = EXCLUDED.contacts`,
+      [srcAdminId, dstAdminId]
+    );
+
+    // Եթե հետո ունենաս այլ աղյուսակներ card_id-ով կապված (icons, brands և այլն),
+    // այստեղ կարող ես ավելացնել լրացուցիչ COPY/INSERT ... SELECT հրամաններ նույն transaction-ի մեջ।
+
+    await pool.query("COMMIT");
+
+    return res.json({
+      ok: true,
+      message: `Card ${fromIdNum}-ի տվյալները կլոնավորվեցին card ${toIdNum}-ի վրա`,
+    });
+  } catch (e) {
+    console.error("clone-card error:", e);
+    try {
+      await pool.query("ROLLBACK");
+    } catch (_) {}
+    return res.status(500).json({ error: "Clone server error" });
+  }
+});
+
 export default r;
