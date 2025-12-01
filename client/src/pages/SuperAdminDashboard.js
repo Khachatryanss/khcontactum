@@ -7,7 +7,7 @@ const h = React.createElement;
 
 export default function SuperAdminDashboard({ token, onLogout }) {
   const [list, setList] = useState([]);
-  const [mode, setMode] = useState(null); // "create" | "change" | "delete" | "viewPass" | null
+  const [mode, setMode] = useState(null); // "create" | "change" | "delete" | null
   const [msg, setMsg] = useState("");
 
   // create form
@@ -38,10 +38,6 @@ export default function SuperAdminDashboard({ token, onLogout }) {
 
   // 📂 users block open/closed
   const [showUsers, setShowUsers] = useState(true);
-
-  // 🔐 view password panel
-  const [viewCardId, setViewCardId] = useState("");
-  const [viewPassword, setViewPassword] = useState("");
 
   /* ------------ load admins ------------ */
   async function load() {
@@ -74,9 +70,6 @@ export default function SuperAdminDashboard({ token, onLogout }) {
       ...df,
       card_id: a.card_id != null ? String(a.card_id) : "",
     }));
-    // auto-fill for view password էլ կարող է օգտակար լինել
-    setViewCardId(a.card_id != null ? String(a.card_id) : "");
-    setViewPassword(""); // ուրիշ row սեղմելուց հին password-ը չմնա
   }
 
   /* ------------ SEARCH logic ------------ */
@@ -109,9 +102,6 @@ export default function SuperAdminDashboard({ token, onLogout }) {
       ...df,
       card_id: String(admin.card_id),
     }));
-    // auto-fill նաև view password-ի card_id-ը
-    setViewCardId(String(admin.card_id));
-    setViewPassword("");
   }
 
   /* ------------ CREATE logic ------------ */
@@ -191,7 +181,8 @@ export default function SuperAdminDashboard({ token, onLogout }) {
       // uniqueness check for card_id
       if (
         list.some(
-          (a) => a.id !== admin.id && Number(a.card_id) === newIdNum
+          (a) =>
+            a.id !== admin.id && Number(a.card_id) === newIdNum
         )
       ) {
         setMsg("Այդ card_id-ով admin արդեն գոյություն ունի");
@@ -261,33 +252,6 @@ export default function SuperAdminDashboard({ token, onLogout }) {
     }
   }
 
-  /* ------------ VIEW PASSWORD logic ------------ */
-  function handleViewPassword() {
-    setMsg("");
-    setViewPassword("");
-
-    const trimmed = viewCardId.trim();
-    if (!trimmed) {
-      setMsg("Գրի card_id-ը, որի password-ը պետք է տեսնել");
-      return;
-    }
-
-    const admin = list.find((a) => String(a.card_id) === trimmed);
-    if (!admin) {
-      setMsg("Նման card_id-ով admin չկա");
-      return;
-    }
-
-    // listAdmins-ը պետք է վերադարձնի admin.password,
-    // եթե backend-ում դա չես ուղարկում, այստեղ պարզապես զգուշացում կտանք.
-    if (typeof admin.password === "undefined" || admin.password === null) {
-      setMsg("Այս admin-ի password դաշտը backend-ից չի վերադարձվում");
-      return;
-    }
-
-    setViewPassword(String(admin.password));
-  }
-
   /* ------------	render helpers ------------ */
   const changePlaceholder =
     changeForm.field === "card_id"
@@ -338,12 +302,6 @@ export default function SuperAdminDashboard({ token, onLogout }) {
           "button",
           { className: "btn", onClick: () => toggleMode("delete") },
           "Delete"
-        ),
-        // ⬇️ ՆՈՐ BUTTON – Delete-ի և Log out-ի միջև
-        h(
-          "button",
-          { className: "btn", onClick: () => toggleMode("viewPass") },
-          "View password"
         ),
         h(
           "button",
@@ -617,51 +575,6 @@ export default function SuperAdminDashboard({ token, onLogout }) {
             },
             "Delete this admin"
           )
-        ),
-
-      /* ---------- VIEW PASSWORD panel ---------- */
-      mode === "viewPass" &&
-        h(
-          "div",
-          {
-            style: {
-              padding: 8,
-              borderRadius: 10,
-              background: "rgba(0,0,0,0.35)",
-              marginBottom: 12,
-              display: "flex",
-              flexDirection: "column",
-              gap: 6,
-            },
-          },
-          h("div", { className: "small" }, "Դիտել admin-ի password-ը ըստ card_id"),
-          h("input", {
-            className: "input",
-            placeholder: "card_id, որի password-ը պետք է տեսնել",
-            value: viewCardId,
-            onChange: (e) => setViewCardId(e.target.value),
-          }),
-          h(
-            "button",
-            {
-              className: "btn",
-              onClick: handleViewPassword,
-              style: {
-                alignSelf: "flex-end",
-                padding: "6px 16px",
-                fontSize: 12,
-                marginTop: 4,
-              },
-            },
-            "Show password"
-          ),
-          viewPassword &&
-            h("input", {
-              className: "input",
-              readOnly: true,
-              value: viewPassword,
-              style: { marginTop: 4 },
-            })
         ),
 
       /* ---------- Users list (collapsible, ամբողջ լիստը) ---------- */
