@@ -230,30 +230,40 @@ r.post("/clone-card", auth("superadmin"), async (req, res) => {
         .json({ error: "from_card_id և to_card_id արժեքները պետք է տարբեր լինեն" });
     }
 
-    // գտնում ենք admins table-ում երկու card_id-ները
+    // 1) source card-ի admin_id + information (նույն SQL-ով, ինչ public.js-ը)
     const { rows: srcRows } = await pool.query(
-      "SELECT id FROM admins WHERE card_id = $1",
+      `SELECT a.id AS admin_id, ai.information
+       FROM admins a
+       JOIN admin_info ai ON ai.admin_id = a.id
+       WHERE a.card_id = $1 AND a.is_active = TRUE
+       LIMIT 1`,
       [fromIdNum]
     );
+
+    if (!srcRows[0]) {
+      return res
+        .status(404)
+        .json({ error: "Source card-ը (from_card_id) տվյալներ չունի" });
+    }
+
+    const srcAdminId    = srcRows[0].admin_id;
+    const srcInfo       = srcRows[0].information;
+
+    // 2) destination admin-ը ըստ card_id
     const { rows: dstRows } = await pool.query(
       "SELECT id FROM admins WHERE card_id = $1",
       [toIdNum]
     );
-
-    if (!srcRows[0]) {
-      return res.status(404).json({ error: "from_card_id-ով admin չի գտնվել" });
-    }
     if (!dstRows[0]) {
-      return res.status(404).json({ error: "to_card_id-ով admin չի գտնվել" });
+      return res
+        .status(404)
+        .json({ error: "to_card_id-ով admin չի գտնվել" });
     }
-
-    const srcAdminId = srcRows[0].id;
     const dstAdminId = dstRows[0].id;
 
-    // մեկ transaction-ի մեջ
     await pool.query("BEGIN");
 
-    // 1) admin_profiles-ի clone (ըստ admin_id)
+    // 3) admin_profiles clone (ըստ admin_id)
     await pool.query(
       `INSERT INTO admin_profiles (admin_id, display_name, headline, bio, contacts)
        SELECT $2, display_name, headline, bio, contacts
@@ -267,15 +277,13 @@ r.post("/clone-card", auth("superadmin"), async (req, res) => {
       [srcAdminId, dstAdminId]
     );
 
-    // 2) admin_info-ի clone ըստ admin_id + information column
+    // 4) admin_info clone՝ օգտագործելով արդեն վերցրած JSON-ը
     await pool.query(
       `INSERT INTO admin_info (admin_id, information)
-       SELECT $2, information
-       FROM admin_info
-       WHERE admin_id = $1
+       VALUES ($1, $2)
        ON CONFLICT (admin_id) DO UPDATE
        SET information = EXCLUDED.information`,
-      [srcAdminId, dstAdminId]
+      [dstAdminId, srcInfo]
     );
 
     await pool.query("COMMIT");
