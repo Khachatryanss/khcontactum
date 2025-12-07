@@ -777,42 +777,57 @@ div section{
 }
 
 /* SharePage–ի հիմնական 3 կոճակները */
+/* 🔹 SharePage-ի առաջին 3 btn–երը՝ 3D look */
 section > button.btn:nth-of-type(1),
 section > button.btn:nth-of-type(2),
 section > button.btn:nth-of-type(3) {
-  display: block;
-  width: 80%;
-  max-width: 360px;
-  padding: 14px 18px;
-  font-size: 16px;
+  position: relative;
+  border-radius: 999px;          /* ավելի “pill” ձև */
+  border: 2px solid rgba(255,255,255,0.75);
   font-weight: 700;
-  border-radius: 14px;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  letter-spacing: .5px;
 
-  /* փափուկ բարձրացված լուք */
+  /* 👉 3D ստվեր */
   box-shadow:
-    0 4px 10px rgba(0,0,0,0.18),
-    0 1px 3px rgba(0,0,0,0.25);
+    0 6px 0 rgba(0,0,0,0.35),    /* “ստորգետնյա եզր” */
+    0 10px 18px rgba(0,0,0,0.35);/* փափուկ շեյդոու */
+  transform: translateY(0);
+  transition: transform .16s ease, box-shadow .16s ease;
+  overflow: hidden;              /* ներսի փայլը կտրելու համար */
 }
 
-/* hover effect */
+/* վերևի փայլ՝ կարծես լույսն է խփում */
+section > button.btn:nth-of-type(1)::before,
+section > button.btn:nth-of-type(2)::before,
+section > button.btn:nth-of-type(3)::before {
+  content: "";
+  position: absolute;
+  inset: 3px 6px 55% 6px;        /* միայն վերևի կեսին */
+  border-radius: inherit;
+  background: linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.65),
+    rgba(255,255,255,0.05)
+  );
+  pointer-events: none;
+}
+
+/* hover → մի քիչ ավելի «բարձրանա» */
 section > button.btn:nth-of-type(1):hover,
 section > button.btn:nth-of-type(2):hover,
 section > button.btn:nth-of-type(3):hover {
   transform: translateY(-2px);
   box-shadow:
-    0 6px 16px rgba(0,0,0,0.22),
-    0 3px 6px rgba(0,0,0,0.28);
+    0 8px 0 rgba(0,0,0,0.35),
+    0 14px 22px rgba(0,0,0,0.38);
 }
 
-/* active (tap) effect */
+/* active → սեղմած վիճակ, մտնում է ներս */
 section > button.btn:nth-of-type(1):active,
 section > button.btn:nth-of-type(2):active,
 section > button.btn:nth-of-type(3):active {
-  transform: translateY(1px);
+  transform: translateY(3px);
   box-shadow:
-    0 2px 6px rgba(0,0,0,0.20),
-    0 1px 3px rgba(0,0,0,0.25);
+    0 3px 0 rgba(0,0,0,0.35),
+    0 6px 12px rgba(0,0,0,0.32);
 }
