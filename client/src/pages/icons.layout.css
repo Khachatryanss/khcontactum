@@ -503,6 +503,7 @@
 /* =================== ADMIN ICON COLOR OVERRIDE (ADD ONLY) =================== */
 :root{
   --icons-icon-color: #ffffff;
+  --icons-scale: 1;
 }
 
 .grid .icon-btn i,
@@ -510,4 +511,31 @@
 .icons-dzev3 .icon-btn i,
 .icons-dzev4 .icon-btn i{
   color: var(--icons-icon-color, #fff);
+}
+
+.grid .icon-btn i{
+  font-size: calc(26px * var(--icons-scale, 1));
+}
+
+.icons-dzev2 .icon-btn i,
+.icons-dzev3 .icon-btn i { font-size: calc(22px * var(--icons-scale, 1)); }
+
+.grid .label,
+.icons-dzev2 .label,
+.icons-dzev3 .label { font-size: var(--label-size, calc(12px * var(--icons-scale, 1))); }
+
+
+/* ===================== SMALLER ICONS FOR 2 & 3 COLS ===================== */
+/* 3 columns → մի քիչ փոքր քան default (0.9x) */
+.grid[style*="--icons-cols: 3"],
+.icons-dzev2[style*="--icons-cols: 3"],
+.icons-dzev3[style*="--icons-cols: 3"]{
+  --icons-scale: 0.9;
+}
+
+/* 2 columns → էլի մի քիչ փոքր (0.85x) */
+.grid[style*="--icons-cols: 2"],
+.icons-dzev2[style*="--icons-cols: 2"],
+.icons-dzev3[style*="--icons-cols: 2"]{
+  --icons-scale: 0.85;
 }
