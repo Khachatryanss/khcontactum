@@ -280,7 +280,7 @@ export default function AdminLogin({
             contactIcon(
               phoneIcon,
               "Phone",
-              "tel:+37477765334"
+              "tel:+37495776607"
             ),
             contactIcon(
               telegramIcon,
