@@ -12,6 +12,9 @@ import santaHat      from "../img/santa_hat.png"; // 🎅 avatar hat
 
 const h = React.createElement;
 
+/* ✅ per-card localStorage key (fix: each card keeps its own default lang) */
+const LANG_KEY = (cardId) => `lang_${String(cardId || "").trim() || "default"}`;
+
 /* ------------ utils ------------ */
 function absSrc(u = "") {
   if (!u) return "";
@@ -111,6 +114,7 @@ function LangDropdown({
   value,
   onChange,
   langs = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"],
+  storageKey = "lang",
 }) {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
@@ -151,7 +155,7 @@ function LangDropdown({
             key: code,
             className: "chip" + (code === value ? " active" : ""),
             onClick: () => {
-              localStorage.setItem("lang", code);
+              try { localStorage.setItem(storageKey, code); } catch {}
               onChange(code);
               setOpen(false);
             },
@@ -349,9 +353,18 @@ export default function HomePage({ cardId = "101" }) {
   const [loading, setLoading] = React.useState(true);
   const [err, setErr] = React.useState("");
   const [info, setInfo] = React.useState(null);
-  const [lang, setLang] = React.useState(
-    (typeof window !== "undefined" ? localStorage.getItem("lang") : "am") || "am"
-  );
+
+  /* ✅ per-card saved lang */
+  const storageKey = LANG_KEY(cardId);
+
+  const [lang, setLang] = React.useState(() => {
+    try {
+      return (typeof window !== "undefined" ? localStorage.getItem(storageKey) : "am") || "am";
+    } catch {
+      return "am";
+    }
+  });
+
   const [activeBrandKeyword, setActiveBrandKeyword] = React.useState("");
   const [splashDone, setSplashDone] = React.useState(false);
 
@@ -381,7 +394,12 @@ export default function HomePage({ cardId = "101" }) {
         const root = data?.information || data || {};
         if (!killed) {
           setInfo(root);
-          if (!localStorage.getItem("lang")) {
+
+          /* ✅ If user didn't pick a lang for this card yet → use server default_lang */
+          let hasStored = false;
+          try { hasStored = !!localStorage.getItem(storageKey); } catch {}
+
+          if (!hasStored) {
             const def =
               root &&
               root.default_lang &&
@@ -390,7 +408,11 @@ export default function HomePage({ cardId = "101" }) {
                   ? root.default_lang
                   : undefined
                 : undefined;
-            if (def) setLang(def);
+
+            if (def) {
+              setLang(def);
+              try { localStorage.setItem(storageKey, def); } catch {}
+            }
           }
         }
       } catch (e) {
@@ -402,7 +424,7 @@ export default function HomePage({ cardId = "101" }) {
     return () => {
       killed = true;
     };
-  }, [cardId]);
+  }, [cardId, storageKey]);
 
   React.useEffect(() => {
     if (!info) return;
@@ -725,8 +747,12 @@ export default function HomePage({ cardId = "101" }) {
         },
         h(LangDropdown, {
           value: lang,
-          onChange: setLang,
+          onChange: (v) => {
+            setLang(v);
+            try { localStorage.setItem(storageKey, v); } catch {}
+          },
           langs: serverLangs,
+          storageKey,
         }),
         showBrandInfo
           ? h(BrandInfoPage, {
