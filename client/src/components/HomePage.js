@@ -99,15 +99,18 @@ function idealColsForLang(lang) {
     case "it":  return [36, 42];
     case "fa":  return [30, 34];
 
+    // ✅ GEO
+    case "geo": return [34, 40];
+
     default:    return [34, 40];
   }
 }
 
-// 👉 default-ում էլ արդեն 11 լեզուն է
+// 👉 default-ում էլ արդեն GEO-ն էլ է ներառված
 function LangDropdown({
   value,
   onChange,
-  langs = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"],
+  langs = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"],
 }) {
   const [open, setOpen] = React.useState(false);
   React.useEffect(() => {
@@ -166,8 +169,8 @@ function rgbaToCss(obj) {
   return `rgba(${(+r | 0)}, ${(+g | 0)}, ${(+b | 0)}, ${(isFinite(+a) ? +a : 1)})`;
 }
 
-// (այս պահին չի օգտագործվում, բայց թարմացրի 11 լեզվի համար)
-function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]) {
+// (այս պահին չի օգտագործվում, բայց թարմացրի GEO-ի համար էլ)
+function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
   const order = [lang].concat(fallbacks.filter(x => x !== lang));
@@ -416,6 +419,7 @@ export default function HomePage({ cardId = "101" }) {
       es:  info?.company?.name?.es  || "",
       it:  info?.company?.name?.it  || "",
       fa:  info?.company?.name?.fa  || "",
+      geo: info?.company?.name?.geo || "",
     };
 
     const displayName =
@@ -518,8 +522,8 @@ export default function HomePage({ cardId = "101" }) {
   try {
     const serverLangs =
       Array.isArray(info?.available_langs) && info.available_langs.length
-        ? info.available_langs.slice(0, 11)
-        : ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
+        ? info.available_langs.slice(0, 12)
+        : ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"];
 
     const nameByLang = {
       hy:  info?.company?.name?.am  || "",
@@ -533,6 +537,7 @@ export default function HomePage({ cardId = "101" }) {
       es:  info?.company?.name?.es  || "",
       it:  info?.company?.name?.it  || "",
       fa:  info?.company?.name?.fa  || "",
+      geo: info?.company?.name?.geo || "",
     };
 
     const desc  = info?.description || {};
@@ -550,6 +555,7 @@ export default function HomePage({ cardId = "101" }) {
       es:  (desc?.es  ?? about?.es)  || "",
       it:  (desc?.it  ?? about?.it)  || "",
       fa:  (desc?.fa  ?? about?.fa)  || "",
+      geo: (desc?.geo ?? about?.geo) || "",
     };
 
     const nameColor = info?.company?.nameColor || "#111";

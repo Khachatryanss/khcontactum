@@ -355,6 +355,39 @@ const PW_UI_TEXT = {
     toastInUse: "This password is already used by another admin",
     toastRoute404: "Password change route not found on the server",
   },
+  geo: {
+  title: "პაროლის შეცვლა",
+
+  oldLabel: "მიმდინარე პაროლი",
+  newLabel: "ახალი პაროლი",
+  repeatLabel: "გაიმეორეთ ახალი პაროლი",
+
+  oldPlaceholder: "მიმდინარე პაროლი",
+  newPlaceholder: "ახალი პაროლი",
+  repeatPlaceholder: "გაიმეორეთ ახალი პაროლი",
+
+  reqTitle: "პահանջები:",
+  reqLen: "მინიმუმ 8 სიმბოლო",
+  reqLow: "ქვედა რეგისტრის ასო",
+  reqUp: "ზედა რეგისტრის ასო",
+  reqNum: "ციფრი",
+  reqSym: "სიმბოლო (., !, @, # …)",
+  reqDiffOld: "არ გაიმეოროთ ძველი პაროლი",
+
+  mismatch: "პაროლები არ ემთხვევა",
+
+  saveButton: "შენახვა",
+  savingButton: "ინახება...",
+
+  hint:
+    "მინიშნება: სერვერი ამოწმებს მიმდინარე პაროლს და უარყოფს ახალს, եթե იგი უკვე გამოყენებულია სხვა ადმინის կողմից.",
+
+  toastNoToken: "ტოკენი არ მოიძებნა",
+  toastSuccess: "პაროლი შეცვლილია ✅",
+  toastWrongOld: "მიმდინარე პაროლი սխալ է",
+  toastInUse: "ეს პაროლი უკვე გამოიყენება სხვა ადმინის მიერ",
+  toastRoute404: "სერვერზე პაროლის შეცვლის route ვერ მოიძებნა",
+},
 };
 
 /* ---------- COMPONENT ---------- */

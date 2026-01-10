@@ -4,7 +4,7 @@ import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
 
 const h = React.createElement;
 // 👇 ավելացրեցինք kz, chn, de, es, it, fa
-const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa","geo"];
 
 /* ---------- UI TEXT ---------- */
 const BRANDS_UI_TEXT = {
@@ -397,6 +397,32 @@ const BRANDS_UI_TEXT = {
     savedOk: "Saved ✅",
     saveFailed: "Save failed",
   },
+  geo: {
+  title: "ბრენდის ინფორმაცია",
+
+  keywordHint: "ეს განყოფილება ბრენდებს უკავშირდება საკვანძო სიტყვის ველით.",
+  keywordLabel: "საკვანძო სიტყვა",
+  nameLabel: "სახელი:",
+  bioLabel: "აღწერა:",
+  nameColorLabel: "სახელის ფერი",
+  bioColorLabel: "აღწერის ფერი",
+  bioBgColorLabel: "აღწერის ფონის ფერი",
+  sliderLabel: "სლაიდერი (მაქს. 5 სურათი, 6:9)",
+  deleteWorkerButton: "წაშლა",
+  addWorkerButton: "დამატება",
+  saveButton: "შენახვა",
+  savingButton: "ინახება…",
+  loading: "იტვირთება…",
+  avatarLabel: "ატვირთვა",
+  deleteAvatarLabel: "ლოგოს წაშლა",
+  fileTypeError: "მხოლოდ სურათის ֆაილები დაიშვება",
+  uploadAvatarOk: "ავატარი ატვირთულია ✔",
+  uploadImageOk: "სურათი ატვირთულია ✔",
+  uploadFailed: "ატვირთვა ვერ შესრულდა",
+  savedOk: "შენახულია ✅",
+  loadFailed: "ჩატვირთვა ვერ შესრულდა",
+  saveFailed: "შენახვა ვერ შესრულდა",
+},
 };
 
 /* ---------- helpers ---------- */

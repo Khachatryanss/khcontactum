@@ -61,13 +61,18 @@ function pickLabel(label, lang = "hy"){
         primaryKeys.push("fa");
         break;
 
+      // ✅ GEO — direct key usage
+      case "geo":
+        primaryKeys.push("geo");
+        break;
+
       default:
         primaryKeys.push(lang);
     }
 
     const fallbackOrder = [
       ...primaryKeys,
-      "am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"
+      "am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"
     ];
 
     for (const k of fallbackOrder) {

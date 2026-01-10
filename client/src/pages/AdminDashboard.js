@@ -596,6 +596,58 @@ const ADMIN_UI_TEXT = {
 
     chooseFileLabel: "انتخاب فایل",
   },
+  geo: {
+  tabs: {
+    home: "მთავარი",
+    icons: "아이კონები",
+    brands: "ბრენდები",
+    brandinfo: "ბრენდის ინფორმაცია",
+    share: "გაზიარება / QR",
+    password: "პაროლის შეცვლა",
+  },
+  logout: "გასვლა",
+  headerAdminPrefix: "ADMIN",
+
+  langsTitle: "ენები",
+  langsDescription:
+    "აირჩიეთ აქტიური ენები და შეცვალეთ მათი რიგითობა; პირველი ენა იქნება ნაგულისხმევი საჯარო გვერდზე.",
+
+  avatarTitle: "AVATAR",
+  typeLabel: "ტიპი",
+  avatarTypeImage: "სურათი",
+  avatarTypeVideo: "ვიდეო",
+  avatarImageUrlLabel: "ავატარის სურათის ბმული",
+  avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+  avatarVideoUrlLabel: "ავატარის ვიდეოს ბმული",
+  avatarVideoHint: "მაქს. 20 MB (mp4, webm, ogg)",
+  avatarSantaHatLabel: "ავატარზე სანტას ქუდის ოვერლეის ჩვენება",
+
+  companyNameTitle: "კომპანიის სახელი",
+  nameColorLabel: "სახელის ფერი",
+
+  descriptionTitle: "აღწერა",
+  descriptionColorLabel: "აღწერის ფერი",
+
+  backgroundTitle: "ფონი",
+  backgroundTypeColor: "ფერი",
+  backgroundTypeImage: "სურათი",
+  backgroundTypeVideo: "ვიდეო",
+  backgroundColorLabel: "ფონის ფერი",
+  backgroundImageUrlLabel: "ფონის სურათის ბმული",
+  backgroundVideoUrlLabel: "ფონის ვიდეოს ბმული",
+  backgroundVideoHint: "მაქს. 20 MB (mp4, webm, ogg)",
+
+  saveButton: "შენახვა",
+  savingButton: "ინახება...",
+  saveOk: "შენახულია ✅",
+  saveError: "შენახვის შეცდომა",
+
+  needLoginTitle: "საჭიროა ავტორიზაცია",
+  needLoginBody: "გთხოვთ შეხვიდეთ / გვერდზე.",
+  loading: "იტვირთება…",
+
+  chooseFileLabel: "ფაილის არჩევა",
+},
 };
 
 const DEFAULT_INFO = {
@@ -615,6 +667,7 @@ const DEFAULT_INFO = {
       es: "",
       it: "",
       fa: "",
+      geo: "",
     },
     nameColor: "#000000",
   },
@@ -631,6 +684,7 @@ const DEFAULT_INFO = {
     es: "",
     it: "",
     fa: "",
+    geo: "",
     color: "#000000",
   },
 
@@ -655,6 +709,7 @@ const ALL_LANGS = [
   { code: "es", label: "Español (ES)" },
   { code: "it", label: "Italiano (IT)" },
   { code: "fa", label: "فارسی (FA)" },
+  { code: "geo", label: "ქართული (GEO)" },
 ];
 const ALL_CODES = ALL_LANGS.map((x) => x.code);
 
@@ -685,6 +740,7 @@ function normalizeInfo(partial) {
         es: i.company?.name?.es || "",
         it: i.company?.name?.it || "",
         fa: i.company?.name?.fa || "",
+        geo: i.company?.name?.geo || "",
       },
     },
 
@@ -700,6 +756,7 @@ function normalizeInfo(partial) {
       es: i.description?.es || "",
       it: i.description?.it || "",
       fa: i.description?.fa || "",
+      geo: i.description?.geo || "",
       color: i.description?.color || "#000000",
     },
 
@@ -870,7 +927,7 @@ export default function AdminDashboard({
   const T = ADMIN_UI_TEXT[uiLang] || ADMIN_UI_TEXT.en;
 
   // UI լեզուների selector
-  const UI_LANGS = ["en", "am", "fr", "ar", "ru", "kz", "chn", "de", "es", "it", "fa"];
+  const UI_LANGS = ["en", "am", "fr", "ar", "ru", "kz", "chn", "de", "es", "it", "fa","geo"];
 
   function handleUiLangChange(next) {
     if (!next || next === uiLang) return;
@@ -1602,7 +1659,10 @@ export default function AdminDashboard({
             ? "Nombre de la empresa (ES)"
             : code === "it"
             ? "Nome dell'azienda (IT)"
-            : "نام شرکت (FA)";
+            : code === "fa"
+            ? "نام شرکت (FA)"
+            : "კომპანიის სახელი (GEO)";
+
 
         const extraProps =
           code === "ar" || code === "fa"
@@ -1679,7 +1739,9 @@ export default function AdminDashboard({
             ? "Descripción (ES)"
             : code === "it"
             ? "Descrizione (IT)"
-            : "توضیحات (FA)";
+            : code === "fa"
+            ? "توضیحات (FA)"
+            : "აღწერა (GEO)";
 
         const extraProps =
           code === "ar" || code === "fa"
@@ -1782,7 +1844,7 @@ export default function AdminDashboard({
       info?.background?.type === "image" &&
         h(MediaUploadRow, {
           label: T.backgroundImageUrlLabel,
-          hint: T.avatarImageHint, // նույն ֆորմատների տեքստը
+          hint: T.avatarImageHint, 
           urlValue: info?.background?.imageUrl || "",
           onUrlChange: (v) => setInfoPath("background.imageUrl", v),
           onFileChange: handleBgImageUpload,

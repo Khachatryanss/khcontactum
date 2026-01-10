@@ -53,17 +53,23 @@ const BI_TEXT = {
     empty: "هنوز کارمندی با این کلمه کلیدی وجود ندارد.",
     back: "بازگشت",
   },
+
+  // ✅ GEO (Georgian)
+  geo: {
+    empty: "ამ საკვანძო სიტყვით თანამშრომელი ჯერ არ არსებობს.",
+    back: "უკან",
+  },
 };
 
 /* ---------- pickLang upgraded for more langs ---------- */
 /**
- * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn, de, es, it, fa})
- * lang – htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa"
+ * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn, de, es, it, fa, geo})
+ * lang – htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa","geo"
  */
 function pickLang(
   v,
   lang = "hy",
-  fallbacks = ["am","en","ru","ar","fr","kz","chn","de","es","it","fa"]
+  fallbacks = ["am","en","ru","ar","fr","kz","chn","de","es","it","fa","geo"]
 ) {
   if (!v) return "";
   if (typeof v === "string") return v;
@@ -114,6 +120,7 @@ function noPhotoLabel(lang) {
   if (k === "es") return "foto";
   if (k === "it") return "foto";
   if (k === "fa") return "عکس";
+  if (k === "geo") return "ფოტო";
   return "photo";
 }
 

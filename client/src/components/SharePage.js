@@ -18,13 +18,13 @@ const PUBLIC_BASE = "https://khcontactum.com/";
 
 /* ===== helpers ===== */
 /**
- * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn, de, es, it, fa})
- * lang – "hy","ru","en","ar","fr","kz","chn","de","es","it","fa" (HomePage-ից եկող htmlLang)
+ * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn, de, es, it, fa, geo})
+ * lang – "hy","ru","en","ar","fr","kz","chn","de","es","it","fa","geo" (HomePage-ից եկող htmlLang)
  */
 function pickLang(
   v,
   lang = "hy",
-  fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]
+  fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"]
 ) {
   if (!v) return "";
   if (typeof v === "string") return v;
@@ -60,7 +60,7 @@ function ensureAbsoluteUrl(u) {
   return PUBLIC_BASE + path;
 }
 
-/* ===== i18n text (11 լեզու) ===== */
+/* ===== i18n text (ավելացվեց geo) ===== */
 const TEXT = {
   am: {
     scanBtn: "Սկանավորել QR կոդը",
@@ -206,6 +206,21 @@ const TEXT = {
     confirmYes: "بله",
     confirmNo: "خیر",
   },
+
+  // ✅ Georgian (geo)
+  geo: {
+    scanBtn: "QR კოდის სკანირება",
+    shareTitle: "ჩემი ბარათის გაზიარება",
+    addBtn: "დამამატეთ კონტაქტებში",
+    qrOnline: "ონლაინ QR-კოდი",
+    qrOffline: "ოფლაინ QR-კოდი",
+    offlineNote: "სკანირების შემდეგ შეგიძლიათ კონტაქტებში შეინახოთ.",
+    shareDefault: "ნახეთ ჩემი KHContactum.com ციფრული ბარათი.",
+    mailSubject: "KHContactum ციფრული ბარათი",
+    confirmTitle: "დავამატოთ {{name}} კონტაქტებში?",
+    confirmYes: "დიახ",
+    confirmNo: "არა",
+  },
 };
 
 /* ✅ Քո ֆիքսված կոնտեքստը */
@@ -222,6 +237,7 @@ const SHARE_CONTEXT = {
   es:  "Mi tarjeta de presentación digital creada en la plataforma KHContactum.com.",
   it:  "Il mio biglietto da visita digitale creato sulla piattaforma KHContactum.com.",
   fa:  "کارت ویزیت دیجیتال من که در پلتفرم KHContactum.com ساخته شده است.",
+  geo: "ჩემი ციფრული ბიზნეს ბარათი, შექმნილი KHContactum.com პლატფორმაზე.",
 };
 
 /* quick flags դեռ պահում ենք struct-ի մեջ (admin panel-ի համար) */
@@ -567,7 +583,7 @@ async function saveVCardUniversal({
 }
 
 /**
- * lang-ը կարող ես փոխանցել HomePage-ից (htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa").
+ * lang-ը կարող ես փոխանցել HomePage-ից (htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa","geo").
  * autoOpenConfirm → VisitCard հղումով մտնելու դեպքում բացի popup
  */
 export default function SharePage({ info, cardId, lang, autoOpenConfirm = false }) {

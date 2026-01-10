@@ -468,6 +468,48 @@ const SHARE_UI_TEXT = {
       ig: "Instagram",
     },
   },
+  geo: {
+  onlineTitle: "ონლაინ QR · ბმული",
+  onlineLabel: "ბარათის საჯარო ბმული",
+  onlineHelp:
+    "ბაზა ფიქსირებულია. შეიყვანეთ მხოლოდ თქვენი card_id / path.",
+
+  offlineTitle: "ოფლაინ QR და კონტაქტები",
+  offlineIntro:
+    "ეს მონაცემები გამოყენებული იქნება ოფლაინ QR კოდის და ღილაკის «კონტაქტებში დამატება»თვის.",
+
+  fullNameLabel: "სრული სახელი",
+  phoneLabel: "ტელეფონი",
+  phonePlaceholder: "+995...",
+
+  quickTitle: "სწრაფი გაზიარების პარამეტრები",
+  quickIntro: "აირჩიეთ, რომელი 아이კონები გამოჩნდება გაზიარების განყოფილებაში.",
+
+  colorsTitle: "ფერები",
+  colorBtnText: "ღილაკის ტექსტის ფერი",
+  colorBtnBg: "ღილაკის ფონის ფერი",
+  colorShareTitle: "„ჩემი ბარათის გაზიარება“ ტექსტის ფერი",
+
+  saveButton: "შენახვა",
+  savingButton: "ინახება...",
+  msgNoToken: "ტოკენი ვერ მოიძებნა, გთხოვთ ხელახლა შეხვიდეთ",
+  msgSaveOk: "შენახულია ✅",
+  msgSaveError: "შენახვის შეცდომა",
+  pathReset: "card_id-ზე დაბრუნება",
+  pathInvalid:
+    "არასწორი path: ნებადართულია მხოლოდ ასოები / ციფრები / - / _, გარეშე სივრცეების.",
+
+    channelLabels: {
+      fb: "Facebook",
+      tg: "Telegram",
+      ln: "LinkedIn",
+      wa: "WhatsApp",
+      mail: "Email",
+      viber: "Viber",
+      ig: "Instagram",
+    },
+},
+
 };
 
 /* ---------- defaults & helpers ---------- */

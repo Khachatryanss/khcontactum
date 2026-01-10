@@ -17,7 +17,7 @@ import mailIcon     from "../img/mail.png";
 const h = React.createElement;
 
 // ավելացրեցի kz և chn
-const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn","de","es", "it","fa"];
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn","de","es", "it","fa","geo"];
 
 const TEXT = {
   am: {
@@ -118,6 +118,15 @@ fa: {
   description:
     "کارت‌های ویزیت دیجیتال KHContactum. کسب‌وکار با یک لمس آغاز می‌شود. KHContactum LLC یکی از پروژه‌های نوآورانه Khachatryans Holding CJSC است که فناوری و کسب‌وکار را به هم متصل می‌کند. طراحی‌شده برای رهبرانی که به سبک و کارایی اهمیت می‌دهند. ارتباط فوری از طریق NFC یا کد QR با طراحی پریمیوم اختصاصی برای برند شما. KHContactum — زبان جدید ارتباطات تجاری.",
   contactsLabel: "تماس با ما",
+},
+geo: {
+  appTitle: "KHContactum",
+  username: "მომხმარებლის სახელი",
+  password: "პაროლი",
+  login: "შესვლა",
+  description:
+    "KHContactum ციფრული ბიზნეს ბარათები. ბიზნესი იწყება ერთი შეხებით. KHContactum LLC არის Khachatryans Holding CJSC-ის კიდევ ერთი ინოვაციური პროექტი, რომელიც აერთიანებს ტექნოლოგიას და ბიზნესს. შექმნილია ლიდერებისთვის, რომლებიც აფასებენ სტილს და ეფექტურობას. მყისიერი კონტაქტი NFC ან QR კოდის საშუალებით, ინდივიდუალური პრემიუმ დიზაინით თქვენი ბრენდისთვის. KHContactum — ბიზნეს კომუნიკაციის ახალი ენა.",
+  contactsLabel: "დაგვიკავშირდით",
 },
 
 };

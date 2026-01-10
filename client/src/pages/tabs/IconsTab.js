@@ -381,6 +381,38 @@ const ICONS_UI_TEXT = {
     moveUp: "Up",
     moveDown: "Down",
   },
+  geo: {
+  styleLabel: "სტილი",
+  styleOption1: "სტილი 1",
+  styleOption2: "სტილი 2",
+  styleOption3: "სტილი 3",
+  styleOption4: "სტილი 4 (წრიული)",
+
+  colsLabel: "სვეტები",
+  labelColor: "아이კონის სახელის ფერი",
+  iconBg: "아이კონის ფონი",
+  iconColor: "아이კონის ფერი",
+  rowCardBg: "아이კონების რიგის ფონი (სვეტი 1)",
+  addButton: "დამატება",
+  deleteButton: "წაშლა",
+  saveButton: "შენახვა",
+  savingButton: "ინახება…",
+  loading: "იტვირთება…",
+  urlPlaceholder: "ბმული (URL)",
+  presetButton: "არჩევა",
+  presetSearchPlaceholder: "ძებნა…",
+  validateLabelsMissing: "შეავსეთ სახელის ველები",
+  validateAmMissing: "შეავსეთ AM სახელის ველი",
+  validateHrefMissing: "შეავსეთ ბმულის (URL) ველი",
+  rowsAttention: "ყურადღება: შეავსეთ წითლად მონიშნული რიგები",
+  savedOk: "შენახულია ✅",
+  loadFailed: "ჩატვირთვა ვერ შესრულდა",
+  saveFailed: "შენახვა ვერ შესრულდა",
+  title: "아이კონების პარამეტრები",
+
+  moveUp: "ზემოთ",
+  moveDown: "ქვემოთ",
+},
 };
 
 const ICON_MAP = {
@@ -668,6 +700,7 @@ function normLabels(label) {
       es: "",
       it: "",
       fa: "",
+      geo: "",
       ...label,
     };
     LANGS.forEach((k) => {
@@ -687,6 +720,7 @@ function normLabels(label) {
     es: "",
     it: "",
     fa: "",
+    geo: "",
   };
 }
 

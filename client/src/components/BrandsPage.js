@@ -26,7 +26,7 @@ function absLogo(u = "") {
 function pickLang(
   v,
   lang = "hy",
-  fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"]
+  fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"]
 ) {
   if (!v) return "";
   if (typeof v === "string") return v;
