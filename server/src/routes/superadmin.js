@@ -137,6 +137,39 @@ r.post("/admins", auth("superadmin"), async (req, res) => {
       [admin.id]
     );
 
+    /* ============================================================
+       ✅ INITIAL DEFAULT LANGUAGES FOR NEW ADMIN
+       - only EN enabled
+       - default_lang = "en"
+       ============================================================ */
+    const initialInfo = {
+      default_lang: "en",
+      available_langs: ["en"],
+      languages: {
+        en: true,
+        am: false,
+        ru: false,
+        ar: false,
+        fr: false,
+        kz: false,
+        chn: false,
+        de: false,
+        es: false,
+        it: false,
+        fa: false,
+        geo: false,
+      },
+      languages_order: ["en"],
+    };
+
+    await pool.query(
+      `INSERT INTO admin_info (admin_id, information)
+       VALUES ($1, $2::jsonb)
+       ON CONFLICT (admin_id) DO NOTHING`,
+      [admin.id, JSON.stringify(initialInfo)]
+    );
+    /* ============================================================ */
+
     res.status(201).json(admin);
   } catch (e) {
     if (e.code === "23505")
