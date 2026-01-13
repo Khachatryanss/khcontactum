@@ -468,10 +468,8 @@ const FA_PRESETS = [
   "fa-brands fa-facebook-f",
   "fa-brands fa-facebook-messenger",
   "fa-solid fa-video",
-  "fa-brands fa-odnoklassniki",
   "fa-brands fa-youtube",
   "fa-brands fa-tiktok",
-  "fa-brands fa-skype",
   "fa-brands fa-twitter",
   "fa-brands fa-x-twitter",
   "fa-brands fa-snapchat",
@@ -625,18 +623,6 @@ const ICON_HREF_PATTERNS = {
     prefix: "https://vk.com/",
     placeholder: "username",
     label: "VK profile",
-  },
-  "fa-brands fa-odnoklassniki": {
-    prefix: "https://ok.ru/",
-    placeholder: "profileId",
-    label: "OK.ru profile",
-  },
-
-  // Messengers / others
-  "fa-brands fa-skype": {
-    prefix: "skype:",
-    placeholder: "live:username",
-    label: "Skype username",
   },
   "fa-brands fa-weixin": {
     prefix: "https://u.wechat.com/",
