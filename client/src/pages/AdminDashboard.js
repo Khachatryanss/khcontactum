@@ -975,19 +975,21 @@ export default function AdminDashboard({
         const normalized = normalizeInfo(root);
         setInfo(normalized);
 
+
+
         const rawAvail = Array.isArray(root.available_langs)
           ? root.available_langs
           : null;
 
-        let langsArr =
-          rawAvail && rawAvail.length
-            ? rawAvail.filter((code) => ALL_CODES.includes(code))
-            : ALL_CODES.slice();
+let langsArr =
+  rawAvail && rawAvail.length
+    ? rawAvail.filter((code) => ALL_CODES.includes(code))
+    : ["en"];
 
-        const def =
-          root.default_lang && ALL_CODES.includes(root.default_lang)
-            ? root.default_lang
-            : langsArr[0] || "am";
+const def =
+  root.default_lang && ALL_CODES.includes(root.default_lang)
+    ? root.default_lang
+    : "en";
 
         if (def) {
           if (!langsArr.includes(def)) {
