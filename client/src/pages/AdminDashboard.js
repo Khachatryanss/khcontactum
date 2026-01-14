@@ -1049,7 +1049,7 @@ const def =
     try {
       const payload = normalizeInfo(info);
       payload.available_langs = langs;
-      payload.default_lang = langs[0] || "am";
+      payload.default_lang = langs[0] || "en";
 
       await adminSaveInfo(token, payload);
       setInfoMsg(T.saveOk);
