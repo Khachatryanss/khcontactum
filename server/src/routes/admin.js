@@ -90,7 +90,7 @@ r.post("/login", async (req, res) => {
 
   try {
     const { rows } = await pool.query(
-      "SELECT id, username, password_hash, is_active FROM admins WHERE username=$1",
+      "SELECT id, username, password_hash, is_active, allow_tr FROM admins WHERE username=$1",
       [username]
     );
     const a = rows[0];
@@ -115,7 +115,11 @@ r.post("/login", async (req, res) => {
         loginAttempts.set(ip, rec);
         return res.json({
           token,
-          admin: { id: a.id, username: a.username },
+          admin: {
+            id: a.id,
+            username: a.username,
+            allow_tr: !!a.allow_tr,
+          },
         });
       }
     }
@@ -142,7 +146,7 @@ r.get("/me", auth("admin"), async (req, res) => {
 
   // admins table
   const { rows: arows } = await pool.query(
-    "SELECT id, username, card_id, is_active FROM admins WHERE id=$1",
+    "SELECT id, username, card_id, is_active, allow_tr FROM admins WHERE id=$1",
     [adminId]
   );
   const admin = arows[0];
@@ -182,7 +186,9 @@ r.get("/me", auth("admin"), async (req, res) => {
   const info = jrows[0]?.information || {};
 
   res.json({
-    admin,
+    admin: admin
+      ? { ...admin, allow_tr: !!admin.allow_tr }
+      : admin,
     profile,
     items: irows,
     info

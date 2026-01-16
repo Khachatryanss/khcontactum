@@ -108,13 +108,13 @@ r.post("/login", async (req, res) => {
 /* --- Admins CRUD (միայն superadmin) --- */
 r.get("/admins", auth("superadmin"), async (_req, res) => {
   const { rows } = await pool.query(
-    "SELECT id, username, card_id, is_active, created_at, updated_at FROM admins ORDER BY id DESC"
+    "SELECT id, username, card_id, is_active, allow_tr, created_at, updated_at FROM admins ORDER BY id DESC"
   );
   res.json(rows);
 });
 
 r.post("/admins", auth("superadmin"), async (req, res) => {
-  const { username, password, card_id } = req.body || {};
+  const { username, password, card_id, allow_tr } = req.body || {};
   if (!username || !password || card_id === undefined)
     return res
       .status(400)
@@ -123,10 +123,10 @@ r.post("/admins", auth("superadmin"), async (req, res) => {
   const hash = await bcrypt.hash(password, 10);
   try {
     const { rows } = await pool.query(
-      `INSERT INTO admins (username, password_hash, card_id)
-       VALUES ($1,$2,$3)
-       RETURNING id, username, card_id, is_active, created_at, updated_at`,
-      [username, hash, Number(card_id)]
+      `INSERT INTO admins (username, password_hash, card_id, allow_tr)
+       VALUES ($1,$2,$3,$4)
+       RETURNING id, username, card_id, is_active, allow_tr, created_at, updated_at`,
+      [username, hash, Number(card_id), Boolean(allow_tr)]
     );
     const admin = rows[0];
 
@@ -148,7 +148,7 @@ r.post("/admins", auth("superadmin"), async (req, res) => {
 
 r.patch("/admins/:id", auth("superadmin"), async (req, res) => {
   const id = Number(req.params.id);
-  const { password, card_id, is_active, username } = req.body || {};
+  const { password, card_id, is_active, username, allow_tr } = req.body || {};
 
   const sets = [];
   const vals = [];
@@ -174,6 +174,12 @@ r.patch("/admins/:id", auth("superadmin"), async (req, res) => {
     vals.push(username);
   }
 
+  // ✅ NEW: per-admin TR permission
+  if (allow_tr !== undefined) {
+    sets.push(`allow_tr=$${i++}`);
+    vals.push(Boolean(allow_tr));
+  }
+
   if (!sets.length)
     return res.status(400).json({ error: "Nothing to update" });
 
@@ -182,7 +188,7 @@ r.patch("/admins/:id", auth("superadmin"), async (req, res) => {
   try {
     const { rows } = await pool.query(
       `UPDATE admins SET ${sets.join(", ")} WHERE id=$${i}
-       RETURNING id, username, card_id, is_active, created_at, updated_at`,
+       RETURNING id, username, card_id, is_active, allow_tr, created_at, updated_at`,
       vals
     );
     if (!rows[0]) return res.status(404).json({ error: "Not found" });
