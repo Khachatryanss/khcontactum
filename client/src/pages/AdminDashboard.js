@@ -1074,7 +1074,7 @@ root.default_lang && EFFECTIVE_CODES.includes(root.default_lang)
           return true;
         });
 
-        if (!langsArr.length) langsArr = ["am"];
+        // if (!langsArr.length) langsArr = ["am"];
         if (!allowTr) {
   langsArr = langsArr.filter((c) => c !== "tr");
 }
