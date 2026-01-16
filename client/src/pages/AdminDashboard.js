@@ -982,7 +982,8 @@ export default function AdminDashboard({
     "";
 
   const T = ADMIN_UI_TEXT[uiLang] || ADMIN_UI_TEXT.en;
-
+  
+  const allowTR = Boolean(me?.allow_tr);
   // UI լեզուների selector
 const UI_LANGS = allowTR
   ? ["en", "am", "fr", "ar", "ru", "kz", "chn", "de", "es", "it", "fa", "geo", "tr"]
@@ -1003,7 +1004,6 @@ const UI_LANGS = allowTR
 
   const [me, setMe] = useState(null);
 
-const allowTR = Boolean(me?.allow_tr);
 
 const EFFECTIVE_LANGS = allowTR
   ? ALL_LANGS
