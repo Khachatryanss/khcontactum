@@ -983,6 +983,8 @@ export default function AdminDashboard({
 
   const T = ADMIN_UI_TEXT[uiLang] || ADMIN_UI_TEXT.en;
   
+  const [me, setMe] = useState(null);
+
   const allowTR = Boolean(me?.allow_tr);
   // UI լեզուների selector
 const UI_LANGS = allowTR
@@ -1002,7 +1004,6 @@ const UI_LANGS = allowTR
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState("");
 
-  const [me, setMe] = useState(null);
 
 
 const EFFECTIVE_LANGS = allowTR
@@ -1076,7 +1077,7 @@ root.default_lang && EFFECTIVE_CODES.includes(root.default_lang)
         });
 
         // if (!langsArr.length) langsArr = ["am"];
-        if (!allowTr) {
+        if (!allowTR) {
   langsArr = langsArr.filter((c) => c !== "tr");
 }
 
