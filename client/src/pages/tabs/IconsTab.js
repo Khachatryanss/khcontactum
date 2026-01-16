@@ -7,7 +7,7 @@ const h = React.createElement;
 
 /* ---------------- constants & helpers ---------------- */
 // ամբողջ հավաքածուն (11 լեզու)
-const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa"];
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa","tr"];
 const rtlProps = (code) =>
   code === "ar" || code === "fa"
     ? { dir: "rtl", style: { textAlign: "right" } }
@@ -413,6 +413,39 @@ const ICONS_UI_TEXT = {
   moveUp: "ზემოთ",
   moveDown: "ქვემოთ",
 },
+tr: {
+  styleLabel: "Stil",
+  styleOption1: "Stil 1",
+  styleOption2: "Stil 2",
+  styleOption3: "Stil 3",
+  styleOption4: "Stil 4 (daire)",
+
+  colsLabel: "Sütunlar",
+  labelColor: "Simge adı rengi",
+  iconBg: "Simge arka planı",
+  iconColor: "Simge rengi",
+  rowCardBg: "Satır simgeleri arka planı (Sütun 1)",
+  addButton: "Ekle",
+  deleteButton: "Sil",
+  saveButton: "Kaydet",
+  savingButton: "Kaydediliyor…",
+  loading: "Yükleniyor…",
+  urlPlaceholder: "Bağlantı (URL)",
+  presetButton: "Seç",
+  presetSearchPlaceholder: "Ara…",
+  validateLabelsMissing: "İsim alanlarını doldurun",
+  validateAmMissing: "AM isim alanını doldurun",
+  validateHrefMissing: "Bağlantı (URL) alanını doldurun",
+  rowsAttention: "Dikkat: kırmızı ile işaretli satırları doldurun",
+  savedOk: "Kaydedildi ✅",
+  loadFailed: "Yükleme başarısız",
+  saveFailed: "Kaydetme başarısız",
+  title: "Simge Ayarları",
+
+  moveUp: "Yukarı",
+  moveDown: "Aşağı",
+},
+
 };
 
 const ICON_MAP = {
@@ -687,6 +720,7 @@ function normLabels(label) {
       it: "",
       fa: "",
       geo: "",
+      tr: "",
       ...label,
     };
     LANGS.forEach((k) => {
@@ -707,6 +741,7 @@ function normLabels(label) {
     it: "",
     fa: "",
     geo: "",
+    tr: "",
   };
 }
 

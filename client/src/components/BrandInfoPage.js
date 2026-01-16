@@ -7,7 +7,7 @@ const h = React.createElement;
 
 /* ---------- i18n text for Brand Info ---------- */
 const BI_TEXT = {
-  hy: {
+  am: {
     empty: "Տվյալ keyword-ով աշխատակից դեռ չկա։",
     back: "Վերադառնալ",
   },
@@ -59,17 +59,22 @@ const BI_TEXT = {
     empty: "ამ საკვანძო სიტყვით თანამშრომელი ჯერ არ არსებობს.",
     back: "უკან",
   },
+  tr: {
+  empty: "Bu anahtar kelimeyle henüz bir çalışan mevcut değil.",
+  back: "Geri",
+},
+
 };
 
 /* ---------- pickLang upgraded for more langs ---------- */
 /**
  * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn, de, es, it, fa, geo})
- * lang – htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa","geo"
+ * lang – htmlLang → "am","ru","en","ar","fr","kz","chn","de","es","it","fa","geo"
  */
 function pickLang(
   v,
-  lang = "hy",
-  fallbacks = ["am","en","ru","ar","fr","kz","chn","de","es","it","fa","geo"]
+  lang = "am",
+  fallbacks = ["am","en","ru","ar","fr","kz","chn","de","es","it","fa","geo","tr"]
 ) {
   if (!v) return "";
   if (typeof v === "string") return v;
@@ -78,8 +83,8 @@ function pickLang(
   const L = (lang || "").toLowerCase();
 
   // Armenian mapping
-  if (L === "hy" || L === "am") {
-    primary.push("am", "hy");
+  if (L === "am" || L === "am") {
+    primary.push("am", "am");
   } else {
     primary.push(L);
   }
@@ -110,7 +115,7 @@ function hasKeyword(itemKeyword, activeKeyword) {
 /* ---------- avatar placeholder text per language ---------- */
 function noPhotoLabel(lang) {
   const k = (lang || "").toLowerCase();
-  if (k === "hy" || k === "am") return "նկար";
+  if (k === "am" || k === "am") return "նկար";
   if (k === "ru") return "фото";
   if (k === "ar") return "صورة";
   if (k === "fr") return "photo";
@@ -121,6 +126,7 @@ function noPhotoLabel(lang) {
   if (k === "it") return "foto";
   if (k === "fa") return "عکس";
   if (k === "geo") return "ფოტო";
+  if (k === "tr") return "Fotoğraf";
   return "photo";
 }
 
@@ -378,16 +384,16 @@ function WorkerCard({ item, lang }) {
  * Props:
  * - brandInfos: [{ id, keyword, name, bio/description, gallery/slides[], nameColor, bioColor, bioBgColor }]
  * - keyword
- * - lang (htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa")
+ * - lang (htmlLang → "am","ru","en","ar","fr","kz","chn","de","es","it","fa")
  * - onBack()
  */
 export default function BrandInfoPage({
   brandInfos = [],
   keyword = "",
-  lang = "hy",
+  lang = "am",
   onBack
 }) {
-  const T = BI_TEXT[lang] || BI_TEXT.hy;
+  const T = BI_TEXT[lang] || BI_TEXT.am;
 
   React.useEffect(() => {
     const container = document.querySelector(".public-scroll-layer");

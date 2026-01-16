@@ -19,12 +19,12 @@ const PUBLIC_BASE = "https://khcontactum.com/";
 /* ===== helpers ===== */
 /**
  * v – string կամ i18n object ({am, ru, en, ar, fr, kz, chn, de, es, it, fa, geo})
- * lang – "hy","ru","en","ar","fr","kz","chn","de","es","it","fa","geo" (HomePage-ից եկող htmlLang)
+ * lang – "am","ru","en","ar","fr","kz","chn","de","es","it","fa","geo" (HomePage-ից եկող htmlLang)
  */
 function pickLang(
   v,
-  lang = "hy",
-  fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"]
+  lang = "am",
+  fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo","tr"]
 ) {
   if (!v) return "";
   if (typeof v === "string") return v;
@@ -33,8 +33,8 @@ function pickLang(
   const L = (lang || "").toLowerCase();
 
   // Armenian mapping
-  if (L === "hy" || L === "am") {
-    primary.push("am", "hy");
+  if (L === "am" || L === "am") {
+    primary.push("am", "am");
   } else {
     primary.push(L);
   }
@@ -221,12 +221,25 @@ const TEXT = {
     confirmYes: "დიახ",
     confirmNo: "არა",
   },
+  tr: {
+  scanBtn: "QR KODU TARA",
+  shareTitle: "KARTIMI PAYLAŞ",
+  addBtn: "BENİ KİŞİ LİSTESİNE EKLE",
+  qrOnline: "ÇEVRİMİÇİ QR KOD",
+  qrOffline: "ÇEVRİMDIŞI QR KOD",
+  offlineNote: "Taradıktan sonra kişilerinize kaydedebilirsiniz.",
+  shareDefault: "KHContactum.com dijital kartımı inceleyin.",
+  mailSubject: "KHContactum dijital kart",
+  confirmTitle: "{{name}} kişisini rehbere eklemek istiyor musunuz?",
+  confirmYes: "Evet",
+  confirmNo: "Hayır",
+},
+
 };
 
 /* ✅ Քո ֆիքսված կոնտեքստը */
 const SHARE_CONTEXT = {
   am:  "Իմ թվային բիզնես քարտը՝ ստեղծված KHContactum.com հարթակում։",
-  hy:  "Իմ թվային բիզնես քարտը՝ ստեղծված KHContactum.com հարթակում։",
   ru:  "Моя цифровая визитка, созданная на платформе KHContactum.com.",
   en:  "My digital business card created on the KHContactum.com platform.",
   ar:  "بطاقتي الرقمية للأعمال، تم إنشاؤها على منصة KHContactum.com.",
@@ -238,6 +251,7 @@ const SHARE_CONTEXT = {
   it:  "Il mio biglietto da visita digitale creato sulla piattaforma KHContactum.com.",
   fa:  "کارت ویزیت دیجیتال من که در پلتفرم KHContactum.com ساخته شده است.",
   geo: "ჩემი ციფრული ბიზნეს ბარათი, შექმნილი KHContactum.com პლატფორმაზე.",
+  tr: "KHContactum.com platformunda oluşturulmuş dijital kartvizitim.",
 };
 
 /* quick flags դեռ պահում ենք struct-ի մեջ (admin panel-ի համար) */
@@ -583,7 +597,7 @@ async function saveVCardUniversal({
 }
 
 /**
- * lang-ը կարող ես փոխանցել HomePage-ից (htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa","geo").
+ * lang-ը կարող ես փոխանցել HomePage-ից (htmlLang → "am","ru","en","ar","fr","kz","chn","de","es","it","fa","geo").
  * autoOpenConfirm → VisitCard հղումով մտնելու դեպքում բացի popup
  */
 export default function SharePage({ info, cardId, lang, autoOpenConfirm = false }) {
@@ -604,9 +618,9 @@ export default function SharePage({ info, cardId, lang, autoOpenConfirm = false 
       ? localStorage.getItem("lang") || "am"
       : "am");
 
-  // Armenian htmlLang ("hy") → TEXT.am
+  // Armenian htmlLang ("am") → TEXT.am
   const textLangKey =
-    activeLangRaw === "hy" ? "am" : (activeLangRaw || "am");
+    activeLangRaw === "am" ? "am" : (activeLangRaw || "am");
   const t = TEXT[textLangKey] || TEXT.am;
 
   const onlineUrl = ensureAbsoluteUrl(

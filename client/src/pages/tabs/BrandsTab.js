@@ -4,7 +4,7 @@ import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
 
 const h = React.createElement;
 // 👇 ավելացրեցինք kz, chn, de, es, it, fa
-const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa","geo"];
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa","geo","tr"];
 
 /* ---------- UI TEXT ---------- */
 const BRANDS_UI_TEXT = {
@@ -423,6 +423,41 @@ const BRANDS_UI_TEXT = {
   loadFailed: "ჩატვირთვა ვერ შესრულდა",
   saveFailed: "შენახვა ვერ შესრულდა",
 },
+tr: {
+  heading: "Markalar",
+
+  titleColorLabel: "Başlık rengi:",
+  nameColorLabel: "İsim rengi:",
+  titleTextLabel: "Başlık metni:",
+  colsLabel: "Sütun sayısı:",
+  colsOption3: "3",
+  colsOption2: "2",
+  colsOption1: "1 (tek sütun)",
+  rowBgLabel: "Tek sütunlu kartlar için arka plan (Sütun 1)",
+
+  brandNameLabel: "Marka adı:",
+  uploadButton: "Yükle",
+  deleteButton: "Sil",
+  removeLogoButton: "Logoyu kaldır",
+  linkTypeLabel: "Bağlantı türü:",
+  linkTypeKeyword: "Anahtar kelime",
+  linkTypeUrl: "URL",
+  keywordPlaceholder: "örn. goodrealty",
+  hrefPlaceholder: "https://example.com/...",
+
+  addButton: "Ekle",
+  saveButton: "Kaydet",
+  savingButton: "Kaydediliyor…",
+  loading: "Yükleniyor…",
+
+  fileTypeError: "Yalnızca görsel veya video dosyaları kabul edilir",
+  uploadOk: "Logo yüklendi ✔",
+  uploadFailed: "Yükleme başarısız",
+  loadFailed: "Yükleme hatası",
+  savedOk: "Kaydedildi ✅",
+  saveFailed: "Kaydetme başarısız",
+},
+
 };
 
 /* ---------- helpers ---------- */

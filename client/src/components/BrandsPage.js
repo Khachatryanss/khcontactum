@@ -21,12 +21,12 @@ function absLogo(u = "") {
 
 /**
  * v – կարող է լինել string կամ i18n object
- * lang – գալիս է HomePage-ից որպես htmlLang: "hy","ru","en","ar","fr","kz","chn","de","es","it","fa"
+ * lang – գալիս է HomePage-ից որպես htmlLang: "am","ru","en","ar","fr","kz","chn","de","es","it","fa"
  */
 function pickLang(
   v,
-  lang = "hy",
-  fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"]
+  lang = "am",
+  fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo","tr"]
 ) {
   if (!v) return "";
   if (typeof v === "string") return v;
@@ -34,8 +34,8 @@ function pickLang(
   // առաջնային key-երը ըստ lang-ի
   const primary = [];
   switch (lang) {
-    case "hy":
-      primary.push("am", "hy");
+    case "am":
+      primary.push("am", "am");
       break;
     default:
       primary.push(lang);
@@ -64,7 +64,7 @@ const CROP_ZOOM = 1.1; // 1.08–1.12 միջակայքը OK է
  * - brandsTitleText (string կամ {am,ru,en,ar,fr,kz,chn,de,es,it,fa})
  * - brandsNameColor
  * - brandsCols: 1 | 2 | 3
- * - lang: htmlLang → "hy","ru","en","ar","fr","kz","chn","de","es","it","fa"
+ * - lang: htmlLang → "am","ru","en","ar","fr","kz","chn","de","es","it","fa"
  * - onKeywordClick(keyword) – optional
  */
 export default function BrandsPage({
@@ -73,7 +73,7 @@ export default function BrandsPage({
   brandsTitleText = "ՄԵՐ ԲՐԵՆԴՆԵՐԸ",
   brandsNameColor = "#000000",
   brandsCols = 3,
-  lang = "hy",
+  lang = "am",
   onKeywordClick,
 }) {
   if (!Array.isArray(brands) || !brands.length) return null;

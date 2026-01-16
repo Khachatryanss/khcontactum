@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import { adminChangePassword } from "../../api.js";
 const h = React.createElement;
 
-/* ---------- UI TEXT BY LANGUAGE ---------- */
+/* ---------- UI TEXT BY LANGUAGE ---------- */ 
 const PW_UI_TEXT = {
   am: {
     title: "Գաղտնաբառի փոփոխություն",
@@ -388,6 +388,40 @@ const PW_UI_TEXT = {
   toastInUse: "ეს პაროლი უკვე გამოიყენება სხვა ადმინის მიერ",
   toastRoute404: "სერვერზე პაროლის შეცვლის route ვერ მოიძებნა",
 },
+tr: {
+  title: "Şifre Değiştir",
+
+  oldLabel: "Mevcut şifre",
+  newLabel: "Yeni şifre",
+  repeatLabel: "Yeni şifreyi tekrar gir",
+
+  oldPlaceholder: "Mevcut şifre",
+  newPlaceholder: "Yeni şifre",
+  repeatPlaceholder: "Yeni şifreyi tekrar gir",
+
+  reqTitle: "Gereksinimler:",
+  reqLen: "En az 8 karakter",
+  reqLow: "Küçük harf",
+  reqUp: "Büyük harf",
+  reqNum: "Rakam",
+  reqSym: "Sembol (., !, @, # …)",
+  reqDiffOld: "Eski şifreyi tekrar kullanmayın",
+
+  mismatch: "Şifreler eşleşmiyor",
+
+  saveButton: "Kaydet",
+  savingButton: "Kaydediliyor...",
+
+  hint:
+    "İpucu: Sunucu mevcut şifrenizi kontrol eder ve yeni şifre başka bir admin tarafından kullanılmışsa reddeder.",
+
+  toastNoToken: "Token bulunamadı",
+  toastSuccess: "Şifre değiştirildi ✅",
+  toastWrongOld: "Mevcut şifre yanlış",
+  toastInUse: "Bu şifre başka bir admin tarafından zaten kullanılıyor",
+  toastRoute404: "Sunucuda şifre değiştirme route'u bulunamadı",
+},
+
 };
 
 /* ---------- COMPONENT ---------- */

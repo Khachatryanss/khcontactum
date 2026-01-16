@@ -648,6 +648,58 @@ const ADMIN_UI_TEXT = {
 
   chooseFileLabel: "ფაილის არჩევა",
 },
+tr: {
+  tabs: {
+    home: "Ana Sayfa",
+    icons: "Simgeler",
+    brands: "Markalar",
+    brandinfo: "Marka Bilgisi",
+    share: "Paylaş / QR",
+    password: "Şifre Değiştir",
+  },
+  logout: "ÇIKIŞ",
+  headerAdminPrefix: "ADMIN",
+
+  langsTitle: "DİLLER",
+  langsDescription:
+    "Aktif dilleri seçin ve sıralamayı değiştirin; ilk dil, herkese açık sayfadaki varsayılan dil olacaktır.",
+
+  avatarTitle: "AVATAR",
+  typeLabel: "Tür",
+  avatarTypeImage: "Görsel",
+  avatarTypeVideo: "Video",
+  avatarImageUrlLabel: "Avatar Görsel URL",
+  avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
+  avatarVideoUrlLabel: "Avatar Video URL",
+  avatarVideoHint: "Maks. 20 MB (mp4, webm, ogg)",
+  avatarSantaHatLabel: "Avatar üzerinde Noel Baba şapkası göster",
+
+  companyNameTitle: "ŞİRKET ADI",
+  nameColorLabel: "Ad Rengi",
+
+  descriptionTitle: "AÇIKLAMA",
+  descriptionColorLabel: "Açıklama Rengi",
+
+  backgroundTitle: "ARKA PLAN",
+  backgroundTypeColor: "Renk",
+  backgroundTypeImage: "Görsel",
+  backgroundTypeVideo: "Video",
+  backgroundColorLabel: "Arka Plan Rengi",
+  backgroundImageUrlLabel: "Arka Plan Görsel URL",
+  backgroundVideoUrlLabel: "Arka Plan Video URL",
+  backgroundVideoHint: "Maks. 20 MB (mp4, webm, ogg)",
+
+  saveButton: "Kaydet",
+  savingButton: "Kaydediliyor...",
+  saveOk: "Kaydedildi ✅",
+  saveError: "Kaydederken hata",
+
+  needLoginTitle: "Giriş gerekli",
+  needLoginBody: "Lütfen / sayfasından giriş yapın.",
+  loading: "Yükleniyor…",
+
+  chooseFileLabel: "Dosya Seç",
+},
 };
 
 const DEFAULT_INFO = {
@@ -668,6 +720,7 @@ const DEFAULT_INFO = {
       it: "",
       fa: "",
       geo: "",
+      tr: "",
     },
     nameColor: "#000000",
   },
@@ -685,6 +738,7 @@ const DEFAULT_INFO = {
     it: "",
     fa: "",
     geo: "",
+    tr: "",
     color: "#000000",
   },
 
@@ -710,6 +764,7 @@ const ALL_LANGS = [
   { code: "it", label: "Italiano (IT)" },
   { code: "fa", label: "فارسی (FA)" },
   { code: "geo", label: "ქართული (GEO)" },
+  { code: "tr", label: "Türkçe (TR)" },
 ];
 const ALL_CODES = ALL_LANGS.map((x) => x.code);
 
@@ -741,6 +796,7 @@ function normalizeInfo(partial) {
         it: i.company?.name?.it || "",
         fa: i.company?.name?.fa || "",
         geo: i.company?.name?.geo || "",
+        tr: i.company?.name?.tr || "",
       },
     },
 
@@ -757,6 +813,7 @@ function normalizeInfo(partial) {
       it: i.description?.it || "",
       fa: i.description?.fa || "",
       geo: i.description?.geo || "",
+      tr: i.description?.tr || "",
       color: i.description?.color || "#000000",
     },
 
@@ -927,7 +984,7 @@ export default function AdminDashboard({
   const T = ADMIN_UI_TEXT[uiLang] || ADMIN_UI_TEXT.en;
 
   // UI լեզուների selector
-  const UI_LANGS = ["en", "am", "fr", "ar", "ru", "kz", "chn", "de", "es", "it", "fa","geo"];
+  const UI_LANGS = ["en", "am", "fr", "ar", "ru", "kz", "chn", "de", "es", "it", "fa","geo","tr"];
 
   function handleUiLangChange(next) {
     if (!next || next === uiLang) return;
@@ -1663,7 +1720,10 @@ const def =
             ? "Nome dell'azienda (IT)"
             : code === "fa"
             ? "نام شرکت (FA)"
-            : "კომპანიის სახელი (GEO)";
+            : code === "geo"
+            ? "კომპანიის სახელი (GEO)"
+            : "Şirket Adı (TR)";
+
 
 
         const extraProps =
@@ -1743,7 +1803,9 @@ const def =
             ? "Descrizione (IT)"
             : code === "fa"
             ? "توضیحات (FA)"
-            : "აღწერა (GEO)";
+            : code === "geo" 
+            ? "აღწერა (GEO)"
+            : "Açıklama (TR)";
 
         const extraProps =
           code === "ar" || code === "fa"

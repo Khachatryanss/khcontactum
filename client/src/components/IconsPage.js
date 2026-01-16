@@ -33,12 +33,12 @@ function faClassFrom(item){
 }
 
 /* ---------- multi-lang label picker (11 լեզու) ---------- */
-function pickLabel(label, lang = "hy"){
+function pickLabel(label, lang = "am"){
   if (label && typeof label === "object") {
     const primaryKeys = [];
     switch (lang) {
-      case "hy":
-        primaryKeys.push("am", "hy");
+      case "am":
+        primaryKeys.push("am");
         break;
       case "kz":
         primaryKeys.push("kz");
@@ -65,6 +65,9 @@ function pickLabel(label, lang = "hy"){
       case "geo":
         primaryKeys.push("geo");
         break;
+      case "tr":
+        primaryKeys.push("tr");
+        break;
 
       default:
         primaryKeys.push(lang);
@@ -72,7 +75,7 @@ function pickLabel(label, lang = "hy"){
 
     const fallbackOrder = [
       ...primaryKeys,
-      "am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"
+      "am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo","tr"
     ];
 
     for (const k of fallbackOrder) {
@@ -96,7 +99,7 @@ export default function IconsPage({
   cols = 4,
   glowEnabled = false,
   glowColor,
-  lang = "hy"
+  lang = "am"
 }) {
   /* ===== dzev4 — ձեռքով պտտվող շրջան (ոչ ավտոմատ) ===== */
   const [orbitAngle, setOrbitAngle] = React.useState(0); // градусовով

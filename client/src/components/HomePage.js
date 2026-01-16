@@ -37,7 +37,7 @@ function isVideo(u = "") {
   return /\.(mp4|webm|ogg)(\?.*)?$/i.test(u);
 }
 
-function hyphenateHy(text, uiLang = "hy") {
+function hyphenateHy(text, uiLang = "am") {
   if (!text) return "";
   const TOKENS = /(\bhttps?:\/\/\S+|\b\S+@\S+\.\S+|\b[\d._\-]+(?:\b|$))/gi;
   const U_DIGR = "\uE000";
@@ -88,7 +88,7 @@ function hyphenateHy(text, uiLang = "hy") {
 
 function idealColsForLang(lang) {
   switch (lang) {
-    case "hy":  return [30, 34];
+    case "am":  return [30, 34];
     case "ru":  return [32, 38];
     case "en":  return [36, 42];
     case "ar":  return [30, 34];
@@ -104,6 +104,7 @@ function idealColsForLang(lang) {
 
     // ✅ GEO
     case "geo": return [34, 40];
+    case "tr": return [34, 40];
 
     default:    return [34, 40];
   }
@@ -113,7 +114,7 @@ function idealColsForLang(lang) {
 function LangDropdown({
   value,
   onChange,
-  langs = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"],
+  langs = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo","tr"],
   storageKey = "lang",
 }) {
   const [open, setOpen] = React.useState(false);
@@ -174,7 +175,7 @@ function rgbaToCss(obj) {
 }
 
 // (այս պահին չի օգտագործվում, բայց թարմացրի GEO-ի համար էլ)
-function pickLang(v, lang, fallbacks = ["hy", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"]) {
+function pickLang(v, lang, fallbacks = ["am", "en", "ru", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo","tr"]) {
   if (!v) return "";
   if (typeof v === "string") return v;
   const order = [lang].concat(fallbacks.filter(x => x !== lang));
@@ -370,7 +371,7 @@ export default function HomePage({ cardId = "101" }) {
 
   const [shareAutoOpened, setShareAutoOpened] = React.useState(false);
 
-  const htmlLang = lang === "am" ? "hy" : lang;
+  const htmlLang = lang === "am" ? "am" : lang;
 
   React.useEffect(() => {
     try {
@@ -430,7 +431,7 @@ export default function HomePage({ cardId = "101" }) {
     if (!info) return;
 
     const nameByLang = {
-      hy:  info?.company?.name?.am  || "",
+      am:  info?.company?.name?.am  || "",
       ru:  info?.company?.name?.ru  || "",
       en:  info?.company?.name?.en  || "",
       ar:  info?.company?.name?.ar  || "",
@@ -442,11 +443,12 @@ export default function HomePage({ cardId = "101" }) {
       it:  info?.company?.name?.it  || "",
       fa:  info?.company?.name?.fa  || "",
       geo: info?.company?.name?.geo || "",
+      tr: info?.company?.name?.tr || "",
     };
 
     const displayName =
       nameByLang[htmlLang] ||
-      nameByLang.hy ||
+      nameByLang.am ||
       nameByLang.en ||
       "KHContactum";
 
@@ -548,7 +550,7 @@ export default function HomePage({ cardId = "101" }) {
         : ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa", "geo"];
 
     const nameByLang = {
-      hy:  info?.company?.name?.am  || "",
+      am:  info?.company?.name?.am  || "",
       ru:  info?.company?.name?.ru  || "",
       en:  info?.company?.name?.en  || "",
       ar:  info?.company?.name?.ar  || "",
@@ -560,13 +562,14 @@ export default function HomePage({ cardId = "101" }) {
       it:  info?.company?.name?.it  || "",
       fa:  info?.company?.name?.fa  || "",
       geo: info?.company?.name?.geo || "",
+      tr: info?.company?.name?.tr || "",
     };
 
     const desc  = info?.description || {};
     const about = info?.profile?.about || {};
 
     const textByLang = {
-      hy:  (desc?.am  ?? about?.am)  || "",
+      am:  (desc?.am  ?? about?.am)  || "",
       ru:  (desc?.ru  ?? about?.ru)  || "",
       en:  (desc?.en  ?? about?.en)  || "",
       ar:  (desc?.ar  ?? about?.ar)  || "",
@@ -578,6 +581,7 @@ export default function HomePage({ cardId = "101" }) {
       it:  (desc?.it  ?? about?.it)  || "",
       fa:  (desc?.fa  ?? about?.fa)  || "",
       geo: (desc?.geo ?? about?.geo) || "",
+      tr: (desc?.tr ?? about?.tr) || "",
     };
 
     const nameColor = info?.company?.nameColor || "#111";
@@ -638,14 +642,14 @@ export default function HomePage({ cardId = "101" }) {
 
     const name =
       nameByLang[htmlLang] ||
-      nameByLang.hy ||
+      nameByLang.am ||
       nameByLang.en ||
       "—";
 
     const descriptionRaw = textByLang[htmlLang] || "";
     const description =
-      htmlLang === "hy"
-        ? hyphenateHy(descriptionRaw, "hy")
+      htmlLang === "am"
+        ? hyphenateHy(descriptionRaw, "am")
         : hyphenateHy(descriptionRaw, htmlLang);
 
     const [minCh, maxCh] = idealColsForLang(htmlLang);

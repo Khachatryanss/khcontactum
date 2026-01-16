@@ -4,7 +4,7 @@ import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
 
 const h = React.createElement;
 // 👇 LANGS ամբողջ հավաքածու
-const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa","geo"];
+const LANGS = ["am", "ru", "en", "ar", "fr", "kz", "chn", "de", "es", "it", "fa","geo","tr"];
 
 /* ---------- UI TEXT ---------- */
 const BRANDINFO_TEXT = {
@@ -335,6 +335,33 @@ const BRANDINFO_TEXT = {
   loadFailed: "ჩატვირთვა ვერ შესრულდა",
   saveFailed: "შენახვა ვერ შესრულდა",
 },
+tr: {
+  title: "Marka Bilgisi",
+
+  keywordHint: "Bu bölüm, anahtar kelime alanı üzerinden markalarla bağlantılıdır.",
+  keywordLabel: "Anahtar Kelime",
+  nameLabel: "İsim:",
+  bioLabel: "Açıklama:",
+  nameColorLabel: "İsim rengi",
+  bioColorLabel: "Açıklama rengi",
+  bioBgColorLabel: "Açıklama arka plan rengi",
+  sliderLabel: "Slider (en fazla 5 görsel, 6:9)",
+  deleteWorkerButton: "Sil",
+  addWorkerButton: "Ekle",
+  saveButton: "Kaydet",
+  savingButton: "Kaydediliyor…",
+  loading: "Yükleniyor…",
+  avatarLabel: "Yükle",
+  deleteAvatarLabel: "Logoyu sil",
+  fileTypeError: "Yalnızca görsel dosyalarına izin verilir",
+  uploadAvatarOk: "Avatar yüklendi ✔",
+  uploadImageOk: "Görsel yüklendi ✔",
+  uploadFailed: "Yükleme başarısız",
+  savedOk: "Kaydedildi ✅",
+  loadFailed: "Yükleme başarısız",
+  saveFailed: "Kaydetme başarısız",
+},
+
 };
 
 /* ---------- helpers ---------- */

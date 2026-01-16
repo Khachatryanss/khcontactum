@@ -509,6 +509,48 @@ const SHARE_UI_TEXT = {
       ig: "Instagram",
     },
 },
+tr: {
+  onlineTitle: "Çevrimiçi QR · Bağlantı",
+  onlineLabel: "Kartın herkese açık bağlantısı",
+  onlineHelp:
+    "Temel bağlantı sabittir. Yalnızca card_id / yol kısmını girin.",
+
+  offlineTitle: "Çevrimdışı QR ve Kişiler",
+  offlineIntro:
+    "Bu bilgiler, çevrimdışı QR kodu ve “Beni kişi listesine ekle” butonu için kullanılacaktır.",
+
+  fullNameLabel: "Ad Soyad",
+  phoneLabel: "Telefon",
+  phonePlaceholder: "+90...",
+
+  quickTitle: "Hızlı paylaşım seçenekleri",
+  quickIntro: "Paylaşım bölümünde görünecek simgeleri seçin.",
+
+  colorsTitle: "Renkler",
+  colorBtnText: "Buton yazı rengi",
+  colorBtnBg: "Buton arka plan rengi",
+  colorShareTitle: "“Kartımı paylaş” yazı rengi",
+
+  saveButton: "Kaydet",
+  savingButton: "Kaydediliyor...",
+  msgNoToken: "Token yok, lütfen tekrar giriş yapın",
+  msgSaveOk: "Kaydedildi ✅",
+  msgSaveError: "Kaydetme sırasında hata",
+  pathReset: "card_id'ye sıfırla",
+  pathInvalid:
+    "Geçersiz yol: yalnızca harfler/rakamlar/-/_, boşluk yok.",
+
+  channelLabels: {
+    fb: "Facebook",
+    tg: "Telegram",
+    ln: "LinkedIn",
+    wa: "WhatsApp",
+    mail: "Email",
+    viber: "Viber",
+    ig: "Instagram",
+  },
+},
+
 
 };
 
