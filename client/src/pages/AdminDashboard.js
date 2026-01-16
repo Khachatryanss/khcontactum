@@ -1003,13 +1003,14 @@ const UI_LANGS = allowTr
 
   const [me, setMe] = useState(null);
 
-  const allowTr = !!me?.allow_tr;
+const allowTR = Boolean(me?.allow_tr);
 
-const EFFECTIVE_LANGS = allowTr
+const EFFECTIVE_LANGS = allowTR
   ? ALL_LANGS
   : ALL_LANGS.filter((x) => x.code !== "tr");
 
 const EFFECTIVE_CODES = EFFECTIVE_LANGS.map((x) => x.code);
+
 
 
   const [cardId, setCardId] = useState(null);

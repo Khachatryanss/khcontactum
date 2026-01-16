@@ -987,13 +987,14 @@ export default function AdminDashboard({
 
   const [me, setMe] = useState(null);
 
-  const canUseTR = !!me?.allow_tr;
+  const allowTR = Boolean(me?.allow_tr);
 
-const EFFECTIVE_LANGS = canUseTR
+const EFFECTIVE_LANGS = allowTR
   ? ALL_LANGS
   : ALL_LANGS.filter((x) => x.code !== "tr");
 
 const EFFECTIVE_CODES = EFFECTIVE_LANGS.map((x) => x.code);
+
 
 
   const [cardId, setCardId] = useState(null);
