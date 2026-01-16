@@ -1,4 +1,4 @@
-// client/src/pages/AdminDashboard.js
+// client/src/pages/HomeTab.js
 import React, { useEffect, useState } from "react";
 import PhoneShell from "../PhoneShell.js";
 import { adminMe, adminGetInfo, adminSaveInfo, uploadFile } from "../api.js";
@@ -987,6 +987,15 @@ export default function AdminDashboard({
 
   const [me, setMe] = useState(null);
 
+  const canUseTR = !!me?.allow_tr;
+
+const EFFECTIVE_LANGS = canUseTR
+  ? ALL_LANGS
+  : ALL_LANGS.filter((x) => x.code !== "tr");
+
+const EFFECTIVE_CODES = EFFECTIVE_LANGS.map((x) => x.code);
+
+
   const [cardId, setCardId] = useState(null);
   const [info, setInfo] = useState(DEFAULT_INFO);
   const [savingInfo, setSavingInfo] = useState(false);
@@ -1024,11 +1033,11 @@ export default function AdminDashboard({
 
         let langsArr =
           rawAvail && rawAvail.length
-            ? rawAvail.filter((code) => ALL_CODES.includes(code))
-            : ALL_CODES.slice();
+? rawAvail.filter((code) => EFFECTIVE_CODES.includes(code))
+: EFFECTIVE_CODES.slice();
 
         const def =
-          root.default_lang && ALL_CODES.includes(root.default_lang)
+root.default_lang && EFFECTIVE_CODES.includes(root.default_lang)
             ? root.default_lang
             : langsArr[0] || "am";
 
@@ -1451,7 +1460,7 @@ export default function AdminDashboard({
           T.langsDescription
         ),
 
-        ALL_LANGS.map(({ code, label }) => {
+EFFECTIVE_LANGS.map(({ code, label }) => {
           const orderIndex = langs.indexOf(code);
           const active = orderIndex !== -1;
           const orderLabel = active ? `#${orderIndex + 1}` : "—";
