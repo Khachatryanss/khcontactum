@@ -984,7 +984,9 @@ export default function AdminDashboard({
   const T = ADMIN_UI_TEXT[uiLang] || ADMIN_UI_TEXT.en;
 
   // UI լեզուների selector
-  const UI_LANGS = ["en", "am", "fr", "ar", "ru", "kz", "chn", "de", "es", "it", "fa","geo","tr"];
+const UI_LANGS = allowTr
+  ? ["en", "am", "fr", "ar", "ru", "kz", "chn", "de", "es", "it", "fa", "geo", "tr"]
+  : ["en", "am", "fr", "ar", "ru", "kz", "chn", "de", "es", "it", "fa", "geo"];
 
   function handleUiLangChange(next) {
     if (!next || next === uiLang) return;
@@ -1000,6 +1002,15 @@ export default function AdminDashboard({
   const [msg, setMsg] = useState("");
 
   const [me, setMe] = useState(null);
+
+  const allowTr = !!me?.allow_tr;
+
+const EFFECTIVE_LANGS = allowTr
+  ? ALL_LANGS
+  : ALL_LANGS.filter((x) => x.code !== "tr");
+
+const EFFECTIVE_CODES = EFFECTIVE_LANGS.map((x) => x.code);
+
 
   const [cardId, setCardId] = useState(null);
   const [info, setInfo] = useState(DEFAULT_INFO);
@@ -1040,11 +1051,11 @@ export default function AdminDashboard({
 
 let langsArr =
   rawAvail && rawAvail.length
-    ? rawAvail.filter((code) => ALL_CODES.includes(code))
+? rawAvail.filter((code) => EFFECTIVE_CODES.includes(code))
     : ["en"];
 
 const def =
-  root.default_lang && ALL_CODES.includes(root.default_lang)
+root.default_lang && EFFECTIVE_CODES.includes(root.default_lang)
     ? root.default_lang
     : "en";
 
@@ -1064,6 +1075,10 @@ const def =
         });
 
         if (!langsArr.length) langsArr = ["am"];
+        if (!allowTr) {
+  langsArr = langsArr.filter((c) => c !== "tr");
+}
+
         setLangs(langsArr);
         setHomeDirty(false);
       } catch (e) {
@@ -1463,7 +1478,7 @@ const def =
           T.langsDescription
         ),
 
-        ALL_LANGS.map(({ code, label }) => {
+EFFECTIVE_LANGS.map(({ code, label }) => {
           const orderIndex = langs.indexOf(code);
           const active = orderIndex !== -1;
           const orderLabel = active ? `#${orderIndex + 1}` : "—";

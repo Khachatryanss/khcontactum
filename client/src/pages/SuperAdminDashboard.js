@@ -15,13 +15,15 @@ export default function SuperAdminDashboard({ token, onLogout }) {
     card_id: "",
     username: "",
     password: "",
+    allow_tr: false, // ✅ NEW
   });
 
   // change form
   const [changeForm, setChangeForm] = useState({
     card_id: "",
-    field: "card_id", // "card_id" | "username" | "password"
+    field: "card_id", // "card_id" | "username" | "password" | "allow_tr"
     newValue: "",
+    allow_tr: false, // ✅ NEW (checkbox value for change)
   });
 
   // delete form
@@ -61,11 +63,15 @@ export default function SuperAdminDashboard({ token, onLogout }) {
 
   function onRowClick(a) {
     setSelectedId(a.id);
+
     // auto-fill card_id for change/delete
     setChangeForm((cf) => ({
       ...cf,
       card_id: a.card_id != null ? String(a.card_id) : "",
+      // ✅ if server doesn't send allow_tr yet -> fallback false
+      allow_tr: !!a.allow_tr,
     }));
+
     setDeleteForm((df) => ({
       ...df,
       card_id: a.card_id != null ? String(a.card_id) : "",
@@ -97,6 +103,7 @@ export default function SuperAdminDashboard({ token, onLogout }) {
     setChangeForm((cf) => ({
       ...cf,
       card_id: String(admin.card_id),
+      allow_tr: !!admin.allow_tr, // ✅
     }));
     setDeleteForm((df) => ({
       ...df,
@@ -107,7 +114,7 @@ export default function SuperAdminDashboard({ token, onLogout }) {
   /* ------------ CREATE logic ------------ */
   async function handleCreate() {
     setMsg("");
-    const { card_id, username, password } = createForm;
+    const { card_id, username, password, allow_tr } = createForm;
 
     if (!card_id || !username || !password) {
       setMsg("Լրացրու card_id, Login և Password դաշտերը");
@@ -140,9 +147,11 @@ export default function SuperAdminDashboard({ token, onLogout }) {
         username: username.trim(),
         password,
         card_id: numericId,
+        allow_tr: !!allow_tr, // ✅ NEW
       });
+
       setMsg("Admin-ը ստեղծվեց ✔");
-      setCreateForm({ card_id: "", username: "", password: "" });
+      setCreateForm({ card_id: "", username: "", password: "", allow_tr: false });
       setMode(null);
       await load();
     } catch (e) {
@@ -153,7 +162,7 @@ export default function SuperAdminDashboard({ token, onLogout }) {
   /* ------------ CHANGE logic ------------ */
   async function handleChange() {
     setMsg("");
-    const { card_id, field, newValue } = changeForm;
+    const { card_id, field, newValue, allow_tr } = changeForm;
 
     if (!card_id) {
       setMsg("Նախ գրիր card_id, որը պետք է գտնենք");
@@ -165,60 +174,64 @@ export default function SuperAdminDashboard({ token, onLogout }) {
       return;
     }
 
-    if (!newValue) {
-      setMsg("Գրի նոր արժեքը");
-      return;
-    }
-
     const payload = {};
 
-    if (field === "card_id") {
-      const newIdNum = Number(newValue);
-      if (!Number.isFinite(newIdNum)) {
-        setMsg("Նոր card_id-ը պետք է լինի թիվ");
+    if (field === "allow_tr") {
+      payload.allow_tr = !!allow_tr; // ✅ checkbox value
+    } else {
+      if (!newValue) {
+        setMsg("Գրի նոր արժեքը");
         return;
       }
-      // uniqueness check for card_id
-      if (
-        list.some(
-          (a) =>
-            a.id !== admin.id && Number(a.card_id) === newIdNum
-        )
-      ) {
-        setMsg("Այդ card_id-ով admin արդեն գոյություն ունի");
-        return;
-      }
-      payload.card_id = newIdNum;
-    }
 
-    if (field === "username") {
-      const trimmed = newValue.trim();
-      if (!trimmed) {
-        setMsg("Login-ը չի կարող դատարկ լինել");
-        return;
+      if (field === "card_id") {
+        const newIdNum = Number(newValue);
+        if (!Number.isFinite(newIdNum)) {
+          setMsg("Նոր card_id-ը պետք է լինի թիվ");
+          return;
+        }
+        // uniqueness check for card_id
+        if (list.some((a) => a.id !== admin.id && Number(a.card_id) === newIdNum)) {
+          setMsg("Այդ card_id-ով admin արդեն գոյություն ունի");
+          return;
+        }
+        payload.card_id = newIdNum;
       }
-      // uniqueness check for username
-      if (
-        list.some(
-          (a) =>
-            a.id !== admin.id &&
-            (a.username || "").toLowerCase() === trimmed.toLowerCase()
-        )
-      ) {
-        setMsg("Այդ login-ով admin արդեն կա");
-        return;
-      }
-      payload.username = trimmed;
-    }
 
-    if (field === "password") {
-      payload.password = newValue;
+      if (field === "username") {
+        const trimmed = newValue.trim();
+        if (!trimmed) {
+          setMsg("Login-ը չի կարող դատարկ լինել");
+          return;
+        }
+        // uniqueness check for username
+        if (
+          list.some(
+            (a) =>
+              a.id !== admin.id &&
+              (a.username || "").toLowerCase() === trimmed.toLowerCase()
+          )
+        ) {
+          setMsg("Այդ login-ով admin արդեն կա");
+          return;
+        }
+        payload.username = trimmed;
+      }
+
+      if (field === "password") {
+        payload.password = newValue;
+      }
     }
 
     try {
       await updateAdmin(token, admin.id, payload);
       setMsg("Փոփոխությունը պահպանվեց ✔");
-      setChangeForm((cf) => ({ ...cf, newValue: "" }));
+
+      setChangeForm((cf) => ({
+        ...cf,
+        newValue: "",
+      }));
+
       await load();
     } catch (e) {
       setMsg(e.message || "Change failed");
@@ -258,7 +271,9 @@ export default function SuperAdminDashboard({ token, onLogout }) {
       ? "Նոր card_id (unique number)"
       : changeForm.field === "username"
       ? "Նոր login (unique)"
-      : "Նոր password";
+      : changeForm.field === "password"
+      ? "Նոր password"
+      : "";
 
   return h(
     PhoneShell,
@@ -389,6 +404,7 @@ export default function SuperAdminDashboard({ token, onLogout }) {
                   h("th", null, "ID"),
                   h("th", null, "User"),
                   h("th", null, "card_id"),
+                  h("th", null, "TR"),
                   h("th", null, "active")
                 )
               ),
@@ -404,6 +420,7 @@ export default function SuperAdminDashboard({ token, onLogout }) {
                   h("td", null, String(searchAdmin.id)),
                   h("td", null, searchAdmin.username),
                   h("td", null, String(searchAdmin.card_id)),
+                  h("td", null, String(!!searchAdmin.allow_tr)),
                   h("td", null, String(searchAdmin.is_active))
                 )
               )
@@ -463,6 +480,30 @@ export default function SuperAdminDashboard({ token, onLogout }) {
             onChange: (e) =>
               setCreateForm({ ...createForm, password: e.target.value }),
           }),
+
+          // ✅ NEW: Turkish checkbox
+          h(
+            "label",
+            {
+              className: "small",
+              style: {
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginTop: 4,
+                cursor: "pointer",
+                color: "#e5e7eb",
+              },
+            },
+            h("input", {
+              type: "checkbox",
+              checked: !!createForm.allow_tr,
+              onChange: (e) =>
+                setCreateForm({ ...createForm, allow_tr: e.target.checked }),
+            }),
+            "Թույլատրել Turkish (TR) այս admin-ի համար"
+          ),
+
           h(
             "button",
             {
@@ -512,15 +553,41 @@ export default function SuperAdminDashboard({ token, onLogout }) {
             },
             h("option", { value: "card_id" }, "Փոխել card_id-ը"),
             h("option", { value: "username" }, "Փոխել login-ը"),
-            h("option", { value: "password" }, "Փոխել password-ը")
+            h("option", { value: "password" }, "Փոխել password-ը"),
+            h("option", { value: "allow_tr" }, "Turkish (TR) միացնել/անջատել")
           ),
-          h("input", {
-            className: "input",
-            placeholder: changePlaceholder,
-            value: changeForm.newValue,
-            onChange: (e) =>
-              setChangeForm({ ...changeForm, newValue: e.target.value }),
-          }),
+
+          // ✅ if allow_tr -> show checkbox, else show input
+          changeForm.field === "allow_tr"
+            ? h(
+                "label",
+                {
+                  className: "small",
+                  style: {
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    marginTop: 2,
+                    cursor: "pointer",
+                    color: "#e5e7eb",
+                  },
+                },
+                h("input", {
+                  type: "checkbox",
+                  checked: !!changeForm.allow_tr,
+                  onChange: (e) =>
+                    setChangeForm({ ...changeForm, allow_tr: e.target.checked }),
+                }),
+                "Թույլատրել Turkish (TR) այս admin-ի համար"
+              )
+            : h("input", {
+                className: "input",
+                placeholder: changePlaceholder,
+                value: changeForm.newValue,
+                onChange: (e) =>
+                  setChangeForm({ ...changeForm, newValue: e.target.value }),
+              }),
+
           h(
             "button",
             {
@@ -633,6 +700,7 @@ export default function SuperAdminDashboard({ token, onLogout }) {
                   h("th", null, "ID"),
                   h("th", null, "User"),
                   h("th", null, "card_id"),
+                  h("th", null, "TR"),
                   h("th", null, "active")
                 )
               ),
@@ -653,6 +721,7 @@ export default function SuperAdminDashboard({ token, onLogout }) {
                     h("td", null, String(a.id)),
                     h("td", null, a.username),
                     h("td", null, String(a.card_id)),
+                    h("td", null, String(!!a.allow_tr)),
                     h("td", null, String(a.is_active))
                   )
                 ),
@@ -663,7 +732,7 @@ export default function SuperAdminDashboard({ token, onLogout }) {
                     h(
                       "td",
                       {
-                        colSpan: 4,
+                        colSpan: 5,
                         style: {
                           padding: "6px 8px",
                           fontSize: 12,

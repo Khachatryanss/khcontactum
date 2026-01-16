@@ -43,14 +43,16 @@ export async function adminLogin(username, password) {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ username, password }),
   });
-  return jsonOrThrow(r, "Login failed"); // { token, admin:{...} }
+  // { token, admin:{ id, username, allow_tr } }
+  return jsonOrThrow(r, "Login failed");
 }
 
 export async function adminMe(token) {
   const r = await fetch(`${API}/api/admin/me`, {
     headers: { ...authHeader(token) },
   });
-  return jsonOrThrow(r, "Load failed"); // { admin, profile, items }
+  // { admin:{... allow_tr }, profile, items, info }
+  return jsonOrThrow(r, "Load failed");
 }
 
 /* ---- Info JSON (Home tab) ---- */
@@ -155,6 +157,7 @@ export async function listAdmins(token) {
   return jsonOrThrow(r, "Fetch failed");
 }
 
+// payload կարող է ունենալ՝ { username, password, card_id, allow_tr }
 export async function createAdmin(token, payload) {
   const r = await fetch(`${API}/api/superadmin/admins`, {
     method: "POST",
@@ -167,6 +170,7 @@ export async function createAdmin(token, payload) {
   return jsonOrThrow(r, "Create failed");
 }
 
+// payload կարող է ունենալ՝ { username?, password?, card_id?, is_active?, allow_tr? }
 export async function updateAdmin(token, id, payload) {
   const r = await fetch(`${API}/api/superadmin/admins/${id}`, {
     method: "PATCH",
