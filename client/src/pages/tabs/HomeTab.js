@@ -1040,10 +1040,11 @@ const EFFECTIVE_CODES = EFFECTIVE_LANGS.map((x) => x.code);
 ? rawAvail.filter((code) => EFFECTIVE_CODES.includes(code))
 : EFFECTIVE_CODES.slice();
 
+        // ✅ default_lang-ը միշտ "en" է (անգլերեն)
         const def =
 root.default_lang && EFFECTIVE_CODES.includes(root.default_lang)
             ? root.default_lang
-            : langsArr[0] || "am";
+            : "en";
 
         if (def) {
           if (!langsArr.includes(def)) {
@@ -1103,7 +1104,8 @@ root.default_lang && EFFECTIVE_CODES.includes(root.default_lang)
     try {
       const payload = normalizeInfo(info);
       payload.available_langs = langs;
-      payload.default_lang = langs[0] || "am";
+      // ✅ default_lang-ը առաջին լեզուն է (langs[0]), fallback՝ "en"
+      payload.default_lang = langs[0] || "en";
 
       await adminSaveInfo(token, payload);
       setInfoMsg(T.saveOk);

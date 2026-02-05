@@ -1,5 +1,5 @@
 // client/src/pages/AdminLogin.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PhoneShell from "../PhoneShell.js";
 import { adminLogin } from "../api.js";
 
@@ -126,7 +126,7 @@ const TEXT = {
     password: "პაროლი",
     login: "შესვლა",
     description:
-      "KHContactum ციფრული ბიზნეს ბარათები. ბიზნესი იწყება ერთი შეხებით. KHContactum LLC არის Khachatryans Holding CJSC-ის კიდევ ერთი ინოვაციური პროექტი, რომელიც აერთიანებს ტექნოლოგიას და ბიზნესს. შექმნილია ლიდერებისთვის, რომლებიც აფასებენ სტილს და ეფექტურობას. მყისიერი კონტაქტი NFC ან QR კოდის საშუალებით, ინდივიდუალური პრემიუმ დიზაინით თქვენი ბრენდისთვის. KHContactum — ბიზნეს კომუნიკაციის ახალი ენა.",
+      "KHContactum ციფრული ბიზნეს ბარათები. ბიზნესი იწყება ერთი შეხებით. KHContactum LLC არის Khachatryans Holding CJSC-ის კიდევ ერთი ინოვაციური პროექტი, რომელიც აერთიანებს ტექნოლოგიას და ბიზნესს. შექმნილია ლიდერებისთვის, რომლებიც აფასებენ სტილს და ეფექტურობას. მყისიერი კონտაქტი NFC ან QR კოდის საშუალებით, ინდივიდუალური პრემიუმ დიზაინით თქვენი ბრენდისთვის. KHContactum — ბიზნეს კომუნიკაციის ახალი ენა.",
     contactsLabel: "დაგვიკავშირდით",
   },
 
@@ -169,6 +169,13 @@ export default function AdminLogin({
 
   const [lang, setLang] = useState(initialLang);
   const t = TEXT[lang] || TEXT.en;
+
+  // ✅ Սինխրոնացնում ենք lang state-ը, երբ initialLang prop-ը փոխվում է
+  useEffect(() => {
+    if (initialLang && initialLang !== lang) {
+      setLang(initialLang);
+    }
+  }, [initialLang]);
 
   // current URL (որպես fallback՝ "/admin")
   const currentHref =

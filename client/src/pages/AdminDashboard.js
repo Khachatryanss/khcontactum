@@ -1123,6 +1123,7 @@ root.default_lang && EFFECTIVE_CODES.includes(root.default_lang)
     try {
       const payload = normalizeInfo(info);
       payload.available_langs = langs;
+      // ✅ default_lang-ը առաջին լեզուն է (langs[0]), fallback՝ "en"
       payload.default_lang = langs[0] || "en";
 
       await adminSaveInfo(token, payload);

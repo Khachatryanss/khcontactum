@@ -19,7 +19,14 @@ function parseCardPath(path) {
 export default function App() {
   const [superToken, setSuperToken] = useState("");
   const [adminToken, setAdminToken] = useState("");
-  const [adminLang, setAdminLang] = useState("en");
+  // ✅ adminLang-ը սկսվում է sessionStorage-ից (եթե կա) կամ "en" default-ով
+  const [adminLang, setAdminLang] = useState(() => {
+    try {
+      return sessionStorage.getItem("adminLang") || "en";
+    } catch {
+      return "en";
+    }
+  });
 
   // ✅ Restore ONLY from sessionStorage (այսուհետ localStorage չենք օգտագործում)
   useEffect(() => {
@@ -30,8 +37,12 @@ export default function App() {
       const st = sessionStorage.getItem("superToken") || "";
       if (st) setSuperToken(st);
 
-      const lang = sessionStorage.getItem("adminLang") || "";
-      if (lang) setAdminLang(lang);
+      // adminLang-ը արդեն սկսվել է sessionStorage-ից useState-ում
+      // այստեղ ստուգում ենք, եթե sessionStorage-ում նոր արժեք է ավելացվել
+      const lang = sessionStorage.getItem("adminLang");
+      if (lang && lang !== adminLang) {
+        setAdminLang(lang);
+      }
     } catch {}
   }, []);
 
