@@ -110,6 +110,7 @@ app.use(cors(corsOptions));
 /* ================== BODY & COOKIES ================== */
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // For Idram form-urlencoded requests
 app.use(cookieParser());
 
 app.use(manifestRouter);
