@@ -582,11 +582,6 @@ const ICON_HREF_PATTERNS = {
     placeholder: "username",
     label: "Messenger username",
   },
-  "fa-brands fa-linkedin-in": {
-    prefix: "https://www.linkedin.com/in/",
-    placeholder: "username",
-    label: "LinkedIn profile",
-  },
   "fa-brands fa-tiktok": {
     prefix: "https://www.tiktok.com/@",
     placeholder: "username",
@@ -1366,9 +1361,29 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       return { ok: false, msg: T.validateLabelsMissing };
     }
 
+    const fa = faClass(it.icon);
     if (!href) return { ok: false, msg: T.validateHrefMissing };
 
-    const fa = faClass(it.icon);
+    // Special validation for LinkedIn: allow ONLY full https:// URL to linkedin.com
+    if (fa === "fa-brands fa-linkedin-in" && href) {
+      try {
+        const url = new URL(href);
+        const isHttps = url.protocol === "https:";
+        const isLinkedIn = (url.hostname || "").toLowerCase().includes("linkedin.com");
+        if (!isHttps || !isLinkedIn) {
+          return {
+            ok: false,
+            msg: "Մուտքագրեք ամբողջական LinkedIn հղումը (https://linkedin.com/...)",
+          };
+        }
+      } catch {
+        return {
+          ok: false,
+          msg: "Մուտքագրեք ամբողջական LinkedIn հղումը (https://linkedin.com/...)",
+        };
+      }
+    }
+
     return {
       ok: true,
       payload: {
