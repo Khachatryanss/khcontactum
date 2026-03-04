@@ -1354,19 +1354,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   }, [token, T.loadFailed]);
 
   /* ------ CRUD in memory ------ */
-
-  function isValidLinkedinHref(href) {
-    const s = (href || "").trim();
-    if (!s) return true; // empty handled separately
-    if (!s.startsWith("https://")) return false;
-    try {
-      const u = new URL(s);
-      return u.hostname.includes("linkedin.com");
-    } catch {
-      return false;
-    }
-  }
-
   const validate = (it) => {
     const href = (it.href || "").trim();
 
@@ -1374,13 +1361,22 @@ export default function IconsTab({ langs, uiLang = "en" }) {
       return { ok: false, msg: T.validateLabelsMissing };
     }
 
+    const fa = faClass(it.icon);
     if (!href) return { ok: false, msg: T.validateHrefMissing };
 
-    const fa = faClass(it.icon);
-
-    // Special strict validation for LinkedIn: require full https://linkedin.com/... URL
-    if (fa === "fa-brands fa-linkedin-in") {
-      if (!isValidLinkedinHref(href)) {
+    // Special validation for LinkedIn: allow ONLY full https:// URL to linkedin.com
+    if (fa === "fa-brands fa-linkedin-in" && href) {
+      try {
+        const url = new URL(href);
+        const isHttps = url.protocol === "https:";
+        const isLinkedIn = (url.hostname || "").toLowerCase().includes("linkedin.com");
+        if (!isHttps || !isLinkedIn) {
+          return {
+            ok: false,
+            msg: "Մուտքագրեք ամբողջական LinkedIn հղումը (https://linkedin.com/...)",
+          };
+        }
+      } catch {
         return {
           ok: false,
           msg: "Մուտքագրեք ամբողջական LinkedIn հղումը (https://linkedin.com/...)",
@@ -1789,7 +1785,7 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         {
           className: "btn",
           onClick: save,
-          disabled: saving || Object.keys(errors).length > 0,
+          disabled: saving,
         },
         saving ? T.savingButton : T.saveButton
       ),

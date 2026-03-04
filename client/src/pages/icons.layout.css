@@ -31,15 +31,11 @@
 .icons-dzev3 .label,
 .grid .label {
   color: var(--icons-label-color, #d9caa0);
+  font-size: 12px;
   font-weight: 600;
-  /* ✅ auto-scale + wrap, never ellipsis */
-  font-size: clamp(11px, 1.2vw, 14px);
-  line-height: 1.3;
+  line-height: 1.2;
   text-align: center;
   user-select: none;
-  word-break: break-word;
-  overflow-wrap: anywhere;
-  white-space: normal;
 }
 
 /* ===================== Dzev-1 (OLD GRID LOOK) — supports 1..4 cols ===================== */
@@ -216,9 +212,14 @@
   position:absolute;
   inset:0;
   z-index: 1;
-  /* ✅ simplified clean gradient without speckled dots */
   background:
     linear-gradient(150deg, rgba(0,0,0,.10), transparent 35%) border-box,
+    conic-gradient(from 35deg,
+      rgba(255,255,255,.85) 0deg, rgba(255,255,255,0) 16deg,
+      rgba(0,0,0,.08) 40deg,  rgba(255,255,255,0) 62deg,
+      rgba(0,0,0,.08) 95deg,  rgba(255,255,255,0) 132deg,
+      rgba(0,0,0,.10) 190deg, rgba(255,255,255,0) 228deg,
+      rgba(255,255,255,.78) 270deg, rgba(255,255,255,0) 320deg),
     radial-gradient(92% 90% at 50% 40%, #fbfbfb 0%, #ececec 62%, #dddddd 100%);
   box-shadow:
     0 12px 26px rgba(0,0,0,.18),
@@ -246,14 +247,17 @@
   z-index: 4;
   pointer-events:none;
   mix-blend-mode: screen;
-  opacity:.6;
-  /* ✅ soft top highlight without dotted artifacts */
-  background: linear-gradient(
-    135deg,
-    rgba(255,255,255,0.55) 0%,
-    rgba(255,255,255,0.25) 40%,
-    rgba(255,255,255,0.0) 75%
-  );
+  opacity:.9;
+  background: conic-gradient(from 0deg,
+      rgba(255,255,255,0) 0deg,
+      rgba(255,255,255,.45) 22deg,
+      rgba(255,255,255,0) 42deg,
+      rgba(0,0,0,.05) 100deg,
+      rgba(255,255,255,0) 150deg,
+      rgba(255,255,255,.40) 200deg,
+      rgba(255,255,255,0) 260deg,
+      rgba(255,255,255,.50) 310deg,
+      rgba(255,255,255,0) 360deg);
 }
 .icons-dzev3 .icon-btn i,
 .icons-dzev3 .icon-btn img{
@@ -402,11 +406,14 @@
   font-weight: 600;
 }
 
-/* icons-nowrap keeps alignment only, no truncation */
+/* Մի տողի վրա պահել բոլոր layout-ներում */
 .icons-nowrap .label{
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  word-break: keep-all;
+  hyphens: manual;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 /* 🔽 Global responsive scale dzev1/2/3 համար 🔽 */
