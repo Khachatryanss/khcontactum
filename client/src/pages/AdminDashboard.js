@@ -1744,10 +1744,15 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
 
 
 
+        const baseClass =
+          code === "en" || code === "ru"
+            ? "input companyNameText"
+            : "input";
+
         const extraProps =
           code === "ar" || code === "fa"
-            ? { dir: "rtl", placeholder }
-            : { placeholder };
+            ? { dir: "rtl", placeholder, className: baseClass }
+            : { placeholder, className: baseClass };
 
         return h(
           React.Fragment,
@@ -1825,10 +1830,15 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
             ? "აღწერა (GEO)"
             : "Açıklama (TR)";
 
+        const baseClass =
+          code === "en" || code === "ru"
+            ? "input h-28 companyDescText"
+            : "input h-28";
+
         const extraProps =
           code === "ar" || code === "fa"
-            ? { dir: "rtl", placeholder }
-            : { placeholder };
+            ? { dir: "rtl", placeholder, className: baseClass }
+            : { placeholder, className: baseClass };
 
         return h(
           React.Fragment,
