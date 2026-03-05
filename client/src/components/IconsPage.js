@@ -137,6 +137,50 @@ export default function IconsPage({
   /* ===== ONE-COLUMN MODE ===== */
   const isOneColumnRow = layoutStyle !== "dzev4" && Number(cols) === 1;
 
+  /* ===== single-line auto-fit for labels (non-row layouts) ===== */
+  const labelRefs = React.useRef([]);
+
+  React.useEffect(() => {
+    if (layoutStyle === "dzev4") return;
+
+    const MIN = 9;
+    const MAX = 14;
+
+    const fitOne = (el) => {
+      if (!el) return;
+      // start from MAX on each run
+      let size = MAX;
+      el.style.fontSize = `${size}px`;
+
+      // guard if width is zero (not yet laid out)
+      if (!el.clientWidth) return;
+
+      // shrink until it fits or hits min
+      while (el.scrollWidth > el.clientWidth && size > MIN) {
+        size -= 0.5;
+        el.style.fontSize = `${size}px`;
+      }
+    };
+
+    const fitAll = () => {
+      labelRefs.current.forEach(fitOne);
+    };
+
+    fitAll();
+
+    let frame;
+    const onResize = () => {
+      if (frame) cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(fitAll);
+    };
+
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [links, lang, layoutStyle, cols]);
+
   if (isOneColumnRow) {
     const textColor = labelColor || "#ffffff";
     const icColor   = iconColor || "#ffffff";
@@ -324,9 +368,14 @@ export default function IconsPage({
           h(
             "span",
             {
-              className: "label",
+              className: "label icon-label",
               dir: labelDir,
-              style: { textAlign: labelAlign }
+              style: { textAlign: labelAlign },
+              ref: (el) => {
+                if (el) {
+                  labelRefs.current[i] = el;
+                }
+              }
             },
             label
           )
