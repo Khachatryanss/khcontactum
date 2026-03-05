@@ -1744,10 +1744,12 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
 
 
 
+        const baseClass = "input company-name-input";
+
         const extraProps =
           code === "ar" || code === "fa"
-            ? { dir: "rtl", placeholder }
-            : { placeholder };
+            ? { dir: "rtl", placeholder, className: baseClass }
+            : { placeholder, className: baseClass };
 
         return h(
           React.Fragment,

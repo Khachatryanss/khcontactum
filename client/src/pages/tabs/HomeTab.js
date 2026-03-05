@@ -1703,10 +1703,12 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
             ? "კომპანიის სახელი (GEO)"
             : "Şirket Adı (TR)";
 
+        const baseClass = "input company-name-input";
+
         const extraProps =
           code === "ar" || code === "fa"
-            ? { dir: "rtl", placeholder }
-            : { placeholder };
+            ? { dir: "rtl", placeholder, className: baseClass }
+            : { placeholder, className: baseClass };
 
         return h(
           React.Fragment,

@@ -850,6 +850,11 @@
   line-height: 1.25;
 }
 
+/* company name input – value text slightly smaller (−4px) */
+.company-name-input {
+  font-size: calc(1em - 4px);
+}
+
 /* ===== 1280–1365 ===== */
 @media (min-width: 1280px) and (max-width: 1365.98px) {
   :root {
