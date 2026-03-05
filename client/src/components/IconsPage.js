@@ -175,9 +175,23 @@ export default function IconsPage({
     };
 
     window.addEventListener("resize", onResize);
+
+    // ResizeObserver for container/label width changes
+    const observers = [];
+    labelRefs.current.forEach((el) => {
+      if (!el || !window.ResizeObserver) return;
+      const ro = new ResizeObserver(() => {
+        if (frame) cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => fitOne(el));
+      });
+      ro.observe(el);
+      observers.push(ro);
+    });
+
     return () => {
       window.removeEventListener("resize", onResize);
       if (frame) cancelAnimationFrame(frame);
+      observers.forEach((ro) => ro.disconnect());
     };
   }, [links, lang, layoutStyle, cols]);
 
