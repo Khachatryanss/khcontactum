@@ -1,4 +1,12 @@
 
+
+/* որ բոլոր էլեմենտները ժառանգեն body-ի ֆոնտը */
+* {
+  font-family: "Roboto", "Noto Sans Armenian", sans-serif;
+}
+
+/* HomePage.responsive.css */
+
 /* ====== 480px և ներքև – ընդհանուր mobile view ====== */
 @media (max-width: 480px) {
   .public-scroll-layer {
