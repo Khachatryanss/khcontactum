@@ -412,10 +412,9 @@
 
 /* icons-nowrap – keep alignment but never truncate */
 .icons-nowrap .label{
-  white-space: normal;
-  word-break: break-word;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
   text-overflow: clip;
+  overflow: visible;
   max-width: 100%;
 }
 

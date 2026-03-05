@@ -150,7 +150,7 @@ export default function IconsPage({
       if (!el) return;
       // start from MAX on each run
       let size = MAX;
-      el.style.fontSize = `${size}px`;
+      el.style.setProperty("--label-fs", `${size}px`);
 
       // guard if width is zero (not yet laid out)
       if (!el.clientWidth) return;
@@ -158,7 +158,7 @@ export default function IconsPage({
       // shrink until it fits or hits min
       while (el.scrollWidth > el.clientWidth && size > MIN) {
         size -= 0.5;
-        el.style.fontSize = `${size}px`;
+        el.style.setProperty("--label-fs", `${size}px`);
       }
     };
 
