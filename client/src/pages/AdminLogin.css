@@ -215,9 +215,7 @@
 
 
 /* ========== 1280px – 1365px (laptop) ========== */
-@media (min-width: 1280px) and (max-width: 1365px) {
-
-
+/* @media (min-width: 1280px) and (max-width: 1365px) {
   .admin-login-panel {
     max-width: 400px;
   }
@@ -237,10 +235,10 @@
     height: 110px;
     padding-top: 20px;
   }
-}
+} */
 
 /* ========== 1366px – 1439px (HD laptop) ========== */
-@media (min-width: 1366px) and (max-width: 1439px) {
+/* @media (min-width: 1366px) and (max-width: 1439px) {
 
 
   .admin-login-panel {
@@ -267,10 +265,10 @@
     height: 110px;
     padding-top: 20px;
   }
-}
+} */
 
 /* ========== 1440px – 1919px (wide desktop) ========== */
-@media (min-width: 1440px) and (max-width: 1919px) {
+/* @media (min-width: 1440px) and (max-width: 1919px) {
 
   .admin-login-panel {
     max-width: 420px;
@@ -294,7 +292,7 @@
     max-width: 62px;
     max-height: 62px;
   }
-}
+} */
 
 /* ========== 1920px+ (Full HD և ավելի) ========== */
 @media (min-width: 1920px) {
