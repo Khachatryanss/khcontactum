@@ -216,7 +216,9 @@
 
 /* ========== 1280px – 1365px (laptop) ========== */
 @media (min-width: 1280px) and (max-width: 1365px) {
- 
+  .admin-login-panel {
+    max-width: 480px;
+  }
 
   .admin-login-description,
   .admin-login-contacts-row {
@@ -239,6 +241,9 @@
 @media (min-width: 1366px) and (max-width: 1439px) {
 
 
+  .admin-login-panel {
+    max-width: 410px;
+  }
 
   .admin-login-app-title {
     font-size: 21px;
@@ -265,6 +270,9 @@
 /* ========== 1440px – 1919px (wide desktop) ========== */
 @media (min-width: 1440px) and (max-width: 1919px) {
 
+  .admin-login-panel {
+    max-width: 420px;
+  }
 
   .admin-login-app-title {
     font-size: 22px;
