@@ -13,20 +13,23 @@
 /* գլոբալ scroll պահվածք */
 html,
 body{
-  height: 100%;
-  overscroll-behavior-y: none;  /* որ դուրսի բաունս չլինի */
+  height: auto;
+  min-height: 100%;
 }
 
 /* դուրսի ֆոն */
 body{
-  margin:0;
-  display:grid;
-  place-items:center;
-  background:#f5f7fb;
-  color:var(--text);
+  margin: 0;
+  background: #f5f7fb;
+  color: var(--text);
+
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
+
+  padding: 24px 0;
+
+  overflow-y: auto;
 }
 
 /* “հեռախոս” շրջանակը */
@@ -41,13 +44,9 @@ body{
 
   /* ✅ Պահպանի նույն aspect-ratio-ն, բայց ավտոմատ սքեյլվի */
   aspect-ratio: 416 / 829;
-  width: min(
-    416px,                                  /* հիմնական չափ */
-    100vw - 24px,                           /* որ կողքերից չկտրի */
-    calc((100dvh - 24px) * 416 / 829)       /* որ վերև-ներքև չկտրի */
-  );
+  width: min(416px, calc(100vw - 24px));
   height: auto;
-  max-height: 100dvh;                       /* որ բարձրությունից դուրս չգա */
+  max-height: none;
 }
 
 
