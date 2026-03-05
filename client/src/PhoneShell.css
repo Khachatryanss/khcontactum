@@ -77,6 +77,12 @@ body{
   display: none;
 }
 
+@media (min-width: 768px) {
+  .screen::-webkit-scrollbar {
+    display: initial;
+  }
+}
+
 .screen.light{
   background:#ffffff;
   color:#111;
