@@ -8,9 +8,10 @@
   align-items: flex-start;
   box-sizing: border-box;
 
-  overflow-y: auto;                  
-  overscroll-behavior-y: contain;    
-  -webkit-overflow-scrolling: touch; 
+  overflow-y: auto;
+  touch-action: pan-y;
+  overscroll-behavior-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* panel-ը այլևս քարտ չէ, ֆոն ու սահմանի չենք տալիս,
