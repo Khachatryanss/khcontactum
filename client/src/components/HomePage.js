@@ -1,7 +1,8 @@
 // client/src/components/HomePage.js
 import React from "react";
-import { getPublicInfoByCardId, API } from "../api.js";
+import { getPublicInfoByCardId } from "../api.js";
 import "./Responcive.css";
+import { fileUrl } from "../utils/fileUrl.js";
 
 import IconsPage     from "./IconsPage.js";
 import BrandsPage    from "./BrandsPage.js";
@@ -16,23 +17,6 @@ const h = React.createElement;
 const LANG_KEY = (cardId) => `lang_${String(cardId || "").trim() || "default"}`;
 
 /* ------------ utils ------------ */
-function absSrc(u = "") {
-  if (!u) return "";
-  if (/^(data:|https?:\/\/|blob:)/i.test(u)) return u;
-  let path = String(u).trim().replace(/^server\//i, "");
-  if (!path.startsWith("/")) path = "/" + path;
-  try {
-    const apiUrl = new URL(API);
-    return `${apiUrl.origin}${path}`;
-  } catch (e) {
-    console.warn("absSrc: bad API, fallback to window.origin", API, e);
-    if (typeof window !== "undefined" && window.location?.origin) {
-      return window.location.origin.replace(/\/$/, "") + path;
-    }
-    return path;
-  }
-}
-
 function isVideo(u = "") {
   return /\.(mp4|webm|ogg)(\?.*)?$/i.test(u);
 }
@@ -621,7 +605,7 @@ export default function HomePage({ cardId = "101" }) {
     }
     if (!avatarUrl && fallbackLogo) avatarUrl = fallbackLogo;
 
-    const avatarAbs     = absSrc(avatarUrl);
+    const avatarAbs     = fileUrl(avatarUrl);
     const avatarIsVideo =
       avatarType === "video"
         ? true
@@ -718,13 +702,13 @@ export default function HomePage({ cardId = "101" }) {
               bg.type === "color"
                 ? bg.color || "#ffffff"
                 : bg.type === "image"
-                ? `url(${absSrc(bg.imageUrl)}) center/cover no-repeat`
+                ? `url(${fileUrl(bg.imageUrl)}) center/cover no-repeat`
                 : "transparent",
           },
         },
         bg.type === "video" && bg.videoUrl
           ? h(VideoLoop, {
-              src: absSrc(bg.videoUrl),
+              src: fileUrl(bg.videoUrl),
               style: {
                 width: "100%",
                 height: "100%",

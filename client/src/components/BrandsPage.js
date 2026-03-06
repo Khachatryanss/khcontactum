@@ -1,23 +1,9 @@
 // client/src/components/BrandsPage.js
 import React from "react";
 import "./Responcive.css";
-import { API } from "../api.js";
+import { fileUrl } from "../utils/fileUrl.js";
 
 const h = React.createElement;
-
-/* ---------- helpers ---------- */
-function absLogo(u = "") {
-  if (!u) return "";
-  if (/^(data:|https?:\/\/|blob:)/i.test(u)) return u;
-  let clean = String(u).trim().replace(/^server\//i, "");
-  if (!clean.startsWith("/")) clean = "/" + clean;
-  try {
-    const apiUrl = new URL(API);
-    return `${apiUrl.origin}${clean}`;
-  } catch {
-    return clean;
-  }
-}
 
 /**
  * v – կարող է լինել string կամ i18n object
@@ -177,9 +163,9 @@ export default function BrandsPage({
                     background: "#111",
                   },
                 },
-                b.logo
+              b.logo
                   ? h("img", {
-                      src: absLogo(b.logo),
+                      src: fileUrl(b.logo),
                       alt: name || "brand",
                       loading: "lazy",
                       style: {
@@ -317,8 +303,8 @@ export default function BrandsPage({
                 },
               },
               b.logo
-                ? h("img", {
-                    src: absLogo(b.logo),
+                    ? h("img", {
+                    src: fileUrl(b.logo),
                     alt: name || "brand",
                     loading: "lazy",
                     style: {
