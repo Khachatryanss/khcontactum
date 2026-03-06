@@ -84,7 +84,7 @@ export default function App() {
   // for public card check
   const [cardCheck, setCardCheck] = useState({ id: null, ok: null }); // ok: true/false/null
 
-  const path = location.pathname;
+const path = location.pathname;
   const cardId = parseCardPath(path);
 
   // when on "/{card_id}" check existence in DB
