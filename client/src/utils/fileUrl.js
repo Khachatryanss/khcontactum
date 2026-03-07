@@ -4,7 +4,10 @@ const API_BASE = "https://api.khcontactum.com";
 export function getFileUrl(fileName) {
   if (!fileName) return "";
 
-  if (fileName.startsWith("http://") || fileName.startsWith("https://")) {
+  if (
+    fileName.startsWith("http://") ||
+    fileName.startsWith("https://")
+  ) {
     return fileName;
   }
 
