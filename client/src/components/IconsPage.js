@@ -384,7 +384,7 @@ export default function IconsPage({
             {
               className: "label icon-label",
               dir: labelDir,
-              style: { textAlign: labelAlign },
+              style: { textAlign: "center" },
               ref: (el) => {
                 if (el) {
                   labelRefs.current[i] = el;

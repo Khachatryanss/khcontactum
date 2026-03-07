@@ -15,7 +15,7 @@
   --icons-scale: 1;
 }
 
-/* ընդհանուր — link-ը column՝ icon + label */
+/* ընդհանուր — link-ը column՝ icon + label, centered under icon */
 .icons-dzev2 a,
 .icons-dzev3 a,
 .grid a {
@@ -23,10 +23,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   gap: 8px;
+  box-sizing: border-box;
 }
 
-/* label — գույնը գալիս է admin-ից */
+/* label — centered under icon, full width of item */
 .icon-label,
 .icons-dzev2 .label,
 .icons-dzev3 .label,
@@ -35,6 +37,10 @@
   width: 100%;
   max-width: 100%;
   margin-top: 8px;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
   color: var(--icons-label-color, #d9caa0);
   font-weight: 600;
   text-align: center;
