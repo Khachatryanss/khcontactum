@@ -1,7 +1,7 @@
 // client/src/components/BrandInfoPage.js
 import React from "react";
 import "./Responcive.css";
-import { fileUrl } from "../utils/fileUrl.js";
+import { getFileUrl } from "../utils/fileUrl.js";
 
 const h = React.createElement;
 
@@ -182,9 +182,9 @@ function WorkerCard({ item, lang }) {
       ? item.slides
       : (Array.isArray(item.gallery) ? item.gallery : []);
 
-  const slides = slidesSource.map(fileUrl).filter(Boolean).slice(0, 5);
+  const slides = slidesSource.map(getFileUrl).filter(Boolean).slice(0, 5);
 
-  const avatarAbs = fileUrl(item.avatar || "");
+  const avatarAbs = getFileUrl(item.avatar || "");
 
   const [index, setIndex] = React.useState(0);
   const hasSlides = slides.length > 0;

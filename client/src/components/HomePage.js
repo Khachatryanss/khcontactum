@@ -2,7 +2,7 @@
 import React from "react";
 import { getPublicInfoByCardId } from "../api.js";
 import "./Responcive.css";
-import { fileUrl } from "../utils/fileUrl.js";
+import { getFileUrl } from "../utils/fileUrl.js";
 
 import IconsPage     from "./IconsPage.js";
 import BrandsPage    from "./BrandsPage.js";
@@ -605,7 +605,7 @@ export default function HomePage({ cardId = "101" }) {
     }
     if (!avatarUrl && fallbackLogo) avatarUrl = fallbackLogo;
 
-    const avatarAbs     = fileUrl(avatarUrl);
+    const avatarAbs     = getFileUrl(avatarUrl);
     const avatarIsVideo =
       avatarType === "video"
         ? true
@@ -702,13 +702,13 @@ export default function HomePage({ cardId = "101" }) {
               bg.type === "color"
                 ? bg.color || "#ffffff"
                 : bg.type === "image"
-                ? `url(${fileUrl(bg.imageUrl)}) center/cover no-repeat`
+                ? `url(${getFileUrl(bg.imageUrl)}) center/cover no-repeat`
                 : "transparent",
           },
         },
         bg.type === "video" && bg.videoUrl
           ? h(VideoLoop, {
-              src: fileUrl(bg.videoUrl),
+              src: getFileUrl(bg.videoUrl),
               style: {
                 width: "100%",
                 height: "100%",

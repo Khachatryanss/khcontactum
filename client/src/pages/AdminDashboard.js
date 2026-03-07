@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import PhoneShell from "../PhoneShell.js";
 import { adminMe, adminGetInfo, adminSaveInfo, uploadFile } from "../api.js";
 import "./tabs/AdminResponcive.css";
-import { fileUrl } from "../utils/fileUrl.js";
+import { getFileUrl } from "../utils/fileUrl.js";
 import IconsTab from "./tabs/IconsTab.js";
 import BrandsTab from "./tabs/BrandsTab.js";
 import PasswordTab from "./tabs/PasswordTab.js";
@@ -1685,7 +1685,7 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
             setInfoPath("logo_url", v);
           },
           onFileChange: handleAvatarUpload,
-          previewSrc: fileUrl(
+          previewSrc: getFileUrl(
             avatarPreview || info?.avatar?.imageUrl || info.logo_url
           ),
           kind: "image",
@@ -1702,7 +1702,7 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
           urlValue: info?.avatar?.videoUrl || "",
           onUrlChange: (v) => setInfoPath("avatar.videoUrl", v),
           onFileChange: handleAvatarUpload,
-          previewSrc: fileUrl(avatarPreview || info?.avatar?.videoUrl || ""),
+          previewSrc: getFileUrl(avatarPreview || info?.avatar?.videoUrl || ""),
           kind: "video",
           fileLabel: T.chooseFileLabel,
           accept: "video/*,.mp4,.webm,.ogg",
@@ -1932,7 +1932,7 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
           urlValue: info?.background?.imageUrl || "",
           onUrlChange: (v) => setInfoPath("background.imageUrl", v),
           onFileChange: handleBgImageUpload,
-          previewSrc: fileUrl(
+          previewSrc: getFileUrl(
             bgImagePreview || info?.background?.imageUrl || ""
           ),
           kind: "image",
@@ -1949,7 +1949,7 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
           urlValue: info?.background?.videoUrl || "",
           onUrlChange: (v) => setInfoPath("background.videoUrl", v),
           onFileChange: handleBgVideoUpload,
-          previewSrc: fileUrl(
+          previewSrc: getFileUrl(
             bgVideoPreview || info?.background?.videoUrl || ""
           ),
           kind: "video",

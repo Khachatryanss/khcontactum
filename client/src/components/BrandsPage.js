@@ -1,7 +1,7 @@
 // client/src/components/BrandsPage.js
 import React from "react";
 import "./Responcive.css";
-import { fileUrl } from "../utils/fileUrl.js";
+import { getFileUrl } from "../utils/fileUrl.js";
 
 const h = React.createElement;
 
@@ -165,7 +165,7 @@ export default function BrandsPage({
                 },
               b.logo
                   ? h("img", {
-                      src: fileUrl(b.logo),
+                      src: getFileUrl(b.logo),
                       alt: name || "brand",
                       loading: "lazy",
                       style: {
@@ -304,7 +304,7 @@ export default function BrandsPage({
               },
               b.logo
                     ? h("img", {
-                    src: fileUrl(b.logo),
+                    src: getFileUrl(b.logo),
                     alt: name || "brand",
                     loading: "lazy",
                     style: {
