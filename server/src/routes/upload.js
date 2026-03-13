@@ -36,15 +36,37 @@ function setPath(obj, pathStr, value) {
   return obj;
 }
 
-function safeFilePathFromUrlPath(urlPath) {
-  if (!urlPath || typeof urlPath !== "string") return null;
-  if (!urlPath.startsWith("/file/")) return null;
+function safeFilePathFromUrlPath(storedValue) {
+  if (!storedValue || typeof storedValue !== "string") return null;
 
-  const filename = urlPath.slice("/file/".length);
-  if (!filename || filename.includes("..") || filename.includes("/") || filename.includes("\\")) {
-    return null;
+  let v = storedValue.trim();
+  if (!v) return null;
+
+  // If a full URL was stored (e.g. https://api.khcontactum.com/file/123.jpg),
+  // extract just the pathname so we can work with /file/...
+  if (/^https?:\/\//i.test(v)) {
+    try {
+      const u = new URL(v);
+      v = u.pathname || "";
+    } catch {
+      // if URL parse fails, fall through and treat as plain string
+    }
   }
-  return path.join(UPLOAD_DIR, filename);
+
+  // Normalise known /file/ prefixes
+  if (v.startsWith("/file/")) {
+    v = v.slice("/file/".length);
+  } else if (v.startsWith("file/")) {
+    v = v.slice("file/".length);
+  }
+
+  // If it still looks like a nested path (with / or \), but not a simple filename, skip
+  if (v.includes("/") || v.includes("\\")) return null;
+
+  // Final safety checks on filename
+  if (!v || v.includes("..")) return null;
+
+  return path.join(UPLOAD_DIR, v);
 }
 
 const storage = multer.diskStorage({
