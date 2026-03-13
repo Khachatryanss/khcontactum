@@ -7,6 +7,11 @@ export function getFileUrl(fileName) {
   const value = fileName.trim();
   if (!value) return "";
 
+  // local preview URLs (blob:, data:) must be used as-is
+  if (/^(blob:|data:)/i.test(value)) {
+    return value;
+  }
+
   // եթե արդեն ճիշտ API file URL է
   if (value.startsWith(`${API_BASE}/file/`)) {
     return value;
