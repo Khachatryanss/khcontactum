@@ -812,6 +812,10 @@ function normalizeInfo(partial) {
 
     // share դաշտը թողնում ենք ինչ կա՝ ShareTab–ը ինքը կխումբագրի
     share: i.share || undefined,
+
+    // preserve array fields so Brands/BrandInfo tabs get saved image data on load
+    brands: Array.isArray(i.brands) ? i.brands : undefined,
+    brandInfos: Array.isArray(i.brandInfos) ? i.brandInfos : undefined,
   };
 }
 

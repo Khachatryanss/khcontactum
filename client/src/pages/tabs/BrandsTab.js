@@ -1,6 +1,7 @@
 // client/src/pages/tabs/BrandsTab.js
 import React from "react";
 import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
+import { getFileUrl } from "../../utils/fileUrl.js";
 
 const h = React.createElement;
 // 👇 ավելացրեցինք kz, chn, de, es, it, fa
@@ -461,19 +462,6 @@ tr: {
 };
 
 /* ---------- helpers ---------- */
-function filesBase() {
-  if (typeof window === "undefined") return "http://localhost:5050";
-  const host = window.location.hostname || "localhost";
-  return `http://${host}:5050`;
-}
-const isAbsLike = (u = "") => /^(data:|https?:\/\/|blob:)/i.test(u);
-function absPreview(u = "") {
-  if (!u) return "";
-  if (isAbsLike(u)) return u;
-  let s = String(u).trim();
-  if (!s.startsWith("/")) s = "/" + s;
-  return filesBase() + s;
-}
 function toI18nObj(v, fb = "") {
   if (v && typeof v === "object" && !Array.isArray(v)) {
     const out = {};
@@ -948,7 +936,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
               { className: "brand-logo" },
               b.logo
                 ? h("img", {
-                    src: absPreview(b.logo),
+                    src: getFileUrl(b.logo),
                     alt: b.name?.am || "logo",
                   })
                 : h(

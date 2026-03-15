@@ -1,6 +1,7 @@
 // client/src/pages/tabs/BrandInfoTab.js
 import React from "react";
 import { adminGetInfo, adminSaveInfo, uploadFile } from "../../api.js";
+import { getFileUrl } from "../../utils/fileUrl.js";
 
 const h = React.createElement;
 // 👇 LANGS ամբողջ հավաքածու
@@ -365,20 +366,6 @@ tr: {
 };
 
 /* ---------- helpers ---------- */
-function filesBase() {
-  if (typeof window === "undefined") return "http://localhost:5050";
-  const host = window.location.hostname || "localhost";
-  return "http://" + host + ":5050";
-}
-const isAbsLike = (u = "") => /^(data:|https?:\/\/|blob:)/i.test(u);
-function absPreview(u) {
-  if (!u) return "";
-  if (isAbsLike(u)) return u;
-  let s = String(u).trim();
-  if (!s.startsWith("/")) s = "/" + s;
-  return filesBase() + s;
-}
-
 /**
  * ✅ space-երը պահող տարբերակ (trim չկա)
  */
@@ -770,7 +757,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
               "div",
               { className: "worker-avatar" },
               w.avatar
-                ? h("img", { src: absPreview(w.avatar), alt: "worker" })
+                ? h("img", { src: getFileUrl(w.avatar), alt: "worker" })
                 : h(
                     "span",
                     { className: "worker-avatar-initials" },
@@ -991,7 +978,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
                       className: "gallery-slot",
                     },
                     src
-                      ? h("img", { src: absPreview(src), alt: "slide" })
+                      ? h("img", { src: getFileUrl(src), alt: "slide" })
                       : h(
                           "span",
                           { className: "gallery-plus" },
