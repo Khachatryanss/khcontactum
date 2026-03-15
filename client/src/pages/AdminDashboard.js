@@ -142,6 +142,7 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Avatar Video URL",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
+    avatarZoomLabel: "Zoom",
 
     companyNameTitle: "COMPANY NAME",
     nameColorLabel: "Name Color",
@@ -691,7 +692,7 @@ tr: {
 
 const DEFAULT_INFO = {
   logo_url: "",
-  avatar: { type: "image", imageUrl: "", videoUrl: "" },
+  avatar: { type: "image", imageUrl: "", videoUrl: "", zoom: 1 },
 
   company: {
     name: {
@@ -758,10 +759,16 @@ const ALL_CODES = ALL_LANGS.map((x) => x.code);
 // always return full shape + back-compat mapping
 function normalizeInfo(partial) {
   const i = partial || {};
+  const zoomRaw = i.avatar?.zoom;
+  const zoom =
+    typeof zoomRaw === "number" && zoomRaw >= 0.8 && zoomRaw <= 2
+      ? zoomRaw
+      : Math.min(2, Math.max(0.8, Number(zoomRaw) || 1));
   const avatar = {
     type: i.avatar?.type || (i.logo_url ? "image" : "image"),
     imageUrl: i.avatar?.imageUrl || i.logo_url || "",
     videoUrl: i.avatar?.videoUrl || "",
+    zoom,
   };
   return {
     logo_url: i.logo_url || avatar.imageUrl || "",
@@ -846,7 +853,8 @@ function FileButton({ label, accept, onChange, style }) {
 }
 
 /* ------- Avatar / Background circle preview ------- */
-function CirclePreview(src, kind) {
+function CirclePreview(src, kind, imageZoom = 1) {
+  const isImageWithZoom = src && kind === "image" && imageZoom !== 1;
   return h(
     "div",
     {
@@ -872,6 +880,29 @@ function CirclePreview(src, kind) {
             autoPlay: true,
             style: { width: "100%", height: "100%", objectFit: "cover" },
           })
+        : isImageWithZoom
+        ? h(
+            "div",
+            {
+              style: {
+                width: "100%",
+                height: "100%",
+                overflow: "hidden",
+                display: "grid",
+                placeItems: "center",
+              },
+            },
+            h("img", {
+              src,
+              alt: "preview",
+              style: {
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transform: `scale(${imageZoom})`,
+              },
+            })
+          )
         : h("img", {
             src,
             alt: "preview",
@@ -900,6 +931,7 @@ function MediaUploadRow({
   fileLabel,
   accept,
   placeholder,
+  imageZoom,
 }) {
   return h(
     "div",
@@ -911,7 +943,7 @@ function MediaUploadRow({
         gap: 12,
       },
     },
-    CirclePreview(previewSrc, kind),
+    CirclePreview(previewSrc, kind, imageZoom),
     h(
       "div",
       null,
@@ -1659,7 +1691,51 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
           accept:
             "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
           placeholder: "https://...",
+          imageZoom: info?.avatar?.zoom ?? 1,
         }),
+
+      info?.avatar?.type === "image" &&
+        h(
+          "div",
+          {
+            className: "mb-3",
+            style: {
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              flexWrap: "wrap",
+            },
+          },
+          h("span", { className: "text-sm", style: { fontWeight: 500 } }, (T.avatarZoomLabel || "Zoom") + ":"),
+          h(
+            "div",
+            { style: { display: "flex", alignItems: "center", gap: 4 } },
+            h("button", {
+              type: "button",
+              "aria-label": "Zoom out",
+              className: "btn pill btn-small",
+              style: { minWidth: 32, padding: "4px 8px", fontSize: 16 },
+              onClick: () => {
+                const cur = Math.max(0.8, (info?.avatar?.zoom ?? 1) - 0.1);
+                setInfoPath("avatar.zoom", Math.round(cur * 10) / 10);
+              },
+            }, "−"),
+            h("span", {
+              className: "text-sm",
+              style: { minWidth: 28, textAlign: "center" },
+            }, String(info?.avatar?.zoom ?? 1)),
+            h("button", {
+              type: "button",
+              "aria-label": "Zoom in",
+              className: "btn pill btn-small",
+              style: { minWidth: 32, padding: "4px 8px", fontSize: 16 },
+              onClick: () => {
+                const cur = Math.min(2, (info?.avatar?.zoom ?? 1) + 0.1);
+                setInfoPath("avatar.zoom", Math.round(cur * 10) / 10);
+              },
+            }, "+")
+          )
+        ),
 
       info?.avatar?.type === "video" &&
         h(MediaUploadRow, {

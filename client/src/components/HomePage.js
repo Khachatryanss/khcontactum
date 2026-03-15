@@ -269,8 +269,9 @@ function VideoLoop({ src, style }) {
 }
 
 /* ===== Avatar ===== */
-function AvatarMedia({ src, isVideo, initials }) {
+function AvatarMedia({ src, isVideo, initials, zoom = 1 }) {
   const size = 150;
+  const zoomNum = Math.min(2, Math.max(0.8, Number(zoom) || 1));
 
   const containerStyle = {
     position: "relative",
@@ -289,12 +290,35 @@ function AvatarMedia({ src, isVideo, initials }) {
 
   const avatarNode = src
     ? (!isVideo
-        ? h("img", {
-            src,
-            alt: "avatar",
-            style: avatarStyle,
-            loading: "lazy",
-          })
+        ? (zoomNum !== 1
+            ? h(
+                "div",
+                {
+                  style: {
+                    ...avatarStyle,
+                    overflow: "hidden",
+                    display: "grid",
+                    placeItems: "center",
+                  },
+                },
+                h("img", {
+                  src,
+                  alt: "avatar",
+                  loading: "lazy",
+                  style: {
+                    width: size,
+                    height: size,
+                    objectFit: "cover",
+                    transform: `scale(${zoomNum})`,
+                  },
+                })
+              )
+            : h("img", {
+                src,
+                alt: "avatar",
+                style: avatarStyle,
+                loading: "lazy",
+              }))
         : h(VideoLoop, { src, style: avatarStyle }))
     : h(
         "div",
@@ -743,6 +767,7 @@ export default function HomePage({ cardId = "101" }) {
                   src: avatarAbs,
                   isVideo: avatarIsVideo,
                   initials: (name || "KH").slice(0, 2),
+                  zoom: info?.avatar?.zoom ?? 1,
                 }),
                 h(
                   "h1",
