@@ -1716,17 +1716,21 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: 2,
+                gap: 4,
               },
             },
+            h("span", {
+              className: "text-sm",
+              style: { fontSize: 11, fontWeight: 500 },
+            }, (T.avatarZoomLabel || "Zoom") + ": " + String(info?.avatar?.zoom ?? 1)),
             h("button", {
               type: "button",
               "aria-label": "Zoom in",
               className: "btn pill btn-small",
               style: {
-                width: 24,
-                height: 24,
-                minWidth: 24,
+                width: 28,
+                height: 28,
+                minWidth: 28,
                 padding: 0,
                 fontSize: 14,
                 lineHeight: 1,
@@ -1739,18 +1743,14 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
                 setInfoPath("avatar.zoom", Math.round(cur * 10) / 10);
               },
             }, "+"),
-            h("span", {
-              className: "text-sm",
-              style: { fontSize: 10, opacity: 0.85 },
-            }, String(info?.avatar?.zoom ?? 1)),
             h("button", {
               type: "button",
               "aria-label": "Zoom out",
               className: "btn pill btn-small",
               style: {
-                width: 24,
-                height: 24,
-                minWidth: 24,
+                width: 28,
+                height: 28,
+                minWidth: 28,
                 padding: 0,
                 fontSize: 14,
                 lineHeight: 1,
