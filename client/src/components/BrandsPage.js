@@ -164,18 +164,25 @@ export default function BrandsPage({
                   },
                 },
               b.logo
-                  ? h("img", {
-                      src: getFileUrl(b.logo),
-                      alt: name || "brand",
-                      loading: "lazy",
-                      style: {
-                        width: `${CROP_ZOOM * 100}%`,
-                        height: `${CROP_ZOOM * 100}%`,
-                        objectFit: "cover",
-                        objectPosition: "50% 50%",
-                        display: "block",
-                      },
-                    })
+                  ? (() => {
+                      const zoom = Math.min(2, Math.max(0.8, Number(b.logoZoom) || 1));
+                      const imgEl = h("img", {
+                        src: getFileUrl(b.logo),
+                        alt: name || "brand",
+                        loading: "lazy",
+                        style: {
+                          width: zoom !== 1 ? "100%" : `${CROP_ZOOM * 100}%`,
+                          height: zoom !== 1 ? "100%" : `${CROP_ZOOM * 100}%`,
+                          objectFit: "cover",
+                          objectPosition: "50% 50%",
+                          display: "block",
+                          transform: zoom !== 1 ? `scale(${zoom})` : undefined,
+                        },
+                      });
+                      return zoom !== 1
+                        ? h("div", { style: { width: "100%", height: "100%", overflow: "hidden", display: "grid", placeItems: "center" } }, imgEl)
+                        : imgEl;
+                    })()
                   : h(
                       "span",
                       {
@@ -303,18 +310,25 @@ export default function BrandsPage({
                 },
               },
               b.logo
-                    ? h("img", {
-                    src: getFileUrl(b.logo),
-                    alt: name || "brand",
-                    loading: "lazy",
-                    style: {
-                      width: `${CROP_ZOOM * 100}%`,
-                      height: `${CROP_ZOOM * 100}%`,
-                      objectFit: "cover",
-                      objectPosition: "50% 50%",
-                      display: "block",
-                    },
-                  })
+                    ? (() => {
+                    const zoom = Math.min(2, Math.max(0.8, Number(b.logoZoom) || 1));
+                    const imgEl = h("img", {
+                      src: getFileUrl(b.logo),
+                      alt: name || "brand",
+                      loading: "lazy",
+                      style: {
+                        width: zoom !== 1 ? "100%" : `${CROP_ZOOM * 100}%`,
+                        height: zoom !== 1 ? "100%" : `${CROP_ZOOM * 100}%`,
+                        objectFit: "cover",
+                        objectPosition: "50% 50%",
+                        display: "block",
+                        transform: zoom !== 1 ? `scale(${zoom})` : undefined,
+                      },
+                    });
+                    return zoom !== 1
+                      ? h("div", { style: { width: "100%", height: "100%", overflow: "hidden", display: "grid", placeItems: "center" } }, imgEl)
+                      : imgEl;
+                  })()
                 : h(
                     "span",
                     {

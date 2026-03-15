@@ -25,6 +25,7 @@ const BRANDS_UI_TEXT = {
     uploadButton: "Վերբեռնել",
     deleteButton: "Ջնջել",
     removeLogoButton: "Ջնջել լոգոն",
+    zoomLabel: "Zoom",
     linkTypeLabel: "Լինքի տիպը:",
     linkTypeKeyword: "Keyword",
     linkTypeUrl: "URL",
@@ -634,6 +635,11 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
             const linkType =
               x?.linkType ||
               (keyword ? "keyword" : href ? "url" : "keyword");
+            const rawZoom = x?.logoZoom;
+            const logoZoom =
+              typeof rawZoom === "number" && rawZoom >= 0.8 && rawZoom <= 2
+                ? rawZoom
+                : Math.min(2, Math.max(0.8, Number(rawZoom) || 1));
 
             return {
               id: x.id || uid(),
@@ -642,6 +648,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
               logo: (x?.logo || "").trim(),
               linkType,
               keyword,
+              logoZoom,
             };
           })
         );
@@ -706,6 +713,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         keyword: "",
         linkType: "keyword",
         logo: "",
+        logoZoom: 1,
       },
     ]);
     setScrollToBottomFlag(true);
@@ -727,6 +735,15 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         return { ...b, logo: "", _blob: false };
       })
     );
+
+  const setBrandLogoZoom = (id, value) => {
+    const clamped = Math.min(2, Math.max(0.8, Number(value) || 1));
+    setBrands((list) =>
+      list.map((b) =>
+        b.id === id ? { ...b, logoZoom: Math.round(clamped * 10) / 10 } : b
+      )
+    );
+  };
 
   // ✅ reorder brands
   const moveBrand = (id, dir) => {
@@ -791,6 +808,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         logo: b._blob ? "" : (b.logo || "").trim(),
         linkType: b.linkType || "url",
         keyword: (b.keyword || "").trim(),
+        logoZoom: Math.min(2, Math.max(0.8, Number(b.logoZoom) || 1)),
       }));
 
       const next = { ...(baseInfo || {}) };
@@ -814,6 +832,11 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
           const linkType =
             x?.linkType ||
             (keyword ? "keyword" : href ? "url" : "keyword");
+          const rawZoom = x?.logoZoom;
+          const logoZoom =
+            typeof rawZoom === "number" && rawZoom >= 0.8 && rawZoom <= 2
+              ? rawZoom
+              : Math.min(2, Math.max(0.8, Number(rawZoom) || 1));
           return {
             id: x.id || uid(),
             name: toI18nObj(x?.name ?? ""),
@@ -821,6 +844,7 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
             logo: (x?.logo || "").trim(),
             linkType,
             keyword,
+            logoZoom,
           };
         })
       );
@@ -935,10 +959,37 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
               "div",
               { className: "brand-logo" },
               b.logo
-                ? h("img", {
-                    src: getFileUrl(b.logo),
-                    alt: b.name?.am || "logo",
-                  })
+                ? (() => {
+                    const zoom = Math.min(2, Math.max(0.8, Number(b.logoZoom) || 1));
+                    if (zoom !== 1) {
+                      return h(
+                        "div",
+                        {
+                          style: {
+                            width: "100%",
+                            height: "100%",
+                            overflow: "hidden",
+                            display: "grid",
+                            placeItems: "center",
+                          },
+                        },
+                        h("img", {
+                          src: getFileUrl(b.logo),
+                          alt: b.name?.am || "logo",
+                          style: {
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            transform: `scale(${zoom})`,
+                          },
+                        })
+                      );
+                    }
+                    return h("img", {
+                      src: getFileUrl(b.logo),
+                      alt: b.name?.am || "logo",
+                    });
+                  })()
                 : h(
                     "span",
                     { className: "brand-initials" },
@@ -946,6 +997,69 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
                       .slice(0, 2)
                       .toUpperCase()
                   )
+            ),
+
+            h(
+              "div",
+              {
+                className: "avatar-zoom-controls",
+                style: {
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 2,
+                },
+              },
+              h("span", {
+                className: "text-sm avatar-zoom-label",
+                style: {
+                  fontSize: 11,
+                  fontWeight: 500,
+                  marginBottom: 10,
+                },
+              }, (T.zoomLabel || "Zoom") + ": " + String(b.logoZoom ?? 1)),
+              h("button", {
+                type: "button",
+                "aria-label": "Zoom in",
+                className: "btn pill btn-small",
+                style: {
+                  width: 50,
+                  height: 28,
+                  minWidth: 50,
+                  padding: 0,
+                  fontSize: 14,
+                  lineHeight: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+                onClick: () =>
+                  setBrandLogoZoom(
+                    b.id,
+                    Math.min(2, (b.logoZoom ?? 1) + 0.1)
+                  ),
+              }, "+"),
+              h("button", {
+                type: "button",
+                "aria-label": "Zoom out",
+                className: "btn pill btn-small",
+                style: {
+                  width: 50,
+                  height: 28,
+                  minWidth: 50,
+                  padding: 0,
+                  fontSize: 14,
+                  lineHeight: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+                onClick: () =>
+                  setBrandLogoZoom(
+                    b.id,
+                    Math.max(0.8, (b.logoZoom ?? 1) - 0.1)
+                  ),
+              }, "−")
             ),
 
             h(
