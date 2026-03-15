@@ -1988,7 +1988,13 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
   );
   const PageShare = Card(
     T.tabs.share,
-    h(ShareTab, { cardId, info, uiLang })
+    h(ShareTab, {
+      cardId,
+      info,
+      uiLang,
+      onSaveSuccess: (payload) =>
+        setInfo((prev) => (payload && payload.share ? { ...prev, share: payload.share } : prev)),
+    })
   );
   const PagePassword = Card(
     T.tabs.password,

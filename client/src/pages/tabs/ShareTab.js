@@ -578,6 +578,10 @@ function normalizeShare(raw, cardId) {
 
   if (!path && cardId) path = String(cardId);
 
+  const existingStyles = s.styles && typeof s.styles === "object" ? s.styles : {};
+  const has = (key) =>
+    existingStyles[key] != null && String(existingStyles[key]).trim() !== "";
+
   return {
     onlineUrl: rawUrl || (cardId ? ONLINE_BASE + cardId : ""),
     onlinePath: (s.onlinePath || path || "").toString().trim(),
@@ -587,10 +591,10 @@ function normalizeShare(raw, cardId) {
     shareText: (s.shareText || "").toString().trim(),
     quick: Object.assign({}, DEFAULT_QUICK, s.quick || {}),
     styles: {
-      btnTextColor: (s.styles && s.styles.btnTextColor) || "#ffffff",
-      btnBgColor: (s.styles && s.styles.btnBgColor) || "#000000",
-      shareTitleColor:
-        (s.styles && s.styles.shareTitleColor) || "#000000",
+      ...existingStyles,
+      btnTextColor: has("btnTextColor") ? String(existingStyles.btnTextColor).trim() : "#ffffff",
+      btnBgColor: has("btnBgColor") ? String(existingStyles.btnBgColor).trim() : "#000000",
+      shareTitleColor: has("shareTitleColor") ? String(existingStyles.shareTitleColor).trim() : "#000000",
     },
   };
 }
@@ -603,7 +607,9 @@ function isValidPath(p) {
 }
 
 /* ---------- component ---------- */
-export default function ShareTab({ cardId, info, uiLang = "am" }) {
+const STYLE_DEFAULTS = { btnTextColor: "#ffffff", btnBgColor: "#000000", shareTitleColor: "#000000" };
+
+export default function ShareTab({ cardId, info, uiLang = "am", onSaveSuccess }) {
   const T = SHARE_UI_TEXT[uiLang] || SHARE_UI_TEXT.am;
 
   const [share, setShare] = React.useState(
@@ -663,6 +669,9 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
       };
       await adminSaveInfo(token, payload);
       setMsg(T.msgSaveOk);
+      if (typeof onSaveSuccess === "function") {
+        onSaveSuccess(payload);
+      }
     } catch (e) {
       setMsg(e.message || T.msgSaveError);
     } finally {
@@ -672,8 +681,11 @@ export default function ShareTab({ cardId, info, uiLang = "am" }) {
   }
 
   function colorRow(label, key) {
-    const val = (share.styles && share.styles[key]) || "#000000";
-    const onChange = (v) => setStyleColor(key, v || "#000000");
+    const fallback = STYLE_DEFAULTS[key] != null ? STYLE_DEFAULTS[key] : "#000000";
+    const val = (share.styles && share.styles[key] != null && String(share.styles[key]).trim() !== "")
+      ? String(share.styles[key]).trim()
+      : fallback;
+    const onChange = (v) => setStyleColor(key, (v != null && String(v).trim() !== "") ? String(v).trim() : fallback);
 
     return h(
       "label",
