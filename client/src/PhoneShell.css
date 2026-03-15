@@ -445,7 +445,7 @@ div section{
 /* form դաշտերի որոշ utility-ներ (admin էջից) */
 .text-sm{
   margin-bottom: 15px;
-  width: 150px;
+  width: 50px;
   font-size:13px;
   line-height:1.3;
   font-weight:500;
