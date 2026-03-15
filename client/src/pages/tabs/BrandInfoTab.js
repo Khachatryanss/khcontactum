@@ -26,6 +26,7 @@ const BRANDINFO_TEXT = {
     savingButton: "Պահպանում…",
     loading: "Բեռնվում է…",
     avatarLabel: "Վերբեռնել",
+    zoomLabel: "Zoom",
     deleteAvatarLabel: "Ջնջել լոգոն",
     fileTypeError: "Ընդունվում է միայն նկար",
     uploadAvatarOk: "Avatar-ը վերբեռնվեց ✔",
@@ -488,17 +489,25 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
           ? info.brandWorkers
           : [];
 
-        const prepared = list.map((x) => ({
-          id: x.id || uid(),
-          keyword: (x.keyword || "").toString().trim(),
-          name: toI18nObj(x.name || x.title || ""),
-          bio: toI18nObj(x.bio || x.description || ""),
-          avatar: (x.avatar || "").toString().trim(),
-          gallery: cleanGallery(x.gallery),
-          nameColor: (x.nameColor || "#ffffff").toString(),
-          bioColor: (x.bioColor || "#ffffff").toString(),
-          bioBgColor: (x.bioBgColor || "#000000").toString(),
-        }));
+        const prepared = list.map((x) => {
+          const rawZoom = x.avatarZoom;
+          const avatarZoom =
+            typeof rawZoom === "number" && rawZoom >= 0.8 && rawZoom <= 2
+              ? rawZoom
+              : Math.min(2, Math.max(0.8, Number(rawZoom) || 1));
+          return {
+            id: x.id || uid(),
+            keyword: (x.keyword || "").toString().trim(),
+            name: toI18nObj(x.name || x.title || ""),
+            bio: toI18nObj(x.bio || x.description || ""),
+            avatar: (x.avatar || "").toString().trim(),
+            gallery: cleanGallery(x.gallery),
+            nameColor: (x.nameColor || "#ffffff").toString(),
+            bioColor: (x.bioColor || "#ffffff").toString(),
+            bioBgColor: (x.bioBgColor || "#000000").toString(),
+            avatarZoom,
+          };
+        });
         setWorkers(prepared);
       } catch (e) {
         setMsg(e?.message || T.loadFailed);
@@ -545,6 +554,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
           nameColor: "#ffffff",
           bioColor: "#ffffff",
           bioBgColor: "#000000",
+          avatarZoom: 1,
         },
       ];
 
@@ -565,6 +575,15 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
 
   function delWorker(id) {
     setWorkers((list) => list.filter((w) => w.id !== id));
+  }
+
+  function setWorkerAvatarZoom(id, value) {
+    const clamped = Math.min(2, Math.max(0.8, Number(value) || 1));
+    setWorkers((list) =>
+      list.map((w) =>
+        w.id === id ? { ...w, avatarZoom: Math.round(clamped * 10) / 10 } : w
+      )
+    );
   }
 
   // reorder workers (up/down)
@@ -675,6 +694,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         nameColor: (w.nameColor || "#ffffff").toString(),
         bioColor: (w.bioColor || "#ffffff").toString(),
         bioBgColor: (w.bioBgColor || "#000000").toString(),
+        avatarZoom: Math.min(2, Math.max(0.8, Number(w.avatarZoom) || 1)),
       }));
 
       const next = { ...(baseInfo || {}) };
@@ -693,17 +713,25 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         : Array.isArray(info.brandWorkers)
         ? info.brandWorkers
         : [];
-      const prepared = list.map((x) => ({
-        id: x.id || uid(),
-        keyword: (x.keyword || "").toString().trim(),
-        name: toI18nObj(x.name || x.title || ""),
-        bio: toI18nObj(x.bio || x.description || ""),
-        avatar: (x.avatar || "").toString().trim(),
-        gallery: cleanGallery(x.gallery),
-        nameColor: (x.nameColor || "#ffffff").toString(),
-        bioColor: (x.bioColor || "#ffffff").toString(),
-        bioBgColor: (x.bioBgColor || "#000000").toString(),
-      }));
+      const prepared = list.map((x) => {
+        const rawZoom = x.avatarZoom;
+        const avatarZoom =
+          typeof rawZoom === "number" && rawZoom >= 0.8 && rawZoom <= 2
+            ? rawZoom
+            : Math.min(2, Math.max(0.8, Number(rawZoom) || 1));
+        return {
+          id: x.id || uid(),
+          keyword: (x.keyword || "").toString().trim(),
+          name: toI18nObj(x.name || x.title || ""),
+          bio: toI18nObj(x.bio || x.description || ""),
+          avatar: (x.avatar || "").toString().trim(),
+          gallery: cleanGallery(x.gallery),
+          nameColor: (x.nameColor || "#ffffff").toString(),
+          bioColor: (x.bioColor || "#ffffff").toString(),
+          bioBgColor: (x.bioBgColor || "#000000").toString(),
+          avatarZoom,
+        };
+      });
       setWorkers(prepared);
 
       setMsg(T.savedOk);
@@ -748,7 +776,7 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
           "div",
           { key: w.id, className: "worker-row card" },
 
-          // LEFT COL: avatar + upload + delete + up/down
+          // LEFT COL: avatar + zoom + upload + delete + up/down
           h(
             "div",
             { className: "worker-left" },
@@ -757,7 +785,34 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
               "div",
               { className: "worker-avatar" },
               w.avatar
-                ? h("img", { src: getFileUrl(w.avatar), alt: "worker" })
+                ? (() => {
+                    const zoom = Math.min(2, Math.max(0.8, Number(w.avatarZoom) || 1));
+                    if (zoom !== 1) {
+                      return h(
+                        "div",
+                        {
+                          style: {
+                            width: "100%",
+                            height: "100%",
+                            overflow: "hidden",
+                            display: "grid",
+                            placeItems: "center",
+                          },
+                        },
+                        h("img", {
+                          src: getFileUrl(w.avatar),
+                          alt: "worker",
+                          style: {
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            transform: `scale(${zoom})`,
+                          },
+                        })
+                      );
+                    }
+                    return h("img", { src: getFileUrl(w.avatar), alt: "worker" });
+                  })()
                 : h(
                     "span",
                     { className: "worker-avatar-initials" },
@@ -765,6 +820,63 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
                       .slice(0, 2)
                       .toUpperCase()
                   )
+            ),
+
+            h(
+              "div",
+              {
+                className: "avatar-zoom-controls",
+                style: {
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: 2,
+                },
+              },
+              h("span", {
+                className: "text-sm avatar-zoom-label",
+                style: {
+                  fontSize: 11,
+                  fontWeight: 500,
+                  marginBottom: 10,
+                },
+              }, (T.zoomLabel || "Zoom") + ": " + String(w.avatarZoom ?? 1)),
+              h("button", {
+                type: "button",
+                "aria-label": "Zoom in",
+                className: "btn pill btn-small",
+                style: {
+                  width: 50,
+                  height: 28,
+                  minWidth: 50,
+                  padding: 0,
+                  fontSize: 14,
+                  lineHeight: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+                onClick: () =>
+                  setWorkerAvatarZoom(w.id, Math.min(2, (w.avatarZoom ?? 1) + 0.1)),
+              }, "+"),
+              h("button", {
+                type: "button",
+                "aria-label": "Zoom out",
+                className: "btn pill btn-small",
+                style: {
+                  width: 50,
+                  height: 28,
+                  minWidth: 50,
+                  padding: 0,
+                  fontSize: 14,
+                  lineHeight: 1,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                },
+                onClick: () =>
+                  setWorkerAvatarZoom(w.id, Math.max(0.8, (w.avatarZoom ?? 1) - 0.1)),
+              }, "−")
             ),
 
             h(

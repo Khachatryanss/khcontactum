@@ -242,12 +242,23 @@ function WorkerCard({ item, lang }) {
       }
     },
       avatarAbs
-        ? h("img", {
-            src: avatarAbs,
-            alt: name || "worker",
-            loading: "lazy",
-            style:{ width:"100%", height:"100%", objectFit:"cover" }
-          })
+        ? (() => {
+            const zoom = Math.min(2, Math.max(0.8, Number(item.avatarZoom) || 1));
+            const imgEl = h("img", {
+              src: avatarAbs,
+              alt: name || "worker",
+              loading: "lazy",
+              style: {
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transform: zoom !== 1 ? `scale(${zoom})` : undefined,
+              },
+            });
+            return zoom !== 1
+              ? h("div", { style: { width: "100%", height: "100%", overflow: "hidden", display: "grid", placeItems: "center" } }, imgEl)
+              : imgEl;
+          })()
         : h("span", {
             style:{
               fontWeight:700,
