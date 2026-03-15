@@ -932,7 +932,24 @@ function MediaUploadRow({
   accept,
   placeholder,
   imageZoom,
+  underPreview,
 }) {
+  const previewCell = underPreview
+    ? h(
+        "div",
+        {
+          style: {
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 4,
+            flex: "0 0 auto",
+          },
+        },
+        CirclePreview(previewSrc, kind, imageZoom),
+        underPreview
+      )
+    : CirclePreview(previewSrc, kind, imageZoom);
   return h(
     "div",
     {
@@ -943,7 +960,7 @@ function MediaUploadRow({
         gap: 12,
       },
     },
-    CirclePreview(previewSrc, kind, imageZoom),
+    previewCell,
     h(
       "div",
       null,
@@ -1692,50 +1709,62 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
             "image/png,image/jpeg,image/webp,image/gif,image/svg+xml",
           placeholder: "https://...",
           imageZoom: info?.avatar?.zoom ?? 1,
-        }),
-
-      info?.avatar?.type === "image" &&
-        h(
-          "div",
-          {
-            className: "mb-3",
-            style: {
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              flexWrap: "wrap",
-            },
-          },
-          h("span", { className: "text-sm", style: { fontWeight: 500 } }, (T.avatarZoomLabel || "Zoom") + ":"),
-          h(
+          underPreview: h(
             "div",
-            { style: { display: "flex", alignItems: "center", gap: 4 } },
-            h("button", {
-              type: "button",
-              "aria-label": "Zoom out",
-              className: "btn pill btn-small",
-              style: { minWidth: 32, padding: "4px 8px", fontSize: 16 },
-              onClick: () => {
-                const cur = Math.max(0.8, (info?.avatar?.zoom ?? 1) - 0.1);
-                setInfoPath("avatar.zoom", Math.round(cur * 10) / 10);
+            {
+              style: {
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: 2,
               },
-            }, "−"),
-            h("span", {
-              className: "text-sm",
-              style: { minWidth: 28, textAlign: "center" },
-            }, String(info?.avatar?.zoom ?? 1)),
+            },
             h("button", {
               type: "button",
               "aria-label": "Zoom in",
               className: "btn pill btn-small",
-              style: { minWidth: 32, padding: "4px 8px", fontSize: 16 },
+              style: {
+                width: 24,
+                height: 24,
+                minWidth: 24,
+                padding: 0,
+                fontSize: 14,
+                lineHeight: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              },
               onClick: () => {
                 const cur = Math.min(2, (info?.avatar?.zoom ?? 1) + 0.1);
                 setInfoPath("avatar.zoom", Math.round(cur * 10) / 10);
               },
-            }, "+")
-          )
-        ),
+            }, "+"),
+            h("span", {
+              className: "text-sm",
+              style: { fontSize: 10, opacity: 0.85 },
+            }, String(info?.avatar?.zoom ?? 1)),
+            h("button", {
+              type: "button",
+              "aria-label": "Zoom out",
+              className: "btn pill btn-small",
+              style: {
+                width: 24,
+                height: 24,
+                minWidth: 24,
+                padding: 0,
+                fontSize: 14,
+                lineHeight: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              },
+              onClick: () => {
+                const cur = Math.max(0.8, (info?.avatar?.zoom ?? 1) - 0.1);
+                setInfoPath("avatar.zoom", Math.round(cur * 10) / 10);
+              },
+            }, "−")
+          ),
+        }),
 
       info?.avatar?.type === "video" &&
         h(MediaUploadRow, {
