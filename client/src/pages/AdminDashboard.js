@@ -1712,25 +1712,35 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
           underPreview: h(
             "div",
             {
+              className: "avatar-zoom-controls",
               style: {
                 display: "flex",
                 flexDirection: "column",
-                alignItems: "center",
-                gap: 4,
+                alignItems: "flex-start",
+                gap: 2,
               },
             },
             h("span", {
-              className: "text-sm",
-              style: { fontSize: 11, fontWeight: 500 },
-            }, (T.avatarZoomLabel || "Zoom") + ": " + String(info?.avatar?.zoom ?? 1)),
+              className: "text-sm avatar-zoom-label",
+              style: {
+                fontSize: 11,
+                fontWeight: 500,
+                marginBottom: 10,
+              },
+            }, [
+              (T.avatarZoomLabel || "Zoom") + ": ",
+              h("span", {
+                style: { display: "inline-block", width: 15, textAlign: "left" },
+              }, String(info?.avatar?.zoom ?? 1)),
+            ]),
             h("button", {
               type: "button",
               "aria-label": "Zoom in",
               className: "btn pill btn-small",
               style: {
-                width: 28,
+                width: 50,
                 height: 28,
-                minWidth: 28,
+                minWidth: 50,
                 padding: 0,
                 fontSize: 14,
                 lineHeight: 1,
@@ -1748,9 +1758,9 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
               "aria-label": "Zoom out",
               className: "btn pill btn-small",
               style: {
-                width: 28,
+                width: 50,
                 height: 28,
-                minWidth: 28,
+                minWidth: 50,
                 padding: 0,
                 fontSize: 14,
                 lineHeight: 1,
