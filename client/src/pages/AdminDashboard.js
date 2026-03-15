@@ -38,7 +38,6 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Avatar վիդեոյի հղում",
     avatarVideoHint: "Մաքս. 20 MB (mp4, webm, ogg)",
-    avatarSantaHatLabel: "Ցույց տալ Ձմեռ պապու գլխարկը avatar-ի վրա",
 
     companyNameTitle: "ԿԱԶՄԱԿԵՐՊՈՒԹՅԱՆ ԱՆՎԱՆՈՒՄ",
     nameColorLabel: "Անվան գույնը",
@@ -91,7 +90,6 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Ссылка на видео-аватар",
     avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
-    avatarSantaHatLabel: "Показывать шапку Деда Мороза на аватаре",
 
     companyNameTitle: "НАЗВАНИЕ КОМПАНИИ",
     nameColorLabel: "Цвет названия",
@@ -144,7 +142,6 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Avatar Video URL",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
-    avatarSantaHatLabel: "Show Santa hat overlay on avatar",
 
     companyNameTitle: "COMPANY NAME",
     nameColorLabel: "Name Color",
@@ -197,7 +194,6 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "رابط فيديو الـ Avatar",
     avatarVideoHint: "الحد الأقصى 20MB ‏(mp4, webm, ogg)",
-    avatarSantaHatLabel: "إظهار قبعة سانتا فوق صورة الـ Avatar",
 
     companyNameTitle: "اسم الشركة",
     nameColorLabel: "لون الاسم",
@@ -250,7 +246,6 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "URL de la vidéo avatar",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
-    avatarSantaHatLabel: "Afficher le bonnet de Noël sur l'avatar",
 
     companyNameTitle: "NOM DE L’ENTREPRISE",
     nameColorLabel: "Couleur du nom",
@@ -303,7 +298,6 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Avatar видеосының сілтемесі",
     avatarVideoHint: "Макс. 20 MB (mp4, webm, ogg)",
-    avatarSantaHatLabel: "Аватарда Жаңа жылдық қалпақты көрсету",
 
     companyNameTitle: "КОМПАНИЯ АТЫ",
     nameColorLabel: "Атаудың түсі",
@@ -356,7 +350,6 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "头像视频链接",
     avatarVideoHint: "最大 20 MB (mp4, webm, ogg)",
-    avatarSantaHatLabel: "在头像上显示圣诞帽覆盖效果",
 
     companyNameTitle: "公司名称",
     nameColorLabel: "名称颜色",
@@ -409,7 +402,6 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "Avatar-Video-URL",
     avatarVideoHint: "Max. 20 MB (mp4, webm, ogg)",
-    avatarSantaHatLabel: "Weihnachtsmütze auf dem Avatar anzeigen",
 
     companyNameTitle: "FIRMENNAME",
     nameColorLabel: "Farbe des Namens",
@@ -462,7 +454,6 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "URL de vídeo del avatar",
     avatarVideoHint: "Máx. 20 MB (mp4, webm, ogg)",
-    avatarSantaHatLabel: "Mostrar gorro de Papá Noel sobre el avatar",
 
     companyNameTitle: "NOMBRE DE LA EMPRESA",
     nameColorLabel: "Color del nombre",
@@ -515,7 +506,6 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "URL video avatar",
     avatarVideoHint: "Max 20 MB (mp4, webm, ogg)",
-    avatarSantaHatLabel: "Mostra il cappello di Babbo Natale sull'avatar",
 
     companyNameTitle: "NOME AZIENDA",
     nameColorLabel: "Colore del nome",
@@ -568,7 +558,6 @@ const ADMIN_UI_TEXT = {
     avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
     avatarVideoUrlLabel: "لینک ویدئوی آواتار",
     avatarVideoHint: "حداکثر ۲۰ مگابایت (mp4, webm, ogg)",
-    avatarSantaHatLabel: "نمایش کلاه بابانوئل روی آواتار",
 
     companyNameTitle: "نام شرکت",
     nameColorLabel: "رنگ نام",
@@ -620,7 +609,6 @@ const ADMIN_UI_TEXT = {
   avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
   avatarVideoUrlLabel: "ავატარის ვიდეოს ბმული",
   avatarVideoHint: "მაქს. 20 MB (mp4, webm, ogg)",
-  avatarSantaHatLabel: "ავატარზე სანტას ქუდის ოვერლეის ჩვენება",
 
   companyNameTitle: "კომპანიის სახელი",
   nameColorLabel: "სახელის ფერი",
@@ -672,7 +660,6 @@ tr: {
   avatarImageHint: "(PNG / JPG / JPEG / WEBP / GIF)",
   avatarVideoUrlLabel: "Avatar Video URL",
   avatarVideoHint: "Maks. 20 MB (mp4, webm, ogg)",
-  avatarSantaHatLabel: "Avatar üzerinde Noel Baba şapkası göster",
 
   companyNameTitle: "ŞİRKET ADI",
   nameColorLabel: "Ad Rengi",
@@ -704,7 +691,7 @@ tr: {
 
 const DEFAULT_INFO = {
   logo_url: "",
-  avatar: { type: "image", imageUrl: "", videoUrl: "", santaHat: false },
+  avatar: { type: "image", imageUrl: "", videoUrl: "" },
 
   company: {
     name: {
@@ -775,7 +762,6 @@ function normalizeInfo(partial) {
     type: i.avatar?.type || (i.logo_url ? "image" : "image"),
     imageUrl: i.avatar?.imageUrl || i.logo_url || "",
     videoUrl: i.avatar?.videoUrl || "",
-    santaHat: i.avatar?.santaHat === true, // default false
   };
   return {
     logo_url: i.logo_url || avatar.imageUrl || "",
@@ -1648,30 +1634,6 @@ EFFECTIVE_LANGS.map(({ code, label }) => {
           },
           h("option", { value: "image" }, T.avatarTypeImage),
           h("option", { value: "video" }, T.avatarTypeVideo)
-        )
-      ),
-
-      // Santa hat toggle
-      h(
-        "div",
-        { className: "block mb-3" },
-        h(
-          "label",
-          {
-            className: "row",
-            style: {
-              alignItems: "center",
-              gap: 8,
-              cursor: "pointer",
-            },
-          },
-          h("input", {
-            type: "checkbox",
-            checked: !!info?.avatar?.santaHat,
-            onChange: (e) =>
-              setInfoPath("avatar.santaHat", e.target.checked),
-          }),
-          h("span", { className: "text-sm" }, T.avatarSantaHatLabel)
         )
       ),
 

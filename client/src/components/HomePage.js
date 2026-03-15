@@ -9,7 +9,6 @@ import BrandsPage    from "./BrandsPage.js";
 import BrandInfoPage from "./BrandInfoPage.js";
 import SharePage     from "./SharePage.js";
 import contactumLogo from "../img/Contactum.png"; // ✅ splash logo
-import santaHat      from "../img/santa_hat.png"; // 🎅 avatar hat
 
 const h = React.createElement;
 
@@ -269,8 +268,8 @@ function VideoLoop({ src, style }) {
   });
 }
 
-/* ===== Avatar + Santa Hat ===== */
-function AvatarMedia({ src, isVideo, initials, showHat }) {
+/* ===== Avatar ===== */
+function AvatarMedia({ src, isVideo, initials }) {
   const size = 150;
 
   const containerStyle = {
@@ -286,15 +285,6 @@ function AvatarMedia({ src, isVideo, initials, showHat }) {
     borderRadius: "50%",
     objectFit: "cover",
     boxShadow: "0 10px 30px rgba(0,0,0,0.6)",
-  };
-
-  const hatStyle = {
-    position: "absolute",
-    top: -168,
-    left: "74%",
-    transform: "translateX(-50%)",
-    width: size * 1.5,
-    pointerEvents: "none",
   };
 
   const avatarNode = src
@@ -321,17 +311,7 @@ function AvatarMedia({ src, isVideo, initials, showHat }) {
         (initials || "KH").slice(0, 2).toUpperCase()
       );
 
-  return h(
-    "div",
-    { style: containerStyle },
-    avatarNode,
-    showHat &&
-      h("img", {
-        src: santaHat,
-        alt: "hat",
-        style: hatStyle,
-      })
-  );
+  return h("div", { style: containerStyle }, avatarNode);
 }
 
 export default function HomePage({ cardId = "101" }) {
@@ -613,9 +593,6 @@ export default function HomePage({ cardId = "101" }) {
         ? false
         : isVideo(avatarAbs);
 
-    const showSantaHat =
-      !!(info && info.avatar && info.avatar.santaHat === true);
-
     const bg =
       info?.background || {
         type: "color",
@@ -766,7 +743,6 @@ export default function HomePage({ cardId = "101" }) {
                   src: avatarAbs,
                   isVideo: avatarIsVideo,
                   initials: (name || "KH").slice(0, 2),
-                  showHat: showSantaHat,
                 }),
                 h(
                   "h1",
