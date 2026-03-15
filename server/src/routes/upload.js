@@ -126,36 +126,45 @@ r.post("/", auth("admin"), (req, res) => {
       const field = (req.body.field || "").trim();
       if (!field) return res.status(400).json({ error: "Missing 'field' parameter" });
 
-      const { rows } = await pool.query(
-        "SELECT information FROM admin_info WHERE admin_id=$1",
-        [req.user.admin_id]
-      );
-      const info = rows[0]?.information || {};
-
-      const prevUrlPath = getPath(info, field);
-      if (prevUrlPath) {
-        const oldFilePath = safeFilePathFromUrlPath(prevUrlPath);
-        if (oldFilePath && fs.existsSync(oldFilePath)) {
-          try { fs.unlinkSync(oldFilePath); } catch {}
-        }
-      }
-
       const urlPath = `/file/${req.file.filename}`;
       const origin = getPublicOrigin(req);
       const fullUrl = `${origin}${urlPath}`;
 
-      setPath(info, field, urlPath);
+      // Fields that target arrays (brands, brandInfos) must not overwrite the whole array.
+      // Only persist the file URL when the field is a simple path (e.g. avatar.imageUrl, background.imageUrl).
+      const isArrayField =
+        field === "brands" ||
+        field.startsWith("brandInfos.");
 
-      await pool.query(
-        `INSERT INTO admin_info (admin_id, information, updated_at)
-         VALUES ($1, $2, now())
-         ON CONFLICT (admin_id) DO UPDATE
-         SET information = EXCLUDED.information,
-             updated_at  = now()`,
-        [req.user.admin_id, info]
-      );
+      let info = {};
+      if (!isArrayField) {
+        const { rows } = await pool.query(
+          "SELECT information FROM admin_info WHERE admin_id=$1",
+          [req.user.admin_id]
+        );
+        info = rows[0]?.information || {};
 
-      // ✅ NEW: եթե avatar upload է → ջնջում ենք card icon cache-ը
+        const prevUrlPath = getPath(info, field);
+        if (prevUrlPath) {
+          const oldFilePath = safeFilePathFromUrlPath(prevUrlPath);
+          if (oldFilePath && fs.existsSync(oldFilePath)) {
+            try { fs.unlinkSync(oldFilePath); } catch {}
+          }
+        }
+
+        setPath(info, field, urlPath);
+
+        await pool.query(
+          `INSERT INTO admin_info (admin_id, information, updated_at)
+           VALUES ($1, $2, now())
+           ON CONFLICT (admin_id) DO UPDATE
+           SET information = EXCLUDED.information,
+               updated_at  = now()`,
+          [req.user.admin_id, info]
+        );
+      }
+
+      // ✅ եթե avatar upload է → ջնջում ենք card icon cache-ը
       if (/avatar/i.test(field)) {
         try {
           const iconDir = path.resolve("server/public/cardIcons");
@@ -179,7 +188,7 @@ r.post("/", auth("admin"), (req, res) => {
         field,
         mime: req.file.mimetype,
         size: req.file.size,
-        information: info,
+        information: isArrayField ? {} : info,
       });
 
     } catch (e) {
