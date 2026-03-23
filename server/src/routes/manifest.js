@@ -76,17 +76,20 @@ function defaultManifest() {
   };
 }
 
-router.get("/manifest.json", (_req, res) => {
-  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-  res.json(defaultManifest());
-});
+function sendManifest(res, payload) {
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, proxy-revalidate"
+  );
+  res.type("application/manifest+json");
+  return res.send(JSON.stringify(payload));
+}
 
-// /manifest/101
-router.get("/manifest/:cardId", async (req, res) => {
+async function handleCardManifest(req, res) {
   try {
     const cardId = Number(req.params.cardId);
     if (!Number.isFinite(cardId)) {
-      return res.json(defaultManifest());
+      return sendManifest(res, defaultManifest());
     }
 
     const q = `
@@ -103,8 +106,7 @@ router.get("/manifest/:cardId", async (req, res) => {
     const shortName = displayName.slice(0, 18) || "KHContactum";
     const cardPath = `/${cardId}`;
 
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-    res.json({
+    return sendManifest(res, {
       name: displayName,
       short_name: shortName,
       start_url: cardPath,
@@ -119,9 +121,18 @@ router.get("/manifest/:cardId", async (req, res) => {
     });
   } catch (e) {
     console.log("Manifest error:", e);
-    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
-    res.json(defaultManifest());
+    return sendManifest(res, defaultManifest());
   }
-});
+}
+
+router.get("/manifest.json", (_req, res) => sendManifest(res, defaultManifest()));
+router.get("/api/public/manifest.json", (_req, res) =>
+  sendManifest(res, defaultManifest())
+);
+
+// Keep top-level route for setups that proxy it correctly.
+router.get("/manifest/:cardId", handleCardManifest);
+// Guaranteed API route for frontend deployments that only proxy /api to backend.
+router.get("/api/public/manifest/:cardId", handleCardManifest);
 
 export default router;
