@@ -100,6 +100,11 @@ export default function PublicPage({ cardId }) {
     };
   }, [cardId]);
 
+  React.useEffect(() => {
+    if (typeof document === "undefined") return;
+    document.title = meta.title || "KHContactum";
+  }, [meta.title]);
+
   const url =
     typeof window !== "undefined"
       ? window.location.href
@@ -127,6 +132,15 @@ export default function PublicPage({ cardId }) {
     };
   }, [manifestHref]);
 
+  React.useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const path = `/${cardId}`;
+      localStorage.setItem("kh_last_public_card_path", path);
+      localStorage.setItem("kh_last_public_card_ts", String(Date.now()));
+    } catch {}
+  }, [cardId]);
+
   return h(
     React.Fragment,
     null,
@@ -151,6 +165,7 @@ export default function PublicPage({ cardId }) {
       h("meta", { name: "apple-mobile-web-app-capable", content: "yes" }),
       h("meta", { name: "apple-mobile-web-app-status-bar-style", content: "default" }),
       h("meta", { name: "apple-mobile-web-app-title", content: title }),
+      h("meta", { name: "theme-color", content: "#000000" }),
 
       // Open Graph
       h("meta", { property: "og:title", content: title }),
