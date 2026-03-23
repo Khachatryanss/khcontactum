@@ -2,6 +2,25 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.js";
 
+function ensureInitialManifestLink() {
+  if (typeof document === "undefined" || typeof window === "undefined") return;
+  const path = window.location.pathname || "/";
+  const cardMatch = path.match(/^\/(\d+)$/);
+  const href = cardMatch
+    ? `/api/public/manifest/${encodeURIComponent(cardMatch[1])}`
+    : "/api/public/manifest.json";
+
+  let link = document.getElementById("app-manifest");
+  if (!link) {
+    link = document.createElement("link");
+    link.id = "app-manifest";
+    link.rel = "manifest";
+    document.head.appendChild(link);
+  }
+  link.setAttribute("href", href);
+  link.setAttribute("crossorigin", "anonymous");
+}
+
 function isStandaloneMode() {
   if (typeof window === "undefined") return false;
   const mediaStandalone =
@@ -35,6 +54,7 @@ function maybeRestorePublicCardRoute() {
   } catch {}
 }
 
+ensureInitialManifestLink();
 maybeRestorePublicCardRoute();
 
 const root = createRoot(document.getElementById("root"));

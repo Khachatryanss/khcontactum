@@ -98,41 +98,12 @@ export default function PublicPage({ cardId }) {
     typeof window !== "undefined"
       ? `${window.location.protocol}//${window.location.host}/`
       : "https://your-domain.com/";
-  const manifestHref = `/api/public/manifest/${encodeURIComponent(cardId)}`;
   const canonicalHref = `${siteUrl.replace(/\/$/, "")}/${cardId}`;
   const ogImage = `${siteUrl}og-card-default.jpg`;
   const touchIcon = `${siteUrl}icon-512.png`;
 
   const title = meta.title || "KHContactum";
   const description = meta.description || "KHContactum Digital Card";
-
-  React.useEffect(() => {
-    if (typeof document === "undefined") return undefined;
-    const manifestEls = Array.from(
-      document.querySelectorAll('link[rel="manifest"]')
-    );
-    if (!manifestEls.length) return undefined;
-
-    const prevState = manifestEls.map((el) => ({
-      el,
-      href: el.getAttribute("href") || "",
-      cross: el.getAttribute("crossorigin"),
-    }));
-
-    manifestEls.forEach((el) => {
-      el.setAttribute("href", manifestHref);
-      el.setAttribute("crossorigin", "anonymous");
-    });
-
-    return () => {
-      prevState.forEach(({ el, href, cross }) => {
-        if (href) el.setAttribute("href", href);
-        else el.removeAttribute("href");
-        if (cross) el.setAttribute("crossorigin", cross);
-        else el.removeAttribute("crossorigin");
-      });
-    };
-  }, [manifestHref]);
 
   React.useEffect(() => {
     if (typeof window === "undefined") return;
