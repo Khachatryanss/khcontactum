@@ -351,17 +351,17 @@ export default function AdminLogin({
             contactIcon(
               telegramIcon,
               "Telegram",
-              "https://t.me/KHachatryansHoldingCJSC"
+              "https://t.me/37495776607"
             ),
             contactIcon(
               viberIcon,
-              "Viber",
-              "viber://add?number=%2B37477765334"
+              "Instagram",
+              "https://www.instagram.com/khcontactum?igsh=NWcxZW1yOHc2Z2E1"
             ),
             contactIcon(
               whatsappIcon,
               "WhatsApp",
-              "https://wa.me/37477765334"
+              "https://wa.me/37495776607"
             ),
             contactIcon(
               mailIcon,
