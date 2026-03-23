@@ -48,26 +48,11 @@ function buildPublicMeta(info, fallbackTitle = "KHContactum") {
     info?.display_name,
     info?.name,
   ]);
-  const headline = pickBestText([
-    info?.profile?.headline,
-    info?.headline,
-    pickLangText(info?.description),
-    pickLangText(info?.profile?.about),
-  ]);
-
-  const title = pickBestText([
-    companyName && headline ? `${companyName} ${headline}` : "",
-    companyName,
-    displayName && headline ? `${displayName} ${headline}` : "",
-    displayName,
-    headline,
-    fallbackTitle,
-  ]);
+  const title = pickBestText([companyName, displayName, fallbackTitle]);
 
   const description = pickBestText([
     pickLangText(info?.description),
     pickLangText(info?.profile?.about),
-    headline,
     `${title} | KHContactum`,
   ]);
 
