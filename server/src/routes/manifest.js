@@ -44,20 +44,7 @@ function buildCardTitle(info = {}) {
     info?.display_name,
     info?.name,
   ]);
-  const headline = pickBestText([
-    info?.profile?.headline,
-    info?.headline,
-    pickLangText(info?.description),
-    pickLangText(info?.profile?.about),
-  ]);
-  return pickBestText([
-    companyName && headline ? `${companyName} ${headline}` : "",
-    companyName,
-    displayName && headline ? `${displayName} ${headline}` : "",
-    displayName,
-    headline,
-    "KHContactum",
-  ]);
+  return pickBestText([companyName, displayName, "KHContactum"]);
 }
 
 function defaultManifest() {
@@ -104,13 +91,13 @@ async function handleCardManifest(req, res) {
 
     const info = result.rows?.[0]?.information || {};
     const displayName = buildCardTitle(info);
-    const shortName = displayName.slice(0, 18) || "KHContactum";
+    const shortName = displayName.slice(0, 24) || "KHContactum";
     const cardPath = `/${cardId}`;
 
     return sendManifest(res, {
       id: cardPath,
       name: displayName,
-      short_name: displayName || shortName,
+      short_name: shortName,
       start_url: cardPath,
       scope: "/",
       display: "standalone",
