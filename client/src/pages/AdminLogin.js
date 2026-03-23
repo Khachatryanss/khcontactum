@@ -351,7 +351,7 @@ export default function AdminLogin({
             contactIcon(
               telegramIcon,
               "Telegram",
-              "https://t.me/37495776607"
+              "https://t.me/+37495776607"
             ),
             contactIcon(
               viberIcon,
