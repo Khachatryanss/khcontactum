@@ -3,57 +3,121 @@ import { pool } from "../db.js";
 
 const router = express.Router();
 
+function pickBestText(values = []) {
+  for (const v of values) {
+    const s = (v || "").toString().trim();
+    if (s) return s;
+  }
+  return "";
+}
+
+function pickLangText(v) {
+  if (!v) return "";
+  if (typeof v === "string") return v.toString().trim();
+  const order = [
+    "am",
+    "en",
+    "ru",
+    "ar",
+    "fr",
+    "kz",
+    "chn",
+    "de",
+    "es",
+    "it",
+    "fa",
+    "geo",
+    "tr",
+  ];
+  for (const k of order) {
+    const s = (v?.[k] || "").toString().trim();
+    if (s) return s;
+  }
+  return "";
+}
+
+function buildCardTitle(info = {}) {
+  const companyName = pickLangText(info?.company?.name);
+  const displayName = pickBestText([
+    info?.profile?.display_name,
+    info?.profile?.name,
+    info?.display_name,
+    info?.name,
+  ]);
+  const headline = pickBestText([
+    info?.profile?.headline,
+    info?.headline,
+    pickLangText(info?.description),
+    pickLangText(info?.profile?.about),
+  ]);
+  return pickBestText([
+    companyName && headline ? `${companyName} ${headline}` : "",
+    companyName,
+    displayName && headline ? `${displayName} ${headline}` : "",
+    displayName,
+    headline,
+    "KHContactum",
+  ]);
+}
+
+function defaultManifest() {
+  return {
+    name: "KHContactum",
+    short_name: "KHContactum",
+    start_url: "/",
+    scope: "/",
+    display: "standalone",
+    background_color: "#000000",
+    theme_color: "#000000",
+    icons: [
+      { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+  };
+}
+
+router.get("/manifest.json", (_req, res) => {
+  res.json(defaultManifest());
+});
+
 // /manifest/101
 router.get("/manifest/:cardId", async (req, res) => {
   try {
-    const { cardId } = req.params;
+    const cardId = Number(req.params.cardId);
+    if (!Number.isFinite(cardId)) {
+      return res.json(defaultManifest());
+    }
 
     const q = `
-      SELECT information
-      FROM public_info
-      WHERE cardid = $1
+      SELECT ai.information
+      FROM admins a
+      JOIN admin_info ai ON ai.admin_id = a.id
+      WHERE a.card_id = $1 AND a.is_active = TRUE
+      LIMIT 1
     `;
     const result = await pool.query(q, [cardId]);
 
-    let displayName = "KHContactum";
-
-    if (result.rows?.length) {
-      const info = result.rows[0].information || {};
-      displayName =
-        info.company?.name?.am ||
-        info.company?.name?.en ||
-        info.company?.name?.ru ||
-        "KHContactum";
-    }
-
-    displayName = displayName.toString().trim();
+    const info = result.rows?.[0]?.information || {};
+    const displayName = buildCardTitle(info);
+    const shortName = displayName.slice(0, 18) || "KHContactum";
+    const cardPath = `/${cardId}`;
 
     res.json({
       name: displayName,
-      short_name: displayName.slice(0, 14),
-      start_url: `/${cardId}`,
+      short_name: shortName,
+      start_url: cardPath,
+      scope: cardPath,
       display: "standalone",
       background_color: "#000000",
       theme_color: "#000000",
       icons: [
         { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
-        { src: "/icon-512.png", sizes: "512x512", type: "image/png" }
-      ]
+        { src: "/icon-512.png", sizes: "512x512", type: "image/png" },
+      ],
     });
   } catch (e) {
     console.log("Manifest error:", e);
-    res.json({
-      name: "KHContactum",
-      short_name: "KHContactum",
-      start_url: "/",
-      display: "standalone",
-      background_color: "#000000",
-      theme_color: "#000000",
-      icons: [
-        { src: "/icon-192.png", sizes: "192x192", type: "image/png" },
-        { src: "/icon-512.png", sizes: "512x512", type: "image/png" }
-      ]
-    });
+    res.json(defaultManifest());
   }
 });
 
