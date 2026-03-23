@@ -77,6 +77,7 @@ function defaultManifest() {
 }
 
 router.get("/manifest.json", (_req, res) => {
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
   res.json(defaultManifest());
 });
 
@@ -102,11 +103,12 @@ router.get("/manifest/:cardId", async (req, res) => {
     const shortName = displayName.slice(0, 18) || "KHContactum";
     const cardPath = `/${cardId}`;
 
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
     res.json({
       name: displayName,
       short_name: shortName,
       start_url: cardPath,
-      scope: cardPath,
+      scope: "/",
       display: "standalone",
       background_color: "#000000",
       theme_color: "#000000",
@@ -117,6 +119,7 @@ router.get("/manifest/:cardId", async (req, res) => {
     });
   } catch (e) {
     console.log("Manifest error:", e);
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
     res.json(defaultManifest());
   }
 });
