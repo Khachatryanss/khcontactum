@@ -62,6 +62,7 @@ function buildCardTitle(info = {}) {
 
 function defaultManifest() {
   return {
+    id: "/",
     name: "KHContactum",
     short_name: "KHContactum",
     start_url: "/",
@@ -107,8 +108,9 @@ async function handleCardManifest(req, res) {
     const cardPath = `/${cardId}`;
 
     return sendManifest(res, {
+      id: cardPath,
       name: displayName,
-      short_name: shortName,
+      short_name: displayName || shortName,
       start_url: cardPath,
       scope: "/",
       display: "standalone",
