@@ -3,7 +3,7 @@ import React from "react";
 import { Helmet } from "react-helmet";
 import PhoneShell from "../PhoneShell.js";
 import HomePage from "../components/HomePage.js";
-import { API, getPublicInfoByCardId } from "../api.js";
+import { getPublicInfoByCardId } from "../api.js";
 
 const h = React.createElement;
 
@@ -98,7 +98,7 @@ export default function PublicPage({ cardId }) {
     typeof window !== "undefined"
       ? `${window.location.protocol}//${window.location.host}/`
       : "https://your-domain.com/";
-  const manifestHref = `${API}/api/public/manifest/${encodeURIComponent(cardId)}`;
+  const manifestHref = `/api/public/manifest/${encodeURIComponent(cardId)}`;
   const canonicalHref = `${siteUrl.replace(/\/$/, "")}/${cardId}`;
   const ogImage = `${siteUrl}og-card-default.jpg`;
   const touchIcon = `${siteUrl}icon-512.png`;
@@ -108,16 +108,29 @@ export default function PublicPage({ cardId }) {
 
   React.useEffect(() => {
     if (typeof document === "undefined") return undefined;
-    const manifestEl = document.getElementById("app-manifest");
-    if (!manifestEl) return undefined;
-    const prevHref = manifestEl.getAttribute("href") || "/manifest.json";
-    const prevCross = manifestEl.getAttribute("crossorigin");
-    manifestEl.setAttribute("href", manifestHref);
-    manifestEl.setAttribute("crossorigin", "anonymous");
+    const manifestEls = Array.from(
+      document.querySelectorAll('link[rel="manifest"]')
+    );
+    if (!manifestEls.length) return undefined;
+
+    const prevState = manifestEls.map((el) => ({
+      el,
+      href: el.getAttribute("href") || "",
+      cross: el.getAttribute("crossorigin"),
+    }));
+
+    manifestEls.forEach((el) => {
+      el.setAttribute("href", manifestHref);
+      el.setAttribute("crossorigin", "anonymous");
+    });
+
     return () => {
-      manifestEl.setAttribute("href", prevHref || "/manifest.json");
-      if (prevCross) manifestEl.setAttribute("crossorigin", prevCross);
-      else manifestEl.removeAttribute("crossorigin");
+      prevState.forEach(({ el, href, cross }) => {
+        if (href) el.setAttribute("href", href);
+        else el.removeAttribute("href");
+        if (cross) el.setAttribute("crossorigin", cross);
+        else el.removeAttribute("crossorigin");
+      });
     };
   }, [manifestHref]);
 
