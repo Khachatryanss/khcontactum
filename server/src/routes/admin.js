@@ -30,6 +30,24 @@ async function writeCardJson(cardId, payload) {
   return p;
 }
 
+function isPlainObject(v) {
+  return v != null && typeof v === "object" && !Array.isArray(v);
+}
+
+function deepMergeJson(current, incoming) {
+  if (!isPlainObject(current)) return incoming;
+  if (!isPlainObject(incoming)) return incoming;
+  const next = { ...current };
+  for (const [k, v] of Object.entries(incoming)) {
+    if (isPlainObject(v) && isPlainObject(current[k])) {
+      next[k] = deepMergeJson(current[k], v);
+    } else {
+      next[k] = v;
+    }
+  }
+  return next;
+}
+
 /* ============================================================
    LOGIN PROTECTION — 3 րոպեում 7 սխալ → 30 րոպե lock մեկ IP-ի համար
    ============================================================ */
@@ -285,10 +303,11 @@ r.put("/info", auth("admin"), async (req, res) => {
     );
     const current = curRow.rows?.[0]?.information || {};
 
-    const next = {
-      ...current,
-      ...incoming
-    };
+    console.log("[admin/info][before-update] admin_id=", adminId);
+    console.log("[admin/info][incoming]", incoming);
+    console.log("[admin/info][current]", current);
+
+    const next = deepMergeJson(current, incoming);
 
     const upsert = `
       INSERT INTO admin_info (admin_id, information)
@@ -303,6 +322,7 @@ r.put("/info", auth("admin"), async (req, res) => {
       JSON.stringify(next)
     ]);
     const information = irows[0]?.information || next;
+    console.log("[admin/info][after-update]", information);
 
     const { rows: arows } = await pool.query(
       "SELECT card_id FROM admins WHERE id=$1",
