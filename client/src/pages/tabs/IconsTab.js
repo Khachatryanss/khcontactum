@@ -1179,8 +1179,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
   const activeLangs =
     Array.isArray(langs) && langs.length ? langs : LANGS;
 
-  const [baseInfo, setBaseInfo] = React.useState(null);
-
   // items: { uid, id?, label:{...}, href, icon }
   const [items, setItems] = React.useState([]);
   const [style, setStyle] = React.useState({
@@ -1316,8 +1314,6 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         setLoading(true);
         const r = await adminGetInfo(token);
         const info = r?.information || {};
-        setBaseInfo(info);
-
         const icons = info?.icons || {};
         const arr = Array.isArray(icons.links) ? icons.links : [];
         setItems(
@@ -1518,10 +1514,9 @@ export default function IconsTab({ langs, uiLang = "en" }) {
         return;
       }
 
-      const info = { ...(baseInfo || {}) };
-
-      // rowCard background-ը կապում ենք icon background-ին
-      info.icons = {
+      const payload = {
+        // rowCard background-ը կապում ենք icon background-ին
+        icons: {
         links,
         styles: {
           labelHEX: style.labelHEX,
@@ -1537,16 +1532,16 @@ export default function IconsTab({ langs, uiLang = "en" }) {
           rowCardRGBA: style.chipRGBA,
           rowCardCss: chipCss,
         },
+        },
       };
-
-      await adminSaveInfo(token, info);
+      console.log("[IconsTab][save] payload", payload);
+      await adminSaveInfo(token, payload);
 
       const fresh = await adminGetInfo(token);
       const back = fresh?.information?.icons?.links || links;
       setItems(
         back.map((x) => withUid({ ...x, label: normLabels(x.label) }))
       );
-      setBaseInfo(fresh?.information || info);
       setMsg(T.savedOk);
     } catch (e) {
       setMsg(e.message || T.saveFailed);

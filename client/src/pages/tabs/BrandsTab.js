@@ -594,8 +594,6 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
   const activeLangs =
     Array.isArray(langs) && langs.length ? langs : LANGS;
 
-  const [baseInfo, setBaseInfo] = React.useState(null);
-
   // brands: [{ id, name:{..}, href, keyword, linkType, logo, _blob? }]
   const [brands, setBrands] = React.useState([]);
 
@@ -625,8 +623,6 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         setLoading(true);
         const r = await adminGetInfo(token);
         const info = r?.information || {};
-        setBaseInfo(info);
-
         const br = Array.isArray(info.brands) ? info.brands : [];
         setBrands(
           br.map((x) => {
@@ -811,20 +807,19 @@ export default function BrandsTab({ langs, uiLang = "am" }) {
         logoZoom: Math.min(2, Math.max(0.8, Number(b.logoZoom) || 1)),
       }));
 
-      const next = { ...(baseInfo || {}) };
-      next.brands = cleanBrands;
-      next.brandsTitleColor = titleColor || "#000000";
-      next.brandsNameColor = nameColor || "#000000";
-      next.brandsTitleText = trimI18nObj(titleTextI18n);
-      next.brandsCols = Number(cols) || 3;
-      next.brandsBgColor = (rowBg || "").trim();
-
-      await adminSaveInfo(token, next);
+      const payload = {
+        brands: cleanBrands,
+        brandsTitleColor: titleColor || "#000000",
+        brandsNameColor: nameColor || "#000000",
+        brandsTitleText: trimI18nObj(titleTextI18n),
+        brandsCols: Number(cols) || 3,
+        brandsBgColor: (rowBg || "").trim(),
+      };
+      console.log("[BrandsTab][save] payload", payload);
+      await adminSaveInfo(token, payload);
 
       const back = await adminGetInfo(token);
-      const info = back?.information || next;
-
-      setBaseInfo(info);
+      const info = back?.information || payload;
       setBrands(
         (Array.isArray(info.brands) ? info.brands : []).map((x) => {
           const keyword = (x?.keyword || "").trim();

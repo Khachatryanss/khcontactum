@@ -64,6 +64,7 @@ export async function adminGetInfo(token) {
 }
 
 export async function adminSaveInfo(token, payload) {
+  console.log("[api][adminSaveInfo] request payload", payload);
   const r = await fetch(`${API}/api/admin/info`, {
     method: "PUT",
     headers: {

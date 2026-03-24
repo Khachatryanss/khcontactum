@@ -1160,10 +1160,18 @@ root.default_lang && EFFECTIVE_CODES.includes(root.default_lang)
     setSavingInfo(true);
     setInfoMsg("");
     try {
-      const payload = normalizeInfo(info);
+      const normalized = normalizeInfo(info);
+      const payload = {
+        logo_url: normalized.logo_url || "",
+        avatar: normalized.avatar || {},
+        company: normalized.company || {},
+        description: normalized.description || {},
+        background: normalized.background || {},
+      };
       payload.available_langs = langs;
       // ✅ default_lang-ը առաջին լեզուն է (langs[0]), fallback՝ "en"
       payload.default_lang = langs[0] || "en";
+      console.log("[AdminDashboard][saveInfo] payload", payload);
 
       await adminSaveInfo(token, payload);
       setInfoMsg(T.saveOk);

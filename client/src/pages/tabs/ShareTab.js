@@ -661,12 +661,12 @@ export default function ShareTab({ cardId, info, uiLang = "am", onSaveSuccess })
     setMsg("");
     try {
       const payload = {
-        ...(info || {}),
         share: {
           ...share,
           onlineUrl: composeOnlineUrl(path),
         },
       };
+      console.log("[ShareTab][save] payload", payload);
       await adminSaveInfo(token, payload);
       setMsg(T.msgSaveOk);
       if (typeof onSaveSuccess === "function") {

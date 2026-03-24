@@ -466,8 +466,6 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
     Array.isArray(langs) && langs.length ? langs : LANGS;
   const T = BRANDINFO_TEXT[uiLang] || BRANDINFO_TEXT.en;
 
-  const [baseInfo, setBaseInfo] = React.useState(null);
-
   // workers: [{ id, keyword, name:{}, bio:{}, avatar, gallery[], nameColor, bioColor, bioBgColor }]
   const [workers, setWorkers] = React.useState([]);
 
@@ -481,8 +479,6 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         setLoading(true);
         const r = await adminGetInfo(token);
         const info = r?.information || r || {};
-        setBaseInfo(info);
-
         const list = Array.isArray(info.brandInfos)
           ? info.brandInfos
           : Array.isArray(info.brandWorkers)
@@ -697,16 +693,14 @@ export default function BrandInfoTab({ langs, uiLang = "am" }) {
         avatarZoom: Math.min(2, Math.max(0.8, Number(w.avatarZoom) || 1)),
       }));
 
-      const next = { ...(baseInfo || {}) };
-      next.brandInfos = cleanWorkers;
-      delete next.brandWorkers;
-
-      await adminSaveInfo(token, next);
+      const payload = {
+        brandInfos: cleanWorkers,
+      };
+      console.log("[BrandInfoTab][save] payload", payload);
+      await adminSaveInfo(token, payload);
 
       const back = await adminGetInfo(token);
-      const info = back?.information || next;
-
-      setBaseInfo(info);
+      const info = back?.information || payload;
 
       const list = Array.isArray(info.brandInfos)
         ? info.brandInfos
